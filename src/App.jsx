@@ -4,6 +4,7 @@ function App() {
 
   return (
     <>
+    <h1>Game In</h1>
     </>
   )
 }
