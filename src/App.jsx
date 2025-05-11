@@ -3,7 +3,7 @@ import './App.css';
 import { useTheme } from './context/ThemeProvider';
 
 const StyledH1 = styled.h1`
-  color: ${({ theme }) => theme.colors.bgPrimary};
+  color: ${({ theme }) => theme.baseColors.brandPrimary};
 `;
 
 function App() {
