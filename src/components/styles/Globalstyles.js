@@ -1,17 +1,10 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyles = createGlobalStyle`
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
   body {
-    font-family: 'Exo 2', sans-serif;
+    font-family: ${({ theme }) => theme.typography.exo2.regular};
     background-color: ${({ theme }) => theme.colors.bgPrimary};
     color: ${({ theme }) => theme.colors.text};
-    transition: all 0.3s ease;
   }
 
   h1 {
@@ -23,17 +16,27 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   button {
-    font-family: 'Exo 2', sans-serif;
-    background-color: ${({ theme }) => theme.colors.bgPrimary};
-    color: #fff;
+    font-family: ${({ theme }) => theme.typography.exo2.regular};
+    background-color: ${({ theme }) => theme.baseColors.brandSecondary};
+    color: #33363A;
+    font-size: 1.25rem;
+    width: 100%;
     border: none;
-    padding: 0.6rem 1.2rem;
-    border-radius: 5px;
+    text-align: center;
+    padding: 1rem;
+    border-radius: ${({ theme }) => theme.borderRadius};
     cursor: pointer;
     transition: background 0.2s ease-in-out;
+  }
 
-    &:hover {
-      background-color: ${({ theme }) => theme.colors.bgSecondary};
+  .container{
+    max-width: 1600px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 4rem;
+
+    @media (min-width: 1920px){
+      max-width: 90rem;
     }
   }
 `;
