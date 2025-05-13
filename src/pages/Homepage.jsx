@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import GameInLogo from "../assets/homepage/gamein-logo.svg";
 import HeroSvg from "../assets/homepage/hero-section-image.svg";
-import Button from "../components/ui/Button";
 import TextWithReadMore from "../components/ui/CardWithReadMore";
 import FindCreator from "../assets/homepage/find-creator.svg";
 import FindBrand from "../assets/homepage/find-brand.svg";
 import CreatorBrandUnite from "../assets/homepage/creators-brands-unite.png";
+import { Button } from "../components/ui";
 
 const HeroSection = styled.div`
   width: 100%;
