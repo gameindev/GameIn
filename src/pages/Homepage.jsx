@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import GameInLogo from "../assets/homepage/gamein-logo.svg";
 import HeroSvg from "../assets/homepage/hero-section-image.svg";
-import Button from "../components/ui/Button";
+import { Button } from "../components/ui";
 
 const HeroSection = styled.div`
   width: 100%;

@@ -55,6 +55,7 @@ export const darkTheme = {
             text: "#FFFFFF",
             hover: "#80848A",
         },
+        boxShadow: "0px 0px 10px 10px rgb(56 56 56)",
     },
     ...baseTheme,
 };
@@ -74,6 +75,7 @@ export const lightTheme = {
             text: "#1A1A1A",
             hover: "#B0B6BD",
         },
+        boxShadow: "0px 0px 10px 10px rgb(221 221 221)",
     },
     ...baseTheme,
 };
