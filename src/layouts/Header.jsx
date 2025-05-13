@@ -20,10 +20,10 @@ export default function Header() {
               <li><NavLink to="/">GuideLines</NavLink></li>
             </ul>
             <div className="access-btns">
-              <Button $variant="hoverGray" $padding="0.7rem 1.5rem" $size="small">
+              <Button $variant="hoverGray" $padding="0.5rem" $size="small" $width="6.25rem">
                 Sign in
               </Button>
-              <Button $variant="secondary" $padding="0.7rem 1.5rem" $size="small">
+              <Button $variant="secondary" $padding="0.5rem" $size="small" $width="6.25rem">
                 Register
               </Button>
             </div>
