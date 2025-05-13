@@ -25,7 +25,7 @@ const Button = styled.button`
     return theme.fontSize.medium;
   }};
 
-  width: ${({ $fullWidth }) => ($fullWidth ? "100%" : "auto")};
+  width: ${({ $width }) => ($width ? $width : "auto")};
   padding: ${({ $padding }) => ($padding ? $padding : "1rem")};
   border: none;
   border-radius: ${({ theme }) => theme.borderRadius};

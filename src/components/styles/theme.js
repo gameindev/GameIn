@@ -37,6 +37,7 @@ const baseTheme = {
     brandSecondary: "#9D7FEF",
     ctaDarkGray: "#34373C",
     dark: "#000000",
+    light: "#FFFFFF"
   },
 };
 
@@ -45,6 +46,7 @@ export const darkTheme = {
   colors: {
     bgPrimary: "#3C4044",
     bgSecondary: "#363A3E",
+    bgGray: "#33363A",
     text: "#FFFFFF",
     textSecondary: "#C2C6CC",
     cardBgGradient:
@@ -63,6 +65,7 @@ export const lightTheme = {
   colors: {
     bgPrimary: "#F5F7FA",
     bgSecondary: "#E9EDF2",
+    bgGray: "#33363A",
     text: "#1A1A1A",
     textSecondary: "#4B4F55",
     cardBgGradient:
