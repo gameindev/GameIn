@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const HeaderSection = styled.header`
   background-color: ${({ theme }) => theme.colors.bgPrimary};
-  padding: 2rem 0;
+  padding: 1.625rem 0;
   box-shadow: ${({ theme }) => theme.colors.boxShadow};
   position: sticky;
   top: 0;
