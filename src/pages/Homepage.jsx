@@ -11,7 +11,7 @@ const HeroSection = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
-  padding: 13rem 0;
+  padding: 8rem 0;
 `;
 
 const LeftSection = styled.div`
