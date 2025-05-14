@@ -32,7 +32,7 @@ const Button = styled.button`
   cursor: pointer;
   font-weight: ${({ $variant }) =>
     $variant === "primary" ? 600 : $variant === "secondary" ? 500 : 400};
-  transition: background 0.2s ease-in-out;
+  transition: 0.2s ease-in-out;
   line-height: 1;
 
   &:hover {
