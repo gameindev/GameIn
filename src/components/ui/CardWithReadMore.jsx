@@ -7,6 +7,7 @@ const CardContent = styled.div`
   font-weight: 900;
   color: ${({ theme }) => theme.colors.text};
   transition: height 0.3s ease-in-out;
+    width: 70%;
 `;
 
 const CardText = styled.p`
@@ -18,7 +19,7 @@ const CardText = styled.p`
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: ${({ $isExpanded }) => ($isExpanded ? "none" : 3)};
-  line-clamp: ${({ isExpanded }) => (isExpanded ? "none" : 3)};
+  line-clamp: ${({ $isExpanded }) => ($isExpanded ? "none" : 3)};
   transition: -webkit-line-clamp 0.3s ease-in-out, max-height 0.3s ease-in-out;
 `;
 
@@ -42,15 +43,15 @@ const ReadMoreText = styled.button`
 `;
 
 const DownChevron = styled.span`
-  position: absolute;
+  position: relative;
   top: 50%;
+  display: inline-block;
   width: 0.4rem;
   height: 0.4rem;
   background: transparent;
   border-top: 0.063rem solid white;
   border-right: 0.063rem solid white;
-  box-shadow: 0 0 0 lightgray;
-  transform: translate(0%, -60%) rotate(135deg);
+  transform: translate(0%, -50%) rotate(135deg);
   margin-left: 1rem;
   transition: all 200ms ease;
 `;
@@ -60,24 +61,27 @@ const TextWithReadMore = ({ content }) => {
   const [shouldShowReadMore, setShouldShowReadMore] = useState(false);
 
   const textRef = useRef(null);
+
   const handleToggle = () => setIsExpanded((prev) => !prev);
 
-  useEffect(() => {
-    const checkTextHeight = () => {
-      if (textRef.current) {
-        const isTextLong =
-          textRef.current.scrollHeight > textRef.current.clientHeight;
-        setShouldShowReadMore(isTextLong);
-      }
-    };
+  const checkTextHeight = () => {
+    if (textRef.current) {
+      const isTextLong =
+        textRef.current.scrollHeight > textRef.current.clientHeight;
+      setShouldShowReadMore(isTextLong);
+    }
+  };
 
+  useEffect(() => {
     checkTextHeight();
-    window.addEventListener("resize", checkTextHeight);
+
+    const resizeListener = () => checkTextHeight();
+    window.addEventListener("resize", resizeListener);
 
     return () => {
-      window.removeEventListener("resize", checkTextHeight);
+      window.removeEventListener("resize", resizeListener);
     };
-  }, []);
+  }, [content]);
 
   return (
     <CardContent className="card_para">
@@ -85,13 +89,14 @@ const TextWithReadMore = ({ content }) => {
         <CardText ref={textRef} $isExpanded={isExpanded}>
           {content}
         </CardText>
+
         <ReadMoreText
           role="button"
           $show={shouldShowReadMore ? "visible" : undefined}
           onClick={handleToggle}
         >
           {isExpanded ? "Read Less" : "Read More"}
-          <DownChevron></DownChevron>
+          <DownChevron />
         </ReadMoreText>
       </div>
     </CardContent>

@@ -6,6 +6,7 @@ export const HeaderSection = styled.header`
   box-shadow: ${({ theme }) => theme.colors.boxShadow};
   position: sticky;
   top: 0;
+  z-index: 999;
 
   .headerFlex {
     display: flex;

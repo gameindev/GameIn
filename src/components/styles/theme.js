@@ -46,6 +46,7 @@ export const darkTheme = {
     bgPrimary: "#3C4044",
     bgSecondary: "#363A3E",
     bgHeader: "#33363A",
+    bgGray: "#33363A",
     text: "#FFFFFF",
     textSecondary: "#C2C6CC",
     cardBgGradient:
@@ -66,6 +67,7 @@ export const lightTheme = {
     bgPrimary: "#F5F7FA",
     bgSecondary: "#E9EDF2",
     bgHeader: "#F5F7FA",
+    bgGray: "F5F7FA",
     text: "#1A1A1A",
     textSecondary: "#4B4F55",
     cardBgGradient:
