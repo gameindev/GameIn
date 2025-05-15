@@ -24,8 +24,6 @@ jobs:
       - name: Build app
         run: npm run build
 
-      - name: Debug dist folder
-        run: ./dist
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
