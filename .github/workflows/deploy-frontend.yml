@@ -14,14 +14,12 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install dependencies
-        run: |
-          cd Frontend
-          npm ci
+        run: npm ci
+          
 
       - name: Build React App
-        run: |
-          cd Frontend
-          vite build
+        run: vite build
+          
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
