@@ -2,10 +2,10 @@ name: Deploy React Frontend to GitHub Pages
 
 on:
   push:
-    paths:
-      - 'Frontend/**'
     branches:
-      - frontend  # Change to 'main' or your frontend branch if needed
+      - frontend     # or main or the actual branch name you're using
+    paths:
+      - 'Frontend/**' # Change to 'main' or your frontend branch if needed
 
 jobs:
   build-and-deploy:
@@ -34,4 +34,4 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./Frontend/build
+          publish_dir: ./dist
