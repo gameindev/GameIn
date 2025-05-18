@@ -1,0 +1,11 @@
+PATCH http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+    "id": 1,
+    "username": "john",
+    "email": "john2@email.com",
+    "password": "Allizw3ll#",
+    "userType": "BRAND",
+    "dateOfBirth": "01-01-1998"
+}

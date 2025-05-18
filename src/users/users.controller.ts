@@ -1,0 +1,203 @@
+/* eslint-disable */
+import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from "@nestjs/common";
+import { ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { GetUsersParamDto } from "./dtos/get-user-param.dto";
+import { CreateUserDto } from "./dtos/post-create-user.dto";
+import { PatchUserDto } from "./dtos/patch-user.dto";
+import { UsersService } from "./providers/users.service";
+
+
+
+@Controller("users")
+@ApiTags("Users")
+/**
+* Users controller.
+*/
+export class UsersController {
+
+    constructor(
+        /**
+         * Injecting Users service.
+         */
+        private readonly usersService: UsersService,
+    ) {
+
+    }
+
+    @Get()
+    @ApiOperation({
+        summary: 'Fetches a list of registered users on the application.',
+        description: `
+    Returns paginated users. Use the 'populate' query param to load related entities.
+
+    - Use \`populate=creatorProfile\`, \`brandProfile\`, etc. to include specific relations
+    - Use \`populate=*\` to include all supported relations dynamically
+  `,
+    })
+    @ApiQuery({
+        name: 'limit',
+        type: Number,
+        description: 'The number of users per page (pagination limit)',
+        required: false,
+        example: 10,
+    })
+    @ApiQuery({
+        name: 'page',
+        type: Number,
+        description: 'The page number to fetch',
+        required: false,
+        example: 1,
+    })
+    @ApiQuery({
+        name: 'populate',
+        type: String,
+        required: false,
+        description: `Comma-separated list of relations to include.
+Options depend on valid relations in User entity, e.g.:
+  - creatorProfile
+  - brandProfile
+
+Use '*' to load all supported relations.`,
+        example: 'creatorProfile,ratingsGiven',
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Users fetched successfully based on the query',
+    })
+    /**
+     * Fetches a list of registered users on the application.
+     * @query limit The number of users per page
+     * @query page The page number to fetch
+     * @query populate Optional relations to include (creatorProfile, brandProfile, etc.)
+     * @returns Users with pagination and optional relations
+     */
+    getUsers(
+        @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+        @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+        @Query('populate') populate?: string,
+    ) {
+        return this.usersService.getAllUsers(limit, page, populate);
+    }
+
+
+    /**
+    * Fetches a registered user on the application by ID.
+    * @param getUserParamDto The ID of the user that you want the API to return
+    * @returns User fetched successfully based on the query
+    */
+    @ApiOperation({
+        summary: 'Fetches a registered user on the application by ID.',
+        description: `
+      Returns user data by ID. You can optionally include related entities using the \`populate\` query param.
+      
+      ### Populate Options:
+      - \`creatorProfile\`: Include Creator Profile (for users with userType: CREATOR)
+      - \`brandProfile\`: Include Brand Profile (if applicable)
+      - \`ratingsGiven\`: Ratings this user has given
+      - \`ratingsReceived\`: Ratings this user has received
+      - \`userFaqs\`: FAQs associated with the user
+      - \`*\`: Include all supported relations
+      
+      Use comma-separated values to load multiple relations.
+        `,
+    })
+    @ApiParam({
+        name: 'id',
+        type: Number,
+        description: 'The ID of the user to fetch',
+        required: true,
+    })
+    @ApiQuery({
+        name: 'populate',
+        required: false,
+        type: String,
+        description: `Optional. Comma-separated list of valid relation keys.
+      Only valid relations on the User entity will be included. Invalid values will be ignored.`,
+        example: 'creatorProfile,ratingsReceived',
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'User fetched successfully based on the query.',
+    })
+
+    @Get("/:id")
+    getUserById(
+        @Param() getUserParamDto: GetUsersParamDto,
+        @Query('populate') populate?: string,
+    ) {
+        return this.usersService.getUserById(getUserParamDto.id, populate);
+    }
+
+
+
+    @Post()
+    @ApiOperation({
+        summary: 'Creates a new user on the application.'
+    })
+    @ApiResponse({
+        status: 201,
+        description: 'User created successfully based on the query',
+    })
+    /**
+     * Creates a new user on the application.
+     * @param createUserDto The user details that you want the API to return
+     * @returns User created successfully based on the query
+     */
+    createUser(@Body() createUserDto: CreateUserDto) {
+        return this.usersService.createUser(createUserDto);
+    }
+
+    
+    @Patch()
+    @ApiOperation({
+        summary: 'Updates a registered user on the application by ID.'
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'User updated successfully based on the query',
+    })
+    /**
+     * Updates a registered user on the application.
+     * @param patchUserDto The user details that you want the API to return
+     * @returns User updated successfully based on the query
+     */
+    updateUser(@Body() patchUserDto: PatchUserDto) {
+        return this.usersService.updateUser(patchUserDto);
+    }
+
+
+
+    /**
+     * Soft deletes a registered user on the application.
+     * @param getUserParamDto The ID of the user that you want the API to return
+     * @returns Return a success message
+     */
+    @Delete("/:id/soft-delete")
+    @ApiOperation({
+        summary: 'Soft Deletes a registered user on the application by ID.'
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'User soft deleted successfully based on the query',
+    })
+    softDeleteUser(@Param() getUserParamDto: GetUsersParamDto) {
+        return this.usersService.softDeleteUser(getUserParamDto.id);
+    }
+
+    /**
+     * Permanently deletes a registered user on the application.
+     * @param getUserParamDto The ID of the user that you want the API to return
+     * @returns Return a success message
+     */
+    @Delete("/:id")
+    @ApiOperation({
+        summary: 'Deletes a registered user on the application by ID.'
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'User deleted successfully based on the query',
+    })
+    deleteUser(@Param() getUserParamDto: GetUsersParamDto) {
+        return this.usersService.deleteUser(getUserParamDto.id);
+    }
+}
