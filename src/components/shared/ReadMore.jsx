@@ -11,7 +11,7 @@ const ReadMoreText = styled.div`
   }
 `;
 
-const ReadMore = ({ content, maxChars = 150, color }) => {
+const ReadMore = ({ content, maxChars = 100, color }) => {
   const [expanded, setExpanded] = useState(false);
 
   const toggle = () => setExpanded(prev => !prev);

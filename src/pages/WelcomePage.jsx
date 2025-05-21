@@ -49,7 +49,7 @@ export default function WelcomePage() {
   const growBusinessData = {
       title: 'Grow your business',
       subTitle: 'with gamein',
-      className: '',
+      className: 'odd',
       readMoreColor: 'primary',
       readMoreContent: 'We offer brands a targeted demographic to a highly engaged esports audience. Brands receive professional guidance and support to create effective sponsorship proposals.',
       btnText: 'Search',

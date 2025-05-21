@@ -162,12 +162,7 @@ export const MileStoneStyles = styled.div`
   .milestone_banner {
     position: relative;
     margin: 7.5rem 0;
-    background: linear-gradient(
-      225deg,
-      #9d7fef 0%,
-      #69b3e7 48.8%,
-      #5ce5b0 100%
-    );
+    background: linear-gradient( 225deg, #9d7fef 0%, #69b3e7 48.8%, #5ce5b0 100%);
     clip-path: polygon(
       -0.018% 0.021%,
       -0.018% 99.883%,
@@ -293,6 +288,7 @@ export const MileStoneStyles = styled.div`
         }
 
         h3 {
+          color: ${({ theme }) => theme.colors.textWhite[0]};
           font-size: 2.188rem;
           font-weight: 900;
           line-height: 1;
@@ -300,6 +296,7 @@ export const MileStoneStyles = styled.div`
         }
 
         p {
+          color: ${({ theme }) => theme.colors.textWhite[0]};
           font-size: 1rem;
           font-weight: 400;
           line-height: 1;
@@ -314,11 +311,13 @@ export const MileStoneStyles = styled.div`
         justify-content: space-between;
 
         .count {
+          color: ${({ theme }) => theme.colors.textWhite[0]};
           font-size: 3.75rem;
           font-weight: 400;
         }
 
         span {
+          color: ${({ theme }) => theme.colors.textWhite[0]};
           font-size: 0.875rem;
           font-weight: 400;
           text-transform: uppercase;

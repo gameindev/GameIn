@@ -1,19 +1,16 @@
 // import { Button, useMantineColorScheme } from "@mantine/core"
-import { Footer, Header } from "./layouts";
-import { WelcomePage } from "./pages";
+import { RouterProvider } from "react-router";
+import router from "./routes";
 
 function App() {
   // const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
   return (
     <>
-      <Header />
       {/* <Button variant="secondary"  onClick={()=>toggleColorScheme()}>
       Toggle to {colorScheme === 'dark' ? 'light' : 'dark'} mode
     </Button> */}
-      <WelcomePage />
-
-      <Footer />
+      <RouterProvider router={router} />
     </>
   );
 }

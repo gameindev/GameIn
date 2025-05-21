@@ -1,7 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
-import { BrowserRouter } from "react-router";
 import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 import './styles'
 import { GlobalStyles, theme } from './styles/theme';
@@ -12,10 +11,8 @@ createRoot(document.getElementById('root')).render(
     <ColorSchemeScript />
     <MantineProvider theme={theme} defaultColorScheme="auto" withGlobalStyles withNormalizeCSS >
       <ThemeProvider theme={theme}>
-        <GlobalStyles />
-        <BrowserRouter>
+        <GlobalStyles/>
           <App />
-        </BrowserRouter>
       </ThemeProvider>
     </MantineProvider>
   </StrictMode>,
