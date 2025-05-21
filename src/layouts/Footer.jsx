@@ -2,7 +2,6 @@ import GameInLogo from "../assets/homepage/gamein-logo.svg";
 import { Link } from 'react-router';
 import { FooterSection } from "../styles/layouts";
 import { Card, TextInput, Title } from "@mantine/core";
-import { IconChevronDown } from "@tabler/icons-react";
 
 export default function Footer() {
     return (
@@ -16,7 +15,7 @@ export default function Footer() {
                             </div>
                             <TextInput
                                 component="select"
-                                rightSection={<IconChevronDown size={14} stroke={1.5} />}
+                                // rightSection={<IconChevronDown size={14} stroke={1.5} />}
                                 pointer
                                 mt="md"
                             >

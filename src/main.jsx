@@ -1,22 +1,31 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import App from './App.jsx'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App.jsx";
 import { BrowserRouter } from "react-router";
-import { ColorSchemeScript, MantineProvider } from '@mantine/core';
-import './styles'
-import { GlobalStyles, theme } from './styles/theme';
-import { ThemeProvider } from 'styled-components';
+import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+import "./styles";
+import { GlobalStyles, theme } from "./styles/theme";
+import { ThemeProvider } from "styled-components";
+import { Provider } from "react-redux";
+import store from "./lib/redux/Store.js";
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ColorSchemeScript />
-    <MantineProvider theme={theme} defaultColorScheme="auto" withGlobalStyles withNormalizeCSS >
+    <MantineProvider
+      theme={theme}
+      defaultColorScheme="auto"
+      withGlobalStyles
+      withNormalizeCSS
+    >
       <ThemeProvider theme={theme}>
         <GlobalStyles />
         <BrowserRouter>
-          <App />
+          <Provider store={store}>
+            <App />
+          </Provider>
         </BrowserRouter>
       </ThemeProvider>
     </MantineProvider>
-  </StrictMode>,
-)
+  </StrictMode>
+);

@@ -25,15 +25,17 @@ export const GlobalStyles = createGlobalStyle`
     }
 
     .container{
-        max-width: 80%;
-        @media (min-width: 1920px){
+        max-width: 1200px;
+        padding: 0 4rem;
+            @media (min-width: 1920px){
             max-width: 70rem;
         }
     }
 
     .container-fluid{
-        max-width: 95%;
-        @media (min-width: 1920px){
+        max-width: 1440px;
+        padding: 0 2rem;
+            @media (min-width: 1920px){
             max-width: 90rem;
         }
     }
