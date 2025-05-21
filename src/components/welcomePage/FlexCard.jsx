@@ -8,7 +8,7 @@ export default function FlexCard({ scrollToRef }) {
   return (
     <FlexCardStyles ref={scrollToRef}>
       <div className="creator_card">
-        <Title order={2} c="textWhite" className="flexTitle" fw="600" mb="xl">FIND A CREATOR</Title>
+        <Title order={2} c="textWhite" className="flexTitle" fw="900" mb="xl">FIND A CREATOR</Title>
         <Text mb="xl" size="md" c="white" fw="800">Monetize your talent</Text>
         <ReadMore
             color="black"
@@ -22,7 +22,7 @@ export default function FlexCard({ scrollToRef }) {
         </Flex>
       </div>
       <div className="sponsor_card">
-        <Title order={2} c="textWhite" className="flexTitle" fw="600" mb="xl">FIND A SPONSOR</Title>
+        <Title order={2} c="textWhite" className="flexTitle" fw="900" mb="xl">FIND A SPONSOR</Title>
         <Text mb="xl" size="md" c="white" fw="800">Don’t just throw your money at eSports.</Text>
         <ReadMore
             color="black"

@@ -15,7 +15,7 @@ export default function Header() {
             </div>
             <nav>
               <ul>
-                <li><NavLink to="/">GameIn</NavLink></li>
+                <li><NavLink to="/dashboard">GameIn</NavLink></li>
                 <li><NavLink to="/">About</NavLink></li>
                 <li><NavLink to="/">Info</NavLink></li>
                 <li><NavLink to="/">GuideLines</NavLink></li>
