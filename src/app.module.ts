@@ -8,6 +8,7 @@ import { UsersModule } from "./users/users.module";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { CreatorProfilesModule } from './creator-profiles/creator-profiles.module';
 import { BrandProfilesModule } from './brand-profiles/brand-profiles.module';
+import { AuthModule } from './auth/auth.module';
 import appConfig from "./config/app.config";
 import databaseConfig from "./config/database.config";
 import * as dotenvFlow from 'dotenv-flow';
@@ -43,7 +44,8 @@ const ENV = process.env.NODE_ENV;
                     // entities: [User, UserProfile]
                 }
             }
-        }),        
+        }),
+        AuthModule,        
     ],
     controllers: [AppController],
     providers: [AppService]

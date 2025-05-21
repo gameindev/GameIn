@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { ConflictException, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { User } from '../user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,6 +9,8 @@ import { PatchUserDto } from '../dtos/patch-user.dto';
 import { CreatorProfilesService } from 'src/creator-profiles/providers/creator-profiles.service';
 import { UserType } from '../enums/user-type.enums';
 import { BrandProfilesService } from 'src/brand-profiles/providers/brand-profiles.service';
+import { CreateUserProvider } from './create-user.provider';
+import { FindOneUserByEmailProvider } from './find-one-user-by-email.provider';
 
 /**
  * Users service.
@@ -35,6 +37,18 @@ export class UsersService {
         @Inject(BrandProfilesService)
         private readonly brandProfileService: BrandProfilesService,
 
+        /**
+         * Injecting createUserProvider.
+         */
+        @Inject(CreateUserProvider)
+        private readonly createUserProvider: CreateUserProvider,
+
+        /**
+         * Injecting findOneUserByEmailProvider.
+         */
+        @Inject(FindOneUserByEmailProvider)
+        private readonly findOneUserByEmailProvider: FindOneUserByEmailProvider,
+
         // @Inject(profileConfig.KEY)
         // private readonly profileConfiguration: ConfigType<typeof profileConfig>,
     ) { }
@@ -47,54 +61,79 @@ export class UsersService {
      * @param populate 
      * @returns 
      */
-    public async getAllUsers(limit: number, page: number, populate?: string) {
-        const userMetadata = this.dataSource.getMetadata(User);
-        console.log(userMetadata.relations);
-        const validRelations = userMetadata.relations.map((r) => r.propertyName);
+    public async getAllUsers(
+        limit: number,
+        page: number,
+        populate?: string,
+    ): Promise<{
+        data: User[];
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+    }> {
+        try {
+            // Step 1: Validate and prepare requested relations
+            const userMetadata = this.dataSource.getMetadata(User);
+            const validRelations = userMetadata.relations.map((r) => r.propertyName);
 
-        const relations: string[] = [];
+            const relations: string[] = [];
 
-        if (populate) {
-            const values = populate.split(',').map((v) => v.trim());
+            if (populate) {
+                const values = populate.split(',').map((v) => v.trim());
 
-            if (values.includes('*')) {
-                relations.push(...validRelations);
-            } else {
-                for (const value of values) {
-                    if (validRelations.includes(value)) {
-                        relations.push(value);
+                if (values.includes('*')) {
+                    relations.push(...validRelations);
+                } else {
+                    for (const value of values) {
+                        if (validRelations.includes(value)) {
+                            relations.push(value);
+                        } else {
+                            throw new BadRequestException(
+                                `Invalid relation requested: "${value}"`,
+                            );
+                        }
                     }
                 }
             }
+
+            // Step 2: Query paginated users with selected relations
+            const [users, total] = await this.userRepository.findAndCount({
+                relations,
+                select: {
+                    id: true,
+                    username: true,
+                    email: true,
+                    userType: true,
+                    isActive: true,
+                    isVerified: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    deletedAt: true,
+                },
+                skip: (page - 1) * limit,
+                take: limit,
+                order: {
+                    createdAt: 'DESC',
+                },
+            });
+
+            return {
+                data: users,
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            };
+        } catch (error) {
+            // If the error is known (e.g. BadRequestException), re-throw
+            if (error instanceof BadRequestException) {
+                throw error;
+            }
+
+            // Otherwise, return a generic server error
+            throw new InternalServerErrorException('Failed to fetch users');
         }
-
-        const [users, total] = await this.userRepository.findAndCount({
-            relations,
-            select: {
-                id: true,
-                username: true,
-                email: true,
-                userType: true,
-                isActive: true,
-                isVerified: true,
-                createdAt: true,
-                updatedAt: true,
-                deletedAt: true,
-            },
-            skip: (page - 1) * limit,
-            take: limit,
-            order: {
-                createdAt: 'DESC',
-            },
-        });
-
-        return {
-            data: users,
-            total,
-            page,
-            limit,
-            totalPages: Math.ceil(total / limit),
-        };
     }
 
     /**
@@ -123,10 +162,24 @@ export class UsersService {
             }
         }
 
-        return this.userRepository.findOne({
-            where: { id },
-            relations,
-        });
+        try {
+            const user = await this.userRepository.findOne({
+                where: { id },
+                relations,
+            });
+
+            if (!user) {
+                throw new NotFoundException(`User with ID ${id} not found`);
+            }
+
+            return user;
+        } catch (error) {
+            // Don't overwrite known HTTP exceptions like NotFoundException
+            if (error instanceof NotFoundException) {
+                throw error;
+            }
+            throw new InternalServerErrorException('Failed to retrieve user');
+        }
     }
 
 
@@ -136,50 +189,7 @@ export class UsersService {
      * @returns 
      */
     public async createUser(createUserDto: CreateUserDto): Promise<Partial<User>> {
-        const { password, ...rest } = createUserDto;
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const newUser = this.userRepository.create({
-            ...rest,
-            password: hashedPassword,
-        });
-
-
-        try {
-            const savedUser = await this.userRepository.save(newUser);
-            if (savedUser.userType === UserType.CREATOR) {
-                await this.creatorProfileService.createProfileForUser(savedUser);
-            } else if(savedUser.userType === UserType.BRAND) {
-                await this.brandProfileService.createProfileForUser(savedUser);
-            }
-
-            return {
-                id: savedUser.id,
-                username: savedUser.username,
-                email: savedUser.email,
-                userType: savedUser.userType,
-                isActive: savedUser.isActive,
-                isVerified: savedUser.isVerified,
-                creatorProfile: savedUser.creatorProfile,
-                createdAt: savedUser.createdAt,
-            };
-        } catch (error) {
-            // PostgreSQL unique constraint violation code
-            if (error.code === '23505') {
-                const detail = error.detail;
-
-                if (detail.includes('username')) {
-                    throw new ConflictException('Username is already taken');
-                } else if (detail.includes('email')) {
-                    throw new ConflictException('Email is already registered');
-                }
-
-                // fallback
-                throw new ConflictException('User already exists');
-            }
-
-            throw new InternalServerErrorException('Failed to create user');
-        }
+        return this.createUserProvider.createUser(createUserDto);
     }
 
 
@@ -214,10 +224,10 @@ export class UsersService {
             if (error.code === '23505') {
                 const detail = error.detail;
                 if (detail.includes('username')) {
-                    throw new ConflictException('Username already exists');
+                    throw new BadRequestException('Username already exists');
                 }
                 if (detail.includes('email')) {
-                    throw new ConflictException('Email already exists');
+                    throw new BadRequestException('Email already exists');
                 }
             }
 
@@ -237,10 +247,15 @@ export class UsersService {
         if (!existingUser) {
             throw new NotFoundException(`User with ID ${id} not found`);
         }
-        // 2. Delete user
-        await this.userRepository.delete(id);
-        // 3. Return success message
-        return { message: 'User deleted successfully', id };
+
+        try {
+            // 2. Delete user
+            await this.userRepository.delete(id);
+            // 3. Return success message
+            return { message: 'User deleted successfully', id };
+        } catch (error) {
+            throw new InternalServerErrorException('Failed to delete user');
+        }
     }
 
     /**
@@ -254,10 +269,19 @@ export class UsersService {
         if (!existingUser) {
             throw new NotFoundException(`User with ID ${id} not found`);
         }
-        // 2. Soft delete user
-        await this.userRepository.softDelete(id);
-        // 3. Return success message
-        return { message: 'User deleted successfully', id };
+
+        try {
+            // 2. Soft delete user
+            await this.userRepository.softDelete(id);
+            // 3. Return success message
+            return { message: 'User soft deleted successfully', id };
+        } catch (error) {
+            throw new InternalServerErrorException('Failed to soft delete user');
+        }
+    }
+
+    public async findUserOneByEmail(email: string) {
+        return await this.findOneUserByEmailProvider.findOneByEmail(email);
     }
 
 }

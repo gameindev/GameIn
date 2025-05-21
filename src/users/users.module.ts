@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { UsersController } from "./users.controller";
 import { UsersService } from "./providers/users.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -8,18 +8,22 @@ import { ConfigModule } from "@nestjs/config";
 import profileConfig from "./config/profile.config";
 import { CreatorProfilesModule } from "src/creator-profiles/creator-profiles.module";
 import { BrandProfilesModule } from "src/brand-profiles/brand-profiles.module";
+import { AuthModule } from "src/auth/auth.module";
+import { CreateUserProvider } from './providers/create-user.provider';
+import { FindOneUserByEmailProvider } from './providers/find-one-user-by-email.provider';
 
 /**
  * Users module.
  */
 @Module({
     controllers: [UsersController],
-    providers: [UsersService],
+    providers: [UsersService, CreateUserProvider, FindOneUserByEmailProvider],
     exports: [UsersService],
     imports: [
         TypeOrmModule.forFeature([User]),
         CreatorProfilesModule,
-        BrandProfilesModule
+        BrandProfilesModule,
+        forwardRef(() => AuthModule),
         // ConfigModule.forFeature(profileConfig),
     ],
 })

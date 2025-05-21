@@ -10,7 +10,9 @@ export class BrandProfile {
     id: number;
 
     @Index()
-    @OneToOne(() => User, user => user.brandProfile)
+    @OneToOne(() => User, user => user.brandProfile, {
+        onDelete: 'CASCADE',
+    })
     @JoinColumn()
     user: User;
 
