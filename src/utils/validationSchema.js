@@ -1,8 +1,13 @@
 import * as Yup from "yup";
 
-const takenUsernames = ["john_doe", "some.one12", "default_username", "dinisah"];
+const takenUsernames = [
+  "john_doe",
+  "some.one12",
+  "default_username",
+  "dinisah",
+];
 
-export const stepOneSchema = Yup.object({
+export const stepOneSchema = Yup.object().shape({
   email: Yup.string()
     .trim()
     .required("Enter your email address")
@@ -18,14 +23,10 @@ export const stepOneSchema = Yup.object({
       /^(?:@)?[a-zA-Z0-9._]+$/,
       "Username can only include letters, numbers, dots, underscores, and an optional leading @"
     )
-    .test(
-      "is-username-available",
-      "Username is already taken",
-      (value) => {
-        if (!value) return false;
-        return !takenUsernames.includes(value);
-      }
-    ),
+    .test("is-username-available", "Username is already taken", (value) => {
+      if (!value) return false;
+      return !takenUsernames.includes(value);
+    }),
   password: Yup.string()
     .trim()
     .required("Enter your password")
@@ -65,10 +66,12 @@ export const stepThreeSchema = Yup.object().shape({
 
 export const defaultFormValues = {
   email: "",
-  userName: "",
+  username: "",
   password: "",
   dob: "",
   acknowledgement: false,
   role: "",
   captcha: "",
 };
+
+export const formSchemas = [stepOneSchema, stepTwoSchema, stepThreeSchema];

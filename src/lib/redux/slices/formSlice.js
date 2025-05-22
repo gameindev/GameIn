@@ -4,7 +4,7 @@ const initialState = {
   currentStep: 0,
   formData: {
     email: "",
-    userName: "",
+    username: "",
     password: "",
     dob: "",
     acknowledgement: false,
@@ -30,7 +30,7 @@ const formSlice = createSlice({
       state.currentStep = 0;
       state.formData = {
         email: "",
-        userName: "",
+        username: "",
         password: "",
         dob: "",
         acknowledgement: false,

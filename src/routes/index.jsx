@@ -4,13 +4,14 @@ import { Suspense, lazy } from "react";
 // Auth and role based routes
 const AuthGuard = lazy(() => import("./AuthGuard"));
 const RoleGuard = lazy(() => import("./RoleGuard"));
-const ErrorPage  = lazy(() => import("./ErrorPage"));
+const ErrorPage = lazy(() => import("./ErrorPage"));
 
 // common layout
 const Layout = lazy(() => import("../layouts/Layout"));
 
 // pages with lazy loaded
 const WelcomePage = lazy(() => import("../pages/WelcomePage"));
+const Register = lazy(() => import("../pages/auth/Register"));
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<div>Loading WelcomePage...</div>}>
             <WelcomePage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/register",
+        element: (
+          <Suspense fallback={<div>Loading WelcomePage...</div>}>
+            <Register />
           </Suspense>
         ),
       },

@@ -1,7 +1,6 @@
 import { Anchor, Button, Text } from "@mantine/core";
 import { useState } from "react";
 import styled from "styled-components";
-import { ChevronDown, ChevronUp  } from 'lucide-react';
 
 const ReadMoreText = styled.div`
   a {
@@ -36,12 +35,12 @@ const ReadMore = ({ content, maxChars = 100, color }) => {
             {expanded ? (
               <>
                 Show less
-                <ChevronUp  size={18} />
+                {/* <ChevronUp  size={18} /> */}
               </>
             ) : (
               <>
                 Read more
-                <ChevronDown size={18} />
+                {/* <ChevronDown size={18} /> */}
               </>
             )}
           </Anchor>
