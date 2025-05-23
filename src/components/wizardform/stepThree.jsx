@@ -1,5 +1,5 @@
 import { TextInput, Stack, Button, Group, Title } from "@mantine/core";
-import { useFormStep } from "../../hooks/useFormSteps";
+import { useFormStep } from "../../hooks/useFormStep";
 import { stepThreeSchema } from "../../utils/validationSchema";
 
 const defaultValues = {

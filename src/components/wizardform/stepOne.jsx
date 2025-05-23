@@ -1,23 +1,48 @@
-import { TextInput, PasswordInput, Stack, Button, Group } from "@mantine/core";
+import {
+  TextInput,
+  PasswordInput,
+  Stack,
+  Button,
+  Group,
+} from "@mantine/core";
 import { Controller } from "react-hook-form";
-import { useFormStep } from "../../hooks/useFormSteps";
 import { stepOneSchema } from "../../utils/validationSchema";
 import DOBPicker from "../shared/DOBPicker";
+import { useEffect } from "react";
+import {useFormStep} from "../../hooks/useFormStep";
 
 const defaultValues = {
   username: "",
   email: "",
   password: "",
   dob: "",
+  dobDay: "",
+  dobMonth: "",
+  dobYear: "",
 };
 
 export default function StepOne({ onNext }) {
-  const methods = useFormStep({
+  const {
+    control,
+    setValue,
+    watch,
+    handleNextStep,
+    errors,
+  } = useFormStep({
     defaultValues,
     schema: stepOneSchema,
     onNext,
   });
-  const { control, setValue, handleNextStep, errors } = methods;
+
+  const day = watch("dobDay");
+  const month = watch("dobMonth");
+  const year = watch("dobYear");
+
+  useEffect(() => {
+    if (day && month && year) {
+      setValue("dob", `${year}-${month}-${day}`);
+    }
+  }, [day, month, year, setValue]);
 
   return (
     <Stack spacing="xl">
@@ -63,11 +88,7 @@ export default function StepOne({ onNext }) {
         )}
       />
 
-      <DOBPicker
-        control={control}
-        setValue={setValue}
-        error={errors?.dob?.message}
-      />
+      <DOBPicker control={control} error={errors?.dob?.message} />
 
       <Group position="right" mt="xl">
         <Button onClick={handleNextStep}>Next Step</Button>

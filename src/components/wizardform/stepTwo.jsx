@@ -1,5 +1,5 @@
 import { Radio, Stack, Button, Group, Title } from "@mantine/core";
-import { useFormStep } from "../../hooks/useFormSteps";
+import { useFormStep } from "../../hooks/useFormStep";
 import { stepTwoSchema } from "../../utils/validationSchema";
 import { Controller } from "react-hook-form";
 
