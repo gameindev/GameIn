@@ -20,7 +20,7 @@ export default function Header() {
                 <li><NavLink to="/">GuideLines</NavLink></li>
               </ul>
               <div className="access-btns">
-                <Link to="/signin">
+                <Link to="/login">
                   <Button
                     variant="grey"
                     padding="0.5rem"

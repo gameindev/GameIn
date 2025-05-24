@@ -4,31 +4,29 @@ import {
   Stack,
   Button,
   Group,
+  Text,
+  Checkbox,
 } from "@mantine/core";
 import { Controller } from "react-hook-form";
 import { stepOneSchema } from "../../utils/validationSchema";
 import DOBPicker from "../shared/DOBPicker";
 import { useEffect } from "react";
-import {useFormStep} from "../../hooks/useFormStep";
+import { useFormStep } from "../../hooks/useFormStep";
+import { Link } from "react-router";
 
 const defaultValues = {
-  username: "",
   email: "",
+  username: "",
   password: "",
   dob: "",
   dobDay: "",
   dobMonth: "",
   dobYear: "",
+  acknowledgement: false,
 };
 
 export default function StepOne({ onNext }) {
-  const {
-    control,
-    setValue,
-    watch,
-    handleNextStep,
-    errors,
-  } = useFormStep({
+  const { control, setValue, watch, handleNextStep, errors } = useFormStep({
     defaultValues,
     schema: stepOneSchema,
     onNext,
@@ -90,9 +88,27 @@ export default function StepOne({ onNext }) {
 
       <DOBPicker control={control} error={errors?.dob?.message} />
 
-      <Group position="right" mt="xl">
-        <Button onClick={handleNextStep}>Next Step</Button>
+      <Controller
+        name="acknowledgement"
+        control={control}
+        render={({ field }) => (
+          <Checkbox
+            {...field}
+            label="I agree to the terms and conditions"
+            error={errors.acknowledgement?.message}
+          />
+        )}
+      />
+      <Group position="center" mt="lg" style={{ justifyContent: 'center' }}>
+        <Button onClick={handleNextStep}>Continue</Button>
       </Group>
+
+      <Text size="xs" mt="md" align="center">
+        Already have an account ?{" "}
+        <Link to="/login" style={{ textDecoration: "none" }}>
+          Login
+        </Link>
+      </Text>
     </Stack>
   );
 }

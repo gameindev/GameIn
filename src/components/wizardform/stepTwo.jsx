@@ -8,23 +8,16 @@ const defaultValues = {
 };
 
 export default function StepTwo({ onNext, onPrev }) {
-  const {
-    control,
-    handleNextStep,
-    handlePrevStep,
-    errors,
-    formValues,
-  } = useFormStep({
-    defaultValues,
-    schema: stepTwoSchema,
-    onNext,
-    onPrev,
-  });
+  const { control, handleNextStep, handlePrevStep, errors, formValues } =
+    useFormStep({
+      defaultValues,
+      schema: stepTwoSchema,
+      onNext,
+      onPrev,
+    });
 
   return (
     <Stack spacing="xl">
-      <Title order={2}>Choose Account Type</Title>
-
       <Controller
         name="role"
         control={control}

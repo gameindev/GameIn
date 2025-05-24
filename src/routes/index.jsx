@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router";
 import { Suspense, lazy } from "react";
+import Signin from "../pages/auth/Signin";
 
 // Auth and role based routes
 const AuthGuard = lazy(() => import("./AuthGuard"));
@@ -33,8 +34,16 @@ const router = createBrowserRouter([
       {
         path: "/register",
         element: (
-          <Suspense fallback={<div>Loading WelcomePage...</div>}>
+          <Suspense fallback={<div>Loading RegisterPage...</div>}>
             <Register />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/login",
+        element: (
+          <Suspense fallback={<div>Loading LoginPage...</div>}>
+            <Signin />
           </Suspense>
         ),
       },

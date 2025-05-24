@@ -1,20 +1,29 @@
-import { Paper, Title, Text, Container, Progress, Stack } from "@mantine/core";
+import {
+  Paper,
+  Title,
+  Group,
+  Container,
+  Progress,
+  Stack,
+  Box,
+} from "@mantine/core";
 import StepOne from "./stepOne";
 import StepTwo from "./stepTwo";
 import StepThree from "./stepThree";
 import Completed from "./Completed";
 import { useState } from "react";
+import { theme } from "../../styles/theme/customTheme";
 
 const getStepTitle = (step) => {
   switch (step) {
     case 0:
       return "Create Your Account";
     case 1:
-      return "Choose Account Type";
+      return "Which Category Would Fit You Most?";
     case 2:
-      return "Social Profiles";
+      return "ReCAPTCHA Verification";
     case 3:
-      return "Complete!";
+      return "Email Verification!";
     default:
       return "";
   }
@@ -50,20 +59,28 @@ export default function MultiStepForm() {
   };
 
   return (
-    <Container size="sm">
-      <Paper radius="md" p="xl" withBorder>
+    <Container size="md">
+      <Paper radius="md" p="xl" withBorder bg="#363a3e" m="xl">
         <Stack spacing="xl">
           <div>
             <Title order={2}>{getStepTitle(currentStep)}</Title>
           </div>
-
-          <Progress
-            value={(currentStep / (totalSteps - 1)) * 100}
-            size="sm"
-            radius="xl"
-          />
-
-          {renderStep()}
+          <Stack w={"50%"} mx="auto">
+            {renderStep()}
+            <Group grow gap={5} mt="xs">
+              {Array.from({ length: totalSteps }).map((_, index) =>
+                currentStep < totalSteps - 1 ? (
+                  <Progress
+                    key={index}
+                    value={currentStep >= index ? 100 : 0}
+                    size="sm"
+                    radius="xl"
+                    bg={theme.colors.inputColor[0]}
+                  />
+                ) : null
+              )}
+            </Group>
+          </Stack>
         </Stack>
       </Paper>
     </Container>

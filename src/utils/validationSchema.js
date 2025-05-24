@@ -61,17 +61,23 @@ export const stepTwoSchema = Yup.object().shape({
 });
 
 export const stepThreeSchema = Yup.object().shape({
-  captcha: Yup.string().required("Please enter the captcha"),
+  captcha: Yup.string().required("Please complete the captcha verification"),
 });
 
-export const defaultFormValues = {
-  email: "",
-  username: "",
-  password: "",
-  dob: "",
-  acknowledgement: false,
-  role: "",
-  captcha: "",
-};
-
-export const formSchemas = [stepOneSchema, stepTwoSchema, stepThreeSchema];
+export const loginSchema = Yup.object().shape({
+  username: Yup.string()
+    .trim()
+    .required("Username is required")
+    .min(6, "Username must be at least 6 characters"),
+  password: Yup.string()
+    .trim()
+    .required("Enter your password")
+    .min(8, "Password must be at least 8 characters")
+    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .matches(/[0-9]/, "Password must contain at least one number")
+    .matches(
+      /[^a-zA-Z0-9]/,
+      "Password must contain at least one special character"
+    ),
+});

@@ -1,40 +1,34 @@
-import { TextInput, Stack, Button, Group, Title } from "@mantine/core";
+import { Stack, Button, Group, Box, Input } from "@mantine/core";
 import { useFormStep } from "../../hooks/useFormStep";
 import { stepThreeSchema } from "../../utils/validationSchema";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const defaultValues = {
-  website: "",
-  github: "",
+  captcha: "",
 };
 
 export default function StepThree({ onNext, onPrev }) {
-  const { register, handleNextStep, handlePrevStep, errors, formValues } =
-    useFormStep({
-      defaultValues,
-      schema: stepThreeSchema,
-      onNext,
-      onPrev,
-    });
+  const { handleNextStep, handlePrevStep, errors, setValue } = useFormStep({
+    defaultValues,
+    schema: stepThreeSchema,
+    onNext,
+    onPrev,
+  });
 
   return (
     <Stack spacing="xl">
-      <Title order={2}>Social Profiles</Title>
-
-      <TextInput
-        {...register("website")}
-        value={formValues.website}
-        label="Website"
-        placeholder="Your website URL"
-        error={errors.website?.message}
-      />
-
-      <TextInput
-        {...register("github")}
-        value={formValues.github}
-        label="GitHub"
-        placeholder="Your GitHub username"
-        error={errors.github?.message}
-      />
+      <Box sx={{ position: "relative" }}>
+        <ReCAPTCHA
+          sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+          onChange={(value) => {
+            setValue("captcha", value, { shouldValidate: true });
+          }}
+          onExpired={() => {
+            setValue("captcha", "", { shouldValidate: true });
+          }}
+        />
+        {errors.captcha && <Input.Error>{errors.captcha.message}</Input.Error>}
+      </Box>
 
       <Group position="apart" mt="xl">
         <Button variant="default" onClick={handlePrevStep}>

@@ -65,7 +65,7 @@ const buttonStyles = {
 
 // Custom Text component styles
 const textStyles = {
-  styles: theme => ({
+  styles: (theme) => ({
     root: {
       color: theme.colors.text[0],
     },
@@ -74,16 +74,20 @@ const textStyles = {
 
 // Custom TextInput component styles
 const textInputStyles = {
-  styles: theme => ({
+  styles: (theme) => ({
     // root: {
     //   color: theme.colors.text[0],
     // },
     input: {
       fontSize: theme.fontSizes.sm,
       color: theme.white,
-      backgroundColor: theme.colors.grey[0],
+      backgroundColor: theme.colors.inputColor[0],
       padding: "0.45rem 1.375rem",
       height: "auto",
+      "::placeholder": {
+        color: theme.colors.white[0],
+        opacity: 0.7,
+      },
     },
   }),
 };
@@ -114,6 +118,7 @@ export const theme = createTheme({
     darkGrey: Array(10).fill("#34373C"),
     white: Array(10).fill("#fff"),
     black: Array(10).fill("#000"),
+    inputColor: Array(10).fill("#50565a"),
     textWhite: virtualColor({
       name: "textWhite",
       light: "black",
