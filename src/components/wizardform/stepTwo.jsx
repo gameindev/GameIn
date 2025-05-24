@@ -39,11 +39,11 @@ export default function StepTwo({ onNext, onPrev }) {
         )}
       />
 
-      <Group position="apart" mt="xl">
+      <Group position="apart" mt="xl" style={{ justifyContent: 'center' }}>
         <Button variant="default" onClick={handlePrevStep}>
           Back
         </Button>
-        <Button onClick={handleNextStep}>Next Step</Button>
+        <Button onClick={handleNextStep}>Continue</Button>
       </Group>
     </Stack>
   );

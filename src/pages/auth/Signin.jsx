@@ -16,10 +16,8 @@ import { Link, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import {
   loginStart,
-  loginSuccess,
   loginFailure,
 } from "../../lib/redux/slices/authSlice";
-import axios from "axios";
 
 const defaultValues = {
   username: "",
@@ -49,7 +47,7 @@ export default function Signin() {
 
   return (
     <Container size="md">
-      <Paper radius="md" p="xl" withBorder bg="#363a3e" m="xl">
+      <Paper radius="sm" p="xl" withBorder bg="#363a3e" m="xl">
         <form onSubmit={handleSubmit}>
           <Stack spacing="xl">
             <Title order={2}>Login</Title>
@@ -88,7 +86,7 @@ export default function Signin() {
                   Login
                 </Button>
               </Group>
-              <Text size="sm" mt="md">
+              <Text size="xs" mt="md">
                 Don't have an account?{" "}
                 <Link to="/register" style={{ textDecoration: "none" }}>
                   Register

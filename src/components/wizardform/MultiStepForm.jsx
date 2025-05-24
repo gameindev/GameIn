@@ -60,7 +60,7 @@ export default function MultiStepForm() {
 
   return (
     <Container size="md">
-      <Paper radius="md" p="xl" withBorder bg="#363a3e" m="xl">
+      <Paper radius="sm" p="xl" withBorder bg="#363a3e" m="xl">
         <Stack spacing="xl">
           <div>
             <Title order={2}>{getStepTitle(currentStep)}</Title>

@@ -30,11 +30,11 @@ export default function StepThree({ onNext, onPrev }) {
         {errors.captcha && <Input.Error>{errors.captcha.message}</Input.Error>}
       </Box>
 
-      <Group position="apart" mt="xl">
+      <Group position="apart" mt="xl" style={{ justifyContent: 'center' }}>
         <Button variant="default" onClick={handlePrevStep}>
           Back
         </Button>
-        <Button onClick={handleNextStep}>Next Step</Button>
+        <Button onClick={handleNextStep}>Continue</Button>
       </Group>
     </Stack>
   );
