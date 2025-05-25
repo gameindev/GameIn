@@ -4,38 +4,41 @@ import { stepThreeSchema } from "../../utils/validationSchema";
 import ReCAPTCHA from "react-google-recaptcha";
 
 const defaultValues = {
-  captcha: "",
+    captcha: "",
 };
 
 export default function StepThree({ onNext, onPrev }) {
-  const { handleNextStep, handlePrevStep, errors, setValue } = useFormStep({
-    defaultValues,
-    schema: stepThreeSchema,
-    onNext,
-    onPrev,
-  });
+    const { handleSubmit, handlePrevStep, errors, setValue } = useFormStep({
+        defaultValues,
+        schema: stepThreeSchema,
+        onNext,
+        onPrev,
+        onSubmit: (values) => {
+            console.log(values);
+        },
+    });
 
-  return (
-    <Stack spacing="xl">
-      <Box sx={{ position: "relative" }}>
-        <ReCAPTCHA
-          sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-          onChange={(value) => {
-            setValue("captcha", value, { shouldValidate: true });
-          }}
-          onExpired={() => {
-            setValue("captcha", "", { shouldValidate: true });
-          }}
-        />
-        {errors.captcha && <Input.Error>{errors.captcha.message}</Input.Error>}
-      </Box>
+    return (
+        <Stack spacing="xl">
+            <Box sx={{ position: "relative" }}>
+                <ReCAPTCHA
+                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                    onChange={(value) => {
+                        setValue("captcha", value, { shouldValidate: true });
+                    }}
+                    onExpired={() => {
+                        setValue("captcha", "", { shouldValidate: true });
+                    }}
+                />
+                {errors.captcha && <Input.Error>{errors.captcha.message}</Input.Error>}
+            </Box>
 
-      <Group position="apart" mt="xl" style={{ justifyContent: 'center' }}>
-        <Button variant="default" onClick={handlePrevStep}>
-          Back
-        </Button>
-        <Button onClick={handleNextStep}>Continue</Button>
-      </Group>
-    </Stack>
-  );
+            <Group position="apart" mt="xl" style={{ justifyContent: 'center' }}>
+                <Button variant="default" onClick={handlePrevStep}>
+                    Back
+                </Button>
+                <Button onClick={handleSubmit}>Continue</Button>
+            </Group>
+        </Stack>
+    );
 }
