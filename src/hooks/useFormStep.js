@@ -66,22 +66,15 @@ export function useFormStep({
     };
 
 
+    
 
     const handleSubmit = onSubmit
         ? formHandleSubmit((data) => {
-            const currentStepData = Object.fromEntries(
-                Object.entries(data).filter(([key]) =>
-                    Object.keys(defaultValues).includes(key)
-                )
+            const formFields = Object.keys(defaultValues);
+            const filteredData = Object.fromEntries(
+                Object.entries(data).filter(([key]) => formFields.includes(key))
             );
-            dispatch(saveStepData(currentStepData));
-            const completeFormData = {
-                ...formData,
-                ...currentStepData,
-            };
-
-            dispatch(registerUserAsync(completeFormData));
-            return onSubmit(completeFormData);
+            return onSubmit(filteredData);
         })
         : formHandleSubmit(handleNextStep);
 

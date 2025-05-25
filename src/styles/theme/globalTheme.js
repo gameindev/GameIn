@@ -39,4 +39,17 @@ export const GlobalStyles = createGlobalStyle`
             max-width: 90rem;
         }
     }
+
+    ::placeholder {
+        color: ${({ theme }) => theme.colors.white[0]} !important;
+        opacity: 0.7 !important;
+    }
+
+    /* .mantine-PasswordInput-innerInput{
+        padding: 4rem !important;
+    } */
+
+     .mantine-RadioCard-card[data-checked] {
+    border: 2px solid ${({ theme }) => theme.colors.primary[0]} !important;
+     }
 `;

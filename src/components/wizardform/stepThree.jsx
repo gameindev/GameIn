@@ -13,15 +13,17 @@ export default function StepThree({ onNext, onPrev }) {
         schema: stepThreeSchema,
         onNext,
         onPrev,
-        onSubmit: (values) => {
-            console.log(values);
+        onSubmit: (data) => {
+            onNext(data);
         },
     });
 
     return (
-        <Stack spacing="xl">
+        <Stack spacing="xl" align="center">
             <Box sx={{ position: "relative" }}>
                 <ReCAPTCHA
+                    theme="dark"
+                    size="normal"
                     sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
                     onChange={(value) => {
                         setValue("captcha", value, { shouldValidate: true });
@@ -33,7 +35,7 @@ export default function StepThree({ onNext, onPrev }) {
                 {errors.captcha && <Input.Error>{errors.captcha.message}</Input.Error>}
             </Box>
 
-            <Group position="apart" mt="xl" style={{ justifyContent: 'center' }}>
+            <Group position="apart" mt="xl" style={{ justifyContent: "center" }}>
                 <Button variant="default" onClick={handlePrevStep}>
                     Back
                 </Button>

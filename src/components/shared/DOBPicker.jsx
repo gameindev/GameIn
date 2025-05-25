@@ -24,6 +24,7 @@ const DOBPicker = ({ control, error }) => {
 
   return (
     <Box sx={{ position: "relative " }}>
+      <Input.Label>Day of birth <span style={{ color: 'red' }}>*</span></Input.Label>
       <Group grow>
         <Controller
           name="dobDay"
@@ -31,8 +32,7 @@ const DOBPicker = ({ control, error }) => {
           render={({ field }) => (
             <Select
               {...field}
-              label="Day"
-              placeholder="Select day"
+              placeholder="Day"
               data={days}
               withAsterisk
               error={error ? " " : false}
@@ -46,8 +46,7 @@ const DOBPicker = ({ control, error }) => {
           render={({ field }) => (
             <Select
               {...field}
-              label="Month"
-              placeholder="Select month"
+              placeholder="Month"
               data={months}
               withAsterisk
               error={error ? " " : false}
@@ -61,8 +60,7 @@ const DOBPicker = ({ control, error }) => {
           render={({ field }) => (
             <Select
               {...field}
-              label="Year"
-              placeholder="Select year"
+              placeholder="Year"
               data={years}
               withAsterisk
               error={error ? " " : false}
