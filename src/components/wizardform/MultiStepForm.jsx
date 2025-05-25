@@ -5,81 +5,99 @@ import {
   Container,
   Progress,
   Stack,
-  Box,
+  Flex,
+  Text,
 } from "@mantine/core";
+import { useState } from "react";
 import StepOne from "./stepOne";
 import StepTwo from "./stepTwo";
 import StepThree from "./stepThree";
 import Completed from "./Completed";
-import { useState } from "react";
 import { theme } from "../../styles/theme/customTheme";
+import { UserRound } from "lucide-react";
 
-const getStepTitle = (step) => {
-  switch (step) {
-    case 0:
-      return "Create Your Account";
-    case 1:
-      return "Which Category Would Fit You Most?";
-    case 2:
-      return "ReCAPTCHA Verification";
-    case 3:
-      return "Email Verification!";
-    default:
-      return "";
-  }
-};
+// form steps information
+const FORM_STEPS = [
+  {
+    title: "Create Your Account",
+    component: StepOne,
+    showProgressBar: true,
+    canGoBack: false,
+    validateOnExit: true,
+  },
+  {
+    title: "Which Category Would Fit You Most?",
+    component: StepTwo,
+    showProgressBar: true,
+    canGoBack: true,
+    validateOnExit: true,
+  },
+  {
+    title: "ReCAPTCHA Verification",
+    component: StepThree,
+    showProgressBar: true,
+    canGoBack: true,
+    validateOnExit: false,
+  },
+  {
+    title: "Email Verification!",
+    component: Completed,
+    showProgressBar: false,
+    canGoBack: false,
+    validateOnExit: false,
+  },
+];
 
 export default function MultiStepForm() {
-  const [currentStep, setCurrentStep] = useState(0);
-  const totalSteps = 4;
+  const [stepIndex, setStepIndex] = useState(0);
+  const totalSteps = FORM_STEPS.length;
 
-  const nextStep = () => {
-    setCurrentStep((current) =>
-      current < totalSteps - 1 ? current + 1 : current
-    );
-  };
+  // get current step information
+  const {
+    component: StepComponent,
+    title,
+    showProgressBar,
+    canGoBack,
+    validateOnExit,
+  } = FORM_STEPS[stepIndex];
 
-  const prevStep = () => {
-    setCurrentStep((current) => (current > 0 ? current - 1 : current));
-  };
-
-  const renderStep = () => {
-    switch (currentStep) {
-      case 0:
-        return <StepOne onNext={nextStep} />;
-      case 1:
-        return <StepTwo onNext={nextStep} onPrev={prevStep} />;
-      case 2:
-        return <StepThree onNext={nextStep} onPrev={prevStep} />;
-      case 3:
-        return <Completed onPrev={prevStep} />;
-      default:
-        return null;
-    }
-  };
+  // go to next/prev step
+  const goToNextStep = () =>
+    setStepIndex((i) => Math.min(i + 1, totalSteps - 1));
+  const goToPrevStep = () =>
+    canGoBack && setStepIndex((i) => Math.max(i - 1, 0));
 
   return (
     <Container size="lg">
-      <Paper radius="sm" p="xl" withBorder bg="#363a3e" m="xl">
+      <Paper radius="sm" p="xl" withBorder bg="#363a3e" my={"5rem"} mx={"xl"}>
         <Stack spacing="xl">
-          <div>
-            <Title order={2}>{getStepTitle(currentStep)}</Title>
-          </div>
-          <Stack w={"50%"} mx="auto">
-            {renderStep()}
-            <Group grow gap={3} mt="xs">
-              {Array.from({ length: totalSteps }).map((_, index) =>
-                currentStep < totalSteps - 1 ? (
+          <Flex align="center" gap="xs" justify="start">
+            <Text component="span" style={{ display: "inline-flex" }}>
+              <UserRound color={theme.colors.primary[0]} />
+            </Text>
+            <Title order={2}>{title}</Title>
+          </Flex>
+          <Stack w="50%" mx="auto">
+            <StepComponent
+              onNext={goToNextStep}
+              onPrev={goToPrevStep}
+              validateOnExit={validateOnExit}
+              canGoBack={canGoBack}
+            />
+
+            {showProgressBar && (
+              <Group grow gap={3} mt="xs">
+                {FORM_STEPS.map((_, index) => (
                   <Progress
                     key={index}
-                    value={currentStep >= index ? 100 : 0}
+                    value={stepIndex >= index ? 100 : 0}
                     size="xs"
                     radius="xl"
                     bg={theme.colors.inputBgColor[0]}
                   />
-                ) : null
-              )}
-            </Group>
+                ))}
+              </Group>
+            )}
           </Stack>
         </Stack>
       </Paper>

@@ -3,27 +3,39 @@ import { useFormStep } from "../../hooks/useFormStep";
 import { stepThreeSchema } from "../../utils/validationSchema";
 import ReCAPTCHA from "react-google-recaptcha";
 
+// default values for the form
 const defaultValues = {
   captcha: "",
 };
 
 export default function StepThree({ onNext, onPrev }) {
-  const { handleSubmit, handlePrevStep, errors, setValue } = useFormStep({
+  // form steps information
+  const { handleNextStep, handlePrevStep, errors, setValue } = useFormStep({
     defaultValues,
     schema: stepThreeSchema,
+    isFinalStep: true,
     onNext,
     onPrev,
     onSubmit: (data) => {
+      console.log("Submitting to API:", data);
       onNext(data);
     },
   });
 
   return (
     <Stack spacing="xl" align="center">
-      <Box sx={{ position: "relative" }}>
+      <Box
+        style={{
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+        mt={"xl"}
+      >
         <ReCAPTCHA
-          theme="dark"
-          size="normal"
+          theme="light"
+          size="compact"
           sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
           onChange={(value) => {
             setValue("captcha", value, { shouldValidate: true });
@@ -32,14 +44,16 @@ export default function StepThree({ onNext, onPrev }) {
             setValue("captcha", "", { shouldValidate: true });
           }}
         />
-        {errors.captcha && <Input.Error>{errors.captcha.message}</Input.Error>}
+        {errors.captcha && (
+          <Input.Error mt="xs">{errors.captcha.message}</Input.Error>
+        )}
       </Box>
 
       <Group position="apart" mt="xl" style={{ justifyContent: "center" }}>
         <Button variant="default" onClick={handlePrevStep}>
           Back
         </Button>
-        <Button onClick={handleSubmit}>Continue</Button>
+        <Button onClick={handleNextStep}>Continue</Button>
       </Group>
     </Stack>
   );

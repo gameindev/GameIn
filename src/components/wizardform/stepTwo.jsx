@@ -1,16 +1,41 @@
+/* eslint-disable */
 import { Radio, Stack, Button, Group, Text, Flex, Box } from "@mantine/core";
 import { useFormStep } from "../../hooks/useFormStep";
 import { stepTwoSchema } from "../../utils/validationSchema";
-import { Controller } from "react-hook-form";
 import { Star, Flame, SunDim } from "lucide-react";
 import { theme } from "../../styles/theme/customTheme";
+import FormField from "../shared/FormField";
 
+// default values for the form
 const defaultValues = {
   role: "",
 };
 
+// form steps information
+const roles = [
+  {
+    icon: Star,
+    label: "Creator",
+    value: "creator",
+    description: "Create and share content with your audience.",
+  },
+  {
+    icon: Flame,
+    label: "Brand",
+    value: "brand",
+    description: "Promote your products or services effectively.",
+  },
+  {
+    icon: SunDim,
+    label: "Community",
+    value: "community",
+    description: "Build and engage with your community.",
+  },
+];
+
 export default function StepTwo({ onNext, onPrev }) {
-  const { control, handleSubmit, handlePrevStep, errors, formValues } =
+  // form steps information
+  const { control, handleNextStep, handlePrevStep, errors, formValues } =
     useFormStep({
       defaultValues,
       schema: stepTwoSchema,
@@ -18,162 +43,53 @@ export default function StepTwo({ onNext, onPrev }) {
       onPrev,
     });
 
-  const RadioData = [
-    {
-      icon: <Star color={theme.colors.primary[0]} />,
-      label: "Creator",
-      value: "creator",
-      description:
-        "Lorem ipsum dolor sit amet, consectetuer adi piscing elit, sed diam nonummy nibh euismod",
-    },
-    {
-      icon: <Flame color={theme.colors.primary[0]} />,
-      label: "Brand",
-      value: "brand",
-      description:
-        "Lorem ipsum dolor sit amet, consectetuer adi piscing elit, sed diam nonummy nibh euismod",
-    },
-    {
-      icon: <SunDim color={theme.colors.primary[0]} />,
-      label: "Community",
-      value: "community",
-      description:
-        "Lorem ipsum dolor sit amet, consectetuer adi piscing elit, sed diam nonummy nibh euismod",
-    },
-  ];
-
   return (
     <Stack spacing="xl">
-      <Controller
+      <FormField
         name="role"
         control={control}
-        render={({ field }) => (
-          <Radio.Group
-            {...field}
-            value={formValues.role}
-            error={errors.role?.message}
-            withAsterisk
-          >
-            <Flex mt="md" wrap="wrap" gap={"xs"}>
-              {RadioData.map((item) => (
+        Component={Radio.Group}
+        componentProps={{
+          value: formValues.role,
+          withAsterisk: true,
+          children: (
+            <Flex wrap="wrap" gap="xs" mt="md" mb="sm">
+              {roles.map(({ label, value, description, icon: Icon }) => (
                 <Radio.Card
-                  key={item.value}
+                  key={value}
+                  value={value}
                   radius="md"
-                  value={item.value}
-                  flex={`0 0 calc(50% - var(--mantine-spacing-xs) / 2)`}
+                  flex="0 0 calc(50% - var(--mantine-spacing-xs) / 2)"
                   bg={theme.colors.inputBgColor[0]}
-                  style={() => ({
-                    border: `2px solid transparent`,
-                    transition: "border-color 0.2s ease",
-                  })}
+                  style={{ border: "2px solid transparent" }}
                 >
-                  <Group wrap="nowrap" align="center">
-                    <Box p={"xl"} align="center">
-                      <Text component="span">{item.icon}</Text>
-                      <Text
-                        tt={"uppercase"}
-                        mb="xs"
-                        style={(theme) => ({
-                          color: theme.colors.primary[0],
-                          fontSize: theme.fontSizes.default,
-                          fontWeight: 400,
-                          lineHeight: 1,
-                          letterSpacing: "0.07em",
-                        })}
-                      >
-                        {item.label}
-                      </Text>
-                      <Text
-                        style={(theme) => ({
-                          color: theme.colors.text[0],
-                          fontSize: theme.fontSizes.xs,
-                          lineHeight: 1.2,
-                          letterSpacing: "0.01em",
-                        })}
-                      >
-                        {item.description}
-                      </Text>
-                    </Box>
-                  </Group>
-                </Radio.Card>
-              ))}
-              {/* <Radio.Card
-                radius="md"
-                value="creator"
-                flex={`0 0 calc(50% - var(--mantine-spacing-xs) / 2)`}
-              >
-                <Group wrap="nowrap" align="center">
-                  <Box p={"xl"} align="center">
-                    <Text component="span">
-                      <Star color={theme.colors.primary[0]} />
-                    </Text>
+                  <Box p="xl" style={{ textAlign: "center" }}>
+                    <Icon color={theme.colors.primary[0]} />
                     <Text
-                      tt={"uppercase"}
-                      mb="xs"
-                      style={(theme) => ({
-                        color: theme.colors.primary[0],
-                        fontSize: theme.fontSizes.default,
-                        fontWeight: 400,
-                        lineHeight: 1,
-                        letterSpacing: "0.07em",
-                      })}
+                      tt="uppercase"
+                      mt="sm"
+                      fw={500}
+                      size="sm"
+                      c={theme.colors.primary[0]}
                     >
-                      Creator
+                      {label}
                     </Text>
-                    <Text
-                      style={(theme) => ({
-                        color: theme.colors.text[0],
-                        fontSize: theme.fontSizes.xs,
-                        lineHeight: 1.2,
-                        letterSpacing: "0.01em",
-                      })}
-                    >
-                      Lorem ipsum dolor sit amet, consectetuer adi piscing elit,
-                      sed diam nonummy nibh euismod
+                    <Text mt="xs" size="xs" c={theme.colors.text[0]}>
+                      {description}
                     </Text>
                   </Box>
-                </Group>
-              </Radio.Card>
-              <Radio.Card
-                radius="md"
-                value="brand"
-                flex={`0 0 calc(50% - var(--mantine-spacing-xs) / 2)`}
-              >
-                <Group wrap="nowrap" align="center">
-                  <div>
-                    <Text>Brand</Text>
-                    <Text>
-                      Lorem ipsum dolor sit amet, consectetuer adi piscing elit,
-                      sed diam nonummy nibh euismod
-                    </Text>
-                  </div>
-                </Group>
-              </Radio.Card>
-              <Radio.Card
-                radius="md"
-                value="community"
-                flex={`0 0 calc(50% - var(--mantine-spacing-xs) / 2)`}
-              >
-                <Group wrap="nowrap" align="center">
-                  <div>
-                    <Text>Community</Text>
-                    <Text>
-                      Lorem ipsum dolor sit amet, consectetuer adi piscing elit,
-                      sed diam nonummy nibh euismod
-                    </Text>
-                  </div>
-                </Group>
-              </Radio.Card> */}
+                </Radio.Card>
+              ))}
             </Flex>
-          </Radio.Group>
-        )}
+          ),
+        }}
       />
 
-      <Group position="apart" mt="xl" style={{ justifyContent: "center" }}>
+      <Group mt="xl" position="center" style={{ justifyContent: "center" }}>
         <Button variant="default" onClick={handlePrevStep}>
           Back
         </Button>
-        <Button onClick={handleSubmit}>Continue</Button>
+        <Button onClick={handleNextStep}>Continue</Button>
       </Group>
     </Stack>
   );
