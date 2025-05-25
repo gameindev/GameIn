@@ -59,7 +59,7 @@ export default function MultiStepForm() {
   };
 
   return (
-    <Container size="md">
+    <Container size="lg">
       <Paper radius="sm" p="xl" withBorder bg="#363a3e" m="xl">
         <Stack spacing="xl">
           <div>
@@ -67,15 +67,15 @@ export default function MultiStepForm() {
           </div>
           <Stack w={"50%"} mx="auto">
             {renderStep()}
-            <Group grow gap={5} mt="xs">
+            <Group grow gap={3} mt="xs">
               {Array.from({ length: totalSteps }).map((_, index) =>
                 currentStep < totalSteps - 1 ? (
                   <Progress
                     key={index}
                     value={currentStep >= index ? 100 : 0}
-                    size="sm"
+                    size="xs"
                     radius="xl"
-                    bg={theme.colors.inputColor[0]}
+                    bg={theme.colors.inputBgColor[0]}
                   />
                 ) : null
               )}

@@ -1,4 +1,9 @@
-import { createTheme, virtualColor } from "@mantine/core";
+import {
+  createTheme,
+  InputWrapper,
+  PasswordInput,
+  virtualColor,
+} from "@mantine/core";
 
 // Custom Button styles using props
 const buttonStyles = {
@@ -79,15 +84,54 @@ const textInputStyles = {
     //   color: theme.colors.text[0],
     // },
     input: {
-      fontSize: theme.fontSizes.sm,
+      fontSize: theme.fontSizes.md,
       color: theme.white,
-      backgroundColor: theme.colors.inputColor[0],
+      backgroundColor: theme.colors.inputBgColor[0],
       padding: "0.45rem 1.375rem",
+      borderRadius: theme.radius.md,
       height: "auto",
       "::placeholder": {
         color: theme.colors.white[0],
-        opacity: 0.7,
+        // opacity: 0.7,
       },
+    },
+  }),
+};
+
+const textLabelStyles = {
+  styles: (theme) => ({
+    label: {
+      fontSize: theme.fontSizes.default,
+      color: theme.colors.text[0],
+      fontWeight: 500,
+      marginBottom: "0.75rem",
+      textTransform: "uppercase",
+      letterSpacing: "0.07em",
+    },
+    input: {
+      fontSize: theme.fontSizes.md,
+      color: theme.colors.text[0],
+      backgroundColor: theme.colors.inputBgColor[0],
+      padding: "0.45rem 1.375rem",
+      borderRadius: theme.radius.md,
+      height: "auto",
+      "::placeholder": {
+        color: theme.colors.white[0],
+        // opacity: 0.7,
+      },
+    },
+  }),
+};
+
+const PasswordInputStyles = {
+  styles: (theme) => ({
+    input: {
+      fontSize: theme.fontSizes.md,
+      padding: "0.45rem 1.375rem",
+      height: "3.125rem",
+    },
+    innerInput: {
+      padding: "0.45rem 1.375rem",
     },
   }),
 };
@@ -102,6 +146,7 @@ const fonts = {
     md: "0.875rem",
     lg: "1.25rem",
     xl: "1.5rem",
+    default: "1rem",
   },
 };
 
@@ -118,7 +163,7 @@ export const theme = createTheme({
     darkGrey: Array(10).fill("#34373C"),
     white: Array(10).fill("#fff"),
     black: Array(10).fill("#000"),
-    inputColor: Array(10).fill("#50565a"),
+    inputBgColor: Array(10).fill("#50565a"),
     textWhite: virtualColor({
       name: "textWhite",
       light: "black",
@@ -126,10 +171,21 @@ export const theme = createTheme({
     }),
   },
 
+  radius: {
+    xs: "0.125rem",
+    sm: "0.25rem",
+    md: "0.375rem",
+    lg: "0.5rem",
+    xl: "0.75rem",
+    default: "0.375rem",
+  },
+
   components: {
     Button: buttonStyles,
     Text: textStyles,
     Input: textInputStyles,
+    InputWrapper: textLabelStyles,
+    PasswordInput: PasswordInputStyles,
   },
   other: {
     lightBg: "#f5f5f5",

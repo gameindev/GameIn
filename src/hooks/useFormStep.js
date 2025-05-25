@@ -28,7 +28,7 @@ export function useFormStep({
     setFocus,
   } = useForm({
     resolver: schema ? yupResolver(schema) : undefined,
-    mode: "onTouched",
+    // mode: "onTouched",
     defaultValues: {
       ...defaultValues,
       ...(onNext ? formData : {}),
@@ -66,11 +66,19 @@ export function useFormStep({
 
   const handleSubmit = onSubmit
     ? formHandleSubmit((data) => {
-        const formFields = Object.keys(defaultValues);
-        const filteredData = Object.fromEntries(
-          Object.entries(data).filter(([key]) => formFields.includes(key))
+        const currentStepData = Object.fromEntries(
+          Object.entries(data).filter(([key]) =>
+            Object.keys(defaultValues).includes(key)
+          )
         );
-        return onSubmit(filteredData);
+        dispatch(saveStepData(currentStepData));
+        const completeFormData = {
+          ...formData,
+          ...currentStepData,
+        };
+
+        console.log("Complete form data:", completeFormData);
+        return onSubmit(completeFormData);
       })
     : formHandleSubmit(handleNextStep);
 
