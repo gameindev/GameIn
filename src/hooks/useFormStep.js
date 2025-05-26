@@ -1,103 +1,121 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { saveStepData } from "../lib/redux/slices/formSlice";
+import { useEffect, useState } from "react";
+import { resetForm, saveStepData } from "../stores/form/formSlice";
+import { registerUserAsync } from './../stores/user/user.action';
+import toast from './../../node_modules/react-hot-toast/src/index';
+
 
 export function useFormStep({
-  defaultValues,
-  schema,
-  onNext,
-  onPrev,
-  onSubmit,
-  isFinalStep = false,
+    defaultValues,
+    schema,
+    onNext,
+    onPrev,
+    onSubmit,
+    isFinalStep = false,
 }) {
-  const dispatch = useDispatch();
-  const formData = useSelector((state) => state.multiStepForm?.formData || {});
-
-  // Initialize form with default values and formData
-  const {
-    register,
-    control,
-    formState: { errors },
-    trigger,
-    getValues,
-    setValue,
-    watch,
-    setFocus,
-    handleSubmit: formHandleSubmit,
-  } = useForm({
-    resolver: schema ? yupResolver(schema) : undefined,
-    mode: "onSubmit",
-    defaultValues: { ...defaultValues, ...formData },
-  });
-
-  // Watch for changes in form values
-  const formValues = watch();
-
-  // Update form values when formData changes
-  useEffect(() => {
-    Object.entries(defaultValues).forEach(([key]) => {
-      if (formData[key] !== undefined) {
-        setValue(key, formData[key]);
-      }
+    const dispatch = useDispatch();
+    const formData = useSelector((state) => state.multiStepForm?.formData || {});
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    // Initialize form with default values and formData
+    const {
+        register,
+        control,
+        formState: { errors },
+        trigger,
+        getValues,
+        setValue,
+        watch,
+        setFocus,
+        handleSubmit: formHandleSubmit,
+    } = useForm({
+        resolver: schema ? yupResolver(schema) : undefined,
+        mode: "onSubmit",
+        defaultValues: { ...defaultValues, ...formData },
     });
-  }, [formData, defaultValues, setValue]);
 
-  // Handle next step
-  const handleNextStep = async () => {
-    const isValid = await trigger(Object.keys(defaultValues));
-    if (!isValid) {
-      const firstErrorKey = Object.keys(errors)[0];
-      setFocus(firstErrorKey);
-      return;
-    }
+    // Watch for changes in form values
+    const formValues = watch();
 
-    const currentStepData = getValues();
-    dispatch(saveStepData(currentStepData));
+    // Update form values when formData changes
+    useEffect(() => {
+        Object.entries(defaultValues).forEach(([key]) => {
+            if (formData[key] !== undefined) {
+                setValue(key, formData[key]);
+            }
+        });
+    }, [formData, defaultValues, setValue]);
 
-    if (isFinalStep && onSubmit) {
-      const completeFormData = { ...formData, ...currentStepData };
-      return onSubmit(completeFormData);
-    }
+    // Handle next step
+    const handleNextStep = async () => {
+        const isValid = await trigger(Object.keys(defaultValues));
+        if (!isValid) {
+            const firstErrorKey = Object.keys(errors)[0];
+            setFocus(firstErrorKey);
+            return;
+        }
 
-    onNext?.();
-  };
+        const currentStepData = getValues();
+        dispatch(saveStepData(currentStepData));
 
-  // Handle previous step
-  const handlePrevStep = () => {
-    dispatch(saveStepData(getValues()));
-    onPrev?.();
-  };
+        if (isFinalStep && onSubmit) {
+            const completeFormData = { ...formData, ...currentStepData };
+            return onSubmit(completeFormData);
+        }
 
-  // Handle form submission
-  const handleSubmit = formHandleSubmit((data) => {
-    const currentStepData = Object.fromEntries(
-      Object.entries(data).filter(([key]) =>
-        Object.keys(defaultValues).includes(key)
-      )
-    );
+        onNext?.();
+    };
 
-    dispatch(saveStepData(currentStepData));
+    // Handle previous step
+    const handlePrevStep = () => {
+        dispatch(saveStepData(getValues()));
+        onPrev?.();
+    };
 
-    if (onSubmit) {
-      return onSubmit(currentStepData);
-    }
+    // Handle form submission
+    const handleSubmit = onSubmit
+        ? formHandleSubmit(async (data) => {
+            const currentStepData = Object.fromEntries(
+                Object.entries(data).filter(([key]) =>
+                    Object.keys(defaultValues).includes(key)
+                )
+            );
 
-    console.log("Submitted:", currentStepData);
-  });
+            dispatch(saveStepData(currentStepData));
+            const completeFormData = {
+                ...formData,
+                ...currentStepData,
+            };
 
-  return {
-    register,
-    control,
-    errors,
-    formValues,
-    setValue,
-    watch,
-    trigger,
-    setFocus,
-    handleNextStep,
-    handlePrevStep,
-    handleSubmit,
-  };
+            setIsSubmitting(true); // ✅ show loader
+            const result = await dispatch(registerUserAsync(completeFormData));
+            setIsSubmitting(false); // ✅ hide loader
+
+            if (result?.success) {
+                toast.success("Registration successful!");
+                localStorage.removeItem("persist:multiStepForm");
+                dispatch(resetForm());
+                // ✅ Proceed to final step only on success
+                return onSubmit(completeFormData);
+            } else {
+                toast.error("Registration failed: ", result.error);
+            }
+        })
+        : formHandleSubmit(handleNextStep);
+
+    return {
+        register,
+        control,
+        errors,
+        formValues,
+        setValue,
+        watch,
+        trigger,
+        setFocus,
+        handleNextStep,
+        handlePrevStep,
+        handleSubmit,
+        isSubmitting
+    };
 }

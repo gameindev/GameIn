@@ -1,98 +1,111 @@
 /* eslint-disable */
 import {
-  TextInput,
-  Container,
-  Paper,
-  PasswordInput,
-  Stack,
-  Button,
-  Group,
-  Title,
-  Text,
+    TextInput,
+    Container,
+    Paper,
+    PasswordInput,
+    Stack,
+    Button,
+    Group,
+    Title,
+    Text,
 } from "@mantine/core";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router";
-import { useFormStep } from "../../hooks/useFormStep";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../../utils/validationSchema";
-import { loginStart, loginFailure } from "../../lib/redux/slices/authSlice";
 import FormField from "../../components/shared/FormField";
+import toast from "react-hot-toast";
+
+// import { loginUserAsync } from "../../stores/user/user.action"; // 👈 Your async thunk
+import {
+    selectUserLoading,
+} from "../../stores/user/user.selector";
+import { loginUserAsync } from "../../stores/user/user.action";
 
 const defaultValues = {
-  username: "",
-  password: "",
+    identifier: "",
+    password: "",
 };
 
 const fields = [
-  {
-    name: "username",
-    label: "Username",
-    placeholder: "Your username",
-    type: TextInput,
-  },
-  {
-    name: "password",
-    label: "Password",
-    placeholder: "Your password",
-    type: PasswordInput,
-  },
+    {
+        name: "identifier",
+        label: "Username or email address",
+        placeholder: "Your username or email address",
+        type: TextInput,
+    },
+    {
+        name: "password",
+        label: "Password",
+        placeholder: "Your password",
+        type: PasswordInput,
+    },
 ];
 
 export default function Signin() {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { loading, error } = useSelector((state) => state.auth);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const error = useSelector((state) => state.user?.error);
+    const loading = useSelector(selectUserLoading);
 
-  const handleLogin = async (data) => {
-    try {
-      dispatch(loginStart());
-      console.log(data);
-      navigate("/dashboard");
-    } catch (err) {
-      dispatch(loginFailure(err?.response?.data?.message || "Login failed"));
-    }
-  };
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        defaultValues,
+        resolver: yupResolver(loginSchema),
+        mode: "onSubmit",
+    });
 
-  const { control, handleSubmit, errors } = useFormStep({
-    defaultValues,
-    schema: loginSchema,
-    onSubmit: handleLogin,
-  });
+    const handleLogin = async (data) => {
+        const result = await dispatch(loginUserAsync(data));
 
-  return (
-    <Container size="md">
-      <Paper radius="sm" p="xl" withBorder bg="#363a3e" my="5rem" mx="xl">
-        <form onSubmit={handleSubmit}>
-          <Stack spacing="xl">
-            <Title order={2}>Login</Title>
+        // if (result?.success) {
+        //     // toast.success("Login successful!");
+        //     // navigate("/dashboard");
+        // } else {
+        //     toast.error(result?.error || "Login failed");
+        // }
+    };
 
-            {error && (
-              <Text color="red" size="sm">
-                {error}
-              </Text>
-            )}
+    return (
+        <Container size="md">
+            <Paper radius="sm" p="xl" withBorder bg="#363a3e" my="5rem" mx="xl">
+                <form onSubmit={handleSubmit(handleLogin)}>
+                    <Stack spacing="xl">
+                        <Title order={2}>Login</Title>
 
-            <Stack w="50%" mx="auto">
-              {fields.map(({ name, label, placeholder, type: Component }) => (
-                <FormField
-                  key={name}
-                  name={name}
-                  control={control}
-                  Component={Component}
-                  componentProps={{
-                    label,
-                    placeholder,
-                    withAsterisk: true,
-                  }}
-                />
-              ))}
+                        {error && (
+                            <Text color="red" size="sm">
+                                {error}
+                            </Text>
+                        )}
 
-              <Group position="apart" mt="md" style={{ justifyContent: "center" }}>
-                <Button variant="primary" type="submit" loading={loading}>
+                        <Stack w="50%" mx="auto">
+                            {fields.map(({ name, label, placeholder, type: Component }) => (
+                                <FormField
+                                    key={name}
+                                    name={name}
+                                    control={control}
+                                    Component={Component}
+                                    componentProps={{
+                                        label,
+                                        placeholder,
+                                        withAsterisk: true,
+                                    }}
+                                />
+                            ))}
+
+              <Group position="apart" mt="md">
+                <Button type="submit" loading={loading}>
                   Login
                 </Button>
               </Group>
 
-              <Text size="xs" mt="md" align="center">
+              <Text size="xs" mt="md">
                 Don't have an account?{" "}
                 <Link to="/register" style={{ textDecoration: "none" }}>
                   Register

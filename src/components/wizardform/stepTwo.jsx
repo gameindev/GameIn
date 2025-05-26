@@ -28,7 +28,7 @@ const roles = [
   {
     icon: SunDim,
     label: "Community",
-    value: "community",
+    value: "user",
     description: "Build and engage with your community.",
   },
 ];

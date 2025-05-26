@@ -6,23 +6,28 @@ import "./styles";
 import { GlobalStyles, theme } from "./styles/theme";
 import { ThemeProvider } from "styled-components";
 import { Provider } from "react-redux";
-import store from "./lib/redux/store";
+import { persistor, store } from "./stores/store.js";
+import { PersistGate } from "redux-persist/integration/react";
+import { Toaster } from './../node_modules/react-hot-toast/src/components/toaster';
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <ColorSchemeScript />
-    <MantineProvider
-      theme={theme}
-      defaultColorScheme="auto"
-      withGlobalStyles
-      withNormalizeCSS
-    >
-      <ThemeProvider theme={theme}>
-        <GlobalStyles />
-        <Provider store={store}>
-          <App />
-        </Provider>
-      </ThemeProvider>
-    </MantineProvider>
-  </StrictMode>
+    <StrictMode>
+        <ColorSchemeScript />
+        <MantineProvider
+            theme={theme}
+            defaultColorScheme="auto"
+            withGlobalStyles
+            withNormalizeCSS
+        >
+            <ThemeProvider theme={theme}>
+                <GlobalStyles />
+                <Provider store={store}>
+                    <PersistGate loading={null} persistor={persistor}>
+                        <App />
+                        <Toaster position="top-right" />
+                    </PersistGate>
+                </Provider>
+            </ThemeProvider>
+        </MantineProvider>
+    </StrictMode>
 );

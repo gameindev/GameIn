@@ -1,4 +1,3 @@
-/* eslint-disable */
 import {
   TextInput,
   PasswordInput,
@@ -7,6 +6,7 @@ import {
   Group,
   Text,
   Checkbox,
+  Space,
 } from "@mantine/core";
 import { useEffect } from "react";
 import { Link } from "react-router";
@@ -95,7 +95,7 @@ export default function StepOne({ onNext }) {
       />
 
       <Group mt="lg" position="center" style={{ justifyContent: "center" }}>
-        <Button variant="primary" onClick={handleNextStep}>Continue</Button>
+        <Button onClick={handleNextStep}>Continue</Button>
       </Group>
 
       <Text size="xs" align="center">
