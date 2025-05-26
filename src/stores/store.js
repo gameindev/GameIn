@@ -1,4 +1,4 @@
-/* eslint-disable */
+
 import { configureStore } from "@reduxjs/toolkit";
 import { rootReducer } from "./root-reducer";
 import logger from "redux-logger";
@@ -9,17 +9,29 @@ import persistStore from "redux-persist/es/persistStore";
 const persistConfig = {
     key: 'root',
     storage,
-    blacklist: ['user'],
+    blacklist: ['user'], // don't persist user slice
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+// ✅ Determine environment
+const isProduction = import.meta.env.VITE_NODE_ENV === 'production';
+
+// ✅ Conditionally include logger middleware only in development
+const middlewares = [];
+
+if (!isProduction) {
+    middlewares.push(logger);
 }
 
-const persistedReducer = persistReducer(persistConfig, rootReducer) //persist the inf
-
-const middleWares = [process.env.NODE_ENV !== 'production' && logger].filter(Boolean); //if it's not in production, use the logger, else don't use it; 
-
+// ✅ Configure store
 export const store = configureStore({
     reducer: persistedReducer,
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(middleWares),
-    devTools: true,
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            serializableCheck: false,
+        }).concat(middlewares),
+    devTools: !isProduction,
 });
 
-export const persistor = persistStore(store)
+export const persistor = persistStore(store);

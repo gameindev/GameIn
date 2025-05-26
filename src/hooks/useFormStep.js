@@ -1,4 +1,3 @@
-/* eslint-disable */
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -6,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { saveStepData } from "../lib/redux/slices/formSlice";
 import { registerUserAsync } from "../stores/user/user.action";
+import toast from './../../node_modules/react-hot-toast/src/index';
 
 export function useFormStep({
     defaultValues,
@@ -29,7 +29,7 @@ export function useFormStep({
         setFocus,
     } = useForm({
         resolver: schema ? yupResolver(schema) : undefined,
-        mode: "onTouched",
+        // mode: "onTouched",
         defaultValues: {
             ...defaultValues,
             ...(onNext ? formData : {}),
@@ -66,17 +66,37 @@ export function useFormStep({
     };
 
 
-    
+
 
     const handleSubmit = onSubmit
-        ? formHandleSubmit((data) => {
-            const formFields = Object.keys(defaultValues);
-            const filteredData = Object.fromEntries(
-                Object.entries(data).filter(([key]) => formFields.includes(key))
+        ? formHandleSubmit(async (data) => {
+            const currentStepData = Object.fromEntries(
+                Object.entries(data).filter(([key]) =>
+                    Object.keys(defaultValues).includes(key)
+                )
             );
-            return onSubmit(filteredData);
+
+            dispatch(saveStepData(currentStepData));
+            const completeFormData = {
+                ...formData,
+                ...currentStepData,
+            };
+
+            const result = await dispatch(registerUserAsync(completeFormData));
+
+            if (result?.success) {
+                toast.success("Registration successful!");
+                // ✅ Proceed to final step only on success
+                return onSubmit(completeFormData);
+            } else {
+                toast.error("Registration failed: ", result.error);
+                // ❌ Do NOT proceed — show error instead
+                console.error("Registration failed: ", result.error);
+                // Optionally show a toast or alert
+            }
         })
         : formHandleSubmit(handleNextStep);
+
 
     return {
         register,
