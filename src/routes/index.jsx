@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router";
 import { Suspense, lazy } from "react";
 import Signin from "../pages/auth/Signin";
+import Preloader from "../components/shared/Preloader";
 
 // Auth and role based routes
 const AuthGuard = lazy(() => import("./AuthGuard"));
@@ -18,7 +19,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<>{<Preloader />}</>}>
         <Layout />
       </Suspense>
     ),
@@ -26,7 +27,7 @@ const router = createBrowserRouter([
       {
         path: "",
         element: (
-          <Suspense fallback={<div>Loading WelcomePage...</div>}>
+          <Suspense fallback={<>{<Preloader />}</>}>
             <WelcomePage />
           </Suspense>
         ),
@@ -34,7 +35,7 @@ const router = createBrowserRouter([
       {
         path: "/register",
         element: (
-          <Suspense fallback={<div>Loading RegisterPage...</div>}>
+          <Suspense fallback={<>{<Preloader />}</>}>
             <Register />
           </Suspense>
         ),
@@ -42,7 +43,7 @@ const router = createBrowserRouter([
       {
         path: "/login",
         element: (
-          <Suspense fallback={<div>Loading LoginPage...</div>}>
+          <Suspense fallback={<>{<Preloader />}</>}>
             <Signin />
           </Suspense>
         ),
@@ -52,7 +53,7 @@ const router = createBrowserRouter([
         element: (
           <AuthGuard
             element={
-              <Suspense fallback={<div>Loading Dashboard...</div>}>
+              <Suspense fallback={<>{<Preloader />}</>}>
                 <>Dashboard</>
               </Suspense>
             }

@@ -68,39 +68,41 @@ export default function MultiStepForm() {
     canGoBack && setStepIndex((i) => Math.max(i - 1, 0));
 
   return (
-    <Container size="lg">
-      <Paper radius="sm" p="xl" withBorder bg="#363a3e" my={"5rem"} mx={"xl"}>
-        <Stack spacing="xl">
-          <Flex align="center" gap="xs" justify="start">
-            <Text component="span" style={{ display: "inline-flex" }}>
-              <UserRound color={theme.colors.primary[0]} />
-            </Text>
-            <Title order={2}>{title}</Title>
-          </Flex>
-          <Stack w="50%" mx="auto">
-            <StepComponent
-              onNext={goToNextStep}
-              onPrev={goToPrevStep}
-              validateOnExit={validateOnExit}
-              canGoBack={canGoBack}
-            />
+    <>
+      <Container size="lg">
+        <Paper radius="sm" p="xl" withBorder bg="#363a3e" my={"5rem"} mx={"xl"}>
+          <Stack spacing="xl">
+            <Flex align="center" gap="xs" justify="start">
+              <Text component="span" style={{ display: "inline-flex" }}>
+                <UserRound color={theme.colors.primary[0]} />
+              </Text>
+              <Title order={2}>{title}</Title>
+            </Flex>
+            <Stack w="50%" mx="auto">
+              <StepComponent
+                onNext={goToNextStep}
+                onPrev={goToPrevStep}
+                validateOnExit={validateOnExit}
+                canGoBack={canGoBack}
+              />
 
-            {showProgressBar && (
-              <Group grow gap={3} mt="xs">
-                {FORM_STEPS.map((_, index) => (
-                  <Progress
-                    key={index}
-                    value={stepIndex >= index ? 100 : 0}
-                    size="xs"
-                    radius="xl"
-                    bg={theme.colors.inputBgColor[0]}
-                  />
-                ))}
-              </Group>
-            )}
+              {showProgressBar && (
+                <Group grow gap={3} mt="xs">
+                  {FORM_STEPS.map((_, index) => (
+                    <Progress
+                      key={index}
+                      value={stepIndex >= index ? 100 : 0}
+                      size="xs"
+                      radius="xl"
+                      bg={theme.colors.inputBgColor[0]}
+                    />
+                  ))}
+                </Group>
+              )}
+            </Stack>
           </Stack>
-        </Stack>
-      </Paper>
-    </Container>
+        </Paper>
+      </Container>
+    </>
   );
 }

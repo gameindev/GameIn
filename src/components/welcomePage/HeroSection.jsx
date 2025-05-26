@@ -31,7 +31,7 @@ export default function HeroSection({ scrollToElement }) {
               Register
             </Button>
           </Link>
-          <Link to="/signin">
+          <Link to="/login">
             <Button variant="grey" padding="0.875rem" size="lg" width="13rem">
               Sign in
             </Button>

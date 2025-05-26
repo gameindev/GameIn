@@ -53,7 +53,7 @@ export default function StepThree({ onNext, onPrev }) {
         <Button variant="default" onClick={handlePrevStep}>
           Back
         </Button>
-        <Button onClick={handleNextStep}>Continue</Button>
+        <Button variant="primary" onClick={handleNextStep}>Continue</Button>
       </Group>
     </Stack>
   );

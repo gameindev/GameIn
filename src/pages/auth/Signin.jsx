@@ -86,13 +86,13 @@ export default function Signin() {
                 />
               ))}
 
-              <Group position="apart" mt="md">
-                <Button type="submit" loading={loading}>
+              <Group position="apart" mt="md" style={{ justifyContent: "center" }}>
+                <Button variant="primary" type="submit" loading={loading}>
                   Login
                 </Button>
               </Group>
 
-              <Text size="xs" mt="md">
+              <Text size="xs" mt="md" align="center">
                 Don't have an account?{" "}
                 <Link to="/register" style={{ textDecoration: "none" }}>
                   Register
