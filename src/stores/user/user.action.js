@@ -15,44 +15,41 @@ export const setCurrentUser = (user) =>
  * THUNK ACTIONS
  * */
 export const registerUserAsync = (formData) => async (dispatch) => {
-    dispatch(createAction(USER_ACTION_TYPES.REGISTER_USER_START));
+    dispatch({ type: USER_ACTION_TYPES.REGISTER_USER_START });
+
     try {
         const apiBody = {
             username: formData.username,
             email: formData.email,
             password: formData.password,
-            userType: formData.role?.toUpperCase() || 'USER',
+            userType: formData.role?.toUpperCase() || "USER",
             dateOfBirth: formatDate(formData.dob),
             isActive: true,
-            isVerified: false
+            isVerified: false,
         };
 
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "X-Captcha-Token": formData.captcha || ""
+                "X-Captcha-Token": formData.captcha || "",
             },
-            body: JSON.stringify(apiBody)
+            body: JSON.stringify(apiBody),
         });
-
 
         const contentType = response.headers.get("content-type");
         const isJson = contentType && contentType.includes("application/json");
-
         const data = isJson ? await response.json() : null;
 
         if (!response.ok) {
             let message = "Something went wrong.";
-
             if (response.status === 404) {
-                message = "API endpoint not found (404). The database or service may be disconnected.";
+                message = "API endpoint not found (404). Backend might be down.";
             } else if (response.status >= 500) {
-                message = "Internal server error. Please try again later.";
+                message = "Server error. Please try again later.";
             } else if (data?.message) {
                 message = data.message;
             }
-
             throw new Error(message);
         }
 
@@ -60,14 +57,19 @@ export const registerUserAsync = (formData) => async (dispatch) => {
             throw new Error(data.error || "API returned an error.");
         }
 
-        dispatch(createAction(USER_ACTION_TYPES.REGISTER_USER_SUCCESS, data.user || data));
+        dispatch({
+            type: USER_ACTION_TYPES.REGISTER_USER_SUCCESS,
+            payload: data.user || data,
+        });
+
         return { success: true, data: data.user || data };
 
-      
-
     } catch (error) {
-        console.error("❌ Registration Error:", error.message);
-        dispatch(createAction(USER_ACTION_TYPES.REGISTER_USER_FAILED, error.message));
+        dispatch({
+            type: USER_ACTION_TYPES.REGISTER_USER_FAILED,
+            payload: error.message,
+        });
+
         return { success: false, error: error.message };
     }
 };

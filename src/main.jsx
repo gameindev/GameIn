@@ -6,8 +6,7 @@ import "./styles";
 import { GlobalStyles, theme } from "./styles/theme";
 import { ThemeProvider } from "styled-components";
 import { Provider } from "react-redux";
-import store from "./lib/redux/store";
-import { persistor } from "./stores/store.js";
+import { persistor, store } from "./stores/store.js";
 import { PersistGate } from "redux-persist/integration/react";
 
 createRoot(document.getElementById("root")).render(

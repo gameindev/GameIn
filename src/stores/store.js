@@ -9,7 +9,7 @@ import persistStore from "redux-persist/es/persistStore";
 const persistConfig = {
     key: 'root',
     storage,
-    blacklist: ['user'], // don't persist user slice
+    // blacklist: [''], // don't persist user slice
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -35,3 +35,4 @@ export const store = configureStore({
 });
 
 export const persistor = persistStore(store);
+
