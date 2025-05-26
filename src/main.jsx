@@ -8,6 +8,7 @@ import { ThemeProvider } from "styled-components";
 import { Provider } from "react-redux";
 import { persistor, store } from "./stores/store.js";
 import { PersistGate } from "redux-persist/integration/react";
+import { Toaster } from './../node_modules/react-hot-toast/src/components/toaster';
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
@@ -23,6 +24,7 @@ createRoot(document.getElementById("root")).render(
                 <Provider store={store}>
                     <PersistGate loading={null} persistor={persistor}>
                         <App />
+                        <Toaster position="top-right" />
                     </PersistGate>
                 </Provider>
             </ThemeProvider>
