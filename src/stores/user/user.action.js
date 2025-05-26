@@ -79,3 +79,39 @@ function formatDate(dobStr) {
     const [year, month, day] = dobStr.split('-');
     return `${day}-${month}-${year}`;
 }
+
+
+
+
+/**
+ * THUNK ACTIONS
+ * */
+export const loginUserAsync = (credentials) => async (dispatch) => {
+    dispatch({ type: USER_ACTION_TYPES.LOGIN_USER_START });
+
+    try {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/sign-in`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(credentials),
+        });
+
+        const data = await response.json();
+
+
+        if (!response.ok) throw new Error(data.message || "Login failed");
+
+        dispatch({
+            type: USER_ACTION_TYPES.LOGIN_USER_SUCCESS, payload: {
+                user: data.user, // optional user object
+                accessToken: data.accessToken,
+                refreshToken: data.refreshToken,
+            },
+        });
+
+        return { success: true, data: data.user };
+    } catch (error) {
+        dispatch({ type: USER_ACTION_TYPES.LOGIN_USER_FAILED, payload: error.message });
+        return { success: false, error: error.message };
+    }
+};

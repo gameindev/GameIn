@@ -69,7 +69,7 @@ export const stepOneSchema = Yup.object().shape({
 export const stepTwoSchema = Yup.object().shape({
     role: Yup.string()
         .oneOf(
-            ["admin", "creator", "brand", "community"],
+            ["creator", "brand", "user"],
             "Please select a valid role"
         )
         .required("Please choose your role"),
@@ -80,10 +80,19 @@ export const stepThreeSchema = Yup.object().shape({
 });
 
 export const loginSchema = Yup.object().shape({
-    username: Yup.string()
+    identifier: Yup.string()
         .trim()
-        .required("Username is required")
-        .min(6, "Username must be at least 6 characters"),
+        .required("Username or email is required")
+        .test(
+            "is-username-or-email",
+            "Enter a valid email or a username (min 6 chars, no spaces)",
+            value => {
+                if (!value) return false;
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                const usernameRegex = /^[a-zA-Z0-9_]{6,}$/;
+                return emailRegex.test(value) || usernameRegex.test(value);
+            }
+        ),
     password: Yup.string()
         .trim()
         .required("Enter your password")

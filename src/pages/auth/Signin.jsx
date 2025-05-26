@@ -12,20 +12,28 @@ import {
 } from "@mantine/core";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router";
-import { useFormStep } from "../../hooks/useFormStep";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../../utils/validationSchema";
 import FormField from "../../components/shared/FormField";
+import toast from "react-hot-toast";
+
+// import { loginUserAsync } from "../../stores/user/user.action"; // 👈 Your async thunk
+import {
+    selectUserLoading,
+} from "../../stores/user/user.selector";
+import { loginUserAsync } from "../../stores/user/user.action";
 
 const defaultValues = {
-    username: "",
+    identifier: "",
     password: "",
 };
 
 const fields = [
     {
-        name: "username",
-        label: "Username",
-        placeholder: "Your username",
+        name: "identifier",
+        label: "Username or email address",
+        placeholder: "Your username or email address",
         type: TextInput,
     },
     {
@@ -39,28 +47,34 @@ const fields = [
 export default function Signin() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    // const { loading, error } = useSelector((state) => state.auth);
+    const error = useSelector((state) => state.user?.error);
+    const loading = useSelector(selectUserLoading);
 
-    // const handleLogin = async (data) => {
-    //     try {
-    //         dispatch(loginStart());
-    //         console.log(data);
-    //         navigate("/dashboard");
-    //     } catch (err) {
-    //         dispatch(loginFailure(err?.response?.data?.message || "Login failed"));
-    //     }
-    // };
-
-    const { control, handleSubmit, errors } = useFormStep({
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
         defaultValues,
-        schema: loginSchema,
-        onSubmit: handleLogin,
+        resolver: yupResolver(loginSchema),
+        mode: "onSubmit",
     });
+
+    const handleLogin = async (data) => {
+        const result = await dispatch(loginUserAsync(data));
+
+        // if (result?.success) {
+        //     // toast.success("Login successful!");
+        //     // navigate("/dashboard");
+        // } else {
+        //     toast.error(result?.error || "Login failed");
+        // }
+    };
 
     return (
         <Container size="md">
             <Paper radius="sm" p="xl" withBorder bg="#363a3e" my="5rem" mx="xl">
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit(handleLogin)}>
                     <Stack spacing="xl">
                         <Title order={2}>Login</Title>
 
