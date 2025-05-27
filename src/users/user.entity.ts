@@ -72,6 +72,8 @@ export class User {
         nullable: true,
     })
     isVerified?: boolean;
+
+
     
     // ratingReceived: UserRating[];
     // ratingGiven: UserRating[];

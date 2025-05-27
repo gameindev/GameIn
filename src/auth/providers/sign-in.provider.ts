@@ -2,9 +2,7 @@ import { forwardRef, Inject, Injectable, RequestTimeoutException, UnauthorizedEx
 import { SigninDto } from '../dto/signin.dto';
 import { UsersService } from 'src/users/providers/users.service';
 import { HashingProvider } from './hashing.provider';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigType } from '@nestjs/config';
-import jwtConfig from '../config/jwt.config';
+import { GenerateTokensProvider } from './generate-tokens.provider';
 
 @Injectable()
 export class SignInProvider {
@@ -23,21 +21,14 @@ export class SignInProvider {
         private readonly hashingProvider: HashingProvider,
 
         /**
-         * Injecting JWT Service
+         * Inject Generate Tokens Provider
          */
-        private readonly jwtService: JwtService,
-
-        /**
-         * Injecting JWT Configuration
-         */
-        @Inject(jwtConfig.KEY)
-        private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
+        private readonly generateTokensProvider: GenerateTokensProvider
     ) { }
 
     public async signIn(signinDto: SigninDto) {
-        //Find the user using email ID        
-        // Throw an exception if user not found
-        let user = await this.usersService.findUserOneByEmail(signinDto.email);
+        // Find the user using email or username
+        let user = await this.usersService.findOneByIdentifier(signinDto.identifier);
 
         // Compare the password
         let isEqual: boolean = false
@@ -53,24 +44,7 @@ export class SignInProvider {
             throw new UnauthorizedException('Invalid Password');
         }
 
-        // Generate JWT token
-        const accessToken = await this.jwtService.signAsync(
-            {
-                sub: user.id,
-                email: user.email,
-            },
-            {
-                audience: this.jwtConfiguration.audience,
-                issuer: this.jwtConfiguration.issuer,
-                secret: this.jwtConfiguration.secret,
-                expiresIn: this.jwtConfiguration.accessTokenTTl,
-            }
-        );
-
-        return {
-            accessToken,
-        };
-
+        return await this.generateTokensProvider.generateTokens(user);
 
     }
 }

@@ -1,9 +1,10 @@
 PATCH http://localhost:3000/api/users
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIyLCJlbWFpbCI6Im1hcmtkb2VAZW1haWwuY29tIiwiaWF0IjoxNzQ4MDcxNzc5LCJleHAiOjE3NDgwNzUzNzksImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.IQTS0o5yuxHMOOczhPxhtd1aorxFQ3KlijI6Luk00XA
 
 {
-    "id": 1,
-    "username": "john",
+    "id": 23,
+    "username": "johnathan",
     "email": "john2@email.com",
     "password": "Allizw3ll#",
     "userType": "BRAND",

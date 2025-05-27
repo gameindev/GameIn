@@ -4,13 +4,13 @@ import { IsEmail, IsNotEmpty, IsString, IsStrongPassword } from "class-validator
 
 export class SigninDto {
     @ApiProperty({
-        description: 'Email',
+        description: 'Email or Username',
         type: String,
-        example: 'markdoe@email.com',
+        example: 'markdoe@email.com or markdoe'
     })
-    @IsEmail()
+    @IsString()
     @IsNotEmpty()
-    email: string;
+    identifier: string;
 
     @ApiProperty({
         description: 'Password',

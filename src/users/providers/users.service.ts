@@ -11,6 +11,9 @@ import { UserType } from '../enums/user-type.enums';
 import { BrandProfilesService } from 'src/brand-profiles/providers/brand-profiles.service';
 import { CreateUserProvider } from './create-user.provider';
 import { FindOneUserByEmailProvider } from './find-one-user-by-email.provider';
+import { UpdateUserProvider } from './update-user.provider';
+import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
+import { FindOneByIdentifierProvider } from './find-one-by-identifier.provider';
 
 /**
  * Users service.
@@ -49,8 +52,21 @@ export class UsersService {
         @Inject(FindOneUserByEmailProvider)
         private readonly findOneUserByEmailProvider: FindOneUserByEmailProvider,
 
+        /**
+         * Injecting FindOneByIdentifierProvider.
+         */
+        private readonly findOneUserByIdentifier: FindOneByIdentifierProvider,
+        /**
+         * Injecting UpdateUserProvider.
+         */
+
         // @Inject(profileConfig.KEY)
         // private readonly profileConfiguration: ConfigType<typeof profileConfig>,
+
+        /**
+         * Inject UpdateUserProvider.
+         */
+        private readonly updateUserProvider: UpdateUserProvider,
     ) { }
 
 
@@ -198,41 +214,8 @@ export class UsersService {
      * @param patchUserDto 
      * @returns 
      */
-    public async updateUser(patchUserDto: PatchUserDto): Promise<Partial<User>> {
-        const { id, password, ...rest } = patchUserDto;
-
-        // 1. Check if user exists
-        const existingUser = await this.userRepository.findOne({ where: { id } });
-        if (!existingUser) {
-            throw new NotFoundException(`User with ID ${id} not found`);
-        }
-
-
-        // 2. Handle password update if present
-        if (password) {
-            existingUser.password = await bcrypt.hash(password, 10);
-        }
-
-        // 4. Merge and save
-        const updatedUser = this.userRepository.merge(existingUser, rest);
-
-        try {
-            const savedUser = await this.userRepository.save(updatedUser);
-            const { password, ...safeUser } = savedUser;
-            return safeUser;
-        } catch (error) {
-            if (error.code === '23505') {
-                const detail = error.detail;
-                if (detail.includes('username')) {
-                    throw new BadRequestException('Username already exists');
-                }
-                if (detail.includes('email')) {
-                    throw new BadRequestException('Email already exists');
-                }
-            }
-
-            throw new InternalServerErrorException('Update failed');
-        }
+    public async updateUser(patchUserDto: PatchUserDto, user: ActiveUserData): Promise<Partial<User>> {
+        return await this.updateUserProvider.updateUser(patchUserDto, user);
     }
 
 
@@ -282,6 +265,10 @@ export class UsersService {
 
     public async findUserOneByEmail(email: string) {
         return await this.findOneUserByEmailProvider.findOneByEmail(email);
+    }
+
+    public async findOneByIdentifier(identifier: string) {
+        return await this.findOneUserByIdentifier.findOneByIdentifier(identifier);
     }
 
 }

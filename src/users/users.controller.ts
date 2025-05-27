@@ -1,10 +1,15 @@
 /* eslint-disable */
-import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from "@nestjs/common";
+import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { GetUsersParamDto } from "./dtos/get-user-param.dto";
 import { CreateUserDto } from "./dtos/post-create-user.dto";
 import { PatchUserDto } from "./dtos/patch-user.dto";
 import { UsersService } from "./providers/users.service";
+import { AccessTokenGuard } from "src/auth/guards/access-token/access-token.guard";
+import { Auth } from "src/auth/decorators/auth.decorator";
+import { AuthType } from "src/auth/enums/auth-type.enum";
+import { ActiveUser } from "src/auth/decorators/active-user.decorator";
+import { ActiveUserData } from "src/auth/interfaces/active-user-data.interface";
 
 
 
@@ -63,7 +68,7 @@ Use '*' to load all supported relations.`,
     @ApiResponse({
         status: 200,
         description: 'Users fetched successfully based on the query',
-    })
+    })    
     /**
      * Fetches a list of registered users on the application.
      * @query limit The number of users per page
@@ -77,6 +82,35 @@ Use '*' to load all supported relations.`,
         @Query('populate') populate?: string,
     ) {
         return this.usersService.getAllUsers(limit, page, populate);
+    }
+
+
+    /**
+    * Fetches a registered user on the application by ID.
+    * @param email The ID of the user that you want the API to return
+    * @returns User fetched successfully based on the query
+    */
+    @ApiOperation({
+        summary: 'Fetches a registered user on the application by email.',        
+    })
+    @ApiQuery({
+        name: 'email',
+        type: String,
+        description: 'The email of the user to fetch',
+        required: true,
+    })   
+    @ApiResponse({
+        status: 200,
+        description: 'User fetched successfully based on the query.',
+    })
+
+    // @UseGuards(AccessTokenGuard)
+    @Get('/by-email')
+    @Auth(AuthType.None)
+    getUserByEmail(
+        @Query() email: string,
+    ) {
+        return this.usersService.findUserOneByEmail(email);
     }
 
 
@@ -120,14 +154,14 @@ Use '*' to load all supported relations.`,
         description: 'User fetched successfully based on the query.',
     })
 
+    // @UseGuards(AccessTokenGuard)
     @Get("/:id")
     getUserById(
         @Param() getUserParamDto: GetUsersParamDto,
         @Query('populate') populate?: string,
     ) {
         return this.usersService.getUserById(getUserParamDto.id, populate);
-    }
-
+    }    
 
 
     @Post()
@@ -138,6 +172,7 @@ Use '*' to load all supported relations.`,
         status: 201,
         description: 'User created successfully based on the query',
     })
+    @Auth(AuthType.None)
     /**
      * Creates a new user on the application.
      * @param createUserDto The user details that you want the API to return
@@ -161,8 +196,11 @@ Use '*' to load all supported relations.`,
      * @param patchUserDto The user details that you want the API to return
      * @returns User updated successfully based on the query
      */
-    updateUser(@Body() patchUserDto: PatchUserDto) {
-        return this.usersService.updateUser(patchUserDto);
+    updateUser(
+        @Body() patchUserDto: PatchUserDto,
+        @ActiveUser() user: ActiveUserData
+    ) {
+        return this.usersService.updateUser(patchUserDto, user);
     }
 
 
