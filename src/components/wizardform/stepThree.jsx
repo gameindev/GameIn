@@ -54,7 +54,7 @@ export default function StepThree({ onNext, onPrev }) {
                     Back
                 </Button>
                 <Button variant="primary" onClick={handleSubmit}>
-                    {isSubmitting ? <Loader type="dots" color="#333" /> : "Submit"}
+                    {isSubmitting ? <Loader type="dots" size="sm" color="#333" /> : "Submit"}
                 </Button>
             </Group>
         </Stack>
