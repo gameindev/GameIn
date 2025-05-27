@@ -53,7 +53,9 @@ export class GenerateTokensProvider {
                 id: user.id,
                 email: user.email,
                 username: user.username,
-                userType: user.userType
+                userType: user.userType,
+                isActive: user.isActive,
+                isVerified: user.isVerified,
             },
             accessToken,
             refreshToken
