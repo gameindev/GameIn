@@ -16,7 +16,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../../utils/validationSchema";
 import FormField from "../../components/shared/FormField";
-import toast from "react-hot-toast";
+import { notifications } from '@mantine/notifications';
 
 // import { loginUserAsync } from "../../stores/user/user.action"; // 👈 Your async thunk
 import {
@@ -49,7 +49,6 @@ export default function Signin() {
     const navigate = useNavigate();
     const error = useSelector((state) => state.user?.error);
     const loading = useSelector(selectUserLoading);
-
     const {
         control,
         handleSubmit,
@@ -63,12 +62,28 @@ export default function Signin() {
     const handleLogin = async (data) => {
         const result = await dispatch(loginUserAsync(data));
 
-        // if (result?.success) {
-        //     // toast.success("Login successful!");
-        //     // navigate("/dashboard");
-        // } else {
-        //     toast.error(result?.error || "Login failed");
-        // }
+        if (result?.success) {
+            const userType = result?.data?.userType?.toUpperCase();
+
+            notifications.show({
+                title: 'Login Successful',
+                message: `Welcome back, ${result?.data?.username}!`,
+                color: 'green',
+                position: 'top-right',
+            })
+
+            if (userType === "BRAND") {
+                navigate("/brand/dashboard");
+            } else if (userType === "CREATOR") {
+                navigate("/creator/dashboard");
+            } else {
+                toast.error("Unknown user type. Contact support.");
+                navigate("/"); // or fallback
+            }
+            
+        } else {
+            toast.error(result?.error || "Login failed");
+        }
     };
 
     return (
@@ -99,22 +114,22 @@ export default function Signin() {
                                 />
                             ))}
 
-              <Group position="apart" mt="md">
-                <Button type="submit" loading={loading}>
-                  Login
-                </Button>
-              </Group>
+                            <Group position="apart" mt="md">
+                                <Button type="submit" loading={loading}>
+                                    Login
+                                </Button>
+                            </Group>
 
-              <Text size="xs" mt="md">
-                Don't have an account?{" "}
-                <Link to="/register" style={{ textDecoration: "none" }}>
-                  Register
-                </Link>
-              </Text>
-            </Stack>
-          </Stack>
-        </form>
-      </Paper>
-    </Container>
-  );
+                            <Text size="xs" mt="md">
+                                Don't have an account?{" "}
+                                <Link to="/register" style={{ textDecoration: "none" }}>
+                                    Register
+                                </Link>
+                            </Text>
+                        </Stack>
+                    </Stack>
+                </form>
+            </Paper>
+        </Container>
+    );
 }

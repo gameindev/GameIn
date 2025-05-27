@@ -8,6 +8,7 @@ const INITIAL_STATE = {
     refreshToken: null,
     isLoading: false,
     error: null,
+    accessTokenExpiry: null,
 };
 
 export const userReducer = (state = INITIAL_STATE, action) => {
@@ -32,12 +33,22 @@ export const userReducer = (state = INITIAL_STATE, action) => {
                 currentUser: payload.user || null,
                 accessToken: payload.accessToken,
                 refreshToken: payload.refreshToken,
+                accessTokenExpiry: payload.accessTokenExpiry,
                 error: null,
             };
 
         case USER_ACTION_TYPES.LOGIN_USER_FAILED:
             return { ...state, isLoading: false, error: payload };
-        
+
+        case USER_ACTION_TYPES.SET_ACCESS_TOKEN:
+            return { ...state, accessToken: action.payload };
+
+        case USER_ACTION_TYPES.SET_REFRESH_TOKEN:
+            return { ...state, refreshToken: action.payload };
+
+        case USER_ACTION_TYPES.SET_ACCESS_TOKEN_EXPIRY:
+            return { ...state, accessTokenExpiry: action.payload };
+
         case USER_ACTION_TYPES.LOGOUT_USER:
             return INITIAL_STATE;
         default:

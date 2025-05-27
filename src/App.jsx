@@ -1,18 +1,23 @@
 // import { Button, useMantineColorScheme } from "@mantine/core"
 import { RouterProvider } from "react-router";
 import router from "./routes";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { startTokenRefreshScheduler } from "./utils/api/startTokenRefreshScheduler";
+import { isLoggedIn } from "./stores/user/user.selector";
 // import { useDispatch } from "react-redux";
 // import { useEffect } from "react";
 
 function App() {
     // const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
-    // const dispatch = useDispatch()
+    const isLoggedInUser = useSelector(isLoggedIn);
 
-    // useEffect(() => {
-    //     // getActiveUser();
-    //     dispatch(checkUseSession())
-    // },[dispatch]) 
+    useEffect(() => {
+        if (isLoggedInUser) {
+            startTokenRefreshScheduler();
+        }
+    }, [isLoggedInUser]);
 
 
     return (

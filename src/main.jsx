@@ -8,7 +8,7 @@ import { ThemeProvider } from "styled-components";
 import { Provider } from "react-redux";
 import { persistor, store } from "./stores/store.js";
 import { PersistGate } from "redux-persist/integration/react";
-import { Toaster } from './../node_modules/react-hot-toast/src/components/toaster';
+import { Notifications } from "@mantine/notifications";
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
@@ -19,12 +19,12 @@ createRoot(document.getElementById("root")).render(
             withGlobalStyles
             withNormalizeCSS
         >
+            <Notifications />
             <ThemeProvider theme={theme}>
                 <GlobalStyles />
                 <Provider store={store}>
                     <PersistGate loading={null} persistor={persistor}>
                         <App />
-                        <Toaster position="top-right" />
                     </PersistGate>
                 </Provider>
             </ThemeProvider>

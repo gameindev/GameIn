@@ -1,5 +1,6 @@
 import { createAction } from "../../utils/reducer/reducer.utils";
 import { USER_ACTION_TYPES } from "./user.types";
+import {jwtDecode} from 'jwt-decode';
 
 export const setCurrentUser = (user) =>
     createAction(USER_ACTION_TYPES.SET_CURRENT_USER, user); // return {type: 'user/SET_CURRENT_USER', payload: user}
@@ -101,11 +102,15 @@ export const loginUserAsync = (credentials) => async (dispatch) => {
 
         if (!response.ok) throw new Error(data.message || "Login failed");
 
+        const decoded = jwtDecode(data.accessToken);
+
         dispatch({
-            type: USER_ACTION_TYPES.LOGIN_USER_SUCCESS, payload: {
-                user: data.user, // optional user object
+            type: USER_ACTION_TYPES.LOGIN_USER_SUCCESS,
+            payload: {
+                user: data.user,
                 accessToken: data.accessToken,
                 refreshToken: data.refreshToken,
+                accessTokenExpiry: decoded.exp * 1000, // in ms
             },
         });
 
@@ -115,3 +120,19 @@ export const loginUserAsync = (credentials) => async (dispatch) => {
         return { success: false, error: error.message };
     }
 };
+
+
+export const setAccessToken = (token) => ({
+    type: USER_ACTION_TYPES.SET_ACCESS_TOKEN,
+    payload: token,
+});
+
+export const setRefreshToken = (token) => ({
+    type: USER_ACTION_TYPES.SET_REFRESH_TOKEN,
+    payload: token,
+});
+
+export const logoutUser = () => ({
+    type: USER_ACTION_TYPES.LOGOUT_USER,
+});
+

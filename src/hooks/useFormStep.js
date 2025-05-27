@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { resetForm, saveStepData } from "../stores/form/formSlice";
 import { registerUserAsync } from './../stores/user/user.action';
-import toast from './../../node_modules/react-hot-toast/src/index';
+import { notifications } from "@mantine/notifications";
 
 
 export function useFormStep({
@@ -93,13 +93,22 @@ export function useFormStep({
             setIsSubmitting(false); // ✅ hide loader
 
             if (result?.success) {
-                toast.success("Registration successful!");
+                notifications.show({
+                    title: "Registration successful",
+                    color: "green",
+                    position: "top-right",
+                })
                 localStorage.removeItem("persist:multiStepForm");
                 dispatch(resetForm());
                 // ✅ Proceed to final step only on success
                 return onSubmit(completeFormData);
             } else {
-                toast.error("Registration failed: ", result.error);
+                notifications.show({
+                    title: "Registration failed",
+                    message: result?.error,
+                    color: "red",
+                    position: "top-right",
+                })
             }
         })
         : formHandleSubmit(handleNextStep);
