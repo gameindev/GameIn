@@ -1,0 +1,17 @@
+export const API_ENDPOINTS = {
+  AUTH: {
+    LOGIN: "/auth/sign-in",
+    REGISTER: "/auth/register",
+    FORGOT_PASSWORD: "/auth/forgot-password",
+  },
+  USERS: {
+    PROFILE: "/users/profile",
+    UPDATE: id => `/users/${id}`,
+    LIST: "/users",
+  },
+  PRODUCTS: {
+    LIST: "/products",
+    DETAILS: id => `/products/${id}`,
+    CREATE: "/products/create",
+  },
+};
