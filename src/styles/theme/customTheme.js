@@ -161,6 +161,7 @@ export const theme = createTheme({
     textSecondary: Array(10).fill("#33363A"),
     grey: Array(10).fill("#3C4044"),
     darkGrey: Array(10).fill("#34373C"),
+    secondaryGrey: Array(10).fill("#363A3E"),
     white: Array(10).fill("#fff"),
     black: Array(10).fill("#000"),
     inputBgColor: Array(10).fill("#50565a"),
