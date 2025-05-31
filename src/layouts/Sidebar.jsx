@@ -24,7 +24,7 @@ export default function Sidebar() {
                 $rotated
                 $border="2px solid #FFF"
               >
-                <Plus size={20} color={theme.colors.primary[0]} />
+                <Plus size='1.25rem' color={theme.colors.primary[0]} />
               </Hexagon>
             </li>
             <li>

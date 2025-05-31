@@ -36,12 +36,12 @@ const ReadMore = ({ content, maxChars = 100, color }) => {
             {expanded ? (
               <>
                 Show less
-                <ChevronUp  size={18} />
+                <ChevronUp  size="1.125" />
               </>
             ) : (
               <>
                 Read more
-                <ChevronDown size={18} />
+                <ChevronDown size="1.125" />
               </>
             )}
           </Anchor>

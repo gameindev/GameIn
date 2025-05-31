@@ -11,7 +11,7 @@ const Layout = () => {
     <div>
       <Header />
       {isDashboard && <Sidebar />}
-      <main>
+      <main className={isDashboard && 'logged-in'}>
         <Outlet /> 
       </main>
       <Footer />

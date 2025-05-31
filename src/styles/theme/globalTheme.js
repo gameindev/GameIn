@@ -8,8 +8,8 @@ export const GlobalStyles = createGlobalStyle`
     }
 
     :root{
-        font-size: 0.8vw;
-    }
+        font-size: 0.833334vw;
+    }    
 
     body{
         background: ${({ theme }) => theme.colors.body[0]};
@@ -33,7 +33,7 @@ export const GlobalStyles = createGlobalStyle`
         margin: 0;
     }
 
-    main{
+    main.logged-in{
         padding: 40px;
         margin: 0 15.875rem 0 20.625rem;
     }
@@ -44,19 +44,19 @@ export const GlobalStyles = createGlobalStyle`
     }
 
     .container{
-        max-width: 1200px;
-        padding: 0 4rem;
-            @media (min-width: 1920px){
+        max-width: 65%;
+        /* padding: 0 4rem; */
+        /* @media (min-width: 1920px){
             max-width: 70rem;
-        }
+        } */
     }
 
     .container-fluid{
-        max-width: 1440px;
-        padding: 0 2rem;
-            @media (min-width: 1920px){
+        max-width: 90%;
+        /* padding: 0 2rem; */
+        /* @media (min-width: 1920px){
             max-width: 90rem;
-        }
+        } */
     }
 
     ::placeholder {
@@ -71,4 +71,9 @@ export const GlobalStyles = createGlobalStyle`
      .mantine-RadioCard-card[data-checked] {
         border: 2px solid ${({ theme }) => theme.colors.primary[0]} !important;
      }
+
+     svg.lucide[width="24"] {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
 `;
