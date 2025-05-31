@@ -50,7 +50,7 @@ const UserProfileBanner = () => {
       <BannerWrapper>
         <CoverBanner coverImage={currentUser.coverImage} />
         <UserInformation>
-          <AvatarSection avatar={currentUser.avatar} />
+          <AvatarSection avatar={currentUser.avatar} size="15em" />
           <ProfileWrapper>
             <div className="personal_info">
               <UserInfo user={currentUser} />

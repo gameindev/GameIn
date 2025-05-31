@@ -45,7 +45,7 @@ export const Hexagon = styled.div`
       rotated: $rotated,
       precision: $precision,
     })};
-  border: ${({ border = "1px solid transparent" }) => border};
+  border: ${({ $border = "1px solid transparent" }) => $border};
   position: relative;
 
   img {

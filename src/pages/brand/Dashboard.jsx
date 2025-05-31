@@ -4,7 +4,6 @@ export default function Dashboard() {
 
   return (
     <>
-      <div className="container">
         <UserProfileBanner />
         <div className="dashboard-content">
           <h1>Brand Dashboard</h1>
@@ -14,7 +13,6 @@ export default function Dashboard() {
           </p>
           {/* Add more components or content as needed */}
         </div>
-      </div>
     </>
   );
 }

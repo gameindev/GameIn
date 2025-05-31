@@ -143,7 +143,7 @@ const fonts = {
   fontSizes: {
     xs: "0.75rem",
     sm: "0.85rem",
-    md: "0.875rem",
+    md: "1rem",
     lg: "1.25rem",
     xl: "1.5rem",
     default: "1rem",
@@ -169,6 +169,11 @@ export const theme = createTheme({
       name: "textWhite",
       light: "black",
       dark: "white",
+    }),
+    body: virtualColor({
+      name: "body",
+      light: "white",
+      dark: "grey",
     }),
   },
 

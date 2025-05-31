@@ -2,12 +2,12 @@ import { UserAvatar } from "./styles";
 import { Hexagon } from "../shared/HexagonDemo";
 import { theme } from "../../styles/theme/customTheme";
 
-const AvatarSection = ({ avatar }) => (
-  <UserAvatar>
+const AvatarSection = ({ avatar, size, className='' }) => (
+  <UserAvatar className={className}>
     <Hexagon
       $mainRadius={10}
       $roundingRadius={15}
-      size="15em"
+      size={size}
       $backgroundColor={theme.colors.inputBgColor[0]}
       $rotated
     >

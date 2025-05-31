@@ -6,7 +6,7 @@ export const HeroSectionStyles = styled.div`
   display: flex;
   align-items: center;
   position: relative;
-  height: calc(100vh - 3.125rem);
+  height: calc(100vh - 5.188rem);
 
   .heroContent {
     width: 60%;

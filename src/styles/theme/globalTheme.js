@@ -1,6 +1,20 @@
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyles = createGlobalStyle`
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    :root{
+        font-size: 0.8vw;
+    }
+
+    body{
+        background: ${({ theme }) => theme.colors.body[0]};
+    }
+
     ul{
         margin: 0;
         padding: 0;
@@ -17,6 +31,11 @@ export const GlobalStyles = createGlobalStyle`
 
     figure {
         margin: 0;
+    }
+
+    main{
+        padding: 40px;
+        margin: 0 15.875rem 0 20.625rem;
     }
     
     .container, .container-fluid{
@@ -50,6 +69,6 @@ export const GlobalStyles = createGlobalStyle`
     } */
 
      .mantine-RadioCard-card[data-checked] {
-    border: 2px solid ${({ theme }) => theme.colors.primary[0]} !important;
+        border: 2px solid ${({ theme }) => theme.colors.primary[0]} !important;
      }
 `;
