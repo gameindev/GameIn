@@ -9,12 +9,14 @@ let refreshTimer = null;
 
 export const startTokenRefreshScheduler = () => {
     const { refreshToken, accessTokenExpiry } = store.getState().user;
-
+    console.log(refreshToken, accessTokenExpiry);
+    
     if (!refreshToken || !accessTokenExpiry) return;
 
     // Schedule 1 minute before expiry
     const refreshTime = accessTokenExpiry - Date.now() - 60 * 1000;
-
+    console.log(refreshTime);
+    
     if (refreshTime <= 0) return;
 
     clearTimeout(refreshTimer);

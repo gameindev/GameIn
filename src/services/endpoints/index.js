@@ -3,6 +3,7 @@ export const API_ENDPOINTS = {
     LOGIN: "/auth/sign-in",
     REGISTER: "/auth/register",
     FORGOT_PASSWORD: "/auth/forgot-password",
+    REFRESH_TOKENS: "/auth/refresh-tokens",
   },
   USERS: {
     PROFILE: "/users/profile",

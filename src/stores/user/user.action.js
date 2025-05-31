@@ -103,7 +103,8 @@ export const loginUserAsync = (credentials) => async (dispatch) => {
         if (!response.ok) throw new Error(data.message || "Login failed");
 
         const decoded = jwtDecode(data.accessToken);
-
+        console.log(decoded);
+        
         dispatch({
             type: USER_ACTION_TYPES.LOGIN_USER_SUCCESS,
             payload: {
