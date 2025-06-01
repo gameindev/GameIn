@@ -1,4 +1,3 @@
-/* eslint-disable */
 import {
     TextInput,
     Container,
@@ -49,15 +48,7 @@ export default function Signin() {
     const navigate = useNavigate();
     const error = useSelector((state) => state.user?.error);
     const loading = useSelector(selectUserLoading);
-    const {
-        control,
-        handleSubmit,
-        formState: { errors },
-    } = useForm({
-        defaultValues,
-        resolver: yupResolver(loginSchema),
-        mode: "onSubmit",
-    });
+    const { control, handleSubmit } = useForm({ defaultValues, resolver: yupResolver(loginSchema), mode: "onSubmit"});
 
     const handleLogin = async (data) => {
         const result = await dispatch(loginUserAsync(data));
@@ -77,12 +68,22 @@ export default function Signin() {
             } else if (userType === "CREATOR") {
                 navigate("/creator/dashboard");
             } else {
-                toast.error("Unknown user type. Contact support.");
+                notifications.show({
+                    title: 'Login Error',
+                    message: `Unknown user type. Contact support`,
+                    color: 'red',
+                    position: 'top-right',
+                })
                 navigate("/"); // or fallback
             }
             
         } else {
-            toast.error(result?.error || "Login failed");
+            notifications.show({
+                title: 'Login Error',
+                message: `${result?.error || "Login failed"}`,
+                color: 'red',
+                position: 'top-right',
+            })
         }
     };
 

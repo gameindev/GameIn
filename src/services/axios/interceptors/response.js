@@ -1,6 +1,6 @@
 import api from "../../../services/axios/index";
 import { refreshTokens } from "../../../utils/tokenManager";
-import { API_ENDPOINTS } from "../../endpoints";
+import { API_PATHS } from "../../endpoints";
 
 export const responseInterceptor = (response) => {
   return response;
@@ -17,7 +17,7 @@ export const responseErrorInterceptor = async (error) => {
     if (
       status === 401 &&
       !originalRequest._retry &&
-      !originalRequest.url.includes(API_ENDPOINTS.AUTH.REFRESH_TOKENS)
+      !originalRequest.url.includes(API_PATHS.AUTH.REFRESH_TOKENS)
     ) {
       originalRequest._retry = true;
       try {

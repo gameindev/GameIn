@@ -1,4 +1,4 @@
-export const API_ENDPOINTS = {
+export const API_PATHS = {
   AUTH: {
     LOGIN: "/auth/sign-in",
     REGISTER: "/auth/register",

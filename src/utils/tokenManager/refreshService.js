@@ -1,5 +1,5 @@
 import api from "../../services/axios/index";
-import { API_ENDPOINTS } from "../../services/endpoints";
+import { API_PATHS } from "../../services/endpoints";
 import {
   getRefreshToken,
   storeTokens,
@@ -22,7 +22,7 @@ export async function refreshTokens() {
 
   try {
     if (!refreshTokenPromise) {
-      refreshTokenPromise = api.post(API_ENDPOINTS.AUTH.REFRESH_TOKENS, {
+      refreshTokenPromise = api.post(API_PATHS.AUTH.REFRESH_TOKENS, {
         refreshToken,
       });
     }
