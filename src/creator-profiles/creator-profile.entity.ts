@@ -17,18 +17,21 @@ export class CreatorProfile {
     user: User
 
     @Column({
+        type: 'varchar',
         length: 30,
         nullable: true,
     })
     firstName: string;
 
     @Column({
+        type: 'varchar',
         length: 30,
         nullable: true,
     })
     lastName: string;
 
     @Column({
+        type: 'varchar',
         length: 10,
         nullable: true,
     })
@@ -47,12 +50,14 @@ export class CreatorProfile {
     coverImage: string;
 
     @Column({
+        type: 'varchar',
         length: 30,
         nullable: true,
     })
     country: string;
 
     @Column({
+        type: 'varchar',
         length: 20,
         nullable: true,
     })

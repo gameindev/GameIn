@@ -17,6 +17,7 @@ export class BrandProfile {
     user: User;
 
     @Column({
+        type: 'varchar',
         length: 30,
         nullable: true,
     })
@@ -41,6 +42,7 @@ export class BrandProfile {
     headOffice: string;
 
     @Column({
+        type: 'varchar',
         length: 20,
         nullable: true,
     })

@@ -10,6 +10,7 @@ import { Auth } from "src/auth/decorators/auth.decorator";
 import { AuthType } from "src/auth/enums/auth-type.enum";
 import { ActiveUser } from "src/auth/decorators/active-user.decorator";
 import { ActiveUserData } from "src/auth/interfaces/active-user-data.interface";
+import { PathcUserRoleDto } from "./dtos/patch-user-role.dto";
 
 
 
@@ -68,7 +69,7 @@ Use '*' to load all supported relations.`,
     @ApiResponse({
         status: 200,
         description: 'Users fetched successfully based on the query',
-    })    
+    })
     /**
      * Fetches a list of registered users on the application.
      * @query limit The number of users per page
@@ -76,6 +77,7 @@ Use '*' to load all supported relations.`,
      * @query populate Optional relations to include (creatorProfile, brandProfile, etc.)
      * @returns Users with pagination and optional relations
      */
+    @Auth(AuthType.None)
     getUsers(
         @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
         @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
@@ -91,14 +93,14 @@ Use '*' to load all supported relations.`,
     * @returns User fetched successfully based on the query
     */
     @ApiOperation({
-        summary: 'Fetches a registered user on the application by email.',        
+        summary: 'Fetches a registered user on the application by email.',
     })
     @ApiQuery({
         name: 'email',
         type: String,
         description: 'The email of the user to fetch',
         required: true,
-    })   
+    })
     @ApiResponse({
         status: 200,
         description: 'User fetched successfully based on the query.',
@@ -161,7 +163,7 @@ Use '*' to load all supported relations.`,
         @Query('populate') populate?: string,
     ) {
         return this.usersService.getUserById(getUserParamDto.id, populate);
-    }    
+    }
 
 
     @Post()
@@ -182,7 +184,7 @@ Use '*' to load all supported relations.`,
         return this.usersService.createUser(createUserDto);
     }
 
-    
+
     @Patch()
     @ApiOperation({
         summary: 'Updates a registered user on the application by ID.'
@@ -201,6 +203,20 @@ Use '*' to load all supported relations.`,
         @ActiveUser() user: ActiveUserData
     ) {
         return this.usersService.updateUser(patchUserDto, user);
+    }
+
+    @ApiOperation({
+        summary: 'Assigns a role to an OAuth user'
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Role assigned successfully'
+    })
+    @Patch('/assign-role')
+    assignUserTypeToOAuthUser(
+        @Body() patchUserRoleDto: PathcUserRoleDto
+    ) {
+        return this.usersService.updateOAuthUserRole(patchUserRoleDto);
     }
 
 
@@ -238,4 +254,7 @@ Use '*' to load all supported relations.`,
     deleteUser(@Param() getUserParamDto: GetUsersParamDto) {
         return this.usersService.deleteUser(getUserParamDto.id);
     }
+
+
+
 }

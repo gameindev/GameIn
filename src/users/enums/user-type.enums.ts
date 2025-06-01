@@ -5,5 +5,5 @@ export enum UserType {
     ADMIN = "ADMIN",
     CREATOR = "CREATOR",
     BRAND = "BRAND",
-    USER = "USER"
+    COMMUNITY = "COMMUNITY"
 }

@@ -1,10 +1,10 @@
 import { Body, Controller, HttpCode, HttpStatus, Inject, Post } from '@nestjs/common';
 import { AuthService } from './providers/auth.service';
-import { SigninDto } from './dto/signin.dto';
+import { SigninDto } from './dtos/signin.dto';
 import { ApiBody, ApiOperation, ApiProperty, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { Auth } from './decorators/auth.decorator';
 import { AuthType } from './enums/auth-type.enum';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { RefreshTokenDto } from './dtos/refresh-token.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -65,7 +65,7 @@ export class AuthController {
         schema: {
             properties: {
                 access_token: {
-                    type:'string',
+                    type: 'string',
                     description: 'JWT access token',
                     example: '...'
                 }

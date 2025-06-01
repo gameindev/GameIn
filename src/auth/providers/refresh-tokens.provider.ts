@@ -1,5 +1,5 @@
 import { forwardRef, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { RefreshTokenDto } from '../dto/refresh-token.dto';
+import { RefreshTokenDto } from '../dtos/refresh-token.dto';
 import { JwtService } from '@nestjs/jwt';
 import jwtConfig from '../config/jwt.config';
 import { ConfigType } from '@nestjs/config';

@@ -14,6 +14,7 @@ export class User {
     id: number;
 
     @Column({
+        type: 'varchar',
         length: 30,
         unique: true,
         nullable: false,
@@ -21,6 +22,7 @@ export class User {
     username: string;
 
     @Column({
+        type: 'varchar',
         length: 96,
         unique: true,
         nullable: false,
@@ -28,24 +30,31 @@ export class User {
     email: string;
 
     @Column({
+        type: 'varchar',
         length: 96,
-        nullable: false,
+        nullable: true,
     })
-    password: string;
+    password?: string;
+
+    @Column({
+        type: 'text',
+        nullable: true,
+    })
+    googleId?: string;
 
     @Column({
         type: "enum",
         enum: UserType,
-        default: UserType.USER,
-        nullable: false,
+        default: null,
+        nullable: true,
     })
-    userType: UserType;
+    userType?: UserType;
 
     @Column({
         type: 'date',
-        nullable: false,
+        nullable: true,
     })
-    dateOfBirth: string;
+    dateOfBirth?: string;
 
     @OneToOne(() => CreatorProfile, creatorProfile => creatorProfile.user, {
         cascade: true,
@@ -73,7 +82,11 @@ export class User {
     })
     isVerified?: boolean;
 
-
+    @Column({
+        default: true,
+        nullable: true,
+    })
+    isFirst?: boolean;
     
     // ratingReceived: UserRating[];
     // ratingGiven: UserRating[];

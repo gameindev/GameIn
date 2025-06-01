@@ -1,5 +1,5 @@
 import { forwardRef, Inject, Injectable, RequestTimeoutException, UnauthorizedException } from '@nestjs/common';
-import { SigninDto } from '../dto/signin.dto';
+import { SigninDto } from '../dtos/signin.dto';
 import { UsersService } from 'src/users/providers/users.service';
 import { HashingProvider } from './hashing.provider';
 import { GenerateTokensProvider } from './generate-tokens.provider';

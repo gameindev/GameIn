@@ -14,6 +14,11 @@ import { FindOneUserByEmailProvider } from './find-one-user-by-email.provider';
 import { UpdateUserProvider } from './update-user.provider';
 import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
 import { FindOneByIdentifierProvider } from './find-one-by-identifier.provider';
+import { FindOneByGoogleIdProvider } from '../provider/find-one-by-google-id.provider';
+import { CreateGoogleUserProvider } from './create-google-user.provider';
+import { GoogleUser } from '../interfaces/google-user.intefrace';
+import { PathcUserRoleDto } from '../dtos/patch-user-role.dto';
+import { UpdateUserRoleProvider } from './update-user-role.provider';
 
 /**
  * Users service.
@@ -67,6 +72,24 @@ export class UsersService {
          * Inject UpdateUserProvider.
          */
         private readonly updateUserProvider: UpdateUserProvider,
+
+        /**
+         * Injecting FindOneByGoogleIdProvider.
+         */
+        @Inject(FindOneByGoogleIdProvider)
+        private readonly findOneByGoogleIdProvider: FindOneByGoogleIdProvider,
+
+        /**
+         * Injecting CreateGoogleUserProvider.
+         */
+        @Inject(CreateGoogleUserProvider)
+        private readonly createGoogleUserProvider: CreateGoogleUserProvider,
+
+        /**
+         * Injectting UpdateUserRoleProvider
+         */
+        @Inject(UpdateUserRoleProvider)
+        private readonly updateUserRoleProvider: UpdateUserRoleProvider,
     ) { }
 
 
@@ -271,4 +294,17 @@ export class UsersService {
         return await this.findOneUserByIdentifier.findOneByIdentifier(identifier);
     }
 
+    public async findOneByGoogleId(googleId: string) {
+        return await this.findOneByGoogleIdProvider.findOneByGoogleId(googleId);
+    }
+
+
+    public async createGoogleUser(googleUser: GoogleUser) {
+        return await this.createGoogleUserProvider.createGoogleUser(googleUser);
+    }
+    
+    public async updateOAuthUserRole(patchUserRoleDto: PathcUserRoleDto,) {
+       return await this.updateUserRoleProvider.updateOAuthUserRole(patchUserRoleDto);
+    }
 }
+ 

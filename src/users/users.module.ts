@@ -11,6 +11,9 @@ import { CreateUserProvider } from './providers/create-user.provider';
 import { FindOneUserByEmailProvider } from './providers/find-one-user-by-email.provider';
 import { UpdateUserProvider } from './providers/update-user.provider';
 import { FindOneByIdentifierProvider } from './providers/find-one-by-identifier.provider';
+import { FindOneByGoogleIdProvider } from './provider/find-one-by-google-id.provider';
+import { CreateGoogleUserProvider } from './providers/create-google-user.provider';
+import { UpdateUserRoleProvider } from './providers/update-user-role.provider';
 
 
 /**
@@ -23,7 +26,10 @@ import { FindOneByIdentifierProvider } from './providers/find-one-by-identifier.
         CreateUserProvider,
         FindOneUserByEmailProvider,
         UpdateUserProvider,
-        FindOneByIdentifierProvider,        
+        FindOneByIdentifierProvider,
+        FindOneByGoogleIdProvider,
+        CreateGoogleUserProvider,
+        UpdateUserRoleProvider,        
     ],
     exports: [UsersService],
     imports: [

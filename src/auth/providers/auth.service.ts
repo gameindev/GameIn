@@ -1,8 +1,8 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/providers/users.service';
-import { SigninDto } from './../dto/signin.dto';
+import { SigninDto } from '../dtos/signin.dto';
 import { SignInProvider } from './sign-in.provider';
-import { RefreshTokenDto } from './../dto/refresh-token.dto';
+import { RefreshTokenDto } from '../dtos/refresh-token.dto';
 import { RefreshTokensProvider } from './refresh-tokens.provider';
 
 @Injectable()

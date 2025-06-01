@@ -732,7 +732,7 @@ export class CreateUserDto {
     @ApiProperty({
         description: &#x27;The user type of the user&#x27;,
         enum: UserType,
-        example: UserType.USER,
+        example: UserType.COMMUNITY,
     })
     @IsEnum(UserType)
     @IsNotEmpty()
