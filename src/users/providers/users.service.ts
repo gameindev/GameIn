@@ -303,8 +303,8 @@ export class UsersService {
         return await this.createGoogleUserProvider.createGoogleUser(googleUser);
     }
     
-    public async updateOAuthUserRole(patchUserRoleDto: PathcUserRoleDto,) {
-       return await this.updateUserRoleProvider.updateOAuthUserRole(patchUserRoleDto);
+    public async updateOAuthUserRole(patchUserRoleDto: PathcUserRoleDto, userSub: ActiveUserData ) {
+       return await this.updateUserRoleProvider.updateOAuthUserRole(patchUserRoleDto, userSub);
     }
 }
  

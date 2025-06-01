@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user.entity';
 import { Repository } from 'typeorm';
 import { PathcUserRoleDto } from '../dtos/patch-user-role.dto';
+import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
 
 @Injectable()
 export class UpdateUserRoleProvider {
@@ -13,11 +14,11 @@ export class UpdateUserRoleProvider {
     ) { }
 
 
-    async updateOAuthUserRole(patchUserRoleDto: PathcUserRoleDto) {
+    async updateOAuthUserRole(patchUserRoleDto: PathcUserRoleDto, userSub: ActiveUserData) {
         let user = undefined;
 
         try {
-            user = await this.userRepository.findOneBy({ googleId: patchUserRoleDto.googleId });
+            user = await this.userRepository.findOneBy({ id: userSub.sub  });
         } catch (error) {
             throw new InternalServerErrorException('Something went wrong while fetching user');
         }

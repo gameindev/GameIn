@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from "@nestjs/common";
-import { ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { GetUsersParamDto } from "./dtos/get-user-param.dto";
 import { CreateUserDto } from "./dtos/post-create-user.dto";
 import { PatchUserDto } from "./dtos/patch-user.dto";
@@ -11,6 +11,7 @@ import { AuthType } from "src/auth/enums/auth-type.enum";
 import { ActiveUser } from "src/auth/decorators/active-user.decorator";
 import { ActiveUserData } from "src/auth/interfaces/active-user-data.interface";
 import { PathcUserRoleDto } from "./dtos/patch-user-role.dto";
+
 
 
 
@@ -30,6 +31,14 @@ export class UsersController {
 
     }
 
+
+    /**
+     * Fetches a list of registered users on the application.
+     * @query limit The number of users per page
+     * @query page The page number to fetch
+     * @query populate Optional relations to include (creatorProfile, brandProfile, etc.)
+     * @returns Users with pagination and optional relations
+     */
     @Get()
     @ApiOperation({
         summary: 'Fetches a list of registered users on the application.',
@@ -69,14 +78,7 @@ Use '*' to load all supported relations.`,
     @ApiResponse({
         status: 200,
         description: 'Users fetched successfully based on the query',
-    })
-    /**
-     * Fetches a list of registered users on the application.
-     * @query limit The number of users per page
-     * @query page The page number to fetch
-     * @query populate Optional relations to include (creatorProfile, brandProfile, etc.)
-     * @returns Users with pagination and optional relations
-     */
+    })    
     @Auth(AuthType.None)
     getUsers(
         @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
@@ -166,6 +168,13 @@ Use '*' to load all supported relations.`,
     }
 
 
+
+
+    /**
+     * Creates a new user on the application.
+     * @param createUserDto The user details that you want the API to return
+     * @returns User created successfully based on the query
+     */
     @Post()
     @ApiOperation({
         summary: 'Creates a new user on the application.'
@@ -174,17 +183,18 @@ Use '*' to load all supported relations.`,
         status: 201,
         description: 'User created successfully based on the query',
     })
-    @Auth(AuthType.None)
-    /**
-     * Creates a new user on the application.
-     * @param createUserDto The user details that you want the API to return
-     * @returns User created successfully based on the query
-     */
+    @Auth(AuthType.None)    
     createUser(@Body() createUserDto: CreateUserDto) {
         return this.usersService.createUser(createUserDto);
     }
 
 
+
+    /**
+     * Updates a registered user on the application.
+     * @param patchUserDto The user details that you want the API to return
+     * @returns User updated successfully based on the query
+     */
     @Patch()
     @ApiOperation({
         summary: 'Updates a registered user on the application by ID.'
@@ -192,12 +202,7 @@ Use '*' to load all supported relations.`,
     @ApiResponse({
         status: 200,
         description: 'User updated successfully based on the query',
-    })
-    /**
-     * Updates a registered user on the application.
-     * @param patchUserDto The user details that you want the API to return
-     * @returns User updated successfully based on the query
-     */
+    })    
     updateUser(
         @Body() patchUserDto: PatchUserDto,
         @ActiveUser() user: ActiveUserData
@@ -205,6 +210,16 @@ Use '*' to load all supported relations.`,
         return this.usersService.updateUser(patchUserDto, user);
     }
 
+
+
+
+    /**
+     * Assigns a role to an OAuth user
+     * @param patchUserRoleDto 
+     * @returns 
+     */
+    @ApiBearerAuth()
+    @ApiTags('auth')
     @ApiOperation({
         summary: 'Assigns a role to an OAuth user'
     })
@@ -214,9 +229,10 @@ Use '*' to load all supported relations.`,
     })
     @Patch('/assign-role')
     assignUserTypeToOAuthUser(
-        @Body() patchUserRoleDto: PathcUserRoleDto
+        @Body() patchUserRoleDto: PathcUserRoleDto,
+        @ActiveUser() userSub: ActiveUserData
     ) {
-        return this.usersService.updateOAuthUserRole(patchUserRoleDto);
+        return this.usersService.updateOAuthUserRole(patchUserRoleDto, userSub);
     }
 
 
@@ -237,6 +253,9 @@ Use '*' to load all supported relations.`,
     softDeleteUser(@Param() getUserParamDto: GetUsersParamDto) {
         return this.usersService.softDeleteUser(getUserParamDto.id);
     }
+
+
+
 
     /**
      * Permanently deletes a registered user on the application.
