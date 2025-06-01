@@ -5,7 +5,7 @@ import { SidebarStyles } from "../styles/layouts";
 import { Hexagon } from "../components/shared/HexagonDemo";
 import { theme } from "../styles/theme/customTheme";
 import AvatarSection from "../components/userProfileBanner/AvatarSection";
-import coverImage from "/src/assets/creators/creator_image.jpg";
+import coverImage from "../assets/creators/creator_image.jpg";
 
 export default function Sidebar() {
 
