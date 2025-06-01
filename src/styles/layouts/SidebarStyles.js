@@ -64,7 +64,7 @@ export const SidebarStyles = styled.div`
         }
 
         .divider{
-            border: 1px dashed ${({ theme }) => theme.colors.inputBgColor[0]};
+            border: 0.063rem dashed ${({ theme }) => theme.colors.inputBgColor[0]};
             width: 100%;
             margin: 0.75rem 0;
         }

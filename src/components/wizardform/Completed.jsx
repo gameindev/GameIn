@@ -20,7 +20,7 @@ export default function Completed() {
                 )}
             </Transition> */}
             <Space h="lg" /> 
-            <Title order={2} ta="center" style={{ fontSize: '42px', lineHeight: 'normal' }}>
+            <Title order={2} ta="center" style={{ fontSize: '2.625rem', lineHeight: 'normal' }}>
                 <span style={{ color: 'var(--mantine-color-primary-text)' }}>you got mail!</span> <br />
                 please verify<br /> your email<br /> address to get<br /> started
             </Title>

@@ -37,11 +37,12 @@ const UserProfileBanner = () => {
       {
         name: "Nike",
         logo: Nike,
+        size: '7rem',
       },
-      {
-        name: "Nike",
-        logo: Nike,
-      },
+      // {
+      //   name: "Nike",
+      //   logo: Nike,
+      // },
     ],
   };
 

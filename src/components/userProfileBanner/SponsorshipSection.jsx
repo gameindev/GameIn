@@ -7,7 +7,7 @@ const SponsorshipSection = ({ sponsors }) => (
       className="sponsorship_text"
       component="span"
       size="sm"
-      color="dimmed"
+      // color="dimmed"
     >
       Sponsored by
     </Text>
@@ -18,7 +18,7 @@ const SponsorshipSection = ({ sponsors }) => (
           className="sponsor_logo"
           src={sponsor.logo}
           alt={sponsor.name}
-          width={50}
+          style={{ width: sponsor.size }}
         />
       ))}
     </div>

@@ -34,7 +34,7 @@ export const GlobalStyles = createGlobalStyle`
     }
 
     main.logged-in{
-        padding: 40px;
+        padding: 2.5rem;
         margin: 0 15.875rem 0 20.625rem;
     }
     
@@ -69,7 +69,7 @@ export const GlobalStyles = createGlobalStyle`
     } */
 
      .mantine-RadioCard-card[data-checked] {
-        border: 2px solid ${({ theme }) => theme.colors.primary[0]} !important;
+        border: 0.125rem solid ${({ theme }) => theme.colors.primary[0]} !important;
      }
 
      svg.lucide[width="24"] {

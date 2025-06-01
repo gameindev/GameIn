@@ -39,8 +39,8 @@ const stars = [
 const SvgComponent = ({ fill = "#E2BB63", number = "6" }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={39}
-    height={54}
+    width="2.438rem"
+    height='3.375rem'
     viewBox="0 0 39 54"
     fill="none"
   >

@@ -22,7 +22,7 @@ export default function Sidebar() {
                 size="3em"
                 $backgroundColor={theme.colors.inputBgColor[0]}
                 $rotated
-                $border="2px solid #FFF"
+                $border="0.125rem solid #FFF"
               >
                 <Plus size='1.25rem' color={theme.colors.primary[0]} />
               </Hexagon>

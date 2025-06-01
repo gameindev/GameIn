@@ -6,7 +6,7 @@ const StatsSection = ({ stats }) => (
   <ProfileStats>
     <div className="profile_stats">
       <div className="stats_section">
-        <Eye size='0.75' />
+        <Eye size='0.75rem' />
         <Text className="views" size="md" weight={500}>
           {stats.views || '11,294'}
         </Text>
@@ -15,7 +15,7 @@ const StatsSection = ({ stats }) => (
         </Text>
       </div>
       <div className="stats_section">
-        <UserRound size='0.75' />
+        <UserRound size='0.75rem' />
         <Text className="followers" size="md" weight={500}>
           {stats?.followers || '1124'}
         </Text>

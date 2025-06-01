@@ -18,7 +18,7 @@ export default function FlexCard({ scrollToRef }) {
           <Button variant="darkGrey" padding="0.5rem" size="sm" width="8.125rem">
             Search
           </Button>
-          <img src={FindCreator} alt="" />
+          <div><img src={FindCreator} alt="" /></div>
         </Flex>
       </div>
       <div className="sponsor_card">
@@ -32,7 +32,7 @@ export default function FlexCard({ scrollToRef }) {
           <Button variant="darkGrey" padding="0.5rem" size="sm" width="8.125rem">
             Search
           </Button>
-          <img src={FindBrand} alt="" />
+          <div><img src={FindBrand} alt="" /></div>
         </Flex>
       </div>
     </FlexCardStyles>

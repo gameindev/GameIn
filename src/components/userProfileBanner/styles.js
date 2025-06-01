@@ -7,7 +7,7 @@ export const BannerWrapper = styled.div`
   background-color: #1f2937;
   border-radius: ${theme.radius.md};
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.3);
 `;
 
 export const Banner = styled.div`
@@ -30,14 +30,14 @@ export const UserInformation = styled.div`
   position: relative;
   display: flex;
   align-items: center;
-  padding: 24px;
+  padding: 1.25rem;
   background-color: ${theme.colors.secondaryGrey[0]};
   color: white;
 `;
 
 export const UserAvatar = styled.div`
   position: absolute;
-  top: -6rem;
+  top: -7.5rem;
   left: 0rem;
   /* width: 10.625rem;
   height: 11.875rem; */
@@ -60,15 +60,15 @@ export const UserAvatar = styled.div`
 `;
 
 export const ProfileWrapper = styled.div`
-  margin-left: 11.625rem;
+  margin-left: 13rem;
   flex: 1;
   display: flex;
   align-items: flex-end;
-  justify-content: center;
+  gap: 1.5rem;
 
-  .personal_info {
+  /* .personal_info {
     flex-grow: 1;
-  }
+  } */
 `;
 
 export const UserSection = styled.div`
@@ -126,8 +126,8 @@ export const ProfileStats = styled.div`
 `;
 
 export const BadgeSection = styled.div`
-  border-left: 1px solid #4a5568;
-  border-right: 1px solid #4a5568;
+  border-left: 0.063rem dotted #4a5568;
+  border-right: 0.063rem dotted #4a5568;
   .levels {
     /* flex: 1; */
     display: flex;
@@ -143,12 +143,12 @@ export const BadgeSection = styled.div`
 export const SponsorShip = styled.div`
   display: flex;
   align-items: end;
-  gap: 0.5rem;
+  gap: 2.5rem;
   font-size: 0.875rem;
   color: #a0aec0;
-  padding: 0 1.5rem;
-  border-right: 1px solid #4a5568;
-  margin-right: 1rem;
+  padding: 0.5rem;
+  border-right: 0.063rem dotted #4a5568;
+  margin-right: auto;
 
   .sponsorship_text {
     font-size: 0.625rem;
@@ -159,7 +159,7 @@ export const SponsorShip = styled.div`
     background-color: #2b6cb0;
     color: white;
     padding: 0.25rem 0.5rem;
-    border-radius: 4px;
+    border-radius: 0.25rem;
     font-size: 0.75rem;
   }
 `;
@@ -167,11 +167,11 @@ export const SponsorShip = styled.div`
 export const ActionWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 
   .actions {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0.5rem;
   }
 `;

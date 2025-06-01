@@ -30,8 +30,8 @@ export const HeroSectionStyles = styled.div`
     &::after {
       content: "";
       position: absolute;
-      border-right: 4px solid #ffffff;
-      border-bottom: 4px solid #ffffff;
+      border-right: 0.25rem solid #ffffff;
+      border-bottom: 0.25rem solid #ffffff;
       width: 0.625rem;
       height: 0.625rem;
       bottom: -1rem;

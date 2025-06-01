@@ -49,7 +49,7 @@ export default function UserProfileBanner({ currentUser }) {
             </div>
             <div className="profile_stats">
               <div className="stats_section">
-                <Eye className="views_icon" size='0.75' />
+                <Eye className="views_icon" size='0.75rem' />
                 <Text className="views" component="span" size="md" weight={500}>
                   11,294
                 </Text>
@@ -63,7 +63,7 @@ export default function UserProfileBanner({ currentUser }) {
                 </Text>
               </div>
               <div className="stats_section">
-                <UserRound className="followers_icon" size='0.75' />
+                <UserRound className="followers_icon" size='0.75rem' />
                 <Text
                   className="followers"
                   component="span"

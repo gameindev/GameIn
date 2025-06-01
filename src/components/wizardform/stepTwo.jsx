@@ -61,7 +61,7 @@ export default function StepTwo({ onNext, onPrev }) {
                   radius="md"
                   flex="0 0 calc(50% - var(--mantine-spacing-xs) / 2)"
                   bg={theme.colors.inputBgColor[0]}
-                  style={{ border: "2px solid transparent" }}
+                  style={{ border: "0.125rem solid transparent" }}
                 >
                   <Box p="xl" style={{ textAlign: "center" }}>
                     <Icon color={theme.colors.primary[0]} />
