@@ -10,8 +10,7 @@ import coverImage from "../assets/creators/creator_image.jpg";
 export default function Sidebar() {
 
   return (
-    <SidebarStyles>
-      <aside>
+      <SidebarStyles>
         <div className="profile-icons">
           <ul>
             <li>
@@ -45,40 +44,38 @@ export default function Sidebar() {
           <ul>
             <li>
               <Link to="/">
-                <Home />
+                <Home size="1rem"/>
                 <span>Account</span>
               </Link>
             </li>
             <li>
               <Link to="/">
-                <Newspaper />
+                <Newspaper size="1rem" />
                 <span>News Feed</span>
               </Link>
             </li>
             <div className="divider"></div>
             <li>
               <Link to="/">
-                <Star />
+                <Star size="1rem" />
                 <span>Creators</span>
               </Link>
             </li>
             <li>
               <Link to="/">
-                <Flame />
+                <Flame size="1rem" />
                 <span>Brands</span>
               </Link>
             </li>
             <div className="divider"></div>
             <li>
               <Link to="/">
-                <Bolt />
+                <Bolt size="1rem" />
                 <span>Settings</span>
               </Link>
             </li>
           </ul>
         </div>
-      </aside>
-      <aside className="ad-banner"></aside>
-    </SidebarStyles>
+      </SidebarStyles>
   );
 }

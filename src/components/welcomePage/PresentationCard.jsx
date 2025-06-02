@@ -29,7 +29,7 @@ export default function PresentationCard({data}) {
             {btnText}
           </Button>
         </div>
-        <div>
+        <div className="presentation_img">
           <img src={image} alt={altText} />
         </div>
       </PresentationStyles>

@@ -11,6 +11,10 @@ export const HeroSectionStyles = styled.div`
   .heroContent {
     width: 60%;
 
+    img{
+      max-width: 22.5rem;
+    }
+
     .heroTitle {
       font-size: 3.125rem;
     }
@@ -57,10 +61,17 @@ export const FlexCardStyles = styled.div`
 
   .creator_card {
     background: ${({ theme }) => theme.colors.primary[0]};
+
+    .banner_img{
+      max-width: 10rem;
+    }
   }
 
   .sponsor_card {
     background: ${({ theme }) => theme.colors.secondary[0]};
+    .banner_img{
+      max-width: 12.938rem;
+    }
   }
 
   .flexTitle{
@@ -116,6 +127,14 @@ export const PresentationStyles = styled.div`
         color: ${({ theme }) => theme.colors.primary};
         display: block;
       }
+    }
+  }
+
+  .presentation_img{
+    flex-basis: 60%;
+    img{
+      height: 100%;
+      object-fit: cover;
     }
   }
 
@@ -285,6 +304,7 @@ export const MileStoneStyles = styled.div`
 
         img {
           margin-bottom: 1.25rem;
+          max-width: 18.75rem;
         }
 
         h3 {

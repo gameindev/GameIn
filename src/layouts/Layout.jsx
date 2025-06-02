@@ -10,10 +10,13 @@ const Layout = () => {
   return (
     <div>
       <Header />
-      {isDashboard && <Sidebar />}
-      <main className={isDashboard && 'logged-in'}>
-        <Outlet /> 
-      </main>
+      <div className="wrapper">
+        {isDashboard && <Sidebar />}
+        <main className={isDashboard && 'logged-in'}>
+          <Outlet /> 
+        </main>
+        {isDashboard && <aside className="ad-banner"></aside> }
+      </div>
       <Footer />
     </div>
   );

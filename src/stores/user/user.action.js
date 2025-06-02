@@ -97,12 +97,15 @@ export const loginUserAsync = (credentials) => async (dispatch) => {
             body: JSON.stringify(credentials),
         });
 
-        const data = await response.json();
+        // eslint-disable-next-line no-debugger
+        // debugger;
+        const { data } = await response.json();
+        console.log(response);
 
 
         if (!response.ok) throw new Error(data.message || "Login failed");
 
-        const decoded = jwtDecode(data.accessToken);
+        const decoded = jwtDecode(data?.accessToken);
         console.log(decoded);
         
         dispatch({

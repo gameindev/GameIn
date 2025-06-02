@@ -25,6 +25,7 @@ export const GlobalStyles = createGlobalStyle`
     }
 
     img {
+        width: 100%;
         max-width: 100%;
         vertical-align: middle;
     }
@@ -33,9 +34,18 @@ export const GlobalStyles = createGlobalStyle`
         margin: 0;
     }
 
+    .wrapper{
+        display: flex;
+
+        .ad-banner{
+            min-width: 15.875rem;
+            background: ${({ theme }) => theme.colors.darkText[1]};
+        }
+    }
+
     main.logged-in{
         padding: 2.5rem;
-        margin: 0 15.875rem 0 20.625rem;
+        min-width: calc(100% - 36.5rem);
     }
     
     .container, .container-fluid{
