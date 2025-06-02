@@ -1,14 +1,14 @@
-import { Link, Navigate, NavLink } from "react-router";
+import { Link, useNavigate,  NavLink } from "react-router";
 import GameInLogo from "../assets/homepage/gamein-logo.svg";
 import { Button, Card, Text } from "@mantine/core";
 import { HeaderSection } from "../styles/layouts";
-import { useSelector } from "react-redux";
-import { isLoggedIn, selectCurrentUser } from "../stores/user/user.selector";
-import { logoutUser } from "../stores/user/user.action";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { persistor } from "../stores/store";
+import { isLoggedIn, selectCurrentUser } from "../stores/auth/authSelector";
+import { logoutUser } from "../stores/auth/authSlice";
 
 export default function Header() {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const user = useSelector(selectCurrentUser);
@@ -17,7 +17,7 @@ export default function Header() {
     const handleLogout = async () => {
         dispatch(logoutUser());
         await persistor.purge();
-        Navigate("/");
+        navigate("/");
     }
 
     return (

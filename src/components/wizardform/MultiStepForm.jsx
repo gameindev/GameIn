@@ -53,19 +53,11 @@ export default function MultiStepForm() {
   const totalSteps = FORM_STEPS.length;
 
   // get current step information
-  const {
-    component: StepComponent,
-    title,
-    showProgressBar,
-    canGoBack,
-    validateOnExit,
-  } = FORM_STEPS[stepIndex];
+  const { component: StepComponent, title, showProgressBar, canGoBack, validateOnExit } = FORM_STEPS[stepIndex];
 
   // go to next/prev step
-  const goToNextStep = () =>
-    setStepIndex((i) => Math.min(i + 1, totalSteps - 1));
-  const goToPrevStep = () =>
-    canGoBack && setStepIndex((i) => Math.max(i - 1, 0));
+  const goToNextStep = () => setStepIndex((i) => Math.min(i + 1, totalSteps - 1));
+  const goToPrevStep = () => canGoBack && setStepIndex((i) => Math.max(i - 1, 0));
 
   return (
     <>

@@ -43,9 +43,14 @@ export const GlobalStyles = createGlobalStyle`
         }
     }
 
-    main.logged-in{
-        padding: 2.5rem;
-        min-width: calc(100% - 36.5rem);
+    main{
+        &:not(.logged-in){
+            flex: 1;
+        }
+        &.logged-in{
+            padding: 2.5rem;
+            min-width: calc(100% - 36.5rem);
+        }
     }
     
     .container, .container-fluid{

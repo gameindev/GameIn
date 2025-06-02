@@ -12,7 +12,7 @@ const Layout = () => {
       <Header />
       <div className="wrapper">
         {isDashboard && <Sidebar />}
-        <main className={isDashboard && 'logged-in'}>
+        <main className={isDashboard ? 'logged-in' : ''}>
           <Outlet /> 
         </main>
         {isDashboard && <aside className="ad-banner"></aside> }

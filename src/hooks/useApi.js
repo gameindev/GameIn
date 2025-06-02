@@ -41,12 +41,14 @@ const useApi = ({ url = null, method = "GET", payload = null, headers = {}, auto
   }, [autoFetch, url, method, payload, headers, callApi]);
 
   const createMethod = (methodType) => (url, payload = {}, headers = {}) => {
+    
     const isPayloadMethod = ["POST", "PUT"].includes(methodType);
+    console.log(url, payload, headers, isPayloadMethod);
     return callApi({
       url,
       method: methodType,
-      ...(isPayloadMethod && payload),
-      ...(headers && headers),
+      ...(isPayloadMethod && {payload: payload}),
+      ...(headers && {headers: headers}),
     });
   };
 
