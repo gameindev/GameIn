@@ -15,9 +15,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIyLCJlbWFpb
 
 PATCH http://localhost:3000/api/users/assign-role
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIyLCJlbWFpbCI6ImpvaG5kb2VAZW1haWwuY29tIiwiaWF0IjoxNzQ4NzkxOTkzLCJleHAiOjE3NDg3OTU1OTMsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.H1WUI2Y07pURtHVhhh_O9PGzYGbS9lr-W7G9FE-UMGQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIyLCJlbWFpbCI6ImpvaG5kb2VAZW1haWwuY29tIiwiaWF0IjoxNzQ4ODkwNDAwLCJleHAiOjE3NDg4OTQwMDAsImF1ZCI6ImxvY2FsaG9zdDozMDAwIiwiaXNzIjoibG9jYWxob3N0OjMwMDAifQ.Ice24uvvQDGSPbTyQaakAk7QtWr6Hsyh7zrLzYoPZ7k
 
 {
-    "googleId": "102818114883302847647",
+    "password": "All2On3#",
     "userType": "BRAND"
 }
