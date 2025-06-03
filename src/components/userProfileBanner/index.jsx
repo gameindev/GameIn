@@ -32,7 +32,7 @@ const UserProfileBanner = () => {
       followers: "1125",
       joinedOn: "OCT 23rd, 2022",
     },
-    level: 3,
+    level: 5,
     sponsors: [
       {
         name: "Nike",

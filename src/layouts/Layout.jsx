@@ -5,7 +5,7 @@ import Sidebar from "./Sidebar";
 
 const Layout = () => {
   const location = useLocation();
-  const isDashboard = location.pathname.startsWith("/brand/dashboard");
+  const isDashboard = location.pathname.startsWith("/");
 
   return (
     <div>

@@ -7,7 +7,7 @@ export const BannerWrapper = styled.div`
   background-color: #1f2937;
   border-radius: ${theme.radius.md};
   overflow: hidden;
-  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.3);
+  /* box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.3); */
 `;
 
 export const Banner = styled.div`
