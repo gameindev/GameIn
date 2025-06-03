@@ -2,10 +2,17 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { resetForm, saveStepData } from "../stores/form/formSlice";
-import { registerUserAsync } from './../stores/user/user.action';
+import { resetForm, saveStepData } from "../stores/slices/form";
 import { notifications } from "@mantine/notifications";
+import useApi from "./useApi";
+import { API_PATHS } from "../services/endpoints";
+import { setUser } from "../stores/slices/user";
 
+function formatDate(dobStr) {
+    if (!dobStr) return "";
+    const [year, month, day] = dobStr.split("-");
+    return `${day}-${month}-${year}`;
+}
 
 export function useFormStep({
     defaultValues,
@@ -73,6 +80,7 @@ export function useFormStep({
         onPrev?.();
     };
 
+    const { post, error } = useApi();
     // Handle form submission
     const handleSubmit = onSubmit
         ? formHandleSubmit(async (data) => {
@@ -89,10 +97,37 @@ export function useFormStep({
             };
 
             setIsSubmitting(true); // ✅ show loader
-            const result = await dispatch(registerUserAsync(completeFormData));
+            const apiBody = {
+                username: completeFormData.username,
+                email: completeFormData.email,
+                password: completeFormData.password,
+                userType: completeFormData.role?.toUpperCase() || "USER",
+                dateOfBirth: formatDate(completeFormData.dob),
+                isActive: true,
+                isVerified: false,
+            };
+
+            const headers = {
+                "Content-Type": "application/json",
+                "X-Captcha-Token": completeFormData.captcha || "",
+            }
+
+            const { data:userData } = await post(API_PATHS.USERS.CREATE, apiBody, headers)
+            // const result = await dispatch(registerUserAsync(completeFormData));
             setIsSubmitting(false); // ✅ hide loader
 
-            if (result?.success) {
+            console.log("userData", userData);
+            
+            if(error){
+                notifications.show({
+                    title: "Registration failed",
+                    message: error,
+                    color: "red",
+                    position: "top-right",
+                })
+            }
+
+            if (userData) {
                 notifications.show({
                     title: "Registration successful",
                     color: "green",
@@ -100,15 +135,9 @@ export function useFormStep({
                 })
                 localStorage.removeItem("persist:multiStepForm");
                 dispatch(resetForm());
+                dispatch(setUser(userData))
                 // ✅ Proceed to final step only on success
                 return onSubmit(completeFormData);
-            } else {
-                notifications.show({
-                    title: "Registration failed",
-                    message: result?.error,
-                    color: "red",
-                    position: "top-right",
-                })
             }
         })
         : formHandleSubmit(handleNextStep);
