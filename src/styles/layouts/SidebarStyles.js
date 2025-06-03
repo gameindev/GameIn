@@ -1,13 +1,9 @@
 import styled from "styled-components";
 
-export const SidebarStyles = styled.div`
-  aside {
+export const SidebarStyles = styled.aside`
     display: flex;
-    position: absolute;
-    top: 5.188rem;
-    left: 0;
-    height: calc(100vh - 5.188rem);
-    width: 20.625rem;
+    width: 100%;
+    min-width: 20.625rem;
     background: ${({ theme }) => theme.colors.darkText[1]};
 
     .profile-icons {
@@ -50,9 +46,8 @@ export const SidebarStyles = styled.div`
           display: flex;
           align-items: center;
           padding: 1rem 1.5rem;
-          gap: 1rem;
+          gap: 0.75rem;
           border-radius: 0.313rem;
-          transition: all 0.3s ease-in-out;
           text-decoration: none;
           color: ${({ theme }) => theme.colors.text[0]};
           text-transform: uppercase;
@@ -60,6 +55,7 @@ export const SidebarStyles = styled.div`
           &:hover{
             background: ${({ theme }) => theme.colors.inputBgColor[0]};
             color: ${({ theme }) => theme.colors.primary[0]};
+            transition: all 0.3s ease-in-out;
           }
         }
 
@@ -70,12 +66,4 @@ export const SidebarStyles = styled.div`
         }
       }
     }
-
-    &.ad-banner{
-        right: 0;
-        left: unset;
-        width: 15.875rem;
-        background: ${({ theme }) => theme.colors.darkText[1]};
-    }
-  }
 `;

@@ -1,25 +1,14 @@
-import {
-  TextInput,
-  Container,
-  Paper,
-  PasswordInput,
-  Stack,
-  Button,
-  Group,
-  Title,
-  Text,
-} from "@mantine/core";
-import { useDispatch, useSelector } from "react-redux";
+import { TextInput, Container, Paper, PasswordInput, Stack, Button, Group, Title, Text, } from "@mantine/core";
+import { useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../../utils/validationSchema";
 import FormField from "../../components/shared/FormField";
-import { notifications } from "@mantine/notifications";
-
-// import { loginUserAsync } from "../../stores/user/user.action"; // 👈 Your async thunk
-import { selectUserLoading } from "../../stores/user/user.selector";
-import { loginUserAsync } from "../../stores/user/user.action";
+import { notifications } from '@mantine/notifications';
+import useApi from "../../hooks/useApi";
+import { API_PATHS } from "../../services/endpoints";
+import { setAuth } from "../../stores/auth/authSlice";
 
 const defaultValues = {
   identifier: "",
@@ -42,51 +31,50 @@ const fields = [
 ];
 
 export default function Signin() {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const error = useSelector((state) => state.user?.error);
-  const loading = useSelector(selectUserLoading);
-  const { control, handleSubmit } = useForm({
-    defaultValues,
-    resolver: yupResolver(loginSchema),
-    mode: "onSubmit",
-  });
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { control, handleSubmit } = useForm({ defaultValues, resolver: yupResolver(loginSchema), mode: "onSubmit"});
+    const { post, loading, error } = useApi();
 
-  const handleLogin = async (data) => {
-    const result = await dispatch(loginUserAsync(data));
+    const handleLogin = async (formData) => {
+        try {
+            const { data } = await post(API_PATHS.AUTH.LOGIN, formData);
 
-    if (result?.success) {
-      const userType = result?.data?.userType?.toUpperCase();
+            dispatch(setAuth({ user: data.user, accessToken: data.accessToken, refreshToken: data.refreshToken }));
+            notifications.show({
+                title: 'Login Successful',
+                message: `Welcome back, ${data?.user?.username}!`,
+                color: 'green',
+                position: 'bottom-right',
+            })
 
-      notifications.show({
-        title: "Login Successful",
-        message: `Welcome back, ${result?.data?.username}!`,
-        color: "green",
-        position: "top-right",
-      });
+            const userType = data?.user?.userType?.toUpperCase();
 
-      if (userType === "BRAND") {
-        navigate("/brand/dashboard");
-      } else if (userType === "CREATOR") {
-        navigate("/creator/dashboard");
-      } else {
-        notifications.show({
-          title: "Login Error",
-          message: `Unknown user type. Contact support`,
-          color: "red",
-          position: "top-right",
-        });
-        navigate("/"); // or fallback
-      }
-    } else {
-      notifications.show({
-        title: "Login Error",
-        message: `${result?.error || "Login failed"}`,
-        color: "red",
-        position: "top-right",
-      });
-    }
-  };
+            if (userType === "BRAND") {
+                navigate("/brand/dashboard");
+            } else if (userType === "CREATOR") {
+                navigate("/creator/dashboard");
+            } else {
+                notifications.show({
+                    title: 'Login Error',
+                    message: `Unknown user type. Contact support`,
+                    color: 'red',
+                    position: 'bottom-right',
+                })
+                navigate("/"); // or fallback
+            }
+
+          } catch (err) {
+            console.error('Login failed', err);
+            notifications.show({
+                title: 'Login Error',
+                message: `Unknown user type. Contact support`,
+                color: 'red',
+                position: 'bottom-right',
+            })
+            navigate("/"); 
+          }
+    };
 
   return (
     <Container size="md">
