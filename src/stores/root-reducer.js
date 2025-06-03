@@ -1,8 +1,6 @@
 import { combineReducers } from "@reduxjs/toolkit";
-import { userReducer } from './user/user.reducer';
 import { persistReducer } from "redux-persist";
-import authReducer from './auth/authSlice';
-import { formReducer } from './slices'
+import { formReducer, authReducer, userReducer } from './slices'
 import { authPersistConfig, formPersistConfig, userPersistConfig } from "./persistConfigs";
 
 
