@@ -16,11 +16,12 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../../utils/validationSchema";
 import FormField from "../../components/shared/FormField";
-import { notifications } from "@mantine/notifications";
 import useApi from "../../hooks/useApi";
 import { API_PATHS } from "../../services/endpoints";
-import { setAuth } from "../../stores/auth/authSlice";
-import GoogleLoginBtn from "../../components/oAuth/GoogleLoginBtn";
+import { showNotification } from "../../utils/helpers";
+import { setUser } from "../../stores/slices/user";
+import { setAuth } from "../../stores/slices/auth";
+import GoogleLoginBtn from "./../../components/oAuth/GoogleLoginBtn";
 
 const defaultValues = {
   identifier: "",
@@ -55,44 +56,38 @@ export default function Signin() {
   const handleLogin = async (formData) => {
     try {
       const { data } = await post(API_PATHS.AUTH.LOGIN, formData);
-
       dispatch(
         setAuth({
-          user: data.user,
           accessToken: data.accessToken,
           refreshToken: data.refreshToken,
         })
       );
-      notifications.show({
-        title: "Login Successful",
-        message: `Welcome back, ${data?.user?.username}!`,
-        color: "green",
-        position: "bottom-right",
-      });
+      dispatch(setUser({ user: data.user }));
+      showNotification(
+        "Login Successful",
+        `Welcome back, ${data?.user?.username}!`
+      );
 
       const userType = data?.user?.userType?.toUpperCase();
 
-      if (userType === "BRAND") {
-        navigate("/brand/dashboard");
-      } else if (userType === "CREATOR") {
-        navigate("/creator/dashboard");
-      } else {
-        notifications.show({
-          title: "Login Error",
-          message: `Unknown user type. Contact support`,
-          color: "red",
-          position: "bottom-right",
-        });
-        navigate("/"); // or fallback
+      if (!userType) {
+        showNotification(
+          "Login Error",
+          `Unknown user type. Contact support`,
+          "red"
+        );
+        navigate("/");
+        return;
       }
+      if (userType === "BRAND") navigate("/brand/dashboard");
+
+      if (userType === "ADMIN") navigate("/admin/dashboard");
     } catch (err) {
-      console.error("Login failed", err);
-      notifications.show({
-        title: "Login Error",
-        message: `Unknown user type. Contact support`,
-        color: "red",
-        position: "bottom-right",
-      });
+      showNotification(
+        "Login Error",
+        `${err?.message || "Something went wrong"}`,
+        "red"
+      );
       navigate("/");
     }
   };

@@ -3,11 +3,11 @@ import { store } from "../../stores/store";
 import { USER_ACTION_TYPES } from "../../stores/user/user.types";
 
 export function getAccessToken() {
-  return store.getState().user.accessToken;
+  return store.getState().auth.accessToken;
 }
 
 export function getRefreshToken() {
-  return store.getState().user.refreshToken;
+  return store.getState().auth.refreshToken;
 }
 
 export function getAccessTokenExpiry() {
