@@ -23,7 +23,6 @@ function App() {
   }, [accessToken]);
 
   const isLoggedInUser = useSelector(isLoggedIn);
-console.log(isLoggedInUser);
 
   useEffect(() => {
     if (isLoggedInUser) {

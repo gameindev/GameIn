@@ -95,7 +95,7 @@ export default function StepOne({ onNext }) {
       />
 
       <Group mt="lg" position="center" style={{ justifyContent: "center" }}>
-        <Button onClick={handleNextStep}>Continue</Button>
+        <Button variant="primary" onClick={handleNextStep}>Continue</Button>
       </Group>
 
       <Text size="xs" align="center">

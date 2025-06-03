@@ -25,6 +25,7 @@
     "@mantine/nprogress": "^8.0.1",
     "@mantine/spotlight": "^8.0.1",
     "@mantine/tiptap": "^8.0.1",
+    "@react-oauth/google": "^0.12.2",
     "@reduxjs/toolkit": "^2.8.2",
     "@tiptap/extension-link": "^2.12.0",
     "@tiptap/pm": "^2.12.0",

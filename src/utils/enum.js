@@ -1,0 +1,6 @@
+export const USERTYPES = {
+  CREATOR: "CREATOR",
+  BRAND: "BRAND",
+  COMMUNITY: "COMMUNITY",
+  ADMIN: "ADMIN",
+};

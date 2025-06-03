@@ -9,25 +9,28 @@ import { Provider } from "react-redux";
 import { persistor, store } from "./stores/store.js";
 import { PersistGate } from "redux-persist/integration/react";
 import { Notifications } from "@mantine/notifications";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 createRoot(document.getElementById("root")).render(
-    <StrictMode>
-        <ColorSchemeScript />
-        <MantineProvider
-            theme={theme}
-            defaultColorScheme="auto"
-            withGlobalStyles
-            withNormalizeCSS
-        >
-            <Notifications />
-            <ThemeProvider theme={theme}>
-                <GlobalStyles />
-                <Provider store={store}>
-                    <PersistGate loading={null} persistor={persistor}>
-                        <App />
-                    </PersistGate>
-                </Provider>
-            </ThemeProvider>
-        </MantineProvider>
-    </StrictMode>
+  <StrictMode>
+    <ColorSchemeScript />
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_OAUTH_CLIENT_ID}>
+      <MantineProvider
+        theme={theme}
+        defaultColorScheme="auto"
+        withGlobalStyles
+        withNormalizeCSS
+      >
+        <Notifications />
+        <ThemeProvider theme={theme}>
+          <GlobalStyles />
+          <Provider store={store}>
+            <PersistGate loading={null} persistor={persistor}>
+              <App />
+            </PersistGate>
+          </Provider>
+        </ThemeProvider>
+      </MantineProvider>
+    </GoogleOAuthProvider>
+  </StrictMode>
 );
