@@ -7,6 +7,7 @@ export const API_PATHS = {
     REFRESH_TOKENS: "/auth/refresh-tokens",
   },
   USERS: {
+    CREATE: '/users',
     PROFILE: "/users/profile",
     UPDATE: id => `/users/${id}`,
     LIST: "/users",

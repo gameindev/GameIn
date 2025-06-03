@@ -2,19 +2,14 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { resetForm, saveStepData } from "../stores/form/formSlice";
-import { registerUserAsync } from './../stores/user/user.action';
-import { notifications } from "@mantine/notifications";
+import { resetForm, saveStepData } from "../stores/slices/form";
+import useApi from "./useApi";
+import { setUser } from "../stores/slices/user";
+import { showNotification } from "../utils/helpers";
+import { createUser } from "../services/users";
 
 
-export function useFormStep({
-    defaultValues,
-    schema,
-    onNext,
-    onPrev,
-    onSubmit,
-    isFinalStep = false,
-}) {
+export function useFormStep({ defaultValues, schema, onNext, onPrev, onSubmit, isFinalStep = false, }) {
     const dispatch = useDispatch();
     const formData = useSelector((state) => state.multiStepForm?.formData || {});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,6 +68,7 @@ export function useFormStep({
         onPrev?.();
     };
 
+    const { post } = useApi();
     // Handle form submission
     const handleSubmit = onSubmit
         ? formHandleSubmit(async (data) => {
@@ -89,26 +85,23 @@ export function useFormStep({
             };
 
             setIsSubmitting(true); // ✅ show loader
-            const result = await dispatch(registerUserAsync(completeFormData));
+            
+            // Refister user here
+            const { userData, error } = await createUser(completeFormData, post)
             setIsSubmitting(false); // ✅ hide loader
+            
+            if(error){
+                showNotification("Registration failed", error, "red")
+                return
+            }
 
-            if (result?.success) {
-                notifications.show({
-                    title: "Registration successful",
-                    color: "green",
-                    position: "top-right",
-                })
+            if (userData) {
+                showNotification("Registration successful", "Please verify your mail id")
                 localStorage.removeItem("persist:multiStepForm");
                 dispatch(resetForm());
+                dispatch(setUser(userData))
                 // ✅ Proceed to final step only on success
                 return onSubmit(completeFormData);
-            } else {
-                notifications.show({
-                    title: "Registration failed",
-                    message: result?.error,
-                    color: "red",
-                    position: "top-right",
-                })
             }
         })
         : formHandleSubmit(handleNextStep);

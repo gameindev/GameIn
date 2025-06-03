@@ -4,14 +4,14 @@ import router from "./routes";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { startTokenRefreshScheduler } from "./utils/api/startTokenRefreshScheduler";
-import { isLoggedIn } from "./stores/user/user.selector";
 import { getTokenExpiry } from "./utils/tokenManager";
+import { isLoggedIn } from "./stores/auth/authSelector";
 // import { useDispatch } from "react-redux";
 // import { useEffect } from "react";
 
 function App() {
   // const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  const accessToken = useSelector((state) => state.user.accessToken);
+  const accessToken = useSelector((state) => state.auth.accessToken);
 
   useEffect(() => {
     if (accessToken) {
