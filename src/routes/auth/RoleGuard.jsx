@@ -1,6 +1,7 @@
 // components/auth/RoleGuard.jsx
 import { Navigate, Outlet } from "react-router";
 import { useSelector } from "react-redux";
+import routePaths from "../endpoints";
 
 const RoleGuard = ({ allowedRoles }) => {
   const userType = useSelector((state) => state.user?.profile?.user?.userType);
@@ -9,7 +10,7 @@ const RoleGuard = ({ allowedRoles }) => {
   return allowedRoles.includes(userType) ? (
     <Outlet />
   ) : (
-    <Navigate to="/" replace />
+    <Navigate  to={routePaths.welcomePage} replace />
   );
 };
 

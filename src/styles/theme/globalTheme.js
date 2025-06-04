@@ -10,9 +10,9 @@ export const GlobalStyles = createGlobalStyle`
     :root{
         font-size: 0.833334vw;
 
-        @media(max-width: 1366px){
+        /* @media(max-width: 1366px){
             font-size: 0.9vw;
-        }
+        } */
     }    
 
     body{

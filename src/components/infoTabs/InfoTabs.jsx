@@ -1,15 +1,18 @@
 import { Tabs } from "@mantine/core";
 import { useNavigate, useLocation } from "react-router";
 import { Tabsection } from "./styles";
+import routePaths from "../../routes/endpoints";
+
+const { dashboard: { base, profile, sponsorships, offerings, stats, newsfeed, inbox} } = routePaths
 
 const tabs = [
-  { value: "dashboard", label: "DASHBOARD" },
-  { value: "profile", label: "PROFILE" },
-  { value: "sponsorships", label: "SPONSORSHIPS" },
-  { value: "offerings", label: "OFFERINGS" },
-  { value: "stats", label: "STATS" },
-  { value: "newsfeed", label: "NEWSFEED" },
-  { value: "inbox", label: "INBOX" },
+  { value: base, label: "DASHBOARD" },
+  { value: profile, label: "PROFILE" },
+  { value: sponsorships, label: "SPONSORSHIPS" },
+  { value: offerings, label: "OFFERINGS" },
+  { value: stats, label: "STATS" },
+  { value: newsfeed, label: "NEWSFEED" },
+  { value: inbox, label: "INBOX" },
 ];
 
 export default function InfoTabs() {
@@ -21,7 +24,7 @@ export default function InfoTabs() {
     <Tabsection>
       <Tabs
         value={currentPath}
-        onChange={(val) => navigate(`/brand/${val}`)}
+        onChange={(val) => navigate(val)}
         variant="none"
       >
         <Tabs.List>

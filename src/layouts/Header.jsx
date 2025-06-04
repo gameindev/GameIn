@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { persistor } from "../stores/store";
 import { isLoggedIn, currentUser } from "../stores/selectors";
 import { logoutUser } from "../stores/auth/authSlice";
+import routePaths from "../routes/endpoints";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ export default function Header() {
   const handleLogout = async () => {
     dispatch(logoutUser());
     await persistor.purge();
-    navigate("/");
+    navigate(routePaths.welcomePage);
   };
 
   return (
@@ -31,16 +32,16 @@ export default function Header() {
             <nav>
               <ul>
                 <li>
-                  <NavLink to="/">GameIn</NavLink>
+                  <NavLink to={routePaths.welcomePage}>GameIn</NavLink>
                 </li>
                 <li>
-                  <NavLink to="/">About</NavLink>
+                  <NavLink to={routePaths.welcomePage}>About</NavLink>
                 </li>
                 <li>
-                  <NavLink to="/">Info</NavLink>
+                  <NavLink to={routePaths.welcomePage}>Info</NavLink>
                 </li>
                 <li>
-                  <NavLink to="/">GuideLines</NavLink>
+                  <NavLink to={routePaths.welcomePage}>GuideLines</NavLink>
                 </li>
               </ul>
               <div className="access-btns">

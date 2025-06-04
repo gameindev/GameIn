@@ -5,6 +5,7 @@ export const API_PATHS = {
     SELECT_ROLE: "/api/users/assign-role",
     FORGOT_PASSWORD: "/auth/forgot-password",
     REFRESH_TOKENS: "/auth/refresh-tokens",
+    GOOGLE_OAUTH: 'auth/google-authentication',
   },
   USERS: {
     CREATE: '/users',

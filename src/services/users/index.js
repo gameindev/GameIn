@@ -1,5 +1,5 @@
-import { API_PATHS } from "./endpoints";
 import { formatDate } from "../../utils/helpers";
+import { API_PATHS } from "../endpoints";
 
 export const createUser = async (formData, post) => {
   const apiBody = {
