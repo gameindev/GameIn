@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import { notifications } from "@mantine/notifications";
-
+import { setUser } from "../../stores/slices/user";
 import { setAuth } from "../../stores/auth/authSlice";
 import CompleteProfile from "./CompleteProfile";
 
@@ -19,11 +19,10 @@ const GoogleLoginBtn = () => {
       BRAND: "/brand/dashboard",
       CREATOR: "/creator/dashboard",
     }[userType?.toUpperCase()];
-
     if (route) {
       navigate(route);
     } else {
-      navigate("/"); // fallback or show error
+      navigate("/");
     }
   };
 
@@ -46,11 +45,12 @@ const GoogleLoginBtn = () => {
 
       dispatch(
         setAuth({
-          user: data.user,
           accessToken: data.accessToken,
           refreshToken: data.refreshToken,
         })
       );
+      dispatch(setUser({ user: data.user }));
+      console.log(data.user);
 
       if (isProfileIncomplete) {
         setShowCompleteProfile(true);
@@ -76,10 +76,11 @@ const GoogleLoginBtn = () => {
     }
   };
 
-  const handleProfileCompleted = ({ user }) => {
-    dispatch(setAuth({ user, accessToken, refreshToken }));
+  const handleProfileCompleted = ({ profile }) => {
+    dispatch(setAuth({ accessToken, refreshToken }));
+    dispatch(setUser({ profile }));
     setShowCompleteProfile(false);
-    redirectToDashboard(user.userType);
+    redirectToDashboard(profile.userType);
   };
 
   return (
