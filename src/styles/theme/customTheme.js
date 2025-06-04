@@ -1,5 +1,6 @@
 import {
   createTheme,
+  Grid,
   InputWrapper,
   PasswordInput,
   virtualColor,
@@ -150,6 +151,21 @@ const fonts = {
   },
 };
 
+const gridStyles = {
+  styles: () => ({
+    root: {
+      width: "100%",
+    },
+    col: {
+      width: "25rem",
+      height: "25rem",
+      Box: {
+        height: "25rem",
+      },
+    },
+  }),
+};
+
 // Final Mantine theme object
 export const theme = createTheme({
   primaryColor: "primary",
@@ -186,12 +202,22 @@ export const theme = createTheme({
     default: "0.375rem",
   },
 
+  gap: {
+    xs: "0.5rem",
+    sm: "0.75rem",
+    md: "1.25rem",
+    lg: "1.5rem",
+    xl: "2rem",
+    default: "1rem",
+  },
+
   components: {
     Button: buttonStyles,
     Text: textStyles,
     Input: textInputStyles,
     InputWrapper: textLabelStyles,
     PasswordInput: PasswordInputStyles,
+    Grid: gridStyles,
   },
   other: {
     lightBg: "#f5f5f5",
