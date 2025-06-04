@@ -22,6 +22,7 @@ import { showNotification } from "../../utils/helpers";
 import { setUser } from "../../stores/slices/user";
 import { setAuth } from "../../stores/slices/auth";
 import GoogleLoginBtn from "./../../components/oAuth/GoogleLoginBtn";
+import routePaths from "../../routes/endpoints";
 
 const defaultValues = {
   identifier: "",
@@ -76,19 +77,19 @@ export default function Signin() {
           `Unknown user type. Contact support`,
           "red"
         );
-        navigate("/");
+        navigate(routePaths.welcomePage);
         return;
       }
-      if (userType === "BRAND") navigate("/brand/dashboard");
+      if (userType === "BRAND") navigate(routePaths.dashboard.base);
 
-      if (userType === "ADMIN") navigate("/admin/dashboard");
+      if (userType === "ADMIN") navigate(routePaths.dashboard.base);
     } catch (err) {
       showNotification(
         "Login Error",
         `${err?.message || "Something went wrong"}`,
         "red"
       );
-      navigate("/");
+      navigate(routePaths.welcomePage);
     }
   };
 

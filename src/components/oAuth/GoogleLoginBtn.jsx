@@ -6,6 +6,7 @@ import { notifications } from "@mantine/notifications";
 import { setUser } from "../../stores/slices/user";
 import { setAuth } from "../../stores/auth/authSlice";
 import CompleteProfile from "./CompleteProfile";
+import routePaths from "../../routes/endpoints";
 
 const GoogleLoginBtn = () => {
   const [showCompleteProfile, setShowCompleteProfile] = useState(false);
@@ -19,10 +20,11 @@ const GoogleLoginBtn = () => {
       BRAND: "/brand/dashboard",
       CREATOR: "/creator/dashboard",
     }[userType?.toUpperCase()];
+
     if (route) {
-      navigate(route);
+      navigate(routePaths.dashboard.base);
     } else {
-      navigate("/");
+      navigate(routePaths.welcomePage);
     }
   };
 
