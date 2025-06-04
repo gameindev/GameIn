@@ -2,11 +2,13 @@ import { GoogleLogin } from "@react-oauth/google";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { useState } from "react";
-import { notifications } from "@mantine/notifications";
 import { setUser } from "../../stores/slices/user";
 import { setAuth } from "../../stores/auth/authSlice";
 import CompleteProfile from "./CompleteProfile";
 import routePaths from "../../routes/endpoints";
+import { showNotification } from "../../utils/helpers";
+import useApi from "../../hooks/useApi";
+import { API_PATHS } from "../../services/endpoints";
 
 const GoogleLoginBtn = () => {
   const [showCompleteProfile, setShowCompleteProfile] = useState(false);
@@ -28,53 +30,27 @@ const GoogleLoginBtn = () => {
     }
   };
 
+  const { post } = useApi()
+
   const handleSuccess = async (response) => {
     try {
-      const res = await fetch(
-        "http://localhost:3000/api/auth/google-authentication",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token: response.credential }),
-        }
-      );
-
-      if (!res.ok) throw new Error("Google authentication failed");
-
-      const { data } = await res.json();
-
+      const data = await post(API_PATHS.AUTH.GOOGLE_OAUTH, { token: response.credential});
       const isProfileIncomplete = !data.user?.userType && !data.user?.password;
 
-      dispatch(
-        setAuth({
-          accessToken: data.accessToken,
-          refreshToken: data.refreshToken,
-        })
-      );
+      // Store authentication and user details in Redux
+      dispatch( setAuth({ accessToken: data.accessToken, refreshToken: data.refreshToken, }) );
       dispatch(setUser({ user: data.user }));
-      console.log(data.user);
 
+      showNotification( "Login Successful", `Welcome back, ${data.user.username}` );
+
+      // If the profile is incomplete, show the complete profile form
       if (isProfileIncomplete) {
         setShowCompleteProfile(true);
-        return;
+      } else {
+        redirectToDashboard(data.user.userType);
       }
-
-      notifications.show({
-        title: "Login Successful",
-        message: `Welcome back, ${data.user.username}`,
-        color: "green",
-        position: "bottom-right",
-      });
-
-      redirectToDashboard(data.user.userType);
-    } catch (error) {
-      console.error("Google login failed:", error);
-      notifications.show({
-        title: "Login Error",
-        message: "Something went wrong with Google login",
-        color: "red",
-        position: "bottom-right",
-      });
+    } catch (err) {
+      showNotification( "Login Error", `{${err?.message || 'Something went wrong with Google login'} }`, "red" );
     }
   };
 
@@ -89,14 +65,7 @@ const GoogleLoginBtn = () => {
     <>
       <GoogleLogin
         onSuccess={handleSuccess}
-        onError={() =>
-          notifications.show({
-            title: "Login Error",
-            message: "Google sign-in failed",
-            color: "red",
-            position: "bottom-right",
-          })
-        }
+        onError={() => showNotification("Login Error", "Google sign-in failed", "red")}
       />
       <CompleteProfile
         opened={showCompleteProfile}
