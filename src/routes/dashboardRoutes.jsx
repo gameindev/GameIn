@@ -1,33 +1,24 @@
-// brandRoutes.js
-import { Navigate } from "react-router";
 import { lazy } from "react";
 import routePaths from "./endpoints";
 
 // Lazy load brand-related components
-const PageLayout = lazy(() => import("../layouts/PageLayout"));
-const BrandDashboard = lazy(() => import("../pages/brand/Dashboard"));
-const Profile = lazy(() => import("../pages/brand/Profile"));
-const SponsorShips = lazy(() => import("../pages/brand/SponsorShips"));
-const Offerings = lazy(() => import("../pages/brand/Offerings"));
-const Stats = lazy(() => import("../pages/brand/Stats"));
-const NewsFeed = lazy(() => import("../pages/brand/NewsFeed"));
-const Inbox = lazy(() => import("../pages/brand/Inbox"));
+const Dashboard = lazy(() => import("../pages/accounts/Dashboard"));
+const Profile = lazy(() => import("../pages/accounts/Profile"));
+const SponsorShips = lazy(() => import("../pages/accounts/SponsorShips"));
+const Offerings = lazy(() => import("../pages/accounts/Offerings"));
+const Stats = lazy(() => import("../pages/accounts/Stats"));
+const NewsFeed = lazy(() => import("../pages/accounts/NewsFeed"));
+const Inbox = lazy(() => import("../pages/accounts/Inbox"));
 
-const { dashboard: {  profile, sponsorships, offerings, stats, newsfeed, inbox} } = routePaths
 
-const dashboardRoutes = [
-  {
-    element: <PageLayout />,
-    children: [
-      { index: true, element: <BrandDashboard /> },
-      { path: profile, element: <Profile /> },
-      { path: sponsorships, element: <SponsorShips /> },
-      { path: offerings, element: <Offerings /> },
-      { path: stats, element: <Stats /> },
-      { path: newsfeed, element: <NewsFeed /> },
-      { path: inbox, element: <Inbox /> },
-    ],
-  },
+const accountsdRoutes = [
+  { path: routePaths.dashboard, element: <Dashboard /> },
+  { path: routePaths.profile, element: <Profile /> },
+  { path: routePaths.sponsorships, element: <SponsorShips /> },
+  { path: routePaths.offerings, element: <Offerings /> },
+  { path: routePaths.stats, element: <Stats /> },
+  { path: routePaths.newsfeed, element: <NewsFeed /> },
+  { path: routePaths.inbox, element: <Inbox /> },
 ];
 
-export default dashboardRoutes;
+export default accountsdRoutes;

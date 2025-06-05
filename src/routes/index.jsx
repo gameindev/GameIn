@@ -1,10 +1,11 @@
 // router.jsx (or router.js)
-import { createBrowserRouter, Navigate } from "react-router";
+import { createBrowserRouter } from "react-router";
 import { lazy, Suspense } from "react";
-import dashboardRoutes from "./dashboardRoutes";
 import Preloader from "../components/shared/Preloader";
 import routePaths from "./endpoints";
 import { USERTYPES } from "../utils/enum";
+import GuestRoute from "./auth/GuestRoute";
+import accountsdRoutes from "./dashboardRoutes";
 
 // Lazy pages and auth-related components
 const Layout = lazy(() => import("../layouts/Layout"));
@@ -12,10 +13,10 @@ const WelcomePage = lazy(() => import("../pages/WelcomePage"));
 const Register = lazy(() => import("../pages/auth/Register"));
 const Signin = lazy(() => import("../pages/auth/Signin"));
 const ErrorPage = lazy(() => import("./ErrorPage"));
-const CreatorDashboard = lazy(() => import("../pages/creator/Dashboard"));
+
+const PageLayout = lazy(() => import("../layouts/PageLayout"));
 
 // Guards
-const RequiresAuth = lazy(() => import("./auth/RequiresAuth"));
 const RoleGuard = lazy(() => import("./auth/RoleGuard"));
 
 export const withSuspense = (element) => (
@@ -36,25 +37,22 @@ const router = createBrowserRouter([
       },
       {
         path: routePaths.login,
-        element: withSuspense(<Signin />),
+        element: withSuspense(<GuestRoute><Signin /></GuestRoute>),
       },
       {
         path: routePaths.register,
-        element: withSuspense(<Register />),
+        element: withSuspense(<GuestRoute><Register /></GuestRoute>),
       },
+
+      // Authenticated Account routes
       {
-        path: routePaths.dashboard.base,
-        element: withSuspense(<RequiresAuth />),
+        element: withSuspense(<RoleGuard allowedRoles={[USERTYPES.BRAND, USERTYPES.CREATOR]} />),
         children: [
           {
-            element: withSuspense(<RoleGuard allowedRoles={[USERTYPES.BRAND, USERTYPES.CREATOR]} />),
-            children: dashboardRoutes.map((route) => ({
-              ...route,
-              element: withSuspense(route.element),
-              children: route.children?.map((child) => ({
-                ...child,
-                element: withSuspense(child.element),
-              })),
+            element: withSuspense(<PageLayout />),
+            children: accountsdRoutes.map(({ path, element }) => ({
+              path,
+              element: withSuspense(element),
             })),
           },
         ],

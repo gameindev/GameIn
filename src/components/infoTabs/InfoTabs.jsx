@@ -3,16 +3,14 @@ import { useNavigate, useLocation } from "react-router";
 import { Tabsection } from "./styles";
 import routePaths from "../../routes/endpoints";
 
-const { dashboard: { base, profile, sponsorships, offerings, stats, newsfeed, inbox} } = routePaths
-
 const tabs = [
-  { value: base, label: "DASHBOARD" },
-  { value: profile, label: "PROFILE" },
-  { value: sponsorships, label: "SPONSORSHIPS" },
-  { value: offerings, label: "OFFERINGS" },
-  { value: stats, label: "STATS" },
-  { value: newsfeed, label: "NEWSFEED" },
-  { value: inbox, label: "INBOX" },
+  { value: routePaths.dashboard, label: "DASHBOARD" },
+  { value: routePaths.profile, label: "PROFILE" },
+  { value: routePaths.sponsorships, label: "SPONSORSHIPS" },
+  { value: routePaths.offerings, label: "OFFERINGS" },
+  { value: routePaths.stats, label: "STATS" },
+  { value: routePaths.newsfeed, label: "NEWSFEED" },
+  { value: routePaths.inbox, label: "INBOX" },
 ];
 
 export default function InfoTabs() {

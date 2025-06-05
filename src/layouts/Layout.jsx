@@ -17,7 +17,7 @@ const Layout = () => {
       <Header />
       <div className="wrapper">
         {showSidebar && <Sidebar />}
-        <main className={isLoggedInUser ? "logged-in" : ""}>
+        <main className={showSidebar ? "logged-in" : ""}>
           <Outlet />
         </main>
         {showSidebar && <aside className="ad-banner"></aside>}
