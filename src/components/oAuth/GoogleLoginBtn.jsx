@@ -24,7 +24,7 @@ const GoogleLoginBtn = () => {
     }[userType?.toUpperCase()];
 
     if (route) {
-      navigate(routePaths.dashboard.base);
+      navigate(routePaths.dashboard);
     } else {
       navigate(routePaths.welcomePage);
     }

@@ -80,9 +80,9 @@ export default function Signin() {
         navigate(routePaths.welcomePage);
         return;
       }
-      if (userType === "BRAND") navigate(routePaths.dashboard.base);
+      if (userType === "BRAND") navigate(routePaths.dashboard);
 
-      if (userType === "ADMIN") navigate(routePaths.dashboard.base);
+      if (userType === "ADMIN") navigate(routePaths.dashboard);
     } catch (err) {
       showNotification(
         "Login Error",

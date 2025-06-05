@@ -4,13 +4,13 @@ const routePaths = {
   register: "/register",
 
   // Dashboard related routes
-  dashboard: "dashboard",
-  profile: "profile",
-  sponsorships: "sponsorships",
-  offerings: "offerings",
-  stats: "stats",
-  newsfeed: "newsfeed",
-  inbox: "inbox",
+  dashboard: "/dashboard",
+  profile: "/profile",
+  sponsorships: "/sponsorships",
+  offerings: "/offerings",
+  stats: "/stats",
+  newsfeed: "/newsfeed",
+  inbox: "/inbox",
 };
 
 export default routePaths;
