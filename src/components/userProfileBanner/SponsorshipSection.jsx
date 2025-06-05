@@ -9,10 +9,10 @@ const SponsorshipSection = ({ sponsors }) => (
       size="sm"
       // color="dimmed"
     >
-      Sponsored by
+      {sponsors.userType === 'BRAND' ? 'Sponsoring': 'Sponsored by'}
     </Text>
     <div className="sponsorship_tracker">
-      {sponsors.map((sponsor, index) => (
+      {sponsors.sponsorship?.map((sponsor, index) => (
         <img
           key={index}
           className="sponsor_logo"

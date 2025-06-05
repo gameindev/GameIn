@@ -27,16 +27,16 @@ export default function Sidebar() {
               </Hexagon>
             </li>
             <li>
-                <AvatarSection className="avatar-icon" size="3em" avatar={coverImage} />
+                <AvatarSection className="avatar-icon-small" size="3em" avatar={coverImage} />
             </li>
             <li>
-                <AvatarSection className="avatar-icon" size="3em" avatar={coverImage} />
+                <AvatarSection className="avatar-icon-small" size="3em" avatar={coverImage} />
             </li>
             <li>
-                <AvatarSection className="avatar-icon" size="3em" avatar={coverImage} />
+                <AvatarSection className="avatar-icon-small" size="3em" avatar={coverImage} />
             </li>
             <li>
-                <AvatarSection className="avatar-icon" size="3em" avatar={coverImage} />
+                <AvatarSection className="avatar-icon-small" size="3em" avatar={coverImage} />
             </li>
           </ul>
         </div>

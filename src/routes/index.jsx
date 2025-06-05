@@ -7,23 +7,21 @@ import { USERTYPES } from "../utils/enum";
 import GuestRoute from "./auth/GuestRoute";
 import accountsdRoutes from "./dashboardRoutes";
 
-// Lazy pages and auth-related components
+// Lazy imports
 const Layout = lazy(() => import("../layouts/Layout"));
+const PageLayout = lazy(() => import("../layouts/PageLayout"));
 const WelcomePage = lazy(() => import("../pages/WelcomePage"));
 const Register = lazy(() => import("../pages/auth/Register"));
 const Signin = lazy(() => import("../pages/auth/Signin"));
 const ErrorPage = lazy(() => import("./ErrorPage"));
 
-const PageLayout = lazy(() => import("../layouts/PageLayout"));
 
 // Guards
 const RoleGuard = lazy(() => import("./auth/RoleGuard"));
 
 export const withSuspense = (element) => (
-  <Suspense fallback={<Preloader />}>
-    {element}
-  </Suspense>
-)
+  <Suspense fallback={<Preloader />}>{element}</Suspense>
+);
 
 const router = createBrowserRouter([
   {
@@ -31,6 +29,10 @@ const router = createBrowserRouter([
     element: withSuspense(<Layout />),
     errorElement: <ErrorPage />,
     children: [
+      { index: true, element: withSuspense(<WelcomePage />) },
+      { path: routePaths.login, element: withSuspense(<Signin />) },
+      { path: routePaths.register, element: withSuspense(<Register />) },
+
       {
         index: true,
         element: withSuspense(<WelcomePage />),

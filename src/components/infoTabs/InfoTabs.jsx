@@ -16,21 +16,25 @@ const tabs = [
 export default function InfoTabs() {
   const navigate = useNavigate();
   const location = useLocation();
-  const currentPath = location.pathname.split("/").pop();
+
+  const currentPath = location.pathname.split("/")[1];
 
   return (
     <Tabsection>
       <Tabs
         value={currentPath}
-        onChange={(val) => navigate(val)}
+        onChange={(val) => navigate(`/${val}`)}
         variant="none"
       >
         <Tabs.List>
-          {tabs.map((tab) => (
-            <Tabs.Tab key={tab.value} value={tab.value}>
-              {tab.label}
-            </Tabs.Tab>
-          ))}
+          {tabs.map((tab) => {
+            const tabValue = tab.value.replace("/", "");
+            return (
+              <Tabs.Tab key={tabValue} value={tabValue}>
+                {tab.label}
+              </Tabs.Tab>
+            );
+          })}
         </Tabs.List>
       </Tabs>
     </Tabsection>

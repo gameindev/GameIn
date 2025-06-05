@@ -1,12 +1,14 @@
-import { Link, useNavigate, NavLink } from "react-router";
+import { Link, useNavigate } from "react-router";
 import GameInLogo from "../assets/homepage/gamein-logo.svg";
-import { Button, Card, Text } from "@mantine/core";
+import { Button, Card, Text, Menu, UnstyledButton } from "@mantine/core";
 import { HeaderSection } from "../styles/layouts";
 import { useSelector, useDispatch } from "react-redux";
 import { persistor } from "../stores/store";
 import { isLoggedIn, currentUser } from "../stores/selectors";
 import { logoutUser } from "../stores/auth/authSlice";
 import routePaths from "../routes/endpoints";
+import AvatarSection from "../components/userProfileBanner/AvatarSection";
+import coverImage from "../assets/creators/creator_image.jpg";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -29,66 +31,72 @@ export default function Header() {
             <div className="logo">
               <img src={GameInLogo} alt="GameIn Logo" />
             </div>
+
             <nav>
-              <ul>
-                <li>
-                  <NavLink to={routePaths.welcomePage}>GameIn</NavLink>
-                </li>
-                <li>
-                  <NavLink to={routePaths.welcomePage}>About</NavLink>
-                </li>
-                <li>
-                  <NavLink to={routePaths.welcomePage}>Info</NavLink>
-                </li>
-                <li>
-                  <NavLink to={routePaths.welcomePage}>GuideLines</NavLink>
-                </li>
-              </ul>
-              <div className="access-btns">
-                {isLoggedInUser ? (
-                  <>
-                    <Text>
-                      <span>
-                        Hello,{" "}
-                        {user?.user?.username?.charAt(0).toUpperCase() +
-                          user?.user?.username?.slice(1).toLowerCase()}
-                      </span>
-                    </Text>
+              {!isLoggedInUser ? (
+                <ul>
+                  <li>
+                    <Link to={routePaths.welcomePage}>GameIn</Link>
+                  </li>
+                  <li>
+                    <Link to={routePaths.welcomePage}>About</Link>
+                  </li>
+                  <li>
+                    <Link to={routePaths.welcomePage}>Info</Link>
+                  </li>
+                  <li>
+                    <Link to={routePaths.welcomePage}>Guidelines</Link>
+                  </li>
+                </ul>
+              ) : (
+                <Menu shadow="md" width={180} position="bottom-end">
+                  <Menu.Target>
+                    <UnstyledButton>
+                      <AvatarSection
+                        className="avatar-icon-small"
+                        size="3.5rem"
+                        avatar={coverImage}
+                      />
+                    </UnstyledButton>
+                  </Menu.Target>
+                  <Menu.Dropdown>
+                    <Menu.Label style={{fontSize: "1rem"}}>
+                      Hello,{" "}
+                      {user?.user?.username?.charAt(0).toUpperCase() +
+                        user?.user?.username?.slice(1).toLowerCase()}
+                    </Menu.Label>
+                    <Menu.Item onClick={() => navigate("/profile")}>
+                      Profile
+                    </Menu.Item>
+                    <Menu.Item onClick={() => navigate("/dashboard")}>
+                      Dashboard
+                    </Menu.Item>
+                    <Menu.Divider />
+                    <Menu.Item color="red" onClick={handleLogout}>
+                      Logout
+                    </Menu.Item>
+                  </Menu.Dropdown>
+                </Menu>
+              )}
+
+              {!isLoggedInUser && (
+                <div className="access-btns">
+                  <Link to="/login">
                     <Button
                       variant="grey"
-                      padding="0.5rem"
                       size="sm"
-                      width="6.25rem"
-                      onClick={handleLogout}
+                      style={{ marginRight: "0.5rem" }}
                     >
-                      Logout
+                      Sign in
                     </Button>
-                  </>
-                ) : (
-                  <>
-                    <Link to="/login">
-                      <Button
-                        variant="grey"
-                        padding="0.5rem"
-                        size="sm"
-                        width="6.25rem"
-                      >
-                        Sign in
-                      </Button>
-                    </Link>
-                    <Link to="/register">
-                      <Button
-                        variant="secondary"
-                        padding="0.5rem"
-                        size="sm"
-                        width="6.25rem"
-                      >
-                        Register
-                      </Button>
-                    </Link>
-                  </>
-                )}
-              </div>
+                  </Link>
+                  <Link to="/register">
+                    <Button variant="secondary" size="sm">
+                      Register
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </nav>
           </div>
         </div>

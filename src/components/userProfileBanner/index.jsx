@@ -14,6 +14,9 @@ import LevelBadge from "./LevelBadge";
 import Nike from "../../assets/creators/sponsers.svg";
 import creator from "../../assets/creators/creator_image.jpg";
 import coverImage from "../../assets/creators/cover_image.jpg";
+import { UserAvatar } from "./styles";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from './../../stores/auth/authSelector';
 
 const UserProfileBanner = () => {
   const currentUser = {
@@ -37,7 +40,7 @@ const UserProfileBanner = () => {
       {
         name: "Nike",
         logo: Nike,
-        size: '7rem',
+        size: "7rem",
       },
       // {
       //   name: "Nike",
@@ -45,20 +48,24 @@ const UserProfileBanner = () => {
       // },
     ],
   };
+  const user = useSelector(selectCurrentUser);
+  
 
   return (
     <>
       <BannerWrapper>
         <CoverBanner coverImage={currentUser.coverImage} />
         <UserInformation>
-          <AvatarSection avatar={currentUser.avatar} size="15em" />
+          <UserAvatar>
+            <AvatarSection avatar={currentUser.avatar} size="15em" />
+          </UserAvatar>
           <ProfileWrapper>
             <div className="personal_info">
-              <UserInfo user={currentUser} />
+              <UserInfo user={user} />
               <StatsSection stats={currentUser.stats} />
             </div>
             <LevelBadge level={currentUser.level} />
-            <SponsorshipSection sponsors={currentUser.sponsors} />
+            <SponsorshipSection sponsors={user} />
             <ActionWrapper>
               <div className="actions">
                 <Button
