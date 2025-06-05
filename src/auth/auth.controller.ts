@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Inject, Post } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, HttpCode, HttpStatus, Inject, Post, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './providers/auth.service';
 import { SigninDto } from './dtos/signin.dto';
 import { ApiBody, ApiOperation, ApiProperty, ApiQuery, ApiResponse } from '@nestjs/swagger';
@@ -43,6 +43,7 @@ export class AuthController {
     @Post('sign-in')
     @HttpCode(HttpStatus.OK)
     @Auth(AuthType.None)
+    @UseInterceptors(ClassSerializerInterceptor)
     public async signIn(@Body() signInDto: SigninDto) {
         return this.authService.signIn(signInDto);
     }

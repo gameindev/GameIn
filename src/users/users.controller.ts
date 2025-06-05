@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, ClassSerializerInterceptor, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards, UseInterceptors } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { GetUsersParamDto } from "./dtos/get-user-param.dto";
 import { CreateUserDto } from "./dtos/post-create-user.dto";
@@ -80,6 +80,7 @@ Use '*' to load all supported relations.`,
         description: 'Users fetched successfully based on the query',
     })    
     @Auth(AuthType.None)
+    @UseInterceptors(ClassSerializerInterceptor)  
     getUsers(
         @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
         @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
@@ -111,6 +112,7 @@ Use '*' to load all supported relations.`,
     // @UseGuards(AccessTokenGuard)
     @Get('/by-email')
     @Auth(AuthType.None)
+    @UseInterceptors(ClassSerializerInterceptor)  
     getUserByEmail(
         @Query() email: string,
     ) {
@@ -183,7 +185,8 @@ Use '*' to load all supported relations.`,
         status: 201,
         description: 'User created successfully based on the query',
     })
-    @Auth(AuthType.None)    
+    @Auth(AuthType.None)  
+    @UseInterceptors(ClassSerializerInterceptor)    
     createUser(@Body() createUserDto: CreateUserDto) {
         return this.usersService.createUser(createUserDto);
     }
@@ -203,6 +206,7 @@ Use '*' to load all supported relations.`,
         status: 200,
         description: 'User updated successfully based on the query',
     })    
+    @UseInterceptors(ClassSerializerInterceptor)  
     updateUser(
         @Body() patchUserDto: PatchUserDto,
         @ActiveUser() user: ActiveUserData
@@ -228,6 +232,7 @@ Use '*' to load all supported relations.`,
         description: 'Role assigned successfully'
     })
     @Patch('/assign-role')
+    @UseInterceptors(ClassSerializerInterceptor)  
     assignUserTypeToOAuthUser(
         @Body() patchUserRoleDto: PathcUserRoleDto,
         @ActiveUser() userSub: ActiveUserData
@@ -250,6 +255,7 @@ Use '*' to load all supported relations.`,
         status: 200,
         description: 'User soft deleted successfully based on the query',
     })
+    @UseInterceptors(ClassSerializerInterceptor)  
     softDeleteUser(@Param() getUserParamDto: GetUsersParamDto) {
         return this.usersService.softDeleteUser(getUserParamDto.id);
     }
@@ -263,6 +269,7 @@ Use '*' to load all supported relations.`,
      * @returns Return a success message
      */
     @Delete("/:id")
+    @UseInterceptors(ClassSerializerInterceptor)  
     @ApiOperation({
         summary: 'Deletes a registered user on the application by ID.'
     })

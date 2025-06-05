@@ -47,7 +47,7 @@ export class UpdateUserProvider {
 
         try {
             const savedUser = await this.userRepository.save(updatedUser);
-            const { password, ...safeUser } = savedUser;
+            const { password, googleId, ...safeUser } = savedUser;
             return safeUser;
         } catch (error) {
             if (error.code === '23505') {

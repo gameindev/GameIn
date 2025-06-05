@@ -49,15 +49,7 @@ export class GenerateTokensProvider {
         ]);
 
         return {
-            user: {
-                id: user.id,
-                email: user.email,
-                username: user.username,
-                userType: user.userType,
-                isActive: user.isActive,
-                isVerified: user.isVerified,
-                dateOfBirth: user.dateOfBirth,
-            },
+            user: user,
             accessToken,
             refreshToken
         }

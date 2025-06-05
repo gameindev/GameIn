@@ -4,6 +4,7 @@ import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToOne, PrimaryGe
 import { UserType } from "./enums/user-type.enums";
 import { CreatorProfile } from "src/creator-profiles/creator-profile.entity";
 import { BrandProfile } from "src/brand-profiles/brand-profile.entity";
+import { Exclude } from "class-transformer";
 
 /**
  * User entity.
@@ -34,12 +35,14 @@ export class User {
         length: 96,
         nullable: true,
     })
+    @Exclude()
     password?: string;
 
     @Column({
         type: 'text',
         nullable: true,
     })
+    @Exclude()
     googleId?: string;
 
     @Column({

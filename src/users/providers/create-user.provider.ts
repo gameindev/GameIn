@@ -61,16 +61,7 @@ export class CreateUserProvider {
                 await this.brandProfileService.createProfileForUser(savedUser);
             }
 
-            return {
-                id: savedUser.id,
-                username: savedUser.username,
-                email: savedUser.email,
-                userType: savedUser.userType,
-                isActive: savedUser.isActive,
-                isVerified: savedUser.isVerified,
-                creatorProfile: savedUser.creatorProfile,
-                createdAt: savedUser.createdAt,
-            };
+            return savedUser
         } catch (error) {
             // PostgreSQL unique constraint violation code
             if (error.code === '23505') {
