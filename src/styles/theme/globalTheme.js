@@ -88,11 +88,17 @@ export const GlobalStyles = createGlobalStyle`
     } */
 
      .mantine-RadioCard-card[data-checked] {
-        border: 0.125rem solid ${({ theme }) => theme.colors.primary[0]} !important;
+        border: 0.125rem solid ${({ theme }) =>
+          theme.colors.primary[0]} !important;
      }
 
      svg.lucide[width="24"] {
         width: 1.5rem;
         height: 1.5rem;
     }
+
+    .avatar-icon-small{
+    transform: scale(1.3);
+  }
+
 `;

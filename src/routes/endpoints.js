@@ -2,16 +2,15 @@ const routePaths = {
   welcomePage: "/",
   login: "/login",
   register: "/register",
+
   // Dashboard related routes
-  dashboard: {
-    base: "/dashboard",
-    profile: "/dashboard/profile",
-    sponsorships: "/dashboard/sponsorships",
-    offerings: "/dashboard/offerings",
-    stats: "/dashboard/stats",
-    newsfeed: "/dashboard/newsfeed",
-    inbox: "/dashboard/inbox",
-  },
+  dashboard: "dashboard",
+  profile: "profile",
+  sponsorships: "sponsorships",
+  offerings: "offerings",
+  stats: "stats",
+  newsfeed: "newsfeed",
+  inbox: "inbox",
 };
 
 export default routePaths;

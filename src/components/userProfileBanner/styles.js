@@ -37,7 +37,7 @@ export const UserInformation = styled.div`
 
 export const UserAvatar = styled.div`
   position: absolute;
-  top: -7.5rem;
+  top: -8rem;
   left: 0rem;
   /* width: 10.625rem;
   height: 11.875rem; */
@@ -91,6 +91,9 @@ export const UserSection = styled.div`
   .profile_info {
     font-size: 0.875rem;
     color: #a0aec0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
   }
 `;
 
@@ -153,6 +156,7 @@ export const SponsorShip = styled.div`
   .sponsorship_text {
     font-size: 0.625rem;
     font-weight: 400;
+    text-transform: uppercase;
   }
 
   .sponsorship_badge {

@@ -1,9 +1,8 @@
-import { UserAvatar } from "./styles";
 import { Hexagon } from "../shared/HexagonDemo";
 import { theme } from "../../styles/theme/customTheme";
 
-const AvatarSection = ({ avatar, size, className='' }) => (
-  <UserAvatar className={className}>
+const AvatarSection = ({ avatar, size, className = "" }) => (
+  <div className={className}>
     <Hexagon
       $mainRadius={10}
       $roundingRadius={15}
@@ -13,7 +12,7 @@ const AvatarSection = ({ avatar, size, className='' }) => (
     >
       <img src={avatar} alt="Avatar" />
     </Hexagon>
-  </UserAvatar>
+  </div>
 );
 
 export default AvatarSection;
