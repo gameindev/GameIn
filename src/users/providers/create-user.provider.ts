@@ -8,6 +8,7 @@ import { CreatorProfilesService } from 'src/creator-profiles/providers/creator-p
 import { BrandProfilesService } from 'src/brand-profiles/providers/brand-profiles.service';
 import { UserType } from '../enums/user-type.enums';
 import { HashingProvider } from 'src/auth/providers/hashing.provider';
+import { UsersBioService } from 'src/users-bio/providers/users-bio.service';
 
 @Injectable()
 export class CreateUserProvider {
@@ -36,6 +37,11 @@ export class CreateUserProvider {
          */
         @Inject(forwardRef(() => HashingProvider))
         private readonly hashingProvider: HashingProvider,
+
+        /**
+         * Injecting UserBioService.
+         */
+        private readonly userBioService: UsersBioService, // Injecting UserBioService
     ){}
 
     /**
@@ -55,6 +61,9 @@ export class CreateUserProvider {
 
         try {
             const savedUser = await this.userRepository.save(newUser);
+            
+            await this.userBioService.createUserBio(savedUser);
+
             if (savedUser.userType === UserType.CREATOR) {
                 await this.creatorProfileService.createProfileForUser(savedUser);
             } else if (savedUser.userType === UserType.BRAND) {

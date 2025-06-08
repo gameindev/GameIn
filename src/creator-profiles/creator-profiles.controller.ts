@@ -1,7 +1,10 @@
-import { Body, Controller, Patch } from '@nestjs/common';
+import { Body, Controller, Patch, UseGuards } from '@nestjs/common';
 import { CreatorProfilesService } from './providers/creator-profiles.service';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { PatchCreatorProfileDto } from './dtos/patch-creatorProfile.dto';
+import { UserTypeGuard } from 'src/auth/guards/user-type.guard';
+import { UserType } from 'src/users/enums/user-type.enums';
+import { UserTypes } from 'src/auth/decorators/user-types.decorator';
 
 
 /**
@@ -17,6 +20,12 @@ export class CreatorProfilesController {
         private readonly creatorProfilesService: CreatorProfilesService,
     ) { }
 
+
+     /**
+     * Updates a creator profile data on the application by User ID.
+     * @param patchCreatorProfileDto
+     * @returns
+     */
     @Patch()
     @ApiOperation({
         summary: 'Updates a creator profile data on the application by User ID.'
@@ -25,11 +34,9 @@ export class CreatorProfilesController {
         status: 200,
         description: 'User profile updated successfully based on the query',
     })
-    /**
-     * Updates a creator profile data on the application by User ID.
-     * @param patchCreatorProfileDto
-     * @returns
-     */
+    @ApiBearerAuth()
+    @UseGuards(UserTypeGuard)
+    @UserTypes(UserType.ADMIN, UserType.CREATOR, UserType.BRAND, UserType.COMMUNITY)
     updateCreatorProfile(
         @Body() patchCreatorProfileDto: PatchCreatorProfileDto
     ) {

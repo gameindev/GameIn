@@ -41,7 +41,8 @@ export class GenerateTokensProvider {
         const [accessToken, refreshToken] = await Promise.all([
             // Generate Access Token
             this.signToken<Partial<ActiveUserData>>(user.id, this.jwtConfiguration.accessTokenTTl, {
-                email: user.email
+                email: user.email,
+                userType: user.userType,
             }),
 
             // Gererate Refresh Token

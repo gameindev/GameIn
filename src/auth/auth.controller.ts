@@ -1,10 +1,13 @@
-import { Body, ClassSerializerInterceptor, Controller, HttpCode, HttpStatus, Inject, Post, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, HttpCode, HttpStatus, Inject, Post, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './providers/auth.service';
 import { SigninDto } from './dtos/signin.dto';
-import { ApiBody, ApiOperation, ApiProperty, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiProperty, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { Auth } from './decorators/auth.decorator';
 import { AuthType } from './enums/auth-type.enum';
 import { RefreshTokenDto } from './dtos/refresh-token.dto';
+import { UserTypeGuard } from './guards/user-type.guard';
+import { UserTypes } from './decorators/user-types.decorator';
+import { UserType } from 'src/users/enums/user-type.enums';
 
 @Controller('auth')
 export class AuthController {
@@ -73,9 +76,11 @@ export class AuthController {
             }
         }
     })
+    @ApiBearerAuth()
     @Post('refresh-tokens')
     @HttpCode(HttpStatus.OK)
-    @Auth(AuthType.None)
+    @UseGuards(UserTypeGuard)
+    @UserTypes(UserType.ADMIN, UserType.CREATOR, UserType.BRAND, UserType.COMMUNITY)
     public async refreshTokens(@Body() refreshTokenDto: RefreshTokenDto) {
         return this.authService.refreshTokens(refreshTokenDto);
     }

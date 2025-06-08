@@ -1,3 +1,5 @@
+import { UploadEntity } from "src/uploads/upload.entity";
+import { UserBio } from "src/users-bio/user-bio.entity";
 import { User } from "src/users/user.entity";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, Index, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
@@ -37,17 +39,15 @@ export class CreatorProfile {
     })
     gender: string;
 
-    @Column({
-        type: 'text',
-        nullable: true,
-    })
-    profileImage: string;
 
-    @Column({
-        type: 'text',
-        nullable: true,
-    })
-    coverImage: string;
+    @OneToOne(() => UploadEntity, { nullable: true, eager: true, cascade: true })
+    @JoinColumn()
+    profileImage: UploadEntity;
+
+
+    @OneToOne(() => UploadEntity, { nullable: true, eager: true, cascade: true })
+    @JoinColumn()
+    coverImage: UploadEntity;
 
     @Column({
         type: 'varchar',
@@ -90,8 +90,6 @@ export class CreatorProfile {
     })
     rank: number;
 
-    // bio: UserBio
-    // socialStats: UserSocialStats
 
     @CreateDateColumn()
     createdAt: Date;

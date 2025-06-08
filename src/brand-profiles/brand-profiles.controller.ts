@@ -1,7 +1,10 @@
-import { Body, Controller, Patch } from '@nestjs/common';
+import { Body, Controller, Patch, UseGuards } from '@nestjs/common';
 import { BrandProfilesService } from './providers/brand-profiles.service';
 import { PatchBrandProfileDto } from './dtos/patch-brandProfile.dto';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { UserTypeGuard } from 'src/auth/guards/user-type.guard';
+import { UserTypes } from 'src/auth/decorators/user-types.decorator';
+import { UserType } from 'src/users/enums/user-type.enums';
 
 /**
  * Controller for Brand Profiles.
@@ -16,7 +19,11 @@ export class BrandProfilesController {
         private readonly brandProfilesService: BrandProfilesService,
     ) { }
     
-
+    /**
+     * Updates a creator profile data on the application by User ID.
+     * @param patchBrandProfileDto
+     * @returns
+     */
     @Patch()
     @ApiOperation({
         summary: 'Updates a brand profile data on the application by User ID.'
@@ -25,11 +32,9 @@ export class BrandProfilesController {
         status: 200,
         description: 'User profile updated successfully based on the query',
     })
-    /**
-     * Updates a creator profile data on the application by User ID.
-     * @param patchBrandProfileDto
-     * @returns
-     */
+    @ApiBearerAuth()
+    @UseGuards(UserTypeGuard)
+    @UserTypes(UserType.ADMIN, UserType.CREATOR, UserType.BRAND, UserType.COMMUNITY)
     updateBrandProfile(@Body() patchBrandProfileDto: PatchBrandProfileDto) 
     {
         return this.brandProfilesService.updateBrandProfile(patchBrandProfileDto); // return the updated brand profil

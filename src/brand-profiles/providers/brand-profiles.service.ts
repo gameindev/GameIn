@@ -4,6 +4,7 @@ import { BrandProfile } from '../brand-profile.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/users/user.entity';
 import { PatchBrandProfileDto } from '../dtos/patch-brandProfile.dto';
+import { UpdateBrandProfileProvider } from './update-brand-profile.provider';
 
 @Injectable()
 export class BrandProfilesService {
@@ -14,6 +15,11 @@ export class BrandProfilesService {
          */
         @InjectRepository(BrandProfile)
         private brandProfileRepository: Repository<BrandProfile>,
+
+        /**
+         * Injecting Update Brand Profile Provider.
+         */
+        private readonly updateBrandProfileProvider: UpdateBrandProfileProvider,
     ) { }
 
     /**
@@ -34,6 +40,6 @@ export class BrandProfilesService {
      * @param patchBrandProfileDto 
      */
     public async updateBrandProfile(patchBrandProfileDto: PatchBrandProfileDto) {
-
+        return await this.updateBrandProfileProvider.updateBrandProfile(patchBrandProfileDto);
     }
 }

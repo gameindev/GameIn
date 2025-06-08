@@ -10,21 +10,15 @@ export class CreateBrandProfileDto {
     @MaxLength(30)
     brandName?: string;
 
-    @ApiPropertyOptional({
-        example: 'https://example.com/profile.jpg',
-        description: 'Text or URL for profile image',
-    })
+    @ApiPropertyOptional({ example: 1, description: 'ID of uploaded profile image' })
     @IsOptional()
-    @IsString()
-    profileImage?: string;
+    @IsInt()
+    profileImageId?: number;
 
-    @ApiPropertyOptional({
-        example: 'https://example.com/cover.jpg',
-        description: 'Text or URL for cover image',
-    })
+    @ApiPropertyOptional({ example: 2, description: 'ID of uploaded cover image' })
     @IsOptional()
-    @IsString()
-    coverImage?: string;
+    @IsInt()
+    coverImageId?: number;
 
     @ApiPropertyOptional({ example: 'New York', maxLength: 30 })
     @IsOptional()

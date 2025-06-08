@@ -3,9 +3,9 @@ POST http://localhost:3000/api/users
 Content-Type: application/json
 
 {
-    "username": "Navin",
-    "email": "Navin@email.com",
+    "username": "Ron Wisley",
+    "email": "ron@email.com",
     "password": "Kj#9mP$2nL",
     "userType": "CREATOR",
     "dateOfBirth": "01-01-1990"
-}
+} 

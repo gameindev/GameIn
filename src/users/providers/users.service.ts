@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { BadRequestException, ConflictException, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { User } from '../user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,7 +14,7 @@ import { FindOneUserByEmailProvider } from './find-one-user-by-email.provider';
 import { UpdateUserProvider } from './update-user.provider';
 import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
 import { FindOneByIdentifierProvider } from './find-one-by-identifier.provider';
-import { FindOneByGoogleIdProvider } from '../provider/find-one-by-google-id.provider';
+import { FindOneByGoogleIdProvider } from './find-one-by-google-id.provider';
 import { CreateGoogleUserProvider } from './create-google-user.provider';
 import { GoogleUser } from '../interfaces/google-user.intefrace';
 import { PathcUserRoleDto } from '../dtos/patch-user-role.dto';
@@ -201,6 +201,7 @@ export class UsersService {
             }
         }
 
+
         try {
             const user = await this.userRepository.findOne({
                 where: { id },
@@ -302,9 +303,8 @@ export class UsersService {
     public async createGoogleUser(googleUser: GoogleUser) {
         return await this.createGoogleUserProvider.createGoogleUser(googleUser);
     }
-    
-    public async updateOAuthUserRole(patchUserRoleDto: PathcUserRoleDto, userSub: ActiveUserData ) {
-       return await this.updateUserRoleProvider.updateOAuthUserRole(patchUserRoleDto, userSub);
+
+    public async updateOAuthUserRole(patchUserRoleDto: PathcUserRoleDto, userSub: ActiveUserData) {
+        return await this.updateUserRoleProvider.updateOAuthUserRole(patchUserRoleDto, userSub);
     }
 }
- 

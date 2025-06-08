@@ -5,6 +5,7 @@ import { UserType } from "./enums/user-type.enums";
 import { CreatorProfile } from "src/creator-profiles/creator-profile.entity";
 import { BrandProfile } from "src/brand-profiles/brand-profile.entity";
 import { Exclude } from "class-transformer";
+import { UserBio } from "src/users-bio/user-bio.entity";
 
 /**
  * User entity.
@@ -90,6 +91,13 @@ export class User {
         nullable: true,
     })
     isFirst?: boolean;
+
+    @OneToOne(() => UserBio, userBio => userBio.user, {
+        cascade: true,
+        eager: true,
+        nullable: true,
+    })
+    userBio: UserBio;
     
     // ratingReceived: UserRating[];
     // ratingGiven: UserRating[];

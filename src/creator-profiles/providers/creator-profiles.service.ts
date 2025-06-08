@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { User } from 'src/users/user.entity';
 import { CreateCreatorProfileDto } from '../dtos/create-creatorProfile.dto';
 import { PatchCreatorProfileDto } from '../dtos/patch-creatorProfile.dto';
+import { UpdateCreatorProfileProvider } from './update-creator-profile.provider';
 
 /**
  * Creator Profiles service.
@@ -14,10 +15,14 @@ export class CreatorProfilesService {
 
     constructor(
         /**
-         * Injecting Creator Profile Repository.
+         * Injecting CreatorProfileRepository.
          */
         @InjectRepository(CreatorProfile)
-        private creatorProfileRepository: Repository<CreatorProfile>,
+        private readonly creatorProfileRepository: Repository<CreatorProfile>, 
+        /**
+         * Injecting Update Creator Profile Provider.
+         */
+        private readonly updateCreatorProfileProvider: UpdateCreatorProfileProvider,
     ) {
 
     }
@@ -40,7 +45,7 @@ export class CreatorProfilesService {
      * @param patchCreatorProfileDto 
      */
     public async updateCreatorProfile(patchCreatorProfileDto: PatchCreatorProfileDto) {
-
+        return await this.updateCreatorProfileProvider.updateCreatorProfile(patchCreatorProfileDto);
     }
 
 }

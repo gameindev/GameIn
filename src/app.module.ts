@@ -19,13 +19,15 @@ import { APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
 import { AccessTokenGuard } from "./auth/guards/access-token/access-token.guard";
 import { AuthenticationGuard } from "./auth/guards/authentication/authentication.guard";
 import { DataResponseInterceptor } from "./common/interceptors/data-response/data-response.interceptor";
+import { UsersBioModule } from './users-bio/users-bio.module';
+import { UploadsModule } from './uploads/uploads.module';
 dotenvFlow.config();
 
 const ENV = process.env.NODE_ENV;
 
 @Module({
     imports: [
-        AuthModule,        
+        AuthModule,
         UsersModule,
         CreatorProfilesModule,
         BrandProfilesModule,
@@ -47,12 +49,14 @@ const ENV = process.env.NODE_ENV;
                     password: configService.get('database.password'),
                     database: configService.get('database.name'),
                     autoLoadEntities: configService.get('database.autoLoadEntities'),
-                    synchronize: configService.get('database.synchronize') 
+                    synchronize: configService.get('database.synchronize')
                 }
             }
         }),
         ConfigModule.forFeature(jwtConfig),
-        JwtModule.registerAsync(jwtConfig.asProvider())
+        JwtModule.registerAsync(jwtConfig.asProvider()),
+        UsersBioModule,
+        UploadsModule
     ],
     controllers: [AppController],
     providers: [

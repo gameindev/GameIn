@@ -7,15 +7,26 @@ import { IsInt, IsNotEmpty } from "class-validator";
  */
 export class PatchCreatorProfileDto extends PartialType(CreateCreatorProfileDto) {
 
-    /**
-     * The id of the creator profile.
-     */
+    // /**
+    //  * The id of the creator profile.
+    //  */
+    // @ApiProperty({
+    //     description: 'The id of the creator profile',
+    //     type: Number,
+    //     example: 1,
+    // })
+    // @IsInt()
+    // @IsNotEmpty()
+    // id: number;
+
+
     @ApiProperty({
-        description: 'The id of the creator profile',
+        description: 'The id of the user that owns this creator profile',
         type: Number,
         example: 1,
+        required: true,
     })
     @IsInt()
     @IsNotEmpty()
-    id: number;
+    userId: number;
 }
