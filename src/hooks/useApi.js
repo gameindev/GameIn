@@ -7,8 +7,7 @@ const useApi = ({ url = null, method = "GET", payload = null, headers = {}, auto
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const callApi = useCallback(
-    async ({ url, method = "GET", payload = null, headers = {} }) => {
+  const callApi = useCallback( async ({ url, method = "GET", payload = null, headers = {} }) => {
       if (!url) return;
       setLoading(true);
       setError(null);

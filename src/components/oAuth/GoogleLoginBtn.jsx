@@ -17,55 +17,24 @@ const GoogleLoginBtn = () => {
 
   const { accessToken, refreshToken } = useSelector((state) => state.auth);
 
-  const redirectToDashboard = (userType) => {
-    const route = {
-      BRAND: "/brand/dashboard",
-      CREATOR: "/creator/dashboard",
-    }[userType?.toUpperCase()];
-
-    if (route) {
-      navigate(routePaths.dashboard);
-    } else {
-      navigate(routePaths.welcomePage);
-    }
-  };
-
   const { post } = useApi();
 
   const handleSuccess = async (response) => {
     try {
-      const { data } = await post(API_PATHS.AUTH.GOOGLE_OAUTH, {
-        token: response.credential,
-      });
+      const { data } = await post(API_PATHS.AUTH.GOOGLE_OAUTH, { token: response.credential});
+
       const isProfileIncomplete = !data.user?.userType && !data.user?.password;
-      console.log(data);
 
       // Store authentication and user details in Redux
-      dispatch(
-        setAuth({
-          accessToken: data.accessToken,
-          refreshToken: data.refreshToken,
-        })
-      );
-      dispatch(setUser({ user: data.user }));
+      dispatch( setAuth({ accessToken: data.accessToken, refreshToken: data.refreshToken, }) );
+      dispatch( setUser({ user: data.user }) );
 
-      showNotification(
-        "Login Successful",
-        `Welcome back, ${data.user.username}`
-      );
+      showNotification( "Login Successful", `Welcome back, ${data.user.username}` );
 
       // If the profile is incomplete, show the complete profile form
-      if (isProfileIncomplete) {
-        setShowCompleteProfile(true);
-      } else {
-        redirectToDashboard(data.user.userType);
-      }
+      isProfileIncomplete ? setShowCompleteProfile(true) : navigate(routePaths.dashboard);
     } catch (err) {
-      showNotification(
-        "Login Error",
-        `{${err?.message || "Something went wrong with Google login"} }`,
-        "red"
-      );
+      showNotification( "Login Error", `{${err?.message || "Something went wrong with Google login"} }`, "red" );
     }
   };
 
@@ -73,7 +42,7 @@ const GoogleLoginBtn = () => {
     dispatch(setAuth({ accessToken, refreshToken }));
     dispatch(setUser({ profile }));
     setShowCompleteProfile(false);
-    redirectToDashboard(profile.userType);
+    navigate(routePaths.dashboard);
   };
 
   return (

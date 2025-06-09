@@ -6,6 +6,7 @@ export const API_PATHS = {
     FORGOT_PASSWORD: "/auth/forgot-password",
     REFRESH_TOKENS: "/auth/refresh-tokens",
     GOOGLE_OAUTH: 'auth/google-authentication',
+    COMPLETE_PROFILE: '/users/complete-profile',
   },
   USERS: {
     CREATE: '/users',
