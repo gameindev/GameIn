@@ -61,8 +61,6 @@ const router = createHashRouter([
       },
     ],
   },
-],{
-  basename: '/GameIn', // ✅ Set basename here
-});
+]);
 
 export default router;
