@@ -4,7 +4,7 @@ import routePaths from "./endpoints";
 // Lazy load brand-related components
 const Dashboard = lazy(() => import("../pages/accounts/Dashboard"));
 const Profile = lazy(() => import("../pages/accounts/Profile"));
-const SponsorShips = lazy(() => import("../pages/accounts/SponsorShips"));
+const SponsorShips = lazy(() => import("../pages/accounts/Sponsorships"));
 const Offerings = lazy(() => import("../pages/accounts/Offerings"));
 const Stats = lazy(() => import("../pages/accounts/Stats"));
 const NewsFeed = lazy(() => import("../pages/accounts/NewsFeed"));
