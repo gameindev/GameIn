@@ -1,4 +1,4 @@
-import{c}from"./createLucideIcon-BScbCUno.js";function n(o,e){return typeof o=="boolean"?o:e.autoContrast}/**
+import{c}from"./createLucideIcon-BqMR5g3r.js";function n(o,e){return typeof o=="boolean"?o:e.autoContrast}/**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.

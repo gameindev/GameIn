@@ -1,1 +1,0 @@
-import{j as o}from"./index-CpVEQC_4.js";function n(){return o.jsxs("div",{style:{padding:20},children:[o.jsx("h1",{children:"🚫 Something went wrong"}),o.jsx("p",{children:"Please try again or go back home."}),o.jsx("button",{onClick:()=>window.location.href="/",children:"Go Home"})]})}export{n as default};
