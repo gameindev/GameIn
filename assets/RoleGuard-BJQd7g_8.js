@@ -1,1 +1,0 @@
-import{n as l,j as t,O as c,ac as p,s as n}from"./index-CkKlCP49.js";const x=({allowedRoles:a})=>{const u=l(o=>{var e,s,r;return(r=(s=(e=o.user)==null?void 0:e.profile)==null?void 0:s.user)==null?void 0:r.userType});return a.includes(u)?t.jsx(c,{}):t.jsx(p,{to:n.welcomePage,replace:!0})};export{x as default};
