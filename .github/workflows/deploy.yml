@@ -1,4 +1,4 @@
-name: Deploy to VPS
+name: 🚀 Deploy NestJS to VPS
 
 on:
   push:
@@ -10,18 +10,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: 🔐 Setup SSH key
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
 
-      - name: Execute SSH to Deploy
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          script: |
-            cd /var/www/GameIn
-            git pull origin backend
-            npm install
-            npm run build
-            pm2 restart gamein-backend
+    - name: 🚀 SSH into VPS and Run Deploy Script
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} '
+          bash /root/deploy_nest.sh
+        '
