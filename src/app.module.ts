@@ -53,7 +53,7 @@ const ENV = process.env.NODE_ENV;
                 }
             }
         }),
-        ConfigModule.forFeature(jwtConfig),
+        ConfigModule.forFeature(jwtConfig), 
         JwtModule.registerAsync(jwtConfig.asProvider()),
         UsersBioModule,
         UploadsModule
