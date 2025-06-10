@@ -61,6 +61,8 @@ const router = createBrowserRouter([
       },
     ],
   },
-]);
+],{
+  basename: '/GameIn', // ✅ Set basename here
+});
 
 export default router;
