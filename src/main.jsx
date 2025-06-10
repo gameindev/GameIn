@@ -13,11 +13,11 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <ColorSchemeScript />
+    <ColorSchemeScript  />
     <GoogleOAuthProvider clientId={import.meta.env.VITE_OAUTH_CLIENT_ID}>
       <MantineProvider
         theme={theme}
-        defaultColorScheme="auto"
+        defaultColorScheme="dark"
         withGlobalStyles
         withNormalizeCSS
       >
