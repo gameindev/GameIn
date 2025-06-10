@@ -5,3 +5,14 @@ Content-Type: application/json
     "identifier": "johndoe",
     "password": "All2On3#"
 }
+
+
+
+POST https://grvroy.com/nest/api/auth/sign-in
+Content-Type: application/json
+
+
+{
+    "identifier": "johndoe",
+    "password": "Kj#9mP$2nL"
+}
