@@ -18,5 +18,5 @@ jobs:
     - name: 🚀 SSH into VPS and Run Deploy Script
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} '
-          bash /root/deploy_nest.sh
+          bash /root/deploy-nest.sh
         '
