@@ -31,7 +31,7 @@ export default function CompleteProfile({ opened, onComplete }) {
 
   const onSubmit = async (formData) => {
     try {
-      const res = await fetch("http://localhost:3000/api/users/assign-role", {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/assign-role`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

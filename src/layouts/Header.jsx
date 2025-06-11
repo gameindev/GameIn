@@ -25,7 +25,7 @@ export default function Header() {
 
   return (
     <HeaderSection>
-      <Card radius={0} className="headerCard">
+      <Card className="headerCard" radius={0}>
         <div className="container-fluid">
           <div className="headerFlex">
             <div className="logo">
