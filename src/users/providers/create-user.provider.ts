@@ -52,7 +52,7 @@ export class CreateUserProvider {
     public async createUser(createUserDto: CreateUserDto): Promise<Partial<User>> {
         const { password, ...rest } = createUserDto;
         const hashedPassword = await this.hashingProvider.hashPassword(password);
-
+        
         const newUser = this.userRepository.create({
             ...rest,
             password: hashedPassword,
