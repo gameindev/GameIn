@@ -20,7 +20,7 @@ export default function Header() {
   const handleLogout = async () => {
     dispatch(logoutUser());
     await persistor.purge();
-    navigate(routePaths.welcomePage);
+    navigate(routePaths.WELCOMEPAGE);
   };
 
   return (
