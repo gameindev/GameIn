@@ -45,8 +45,10 @@ async function bootstrap() {
 
     //enable cors
     app.enableCors({
-        origin: "https://gameindev.github.io/GameIn",
-    });
+        origin: "https://gameindev.github.io", // CORRECTED: No path at the end
+        methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+        credentials: true,
+      });
     await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
