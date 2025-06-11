@@ -1,6 +1,6 @@
 import { Button, Title } from "@mantine/core";
-import { PresentationStyles } from "../../styles/pages/welcomPage";
-import ReadMore from "../shared/ReadMore";
+import { PresentationStyles } from "../../../styles/pages/welcomPage";
+import ReadMore from './ReadMore';
 
 export default function PresentationCard({data}) {
   const {title, subTitle, className, readMoreColor, readMoreContent, btnText, image, altText} = data;

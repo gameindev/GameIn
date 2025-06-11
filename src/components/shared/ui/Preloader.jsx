@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { theme } from "../../styles/theme/customTheme";
+import { theme } from "./../../../styles/theme/customTheme";
 
 const duration = "3s";
 const pathColor = theme.colors.primary[0];

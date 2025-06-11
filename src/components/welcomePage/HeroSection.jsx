@@ -21,7 +21,7 @@ export default function HeroSection({ scrollToElement }) {
           Join the most powerful advertising marketplace and boost your success
         </Title>
         <Flex gap="md" direction="column">
-          <Link to="/register">
+          <Link to="/register" style={{ width: "fit-content"}}>
             <Button
               variant="secondary"
               padding="0.875rem"
@@ -31,7 +31,7 @@ export default function HeroSection({ scrollToElement }) {
               Register
             </Button>
           </Link>
-          <Link to="/login">
+          <Link to="/login" style={{ width: "fit-content"}}>
             <Button variant="grey" padding="0.875rem" size="lg" width="13rem">
               Sign in
             </Button>

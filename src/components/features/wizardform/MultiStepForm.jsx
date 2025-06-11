@@ -13,8 +13,8 @@ import StepOne from "./stepOne";
 import StepTwo from "./stepTwo";
 import StepThree from "./stepThree";
 import Completed from "./Completed";
-import { theme } from "../../styles/theme/customTheme";
 import { UserRound } from "lucide-react";
+import { theme } from './../../../styles/theme/customTheme';
 
 // form steps information
 const FORM_STEPS = [

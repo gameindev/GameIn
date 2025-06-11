@@ -1,5 +1,5 @@
-import CoverBanner from "./CoverBanner";
-import AvatarSection from "./AvatarSection";
+import CoverBanner from './../shared/ui/CoverBanner';
+import AvatarSection from './../shared/ui/AvatarSection';
 import UserInfo from "./UserInfo";
 import StatsSection from "./StatsSection";
 import SponsorshipSection from "./SponsorshipSection";
@@ -17,6 +17,7 @@ import coverImage from "../../assets/creators/cover_image.jpg";
 import { UserAvatar } from "./styles";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from './../../stores/auth/authSelector';
+
 
 const UserProfileBanner = () => {
   const currentUser = {

@@ -4,7 +4,6 @@ import { Outlet } from "react-router";
 import { Box } from "@mantine/core";
 
 export default function PageLayout() {
-  console.log("PageLayout");
   return (
     <>
       <UserProfileBanner />

@@ -1,5 +1,5 @@
 import { Text, Grid } from "@mantine/core";
-import StatBox from "../../components/shared/StatBox";
+import StatBox from './../../components/shared/ui/StatBox';
 
 export default function Dashboard() {
   return (

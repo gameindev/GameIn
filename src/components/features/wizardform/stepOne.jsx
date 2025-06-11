@@ -10,10 +10,10 @@ import {
 } from "@mantine/core";
 import { useEffect } from "react";
 import { Link } from "react-router";
-import { useFormStep } from "../../hooks/useFormStep";
-import { stepOneSchema } from "../../utils/validationSchema";
-import DOBPicker from "../shared/DOBPicker";
-import FormField from "../shared/FormField";
+import DOBPicker from "./../../shared/ui/DOBPicker";
+import { useFormStep } from './../../../hooks/useFormStep';
+import { stepOneSchema } from './../../../utils/validationSchema';
+import FormField from './../../shared/ui/FormField';
 
 // default values for the form
 const defaultValues = {
@@ -95,7 +95,9 @@ export default function StepOne({ onNext }) {
       />
 
       <Group mt="lg" position="center" style={{ justifyContent: "center" }}>
-        <Button variant="primary" onClick={handleNextStep}>Continue</Button>
+        <Button variant="primary" onClick={handleNextStep}>
+          Continue
+        </Button>
       </Group>
 
       <Text size="xs" align="center">

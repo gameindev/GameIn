@@ -1,4 +1,4 @@
-import StatBox from "../../components/shared/StatBox";
+import StatBox from './../../components/shared/ui/StatBox';
 import { Text, Grid } from "@mantine/core";
 
 export default function Stats() {

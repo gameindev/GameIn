@@ -7,8 +7,8 @@ import { persistor } from "../stores/store";
 import { isLoggedIn, currentUser } from "../stores/selectors";
 import { logoutUser } from "../stores/auth/authSlice";
 import routePaths from "../routes/endpoints";
-import AvatarSection from "../components/userProfileBanner/AvatarSection";
 import coverImage from "../assets/creators/creator_image.jpg";
+import AvatarSection from './../components/shared/ui/AvatarSection';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ export default function Header() {
 
   return (
     <HeaderSection>
-      <Card className="headerCard">
+      <Card radius={0} className="headerCard">
         <div className="container-fluid">
           <div className="headerFlex">
             <div className="logo">
