@@ -21,6 +21,11 @@ import { AuthenticationGuard } from "./auth/guards/authentication/authentication
 import { DataResponseInterceptor } from "./common/interceptors/data-response/data-response.interceptor";
 import { UsersBioModule } from './users-bio/users-bio.module';
 import { UploadsModule } from './uploads/uploads.module';
+import { UserBio } from "./users-bio/user-bio.entity";
+import { BrandProfile } from "./brand-profiles/brand-profile.entity";
+import { CreatorProfile } from "./creator-profiles/creator-profile.entity";
+import { User } from "./users/user.entity";
+import { UploadEntity } from "./uploads/upload.entity";
 dotenvFlow.config();
 
 const ENV = process.env.NODE_ENV;
@@ -48,7 +53,8 @@ const ENV = process.env.NODE_ENV;
                     username: configService.get('database.username'), // Use the injected ConfigService t,
                     password: configService.get('database.password'),
                     database: configService.get('database.name'),
-                    autoLoadEntities: configService.get('database.autoLoadEntities'),
+                    // autoLoadEntities: configService.get('database.autoLoadEntities'),
+                    entities: [User, UploadEntity, CreatorProfile, BrandProfile, UserBio],
                     synchronize: configService.get('database.synchronize')
                 }
             }
