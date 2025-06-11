@@ -4,6 +4,7 @@ import CreatorBrandUnite from "../assets/homepage/creators-brands-unite.png";
 import SponsorshipOpp from "../assets/homepage/sponsorship-opportunities.png";
 import JoinEcosystem from "../assets/homepage/join-ecosystem.png";
 import GrowYourBusiness from "../assets/homepage/grow-your-business.png";
+import BackgroundVideo from "../components/shared/BackgroundVideo";
 
 
 export default function WelcomePage() {
@@ -59,6 +60,7 @@ export default function WelcomePage() {
 
   return (
     <>
+      <BackgroundVideo />
       <div className="container">
         <HeroSection scrollToElement={scrollToElement} />
         <FlexCard scrollToRef={scrollToRef} />
