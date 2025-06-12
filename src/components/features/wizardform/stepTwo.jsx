@@ -5,6 +5,7 @@ import { stepTwoSchema } from "../../../utils/validationSchema";
 import { Star, Flame, SunDim } from "lucide-react";
 import { theme } from "../../../styles/theme/customTheme";
 import FormField from '../../shared/ui/FormField';
+import { USERTYPES } from "../../../utils/enum";
 
 // default values for the form
 const defaultValues = {
@@ -16,19 +17,19 @@ const roles = [
   {
     icon: Star,
     label: "Creator",
-    value: "creator",
+    value: USERTYPES.CREATOR,
     description: "Create and share content with your audience.",
   },
   {
     icon: Flame,
     label: "Brand",
-    value: "brand",
+    value: USERTYPES.BRAND,
     description: "Promote your products or services effectively.",
   },
   {
     icon: SunDim,
     label: "Community",
-    value: "user",
+    value: USERTYPES.COMMUNITY,
     description: "Build and engage with your community.",
   },
 ];

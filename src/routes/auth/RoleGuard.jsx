@@ -9,7 +9,7 @@ const RoleGuard = ({ allowedRoles }) => {
   return allowedRoles.includes(userType) ? (
     <Outlet />
   ) : (
-    <Navigate to={routePaths.welcomePage} replace />
+    <Navigate to={routePaths.WELCOMEPAGE} replace />
   );
 };
 
