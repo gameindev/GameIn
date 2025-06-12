@@ -1,0 +1,1 @@
+import{l,j as t,O as p,ad as c,o as i}from"./index-DnhGP-h6.js";const x=({allowedRoles:a})=>{const u=l(o=>{var e,s,r;return(r=(s=(e=o.user)==null?void 0:e.profile)==null?void 0:s.user)==null?void 0:r.userType});return a.includes(u)?t.jsx(p,{}):t.jsx(c,{to:i.WELCOMEPAGE,replace:!0})};export{x as default};
