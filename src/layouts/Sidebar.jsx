@@ -2,10 +2,10 @@ import { Bolt, Flame, Home, Newspaper, Plus, Star } from "lucide-react";
 import React from "react";
 import { Link } from "react-router";
 import { SidebarStyles } from "../styles/layouts";
-import { Hexagon } from "../components/shared/HexagonDemo";
+import { Hexagon } from "../components/shared/ui/HexagonDemo";
 import { theme } from "../styles/theme/customTheme";
-import AvatarSection from "../components/userProfileBanner/AvatarSection";
 import coverImage from "../assets/creators/creator_image.jpg";
+import AvatarSection from './../components/shared/ui/AvatarSection';
 
 export default function Sidebar() {
 

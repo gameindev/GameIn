@@ -1,5 +1,6 @@
-import { Hexagon } from "../shared/HexagonDemo";
-import { theme } from "../../styles/theme/customTheme";
+import { Hexagon } from "./HexagonDemo";
+import { theme } from "../../../styles/theme/customTheme";
+import HexContainer from './HexContainer';
 
 const AvatarSection = ({ avatar, size, className = "" }) => (
   <div className={className}>
@@ -12,6 +13,9 @@ const AvatarSection = ({ avatar, size, className = "" }) => (
     >
       <img src={avatar} alt="Avatar" />
     </Hexagon>
+    {/* <HexContainer size={size} background={theme.colors.inputBgColor[0]}>
+      <img src={avatar} alt="Avatar" />
+    </HexContainer> */}
   </div>
 );
 

@@ -1,10 +1,10 @@
 /* eslint-disable */
 import { Radio, Stack, Button, Group, Text, Flex, Box } from "@mantine/core";
-import { useFormStep } from "../../hooks/useFormStep";
-import { stepTwoSchema } from "../../utils/validationSchema";
+import { useFormStep } from "../../../hooks/useFormStep";
+import { stepTwoSchema } from "../../../utils/validationSchema";
 import { Star, Flame, SunDim } from "lucide-react";
-import { theme } from "../../styles/theme/customTheme";
-import FormField from "../shared/FormField";
+import { theme } from "../../../styles/theme/customTheme";
+import FormField from '../../shared/ui/FormField';
 
 // default values for the form
 const defaultValues = {

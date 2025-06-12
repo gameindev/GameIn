@@ -1,5 +1,5 @@
 import { Box } from "@mantine/core";
-import { theme } from "../../styles/theme/customTheme";
+import { theme } from "../../../styles/theme/customTheme";
 
 export default function StatBox({ children }) {
   return (

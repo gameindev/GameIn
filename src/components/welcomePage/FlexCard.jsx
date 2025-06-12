@@ -2,7 +2,7 @@ import FindCreator from "../../assets/homepage/find-creator.svg";
 import FindBrand from "../../assets/homepage/find-brand.svg";
 import { FlexCardStyles } from "../../styles/pages/welcomPage";
 import { Button, Flex, Text, Title } from "@mantine/core";
-import ReadMore from "../shared/ReadMore";
+import ReadMore from './../shared/ui/ReadMore';
 
 export default function FlexCard({ scrollToRef }) {
   return (

@@ -4,13 +4,13 @@ import { Tabsection } from "./styles";
 import routePaths from "../../routes/endpoints";
 
 const tabs = [
-  { value: routePaths.dashboard, label: "DASHBOARD" },
-  { value: routePaths.profile, label: "PROFILE" },
-  { value: routePaths.sponsorships, label: "SPONSORSHIPS" },
-  { value: routePaths.offerings, label: "OFFERINGS" },
-  { value: routePaths.stats, label: "STATS" },
-  { value: routePaths.newsfeed, label: "NEWSFEED" },
-  { value: routePaths.inbox, label: "INBOX" },
+  { value: routePaths.DASHBOARD.ROOT, label: "DASHBOARD" },
+  { value: routePaths.PROFILE.ROOT, label: "PROFILE" },
+  { value: routePaths.SPONSORSHIPS.ROOT, label: "SPONSORSHIPS" },
+  { value: routePaths.OFFERINGS.ROOT, label: "OFFERINGS" },
+  { value: routePaths.STATS.ROOT, label: "STATS" },
+  { value: routePaths.NEWSFEED.ROOT, label: "NEWSFEED" },
+  { value: routePaths.INBOX.ROOT, label: "INBOX" },
 ];
 
 export default function InfoTabs() {

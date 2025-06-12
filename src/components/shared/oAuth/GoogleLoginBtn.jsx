@@ -2,13 +2,13 @@ import { GoogleLogin } from "@react-oauth/google";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { useState } from "react";
-import { setUser } from "../../stores/slices/user";
-import { setAuth } from "../../stores/auth/authSlice";
+import { setUser } from "../../../stores/slices/user";
+import { setAuth } from "../../../stores/auth/authSlice";
 import CompleteProfile from "./CompleteProfile";
-import routePaths from "../../routes/endpoints";
-import { showNotification } from "../../utils/helpers";
-import useApi from "../../hooks/useApi";
-import { API_PATHS } from "../../services/endpoints";
+import routePaths from "../../../routes/endpoints";
+import { showNotification } from "../../../utils/helpers";
+import useApi from "../../../hooks/useApi";
+import { API_PATHS } from "../../../services/endpoints";
 
 const GoogleLoginBtn = () => {
   const [showCompleteProfile, setShowCompleteProfile] = useState(false);

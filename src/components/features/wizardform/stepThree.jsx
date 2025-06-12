@@ -1,6 +1,6 @@
 import { Stack, Button, Group, Box, Input, Loader } from "@mantine/core";
-import { useFormStep } from "../../hooks/useFormStep";
-import { stepThreeSchema } from "../../utils/validationSchema";
+import { useFormStep } from "../../../hooks/useFormStep";
+import { stepThreeSchema } from "../../../utils/validationSchema";
 import ReCAPTCHA from "react-google-recaptcha";
 
 // default values for the form

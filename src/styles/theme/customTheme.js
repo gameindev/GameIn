@@ -45,7 +45,7 @@ const buttonStyles = {
         root: {
           ...baseStyles,
           color: theme.colors.white[0],
-          backgroundColor: theme.colors.grey[0],
+          backgroundColor: theme.colors.inputBgColor[0],
         },
       };
     }

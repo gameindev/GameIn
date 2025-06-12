@@ -10,22 +10,6 @@ export const BannerWrapper = styled.div`
   /* box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.3); */
 `;
 
-export const Banner = styled.div`
-  position: relative;
-  width: 100%;
-  height: 9.5rem;
-  background-color: #4a5568;
-  overflow: hidden;
-
-  .banner_image {
-    width: 100%;
-    height: 100%;
-    background-image: url("/banner.jpg");
-    background-size: cover;
-    background-position: center;
-  }
-`;
-
 export const UserInformation = styled.div`
   position: relative;
   display: flex;

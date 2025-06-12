@@ -11,9 +11,9 @@ import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-import { completeProfile } from "../../utils/validationSchema";
-import FormField from "../shared/FormField";
-import { USERTYPES } from "../../utils/enum";
+import { OAuthProfile } from "../../../utils/validationSchema";
+import { USERTYPES } from "./../../../utils/enum";
+import FormField from './../ui/FormField';
 
 const defaultValues = {
   userType: "",
@@ -25,7 +25,7 @@ export default function CompleteProfile({ opened, onComplete }) {
 
   const { control, handleSubmit } = useForm({
     defaultValues,
-    resolver: yupResolver(completeProfile),
+    resolver: yupResolver(OAuthProfile),
     mode: "onSubmit",
   });
 
