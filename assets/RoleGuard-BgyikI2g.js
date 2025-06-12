@@ -1,1 +1,0 @@
-import{l,j as t,O as p,ad as c,o as i}from"./index-IxuOPk_s.js";const x=({allowedRoles:a})=>{const o=l(u=>{var e,s,r;return(r=(s=(e=u.user)==null?void 0:e.profile)==null?void 0:s.user)==null?void 0:r.userType});return a.includes(o)?t.jsx(p,{}):t.jsx(c,{to:i.welcomePage,replace:!0})};export{x as default};
