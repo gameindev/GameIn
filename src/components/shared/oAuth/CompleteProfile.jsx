@@ -7,7 +7,6 @@ import {
   Stack,
   Title,
 } from "@mantine/core";
-import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
@@ -20,8 +19,7 @@ const defaultValues = {
   password: "",
 };
 
-export default function CompleteProfile({ opened, onComplete }) {
-  const accessToken = useSelector((state) => state.auth.accessToken);
+export default function CompleteProfile({ opened, onComplete, authTokens }) {
 
   const { control, handleSubmit } = useForm({
     defaultValues,
@@ -35,7 +33,7 @@ export default function CompleteProfile({ opened, onComplete }) {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${authTokens?.accessToken}`,
         },
         body: JSON.stringify(formData),
       });

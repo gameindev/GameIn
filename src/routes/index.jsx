@@ -1,5 +1,5 @@
 // router.jsx (or router.js)
-import { createBrowserRouter } from "react-router";
+import { createHashRouter } from "react-router";
 import { lazy, Suspense } from "react";
 import Preloader from './../components/shared/ui/Preloader';
 import routePaths from "./endpoints";
@@ -25,7 +25,7 @@ export const withSuspense = (element) => (
     <Suspense fallback={<Preloader />}>{element}</Suspense>
 );
 
-const router = createBrowserRouter([
+const router = createHashRouter([
     {
         path: routePaths.WELCOMEPAGE,
         element: withSuspense(<Layout />),
@@ -73,10 +73,7 @@ const router = createBrowserRouter([
             },
         ],
     },
-],
-    {
-        basename: import.meta.env.VITE_BASE_URL,
-    }
+]
 );
 
 export default router;

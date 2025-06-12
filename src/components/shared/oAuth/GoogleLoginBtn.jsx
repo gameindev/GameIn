@@ -1,5 +1,5 @@
 import { GoogleLogin } from "@react-oauth/google";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import { setUser } from "../../../stores/slices/user";
@@ -12,10 +12,9 @@ import { API_PATHS } from "../../../services/endpoints";
 
 const GoogleLoginBtn = () => {
   const [showCompleteProfile, setShowCompleteProfile] = useState(false);
+  const [authTokens, setAuthTokens] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const { accessToken, refreshToken } = useSelector((state) => state.auth);
 
   const { post } = useApi();
 
@@ -24,14 +23,14 @@ const GoogleLoginBtn = () => {
       const { data } = await post(API_PATHS.AUTH.GOOGLE_OAUTH, { token: response.credential});
 
         const isProfileIncomplete = !data.user?.userType && !data.user?.password;
-        
-      isProfileIncomplete ? setShowCompleteProfile(true) : navigate(routePaths.DASHBOARD);
 
-      // Store authentication and user details in Redux
-      dispatch( setAuth({ accessToken: data.accessToken, refreshToken: data.refreshToken, }) );
-      dispatch( setUser({ user: data.user }) );
-
-      showNotification( "Login Successful", `Welcome back, ${data.user.username}` );
+        if(isProfileIncomplete){
+          setShowCompleteProfile(true)
+          setAuthTokens({ accessToken: data.accessToken, refreshToken: data.refreshToken, });
+        }else{
+          dispatch( setAuth({ accessToken: data.accessToken, refreshToken: data.refreshToken, }) );
+          dispatch( setUser({ user: data.user }) );
+        }
 
       // If the profile is incomplete, show the complete profile form
     } catch (err) {
@@ -39,10 +38,12 @@ const GoogleLoginBtn = () => {
     }
   };
 
-  const handleProfileCompleted = ({ profile }) => {
-    dispatch(setAuth({ accessToken, refreshToken }));
-    dispatch(setUser({ profile }));
+  const handleProfileCompleted = ({ user }) => {
+    console.log(user);
+    dispatch(setAuth({ accessToken: authTokens.accessToken, refreshToken: authTokens.refreshToken }));
+    dispatch(setUser({ user }));
     setShowCompleteProfile(false);
+    showNotification( "Login Successful", `Welcome back, ${user.username}` );
     navigate(routePaths.DASHBOARD);
   };
 
@@ -58,6 +59,7 @@ const GoogleLoginBtn = () => {
         opened={showCompleteProfile}
         onClose={() => setShowCompleteProfile(false)}
         onComplete={handleProfileCompleted}
+        authTokens={authTokens}
       />
     </>
   );

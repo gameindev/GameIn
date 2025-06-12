@@ -69,6 +69,7 @@ export default function Signin() {
             );
 
             const userType = data?.user?.userType?.toUpperCase();
+            console.log("userType", userType);
 
             if (!userType) {
                 showNotification(

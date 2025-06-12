@@ -23,7 +23,7 @@ export const stepOneSchema = Yup.object().shape({
         const emailExists = await checkEmailAndUsernameExists({ email: value });
         return !emailExists;
       } catch (error) {
-        return true;
+        return error;
       }
     }),
   username: Yup.string()
@@ -42,7 +42,7 @@ export const stepOneSchema = Yup.object().shape({
         });
         return !usernameExists;
       } catch (err) {
-        return true;
+        return err;
       }
     }),
   password: Yup.string()
@@ -71,7 +71,7 @@ export const stepOneSchema = Yup.object().shape({
 
 export const stepTwoSchema = Yup.object().shape({
   role: Yup.string()
-    .oneOf(["creator", "brand", "user"], "Please select a valid role")
+    .oneOf([USERTYPES.CREATOR, USERTYPES.BRAND, USERTYPES.COMMUNITY], "Please select a valid role")
     .required("Please choose your role"),
 });
 
