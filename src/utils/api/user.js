@@ -2,8 +2,8 @@
 export const checkEmailAndUsernameExists = async ({ email, username }) => {
     try {
         const params = new URLSearchParams();
-        if (email) params.append("email", email);
-        if (username) params.append("username", username);
+        if (email) params.append("identifier", email);
+        if (username) params.append("identifier", username);
 
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/by-identifier?${params}`);
 
