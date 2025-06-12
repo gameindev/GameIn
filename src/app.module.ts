@@ -25,7 +25,7 @@ import { UserBio } from "./users-bio/user-bio.entity";
 import { BrandProfile } from "./brand-profiles/brand-profile.entity";
 import { CreatorProfile } from "./creator-profiles/creator-profile.entity";
 import { User } from "./users/user.entity";
-import { UploadEntity } from "./uploads/upload.entity";
+import { Upload} from "./uploads/upload.entity";
 dotenvFlow.config();
 
 const ENV = process.env.NODE_ENV;
@@ -54,7 +54,7 @@ const ENV = process.env.NODE_ENV;
                     password: configService.get('database.password'),
                     database: configService.get('database.name'),
                     // autoLoadEntities: configService.get('database.autoLoadEntities'),
-                    entities: [User, UploadEntity, CreatorProfile, BrandProfile, UserBio],
+                    entities: [User, Upload, CreatorProfile, BrandProfile, UserBio],
                     synchronize: configService.get('database.synchronize')
                 }
             }

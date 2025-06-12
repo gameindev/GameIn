@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateCol
 import { FileType } from "./enums/file-types.enum";
 
 @Entity()
-export class UploadEntity {
+export class Upload {
     @PrimaryGeneratedColumn()
     id: number;
 

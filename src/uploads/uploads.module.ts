@@ -3,7 +3,7 @@ import { UploadsController } from './uploads.controller';
 import { UploadsService } from './providers/uploads.service';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UploadEntity } from './upload.entity';
+import { Upload } from './upload.entity';
 import { S3UploadProvider } from './providers/s3-upload.provider';
 import { LocalUploadProvider } from './providers/local-upload.provider';
 
@@ -25,7 +25,7 @@ const UploadProviderFactory: Provider = {
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([UploadEntity])
+        TypeOrmModule.forFeature([Upload])
     ],
     controllers: [UploadsController],
     providers: [
