@@ -1,26 +1,33 @@
-// router.jsx (or router.js)
 import { createHashRouter } from "react-router";
 import { lazy, Suspense } from "react";
-import Preloader from './../components/shared/ui/Preloader';
 import routePaths from "./endpoints";
 import { USERTYPES } from "../utils/enum";
-import GuestRoute from "./auth/GuestRoute";
-import accountsdRoutes from "./dashboardRoutes";
+import accountsdRoutes from "./accountsRoutes";
 
-// Lazy imports
+// --- Lazy-loaded Components ---
+
+// Preloader
+const Preloader = lazy(()=> import('./../components/shared/ui/Preloader'))
+
+// Layouts
 const Layout = lazy(() => import("../layouts/Layout"));
 const PageLayout = lazy(() => import("../layouts/PageLayout"));
+
+// Pages
 const WelcomePage = lazy(() => import("../pages/WelcomePage"));
 const Register = lazy(() => import("../pages/auth/Register"));
 const Signin = lazy(() => import("../pages/auth/Signin"));
 const ErrorPage = lazy(() => import("./ErrorPage"));
-const CreateTeam = lazy(() =>
-  import("../components/features/createTeam/CreateTeam")
-);
+
+// Features/Components
+const CreateTeam = lazy(() => import("../components/features/createTeam/CreateTeam") );
 
 // Guards
 const RoleGuard = lazy(() => import("./auth/RoleGuard"));
+const RequiresAuth = lazy(() => import("./auth/RequiresAuth"));
+const GuestRoute = lazy(() => import("./auth/GuestRoute"));
 
+// Centralized Suspense HOC
 export const withSuspense = (element) => (
   <Suspense fallback={<Preloader />}>{element}</Suspense>
 );
@@ -37,39 +44,28 @@ const router = createHashRouter([
       },
       {
         path: routePaths.LOGIN,
-        element: withSuspense(
-          <GuestRoute>
-            <Signin />
-          </GuestRoute>
-        ),
+        element: withSuspense( <GuestRoute> <Signin /> </GuestRoute> ),
       },
       {
         path: routePaths.REGISTER,
-        element: withSuspense(
-          <GuestRoute>
-            <Register />
-          </GuestRoute>
-        ),
+        element: withSuspense( <GuestRoute> <Register /> </GuestRoute> ),
       },
 
       // Authenticated Account routes
       {
-        element: withSuspense(
-          <RoleGuard allowedRoles={[USERTYPES.BRAND, USERTYPES.CREATOR]} />
-        ),
-        children: [
-          {
-            element: withSuspense(<PageLayout />),
-            children: accountsdRoutes.map(({ path, element }) => ({
-              path,
-              element: withSuspense(element),
-            })),
-          },
-          {
-            path: routePaths.PROFILE.CREATE_TEAM,
-            element: withSuspense(<CreateTeam />),
-          },
-        ],
+        element: withSuspense(<RequiresAuth />),
+        children: [{
+          element: withSuspense( <RoleGuard allowedRoles={[USERTYPES.BRAND, USERTYPES.CREATOR]} /> ),
+          children: [
+            {
+              element: withSuspense(<PageLayout />),
+              children: accountsdRoutes.map(
+                ({ path, element }) => ({ path, element: withSuspense(element),})
+              ),
+            },
+            { path: routePaths.PROFILE.CREATE_TEAM, element: withSuspense(<CreateTeam />), },
+          ],
+        }]
       },
     ],
   },
