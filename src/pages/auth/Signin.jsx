@@ -1,13 +1,13 @@
 import {
-  TextInput,
-  Container,
-  Paper,
-  PasswordInput,
-  Stack,
-  Button,
-  Group,
-  Title,
-  Text,
+    TextInput,
+    Container,
+    Paper,
+    PasswordInput,
+    Stack,
+    Button,
+    Group,
+    Title,
+    Text,
 } from "@mantine/core";
 import { useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router";
@@ -24,132 +24,132 @@ import routePaths from "../../routes/endpoints";
 import FormField from './../../components/shared/ui/FormField';
 
 const defaultValues = {
-  identifier: "",
-  password: "",
+    identifier: "",
+    password: "",
 };
 
 const fields = [
-  {
-    name: "identifier",
-    label: "Username or email address",
-    placeholder: "Your username or email address",
-    type: TextInput,
-  },
-  {
-    name: "password",
-    label: "Password",
-    placeholder: "Your password",
-    type: PasswordInput,
-  },
+    {
+        name: "identifier",
+        label: "Username or email address",
+        placeholder: "Your username or email address",
+        type: TextInput,
+    },
+    {
+        name: "password",
+        label: "Password",
+        placeholder: "Your password",
+        type: PasswordInput,
+    },
 ];
 
 export default function Signin() {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { control, handleSubmit } = useForm({
-    defaultValues,
-    resolver: yupResolver(loginSchema),
-    mode: "onSubmit",
-  });
-  const { post, loading, error } = useApi();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { control, handleSubmit } = useForm({
+        defaultValues,
+        resolver: yupResolver(loginSchema),
+        mode: "onSubmit",
+    });
+    const { post, loading, error } = useApi();
 
-  const handleLogin = async (formData) => {
-    try {
-      const { data } = await post(API_PATHS.AUTH.LOGIN, formData);
-      dispatch(
-        setAuth({
-          accessToken: data.accessToken,
-          refreshToken: data.refreshToken,
-        })
-      );
-      dispatch(setUser({ user: data.user }));
-      showNotification(
-        "Login Successful",
-        `Welcome back, ${data?.user?.username}!`
-      );
+    const handleLogin = async (formData) => {
+        try {
+            const { data } = await post(API_PATHS.AUTH.LOGIN, formData);
+            dispatch(
+                setAuth({
+                    accessToken: data.accessToken,
+                    refreshToken: data.refreshToken,
+                })
+            );
+            dispatch(setUser({ user: data.user }));
+            showNotification(
+                "Login Successful",
+                `Welcome back, ${data?.user?.username}!`
+            );
 
-      const userType = data?.user?.userType?.toUpperCase();
+            const userType = data?.user?.userType?.toUpperCase();
 
-      if (!userType) {
-        showNotification(
-          "Login Error",
-          `Unknown user type. Contact support`,
-          "red"
-        );
-        navigate(routePaths.welcomePage);
-        return;
-      }
-      if (userType === "BRAND") navigate(routePaths.dashboard);
+            if (!userType) {
+                showNotification(
+                    "Login Error",
+                    `Unknown user type. Contact support`,
+                    "red"
+                );
+                navigate(routePaths.WELCOMEPAGE);
+                return;
+            }
+            if (userType === "BRAND") navigate(routePaths.DASHBOARD);
 
-      if (userType === "ADMIN") navigate(routePaths.dashboard);
-    } catch (err) {
-      showNotification(
-        "Login Error",
-        `${err?.message || "Something went wrong"}`,
-        "red"
-      );
-      navigate(routePaths.welcomePage);
-    }
-  };
+            if (userType === "ADMIN") navigate(routePaths.DASHBOARD);
+        } catch (err) {
+            showNotification(
+                "Login Error",
+                `${err?.message || "Something went wrong"}`,
+                "red"
+            );
+            navigate(routePaths.WELCOMEPAGE);
+        }
+    };
 
-  return (
-    <Container size="md">
-      <Paper radius="sm" p="xl" withBorder bg="#363a3e" my="5rem" mx="xl">
-        <form onSubmit={handleSubmit(handleLogin)}>
-          <Stack spacing="xl">
-            <Title order={2}>Login</Title>
+    return (
+        <Container size="md">
+            <Paper radius="sm" p="xl" withBorder bg="#363a3e" my="5rem" mx="xl">
+                <form onSubmit={handleSubmit(handleLogin)}>
+                    <Stack spacing="xl">
+                        <Title order={2}>Login</Title>
 
-            {error && (
-              <Text color="red" size="sm">
-                {error}
-              </Text>
-            )}
+                        {error && (
+                            <Text color="red" size="sm">
+                                {error}
+                            </Text>
+                        )}
 
-            <Stack w="50%" mx="auto">
-              {fields.map(({ name, label, placeholder, type: Component }) => (
-                <FormField
-                  key={name}
-                  name={name}
-                  control={control}
-                  Component={Component}
-                  componentProps={{
-                    label,
-                    placeholder,
-                    withAsterisk: true,
-                  }}
-                />
-              ))}
+                        <Stack w="50%" mx="auto">
+                            {fields.map(({ name, label, placeholder, type: Component }) => (
+                                <FormField
+                                    key={name}
+                                    name={name}
+                                    control={control}
+                                    Component={Component}
+                                    componentProps={{
+                                        label,
+                                        placeholder,
+                                        withAsterisk: true,
+                                    }}
+                                />
+                            ))}
 
-              <Group
-                position="apart"
-                mt="md"
-                style={{ justifyContent: "center" }}
-              >
-                <Button
-                  variant="primary"
-                  size="sm"
-                  padding="0.5rem"
-                  width="8.5rem"
-                  type="submit"
-                  loading={loading}
-                >
-                  Login
-                </Button>
-              </Group>
+                            <Group
+                                position="apart"
+                                mt="md"
+                                style={{ justifyContent: "center" }}
+                            >
+                                <Button
+                                    variant="primary"
+                                    size="sm"
+                                    padding="0.5rem"
+                                    width="8.5rem"
+                                    type="submit"
+                                    loading={loading}
+                                >
+                                    Login
+                                </Button>
+                            </Group>
 
-              <Text size="xs" mt="sm" align="center">
-                Don't have an account?{" "}
-                <Link to="/register" style={{ textDecoration: "none" }}>
-                  Register
-                </Link>
-              </Text>
-            </Stack>
-            <Group position="apart" style={{ justifyContent: "center" }}>
-              <GoogleLoginBtn />
-            </Group>
-          </Stack>
-        </form>
-      </Paper>
-    </Container>
-  );
+                            <Text size="xs" mt="sm" align="center">
+                                Don't have an account?{" "}
+                                <Link to="/register" style={{ textDecoration: "none" }}>
+                                    Register
+                                </Link>
+                            </Text>
+                        </Stack>
+                        <Group position="apart" style={{ justifyContent: "center" }}>
+                            <GoogleLoginBtn />
+                        </Group>
+                    </Stack>
+                </form>
+            </Paper>
+        </Container>
+    );
 }

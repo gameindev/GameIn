@@ -23,7 +23,9 @@ const GoogleLoginBtn = () => {
     try {
       const { data } = await post(API_PATHS.AUTH.GOOGLE_OAUTH, { token: response.credential});
 
-      const isProfileIncomplete = !data.user?.userType && !data.user?.password;
+        const isProfileIncomplete = !data.user?.userType && !data.user?.password;
+        
+      isProfileIncomplete ? setShowCompleteProfile(true) : navigate(routePaths.DASHBOARD);
 
       // Store authentication and user details in Redux
       dispatch( setAuth({ accessToken: data.accessToken, refreshToken: data.refreshToken, }) );
@@ -32,7 +34,6 @@ const GoogleLoginBtn = () => {
       showNotification( "Login Successful", `Welcome back, ${data.user.username}` );
 
       // If the profile is incomplete, show the complete profile form
-      isProfileIncomplete ? setShowCompleteProfile(true) : navigate(routePaths.dashboard);
     } catch (err) {
       showNotification( "Login Error", `{${err?.message || "Something went wrong with Google login"} }`, "red" );
     }
@@ -42,7 +43,7 @@ const GoogleLoginBtn = () => {
     dispatch(setAuth({ accessToken, refreshToken }));
     dispatch(setUser({ profile }));
     setShowCompleteProfile(false);
-    navigate(routePaths.dashboard);
+    navigate(routePaths.DASHBOARD);
   };
 
   return (

@@ -36,16 +36,16 @@ export default function Header() {
               {!isLoggedInUser ? (
                 <ul>
                   <li>
-                    <Link to={routePaths.welcomePage}>GameIn</Link>
+                    <Link to={routePaths.WELCOMEPAGE}>GameIn</Link>
                   </li>
                   <li>
-                    <Link to={routePaths.welcomePage}>About</Link>
+                    <Link to={routePaths.WELCOMEPAGE}>About</Link>
                   </li>
                   <li>
-                    <Link to={routePaths.welcomePage}>Info</Link>
+                    <Link to={routePaths.WELCOMEPAGE}>Info</Link>
                   </li>
                   <li>
-                    <Link to={routePaths.welcomePage}>Guidelines</Link>
+                    <Link to={routePaths.WELCOMEPAGE}>Guidelines</Link>
                   </li>
                 </ul>
               ) : (

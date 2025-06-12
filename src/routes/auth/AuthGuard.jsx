@@ -7,7 +7,7 @@ const RequiresAuth = () => {
   //   return localStorage.getItem("accessToken") ? true : false;
   // };
   const { isAuthenticated } = useSelector((state) => state.auth);
-  return isAuthenticated ? <Outlet /> : <Navigate  to={routePaths.login} />;
+  return isAuthenticated ? <Outlet /> : <Navigate  to={routePaths.LOGIN} />;
 };
 
 export default RequiresAuth;
