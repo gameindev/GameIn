@@ -116,15 +116,50 @@ Use '*' to load all supported relations.`,
 
     // @UseGuards(AccessTokenGuard)
     @Get('/by-email')
-    @ApiBearerAuth()
     @UseGuards(UserTypeGuard)
     @UserTypes(UserType.ADMIN, UserType.CREATOR, UserType.BRAND, UserType.COMMUNITY)
     @UseInterceptors(ClassSerializerInterceptor)
     getUserByEmail(
-        @Query() email: string,
+        @Query('email') email: string,
     ) {
         return this.usersService.findUserOneByEmail(email);
     }
+
+
+
+
+    /**
+    * Fetches a registered user on the application by ID.
+    * @param email The ID of the user that you want the API to return
+    * @returns User fetched successfully based on the query
+    */
+    @ApiOperation({
+        summary: 'Fetches a registered user on the application by identifier.',
+    })
+    @ApiQuery({
+        name: 'identifier',
+        type: String,
+        description: 'The identifier of the user to fetch',
+        required: true,
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'User fetched successfully based on the query.',
+    })
+
+    // @UseGuards(AccessTokenGuard)
+    @Get('/by-identifier')
+    @Auth(AuthType.None)
+    @UseInterceptors(ClassSerializerInterceptor)
+    getUserByIdentifier(
+        @Query('identifier') identifier: string,
+    ) {
+        return this.usersService.findOneByIdentifier(identifier);
+    }
+
+
+
+
 
 
     /**

@@ -1,4 +1,4 @@
-import { Injectable, RequestTimeoutException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, RequestTimeoutException, UnauthorizedException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from '../user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,6 +15,8 @@ export class FindOneUserByEmailProvider {
 
 
     public async findOneByEmail(email: string) {
+        if (!email) throw new BadRequestException('Missing email');
+
         let user: User | undefined = undefined;
         // null if user is not found
         try {
@@ -28,7 +30,7 @@ export class FindOneUserByEmailProvider {
         }
 
         if (!user) {
-            throw new UnauthorizedException('User does not exist.')
+            throw new BadRequestException('User does not exist.')
         }
         return user;
     }
