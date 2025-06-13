@@ -41,7 +41,7 @@ const GoogleLoginBtn = () => {
     dispatch(setUser({ user }));
     setShowCompleteProfile(false);
     showNotification("Login Successful", `Welcome back, ${user.username}`);
-    navigate(routePaths.DASHBOARD);
+    navigate(routePaths.DASHBOARD.ROOT);
   };
 
   return (
