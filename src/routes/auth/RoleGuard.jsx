@@ -1,4 +1,3 @@
-// components/auth/RoleGuard.jsx
 import { Navigate, Outlet } from "react-router";
 import { useSelector } from "react-redux";
 import routePaths from "../endpoints";
