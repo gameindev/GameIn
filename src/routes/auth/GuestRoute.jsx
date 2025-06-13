@@ -7,7 +7,7 @@ const GuestRoute = ({ children }) => {
     const isAuthenticated = useSelector(isLoggedIn);
 
   if (isAuthenticated) {
-    return <Navigate to={routePaths.WELCOMEPAGE} replace />;
+    return <Navigate to={routePaths.DASHBOARD.ROOT} replace />;
   }
 
   return children;
