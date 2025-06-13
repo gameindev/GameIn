@@ -1,25 +1,19 @@
-import {
-  Modal,
-  Button,
-  TextInput,
-  Select,
-  Paper,
-  Stack,
-  Title,
-} from "@mantine/core";
+import { Modal, Button, TextInput, Select, Paper, Stack, Title, } from "@mantine/core";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 import { OAuthProfile } from "../../../utils/validationSchema";
 import { USERTYPES } from "./../../../utils/enum";
 import FormField from './../ui/FormField';
+import useApi from "../../../hooks/useApi";
+import { API_PATHS } from "../../../services/endpoints";
 
 const defaultValues = {
   userType: "",
   password: "",
 };
 
-export default function CompleteProfile({ opened, onComplete, authTokens }) {
+export default function CompleteProfile({ opened, onComplete, accessToken }) {
 
   const { control, handleSubmit } = useForm({
     defaultValues,
@@ -27,28 +21,25 @@ export default function CompleteProfile({ opened, onComplete, authTokens }) {
     mode: "onSubmit",
   });
 
-  const onSubmit = async (formData) => {
-    try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/assign-role`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authTokens?.accessToken}`,
-        },
-        body: JSON.stringify(formData),
-      });
+  const { patch } = useApi();
 
-      const { data } = await res.json();
+  const onSubmit = async (formData) => {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    };
+    try {
+      const { data } = await patch(API_PATHS.AUTH.SELECT_ROLE, formData, headers);
       onComplete({ user: data });
     } catch (error) {
-      console.error("Complete profile error:", error);
+      return Promise.reject("Complete profile error:", error);
     }
   };
 
   return (
     <Modal
       opened={opened}
-      onClose={() => {}}
+      onClose={() => { }}
       withCloseButton={false}
       title="Please Update Your Credentials"
       centered
