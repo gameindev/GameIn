@@ -1,1 +1,0 @@
-import{l,j as o,O as p,ad as c,o as n}from"./index-BAp7oaNp.js";const x=({allowedRoles:a})=>{const e=l(u=>{var s,r,t;return(t=(r=(s=u.user)==null?void 0:s.profile)==null?void 0:r.user)==null?void 0:t.userType});return console.log(e),a.includes(e)?o.jsx(p,{}):o.jsx(c,{to:n.WELCOMEPAGE,replace:!0})};export{x as default};
