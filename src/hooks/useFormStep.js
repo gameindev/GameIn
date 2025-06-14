@@ -52,6 +52,8 @@ export function useFormStep({ defaultValues, schema, onNext, onPrev, onSubmit, i
         }
 
         const currentStepData = getValues();
+        console.log(currentStepData);
+        
         dispatch(saveStepData(currentStepData));
 
         if (isFinalStep && onSubmit) {

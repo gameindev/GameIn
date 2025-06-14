@@ -1,6 +1,6 @@
 import * as Yup from "yup";
-import { checkEmailAndUsernameExists } from "./api/user";
-import { USERTYPES } from "./enum";
+import { checkEmailAndUsernameExists } from "../api/user";
+import { USERTYPES } from "../enum";
 
 // const takenUsernames = [
 //     "john_doe",

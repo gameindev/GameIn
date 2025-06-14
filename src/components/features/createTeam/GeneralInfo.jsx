@@ -1,11 +1,20 @@
 import React from "react";
-import { Box, Button, Group, rem, Stack, Textarea, TextInput } from "@mantine/core";
+import {
+  Box,
+  Button,
+  Group,
+  rem,
+  Stack,
+  Textarea,
+  TextInput,
+} from "@mantine/core";
 import { useFormStep } from "./../../../hooks/useFormStep";
 import { theme } from "../../../styles/theme/customTheme";
 import HexContainer from "../../shared/ui/HexContainer";
 import styled from "styled-components";
-import CoverBanner from './../../shared/ui/CoverBanner';
-import FormField from './../../shared/ui/FormField';
+import CoverBanner from "./../../shared/ui/CoverBanner";
+import FormField from "./../../shared/ui/FormField";
+import { generalInfoSchema } from "./../../../utils/schemas/CreateTeamSchema";
 
 const AvatorSection = styled.div`
   position: absolute;
@@ -44,6 +53,7 @@ export default function GeneralInfo({ onNext }) {
   const { control, setValue, watch, handleNextStep } = useFormStep({
     defaultValues,
     onNext,
+    schema: generalInfoSchema,
   });
   return (
     <>

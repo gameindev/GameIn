@@ -1,47 +1,35 @@
 import React, { useState } from "react";
 import { Box, Flex, Combobox, InputBase, useCombobox } from "@mantine/core";
-import { theme } from "../../../styles/theme/customTheme";
 import HexContainer from "./HexContainer";
 import InputCardItem from "./InputCardItem";
+import { theme } from "../../../styles/theme/customTheme";
 
-const allAvailableCreators = [
-  { id: "1", name: "React" },
-  { id: "2", name: "Mantine" },
-  { id: "3", name: "JavaScript" },
-  { id: "4", name: "TypeScript" },
-  { id: "5", name: "Next.js" },
-  { id: "6", name: "Frontend" },
-  { id: "7", name: "Backend" },
-];
-
-function MultiSelector({ placeholder }) {
+function MultiSelector({ placeholder, value = [], onChange, options = [], error  }) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCreators, setSelectedCreators] = useState([]);
 
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
 
+  const safeValue = Array.isArray(value) ? value : [];
+
   const handleSelectCreator = (name) => {
-    const creatorToAdd = allAvailableCreators.find((c) => c.name === name);
-    if (
-      creatorToAdd &&
-      !selectedCreators.some((c) => c.id === creatorToAdd.id)
-    ) {
-      setSelectedCreators([creatorToAdd, ...selectedCreators]);
+    const creatorToAdd = options.find((c) => c.name === name);
+    if (creatorToAdd && !safeValue.some((c) => c.id === creatorToAdd.id)) {
+      onChange([creatorToAdd, ...safeValue]);
     }
     setSearchTerm("");
     combobox.closeDropdown();
   };
 
   const handleRemoveCreator = (idToRemove) => {
-    setSelectedCreators((prev) => prev.filter((c) => c.id !== idToRemove));
+    onChange(safeValue.filter((c) => c.id !== idToRemove));
   };
 
-  const filteredOptions = allAvailableCreators
+  const filteredOptions = options
     .filter(
       (c) =>
-        !selectedCreators.some((s) => s.id === c.id) &&
+        !safeValue.some((s) => s.id === c.id) &&
         c.name.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .map((c) => (
@@ -52,9 +40,9 @@ function MultiSelector({ placeholder }) {
 
   return (
     <Box>
-      {selectedCreators.length > 0 && (
+      {safeValue.length > 0 && (
         <Flex mb="sm" wrap="wrap">
-          {selectedCreators.map((creator) => (
+          {safeValue.map((creator) => (
             <InputCardItem
               key={creator.id}
               id={creator.id}
@@ -89,6 +77,7 @@ function MultiSelector({ placeholder }) {
               combobox.openDropdown();
             }}
             onClick={() => combobox.openDropdown()}
+            error={error}
           />
         </Combobox.Target>
 

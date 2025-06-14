@@ -11,7 +11,7 @@ import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-import { OAuthProfile } from "../../../utils/validationSchema";
+import { OAuthProfile } from "../../../utils/schemas/RegistrationSchema";
 import { USERTYPES } from "./../../../utils/enum";
 import FormField from './../ui/FormField';
 

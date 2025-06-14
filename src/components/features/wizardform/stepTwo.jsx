@@ -1,10 +1,10 @@
 /* eslint-disable */
 import { Radio, Stack, Button, Group, Text, Flex, Box } from "@mantine/core";
 import { useFormStep } from "../../../hooks/useFormStep";
-import { stepTwoSchema } from "../../../utils/validationSchema";
+import { stepTwoSchema } from "./../../../utils/schemas/RegistrationSchema";
 import { Star, Flame, SunDim } from "lucide-react";
 import { theme } from "../../../styles/theme/customTheme";
-import FormField from '../../shared/ui/FormField';
+import FormField from "../../shared/ui/FormField";
 
 // default values for the form
 const defaultValues = {
@@ -89,7 +89,9 @@ export default function StepTwo({ onNext, onPrev }) {
         <Button variant="default" onClick={handlePrevStep}>
           Back
         </Button>
-        <Button variant="primary" onClick={handleNextStep}>Continue</Button>
+        <Button variant="primary" onClick={handleNextStep}>
+          Continue
+        </Button>
       </Group>
     </Stack>
   );

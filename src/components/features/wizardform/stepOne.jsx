@@ -12,8 +12,8 @@ import { useEffect } from "react";
 import { Link } from "react-router";
 import DOBPicker from "./../../shared/ui/DOBPicker";
 import { useFormStep } from './../../../hooks/useFormStep';
-import { stepOneSchema } from './../../../utils/validationSchema';
 import FormField from './../../shared/ui/FormField';
+import { stepOneSchema } from './../../../utils/schemas/RegistrationSchema';
 
 // default values for the form
 const defaultValues = {

@@ -13,7 +13,6 @@ import { useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { loginSchema } from "../../utils/validationSchema";
 import useApi from "../../hooks/useApi";
 import { API_PATHS } from "../../services/endpoints";
 import { showNotification } from "../../utils/helpers";
@@ -22,6 +21,7 @@ import { setAuth } from "../../stores/slices/auth";
 import GoogleLoginBtn from "./../../components/shared/oAuth/GoogleLoginBtn";
 import routePaths from "../../routes/endpoints";
 import FormField from './../../components/shared/ui/FormField';
+import { loginSchema } from './../../utils/schemas/RegistrationSchema';
 
 const defaultValues = {
   identifier: "",

@@ -87,20 +87,20 @@ export default function CreateTeam() {
         <SectionHeader icon={<Settings />} text={"CREATE TEAM"} />
       </div>
       <Container size="lg">
-        {showProgressBar && (
-          <Group grow gap={3} mt="xs">
-            {FORM_STEPS.map((_, index) => (
-              <Progress
-                key={index}
-                value={stepIndex >= index ? 100 : 0}
-                size="xs"
-                radius="xl"
-                bg={theme.colors.inputBgColor[0]}
-              />
-            ))}
-          </Group>
-        )}
         <Paper radius="sm" bg={"transparent"} my={"5rem"} mx={"xl"}>
+          {showProgressBar && (
+            <Group grow gap={3} mb={40}>
+              {FORM_STEPS.map((_, index) => (
+                <Progress
+                  key={index}
+                  value={stepIndex >= index ? 100 : 0}
+                  size="xs"
+                  radius="xl"
+                  bg={theme.colors.inputBgColor[0]}
+                />
+              ))}
+            </Group>
+          )}
           <Stack spacing="xl">
             <Stack>
               <StepComponent

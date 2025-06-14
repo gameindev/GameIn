@@ -2,7 +2,6 @@ import React from "react";
 import { Box, Button, Card, Group, rem, Stack, Text } from "@mantine/core";
 import { theme } from "../../../styles/theme/customTheme";
 import { useFormStep } from "../../../hooks/useFormStep";
-import MultiSelector from "./../../shared/ui/MultiSelector";
 
 const defaultValues = {
   addAchievements: "",
