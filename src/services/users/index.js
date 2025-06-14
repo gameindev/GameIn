@@ -2,6 +2,7 @@ import { formatDate } from "../../utils/helpers";
 import { API_PATHS } from "../endpoints";
 
 export const createUser = async (formData, post) => {
+  console.log("formData", formData);
   const apiBody = {
     username: formData.username,
     email: formData.email,
