@@ -53,10 +53,10 @@ const UserProfileBanner = () => {
   return (
     <>
       <BannerWrapper>
-        <CoverBanner coverImage={userData.coverImage} />
+        <CoverBanner coverImage={userData.coverImage} controls/>
         <UserInformation>
           <UserAvatar>
-            <AvatarSection avatar={userData.avatar} size="15em" />
+            <AvatarSection avatar={userData.avatar} size="15em" controls />
           </UserAvatar>
           <ProfileWrapper>
             <div className="personal_info">
