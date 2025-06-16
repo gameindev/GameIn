@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import * as Yup from "yup";
 import { USERTYPES } from "../enum";
 

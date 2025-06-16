@@ -5,6 +5,7 @@ import { USERTYPES } from "../utils/enum";
 import accountsdRoutes from "./accountsRoutes";
 
 // --- Lazy-loaded Components ---
+const ErrorPage = lazy(() => import("./ErrorPage"));
 
 // Preloader
 const Preloader = lazy(()=> import('./../components/shared/ui/Preloader'))
@@ -17,7 +18,7 @@ const PageLayout = lazy(() => import("../layouts/PageLayout"));
 const WelcomePage = lazy(() => import("../pages/WelcomePage"));
 const Register = lazy(() => import("../pages/auth/Register"));
 const Signin = lazy(() => import("../pages/auth/Signin"));
-const ErrorPage = lazy(() => import("./ErrorPage"));
+const SearchByUserType = lazy(() => import("../pages/search/SearchByUserType"));
 
 // Features/Components
 const CreateTeam = lazy(() => import("../components/features/createTeam/CreateTeam") );
@@ -64,7 +65,7 @@ const router = createHashRouter([
               ),
             },
             { path: routePaths.ACCOUNTS.PROFILE.CREATE_TEAM, element: withSuspense(<CreateTeam />), },
-            { path: routePaths.SEARCH, element: withSuspense(<CreateTeam />), },
+            { path: routePaths.SEARCH, element: withSuspense(<SearchByUserType />), },
           ],
         }]
       },
