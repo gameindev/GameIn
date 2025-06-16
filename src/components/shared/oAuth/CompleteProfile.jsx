@@ -2,7 +2,7 @@ import { Modal, Button, TextInput, Select, Paper, Stack, Title, } from "@mantine
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-import { OAuthProfile } from "../../../utils/schemas/RegistrationSchema";
+import { OAuthProfile } from "../../../utils/schemas/validationSchema";
 import { USERTYPES } from "./../../../utils/enum";
 import FormField from './../ui/FormField';
 import useApi from "../../../hooks/useApi";

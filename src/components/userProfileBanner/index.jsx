@@ -1,5 +1,5 @@
-import CoverBanner from './../shared/ui/CoverBanner';
-import AvatarSection from './../shared/ui/AvatarSection';
+import CoverBanner from "./../shared/ui/CoverBanner";
+import AvatarSection from "./../shared/ui/AvatarSection";
 import UserInfo from "./UserInfo";
 import StatsSection from "./StatsSection";
 import SponsorshipSection from "./SponsorshipSection";
@@ -16,8 +16,7 @@ import creator from "../../assets/creators/creator_image.jpg";
 import coverImage from "../../assets/creators/cover_image.jpg";
 import { UserAvatar } from "./styles";
 import { useSelector } from "react-redux";
-import { selectCurrentUser } from './../../stores/auth/authSelector';
-
+import { selectCurrentUser } from "./../../stores/auth/authSelector";
 
 const UserProfileBanner = () => {
   const currentUser = {
@@ -50,15 +49,14 @@ const UserProfileBanner = () => {
     ],
   };
   const user = useSelector(selectCurrentUser);
-  
 
   return (
     <>
       <BannerWrapper>
-        <CoverBanner coverImage={currentUser.coverImage} />
+        <CoverBanner coverImage={currentUser.coverImage} controls />
         <UserInformation>
           <UserAvatar>
-            <AvatarSection avatar={currentUser.avatar} size="15em" />
+            <AvatarSection avatar={currentUser.avatar} size="15em" controls />
           </UserAvatar>
           <ProfileWrapper>
             <div className="personal_info">

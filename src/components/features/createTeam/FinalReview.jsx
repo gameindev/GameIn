@@ -1,47 +1,95 @@
 import React from "react";
-import { Box, Button, Card, Group, rem, Stack, Text } from "@mantine/core";
+import {
+  Box,
+  Button,
+  Card,
+  Group,
+  rem,
+  Stack,
+  Text,
+  Divider,
+  List,
+} from "@mantine/core";
 import { theme } from "../../../styles/theme/customTheme";
 import { useFormStep } from "../../../hooks/useFormStep";
-import MultiSelector from "./../../shared/ui/MultiSelector";
-
-const defaultValues = {
-  addAchievements: "",
-  externalStats: "",
-};
 
 export default function FinalReview({ onPrev, onNext }) {
-  const { control, setValue, handlePrevStep, handleNextStep } = useFormStep({
-    defaultValues,
+  const { getValues, handlePrevStep, handleNextStep } = useFormStep({
+    formId: "createTeam",
+    defaultValues: {},
     onNext,
     onPrev,
   });
+
+  const formData = getValues();
+
+  const renderList = (label, items) => (
+    <Stack gap={4}>
+      <Text fw={500}>{label}</Text>
+      {Array.isArray(items) && items.length > 0 ? (
+        <List size="sm" spacing="xs" withPadding>
+          {items.map((item, i) => (
+            <List.Item key={i}>{item.name || item}</List.Item>
+          ))}
+        </List>
+      ) : (
+        <Text size="sm" c="dimmed">
+          None selected
+        </Text>
+      )}
+    </Stack>
+  );
+
+  const renderText = (label, value) => (
+    <Stack gap={4}>
+      <Text fw={500}>{label}</Text>
+      <Text size="sm" c={value ? "white" : "dimmed"}>
+        {value || "Not provided"}
+      </Text>
+    </Stack>
+  );
+
   return (
     <>
       <Box
-        pos={"relative"}
+        pos="relative"
         style={{ borderRadius: theme.radius.md, overflow: "hidden" }}
       >
-        <Stack
-          spacing="xl"
-          bg={theme.colors.darkGrey[0]}
-          p={50}
-          pos={"relative"}
-          gap={24}
-        >
-          <Stack gap={8} w={"50%"} mx={"auto"}>
-            <Text>Payment</Text>
-            <Card>Stripe</Card>
-            <Card>PayPal</Card>
-            <Card>UPI Payment</Card>
+        <Stack spacing="xl" bg={theme.colors.darkGrey[0]} p={50} gap={24}>
+          <Stack gap={24} w="50%" mx="auto">
+            <Text size="lg" fw={600}>
+              Final Review
+            </Text>
+
+            {/* Render social media fields */}
+            {Object.entries(formData).map(([key, value]) => {
+              if (Array.isArray(value)) {
+                return renderList(key, value);
+              }
+
+              // Filter known string fields
+              if (
+                typeof value === "string" &&
+                (key.includes("URL") ||
+                  key === "paymentMethod" ||
+                  key === "externalStats" ||
+                  key === "addAchievements")
+              ) {
+                return renderText(key, value);
+              }
+
+              return null;
+            })}
           </Stack>
         </Stack>
       </Box>
+
       <Group mt="lg" position="center" style={{ justifyContent: "center" }}>
-        <Button variant="grey" width={rem(100)} onClick={handlePrevStep}>
+        <Button variant="grey" w={rem(100)} onClick={handlePrevStep}>
           Back
         </Button>
-        <Button variant="primary" width={rem(100)} onClick={handleNextStep}>
-          Next
+        <Button variant="primary" w={rem(100)} onClick={handleNextStep}>
+          Submit
         </Button>
       </Group>
     </>

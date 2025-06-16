@@ -12,6 +12,7 @@ export default function StepThree({ onNext, onPrev }) {
   // form steps information
   const { handleSubmit, isSubmitting, handlePrevStep, errors, setValue } =
     useFormStep({
+      formId: "register",
       defaultValues,
       schema: stepThreeSchema,
       isFinalStep: true,

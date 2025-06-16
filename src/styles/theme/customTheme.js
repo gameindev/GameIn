@@ -181,6 +181,7 @@ export const theme = createTheme({
     white: Array(10).fill("#fff"),
     black: Array(10).fill("#000"),
     inputBgColor: Array(10).fill("#50565a"),
+    iconHover: Array(10).fill("#dbd162"),
     textWhite: virtualColor({
       name: "textWhite",
       light: "black",

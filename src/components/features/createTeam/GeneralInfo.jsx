@@ -51,6 +51,7 @@ const fields = [
 
 export default function GeneralInfo({ onNext }) {
   const { control, setValue, watch, handleNextStep } = useFormStep({
+    formId: "createTeam",
     defaultValues,
     onNext,
     schema: generalInfoSchema,

@@ -1,19 +1,22 @@
 import { Text, Grid } from "@mantine/core";
-import StatBox from './../../components/shared/ui/StatBox';
+import StatBox from "./../../components/shared/ui/StatBox";
+import ReusableModal from "./../../components/shared/modals/modal";
+import { useNavigate } from "react-router";
+import IconButton from "../../components/shared/ui/IconButton";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   return (
     <>
       <Grid gutter={20}>
         <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-          <StatBox>
-            <Text>Stat</Text>
-          </StatBox>
+          <StatBox title={"Profile Bio"} action={<ReusableModal title={"Edit Bio"} />}></StatBox>
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-          <StatBox>
-            <Text>Stat</Text>
-          </StatBox>
+          <StatBox
+            title={"Ongoing Sponsorships"}
+            action={<IconButton onClick={() => navigate("/sponsorships")} />}
+          ></StatBox>
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
           <StatBox>

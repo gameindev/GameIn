@@ -2,47 +2,75 @@ import React from "react";
 import { Box, Button, Group, rem, Stack, Text } from "@mantine/core";
 import { theme } from "../../../styles/theme/customTheme";
 import { useFormStep } from "../../../hooks/useFormStep";
+import FormField from "./../../shared/ui/FormField";
 import MultiSelector from "./../../shared/ui/MultiSelector";
 
 const defaultValues = {
-  addAchievements: "",
-  externalStats: "",
+  addAchievements: [],
+  addExternalStats: [],
 };
 
-export default function InputStats({ onPrev, onNext }) {
-  const { control, setValue, handlePrevStep, handleNextStep } = useFormStep({
+const allAvailableCreators = [
+  { id: "1", name: "React" },
+  { id: "2", name: "Mantine" },
+  { id: "3", name: "JavaScript" },
+  { id: "4", name: "TypeScript" },
+  { id: "5", name: "Next.js" },
+  { id: "6", name: "Frontend" },
+  { id: "7", name: "Backend" },
+];
+
+const selectors = [
+  {
+    name: "addAchievements",
+    label: "Add Achievements",
+    placeholder: "Search and Add Achievements",
+  },
+  {
+    name: "addExternalStats",
+    label: "External Stats",
+    placeholder: "Add External Stats",
+  },
+];
+
+export default function AdminsTeams({ onPrev, onNext }) {
+  const { control, handlePrevStep, handleNextStep } = useFormStep({
+    formId: "createTeam",
     defaultValues,
     onNext,
     onPrev,
   });
+
   return (
     <>
       <Box
-        pos={"relative"}
+        pos="relative"
         style={{ borderRadius: theme.radius.md, overflow: "hidden" }}
       >
-        <Stack
-          spacing="xl"
-          bg={theme.colors.darkGrey[0]}
-          p={50}
-          pos={"relative"}
-          gap={24}
-        >
-          <Stack gap={8} w={"50%"} mx={"auto"}>
-            <Text>Add Achievements</Text>
-            <MultiSelector placeholder="Search and Add Achievements" />
-          </Stack>
-          <Stack gap={8} w={"50%"} mx={"auto"}>
-            <Text>External Stats</Text>
-            <MultiSelector placeholder="Add External Stats" />
-          </Stack>
+        <Stack spacing="xl" bg={theme.colors.darkGrey[0]} p={50} gap={24}>
+          {selectors.map(({ name, label, placeholder }) => (
+            <Stack key={name} gap={8} w="50%" mx="auto">
+              <Text>{label}</Text>
+              <FormField
+                key={name}
+                name={name}
+                control={control}
+                Component={MultiSelector}
+                componentProps={{
+                  placeholder,
+                  options: allAvailableCreators,
+                }}
+              />
+            </Stack>
+          ))}
         </Stack>
       </Box>
+
       <Group mt="lg" position="center" style={{ justifyContent: "center" }}>
-        <Button variant="grey" width={rem(100)} onClick={handlePrevStep}>
+        <Button variant="grey" w={rem(100)} onClick={handlePrevStep}>
           Back
         </Button>
-        <Button variant="primary" width={rem(100)} onClick={handleNextStep}>
+        <Button variant="primary" w={rem(100)} onClick={handleNextStep}>
           Next
         </Button>
       </Group>

@@ -52,6 +52,7 @@ const fields = [
 export default function StepOne({ onNext }) {
   // form steps information
   const { control, setValue, watch, handleNextStep, errors } = useFormStep({
+    formId: "register",
     defaultValues,
     schema: stepOneSchema,
     onNext,

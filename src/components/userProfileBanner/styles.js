@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { theme } from "../../styles/theme/customTheme";
 
-
 export const BannerWrapper = styled.div`
   width: 100%;
   background-color: #1f2937;
@@ -27,19 +26,10 @@ export const UserAvatar = styled.div`
   height: 11.875rem; */
   overflow: hidden;
 
-  .profile_avatar {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 0.063rem solid #50565a;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+  .action {
+    position: absolute;
+    bottom: 2rem;
+    right: 3rem;
   }
 `;
 

@@ -21,7 +21,7 @@ import { setAuth } from "../../stores/slices/auth";
 import GoogleLoginBtn from "./../../components/shared/oAuth/GoogleLoginBtn";
 import routePaths from "../../routes/endpoints";
 import FormField from './../../components/shared/ui/FormField';
-import { loginSchema } from './../../utils/schemas/RegistrationSchema';
+import { loginSchema } from './../../utils/schemas/validationSchema';
 
 const defaultValues = {
   identifier: "",

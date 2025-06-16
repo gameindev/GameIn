@@ -1,16 +1,9 @@
 import React from "react";
-import {
-  Card,
-  TextInput,
-  Group,
-  ActionIcon,
-  Box,
-  rem,
-  Text,
-} from "@mantine/core";
-import { Plus, X, Check } from "lucide-react";
+import { Card, TextInput, Group, Box, rem, Text } from "@mantine/core";
+import { Plus, X } from "lucide-react";
 import { theme } from "../../../styles/theme/customTheme";
 import styled from "styled-components";
+import FormField from "./FormField"; // Adjust path as needed
 
 const CloseIcon = styled.div`
   display: flex;
@@ -35,10 +28,11 @@ const InputCardItem = ({
   icon,
   placeholder,
   value,
-  onChange,
   added,
   onToggle,
   readOnly = false,
+  name,
+  control,
 }) => {
   return (
     <Card
@@ -53,6 +47,7 @@ const InputCardItem = ({
     >
       <Group align="center">
         <Box>{icon}</Box>
+
         {readOnly ? (
           <UserDetails style={{ flexGrow: 1 }}>
             <Text size="sm" fw={500}>
@@ -60,23 +55,23 @@ const InputCardItem = ({
             </Text>
           </UserDetails>
         ) : (
-          <TextInput
-            style={{ flexGrow: 1 }}
-            variant="unstyled"
-            value={value}
-            onChange={(e) => onChange(id, e.currentTarget.value)}
-            placeholder={placeholder}
-            styles={{
-              input: {
-                paddingLeft: rem(4),
-              },
-            }}
-          />
+          <div style={{ flexGrow: 1 }}>
+            <FormField
+              name={name}
+              control={control}
+              Component={TextInput}
+              componentProps={{
+                variant: "unstyled",
+                placeholder,
+                styles: {
+                  input: {
+                    paddingLeft: rem(4),
+                  },
+                },
+              }}
+            />
+          </div>
         )}
-
-        {/* <ActionIcon variant="subtle" color="teal">
-          <Check size={10} />
-        </ActionIcon> */}
 
         <CloseIcon
           style={{
