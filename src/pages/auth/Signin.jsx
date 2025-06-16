@@ -76,19 +76,21 @@ export default function Signin() {
           `Unknown user type. Contact support`,
           "red"
         );
-        navigate(routePaths.welcomePage);
+        navigate(routePaths.WELCOMEPAGE);
         return;
       }
-      if (userType === "BRAND") navigate(routePaths.dashboard);
+      if (userType === "BRAND") navigate(routePaths.ACCOUNTS.DASHBOARD.ROOT);
 
-      if (userType === "ADMIN") navigate(routePaths.dashboard);
+      if (userType === "BRAND_ADMIN") navigate(routePaths.ACCOUNTS.DASHBOARD.ROOT);
+
+      if (userType === "ADMIN") navigate(routePaths.ACCOUNTS.DASHBOARD.ROOT);
     } catch (err) {
       showNotification(
         "Login Error",
         `${err?.message || "Something went wrong"}`,
         "red"
       );
-      navigate(routePaths.welcomePage);
+      navigate(routePaths.WELCOMEPAGE);
     }
   };
 

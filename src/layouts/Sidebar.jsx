@@ -6,8 +6,37 @@ import { Hexagon } from "../components/shared/ui/HexagonDemo";
 import { theme } from "../styles/theme/customTheme";
 import coverImage from "../assets/creators/creator_image.jpg";
 import AvatarSection from './../components/shared/ui/AvatarSection';
+import routePaths from "../routes/endpoints";
 
 export default function Sidebar() {
+
+  const sidebarItems = [
+    {
+      icon: <Home size="1rem" />,
+      label: "Account",
+      link: routePaths.ACCOUNTS.DASHBOARD.ROOT,
+    },
+    {
+      icon: <Newspaper size="1rem" />,
+      label: "News Feed",
+      link: routePaths.ACCOUNTS.DASHBOARD.ROOT,
+    },
+    {
+      icon: <Star size="1rem" />,
+      label: "Creators",
+      link: routePaths.SEARCH.replace(":userType", 'creators'),
+    },
+    {
+      icon: <Flame size="1rem" />,
+      label: "Brands",
+      link: routePaths.SEARCH.replace(":userType", 'brands'),
+    },
+    {
+      icon: <Bolt size="1rem" />,
+      label: "Settings",
+      link: routePaths.ACCOUNTS.DASHBOARD.ROOT,
+    },
+  ]
 
   return (
       <SidebarStyles>
@@ -42,38 +71,15 @@ export default function Sidebar() {
         </div>
         <div className="profile-links">
           <ul>
-            <li>
-              <Link to="/">
-                <Home size="1rem"/>
-                <span>Account</span>
+            {sidebarItems.map((item, index) => (
+              <li key={index}>
+              <Link to={item.link}>
+                {item.icon}
+                <span>{item.label}</span>
               </Link>
+              {index % 2 !== 0 && <div className="divider"></div>}
             </li>
-            <li>
-              <Link to="/">
-                <Newspaper size="1rem" />
-                <span>News Feed</span>
-              </Link>
-            </li>
-            <div className="divider"></div>
-            <li>
-              <Link to="/">
-                <Star size="1rem" />
-                <span>Creators</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/">
-                <Flame size="1rem" />
-                <span>Brands</span>
-              </Link>
-            </li>
-            <div className="divider"></div>
-            <li>
-              <Link to="/">
-                <Bolt size="1rem" />
-                <span>Settings</span>
-              </Link>
-            </li>
+            ))}
           </ul>
         </div>
       </SidebarStyles>

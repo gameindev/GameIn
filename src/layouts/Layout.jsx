@@ -2,8 +2,8 @@ import { Outlet, useLocation } from "react-router";
 import Header from "./Header";
 import Footer from "./Footer";
 import Sidebar from "./Sidebar";
-import { isLoggedIn } from "../stores/auth/authSelector";
 import { useSelector } from "react-redux";
+import { isLoggedIn } from "../stores/selectors";
 
 const Layout = () => {
   const location = useLocation();

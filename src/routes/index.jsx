@@ -63,7 +63,8 @@ const router = createHashRouter([
                 ({ path, element }) => ({ path, element: withSuspense(element),})
               ),
             },
-            { path: routePaths.PROFILE.CREATE_TEAM, element: withSuspense(<CreateTeam />), },
+            { path: routePaths.ACCOUNTS.PROFILE.CREATE_TEAM, element: withSuspense(<CreateTeam />), },
+            { path: routePaths.SEARCH, element: withSuspense(<CreateTeam />), },
           ],
         }]
       },

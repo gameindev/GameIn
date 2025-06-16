@@ -10,7 +10,7 @@ export default function Profile() {
         <StatBox>
           <Text>Stat</Text>
           <div className="create_team">
-            <Link to={routePaths.PROFILE.CREATE_TEAM}>
+            <Link to={routePaths.ACCOUNTS.PROFILE.CREATE_TEAM}>
               <Button>Create Team</Button>
             </Link>
           </div>

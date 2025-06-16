@@ -3,12 +3,12 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import { setUser } from "../../../stores/slices/user";
-import { setAuth } from "../../../stores/auth/authSlice";
 import CompleteProfile from "./CompleteProfile";
 import routePaths from "../../../routes/endpoints";
 import { showNotification } from "../../../utils/helpers";
 import useApi from "../../../hooks/useApi";
 import { API_PATHS } from "../../../services/endpoints";
+import { setAuth } from "../../../stores/slices/auth";
 
 const GoogleLoginBtn = () => {
   const [showCompleteProfile, setShowCompleteProfile] = useState(false);
@@ -41,7 +41,7 @@ const GoogleLoginBtn = () => {
     dispatch(setUser({ user }));
     setShowCompleteProfile(false);
     showNotification("Login Successful", `Welcome back, ${user.username}`);
-    navigate(routePaths.DASHBOARD.ROOT);
+    navigate(routePaths.ACCOUNTS.DASHBOARD.ROOT);
   };
 
   return (

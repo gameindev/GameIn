@@ -5,7 +5,7 @@ import routePaths from "../endpoints";
 const RequiresAuth = () => {
   const accessToken = useSelector((state) => state.auth.accessToken);
 
-  return accessToken ? <Outlet /> : <Navigate  to={routePaths.login} replace />;
+  return accessToken ? <Outlet /> : <Navigate  to={routePaths.LOGIN} replace />;
 };
 
 export default RequiresAuth;

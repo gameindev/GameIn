@@ -5,6 +5,7 @@ import { stepTwoSchema } from "./../../../utils/schemas/RegistrationSchema";
 import { Star, Flame, SunDim } from "lucide-react";
 import { theme } from "../../../styles/theme/customTheme";
 import FormField from "../../shared/ui/FormField";
+import { USERTYPES } from "../../../utils/enum";
 
 // default values for the form
 const defaultValues = {

@@ -10,14 +10,16 @@ const Stats = lazy(() => import("../pages/accounts/Stats"));
 const NewsFeed = lazy(() => import("../pages/accounts/NewsFeed"));
 const Inbox = lazy(() => import("../pages/accounts/Inbox"));
 
+const  { DASHBOARD, PROFILE, SPONSORSHIPS, OFFERINGS, STATS, NEWSFEED, INBOX } = routePaths.ACCOUNTS;
+
 const accountsdRoutes = [
-  { path: routePaths.DASHBOARD.ROOT, element: <Dashboard /> },
-  { path: routePaths.PROFILE.ROOT, element: <Profile /> },
-  { path: routePaths.SPONSORSHIPS.ROOT, element: <SponsorShips /> },
-  { path: routePaths.OFFERINGS.ROOT, element: <Offerings /> },
-  { path: routePaths.STATS.ROOT, element: <Stats /> },
-  { path: routePaths.NEWSFEED.ROOT, element: <NewsFeed /> },
-  { path: routePaths.INBOX.ROOT, element: <Inbox /> },
+  { path: DASHBOARD.ROOT, element: <Dashboard /> },
+  { path: PROFILE.ROOT, element: <Profile /> },
+  { path: SPONSORSHIPS.ROOT, element: <SponsorShips /> },
+  { path: OFFERINGS.ROOT, element: <Offerings /> },
+  { path: STATS.ROOT, element: <Stats /> },
+  { path: NEWSFEED.ROOT, element: <NewsFeed /> },
+  { path: INBOX.ROOT, element: <Inbox /> },
 ];
 
 export default accountsdRoutes;

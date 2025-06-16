@@ -5,10 +5,10 @@ import { HeaderSection } from "../styles/layouts";
 import { useSelector, useDispatch } from "react-redux";
 import { persistor } from "../stores/store";
 import { isLoggedIn, currentUser } from "../stores/selectors";
-import { logoutUser } from "../stores/auth/authSlice";
 import routePaths from "../routes/endpoints";
 import coverImage from "../assets/creators/creator_image.jpg";
 import AvatarSection from './../components/shared/ui/AvatarSection';
+import { logoutUser } from "../stores/slices/auth";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -20,8 +20,27 @@ export default function Header() {
   const handleLogout = async () => {
     dispatch(logoutUser());
     await persistor.purge();
-    navigate(routePaths.WELCOMEPAGE);
+    navigate(routePaths.LOGIN);
   };
+
+  const navList = [
+    {
+      label: "GameIn",
+      path: routePaths.WELCOMEPAGE,
+    },
+    {
+      label: "About",
+      path: routePaths.WELCOMEPAGE,
+    },
+    {
+      label: "Info",
+      path: routePaths.WELCOMEPAGE,
+    },
+    {
+      label: "Guidelines",
+      path: routePaths.WELCOMEPAGE,
+    }
+  ]
 
   return (
     <HeaderSection>
@@ -35,18 +54,11 @@ export default function Header() {
             <nav>
               {!isLoggedInUser ? (
                 <ul>
-                  <li>
-                    <Link to={routePaths.welcomePage}>GameIn</Link>
-                  </li>
-                  <li>
-                    <Link to={routePaths.welcomePage}>About</Link>
-                  </li>
-                  <li>
-                    <Link to={routePaths.welcomePage}>Info</Link>
-                  </li>
-                  <li>
-                    <Link to={routePaths.welcomePage}>Guidelines</Link>
-                  </li>
+                  {navList.map((item, index) => (
+                    <li key={index}>
+                      <Link to={item.path}>{item.label}</Link>
+                    </li>
+                  ))}
                 </ul>
               ) : (
                 <Menu shadow="md" width={180} position="bottom-end">
