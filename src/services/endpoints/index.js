@@ -5,10 +5,10 @@ export const API_PATHS = {
     SELECT_ROLE: "/users/assign-role",
     FORGOT_PASSWORD: "/auth/forgot-password",
     REFRESH_TOKENS: "/auth/refresh-tokens",
-    GOOGLE_OAUTH: 'auth/google-authentication',
-    COMPLETE_PROFILE: '/users/complete-profile',
+    GOOGLE_OAUTH: '/auth/google-authentication',
   },
   USERS: {
+    BY_IDENTIFIER: '/users/by-identifier',
     CREATE: '/users',
     PROFILE: "/users/profile",
     UPDATE: id => `/users/${id}`,

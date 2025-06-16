@@ -1,10 +1,4 @@
-import {
-  createTheme,
-  Grid,
-  InputWrapper,
-  PasswordInput,
-  virtualColor,
-} from "@mantine/core";
+import { createTheme, virtualColor } from "@mantine/core";
 
 // Custom Button styles using props
 const buttonStyles = {
@@ -16,54 +10,31 @@ const buttonStyles = {
       width: width ?? "auto",
       height: height ?? "auto",
       borderRadius: theme.radius.sm,
-      fontSize: theme.fontSizes[size],
+      fontSize: theme.fontSizes?.[size],
+      backgroundColor: theme.colors?.[variant]?.[0],
       lineHeight: "normal",
     };
 
-    if (variant === "primary") {
-      return {
-        root: {
-          ...baseStyles,
-          color: theme.colors.darkText[0],
-          backgroundColor: theme.colors.primary[0],
-        },
-      };
-    }
-
-    if (variant === "secondary") {
-      return {
-        root: {
-          ...baseStyles,
-          color: theme.colors.textSecondary[0],
-          backgroundColor: theme.colors.secondary[0],
-        },
-      };
-    }
-
-    if (variant === "grey") {
-      return {
-        root: {
-          ...baseStyles,
-          color: theme.colors.white[0],
-          backgroundColor: theme.colors.inputBgColor[0],
-        },
-      };
-    }
-
-    if (variant === "darkGrey") {
-      return {
-        root: {
-          ...baseStyles,
-          color: theme.colors.white[0],
-          backgroundColor: theme.colors.darkGrey[0],
-        },
-      };
-    }
+    const variantStylesMap = {
+      primary: {
+        color: theme.colors.darkText[0],
+      },
+      secondary: {
+        color: theme.colors.textSecondary[0],
+      },
+      grey: {
+        color: theme.colors.white[0],
+      },
+      darkGrey: {
+        color: theme.colors.white[0],
+      },
+    };
 
     // Default button style
     return {
       root: {
         ...baseStyles,
+        ...(variantStylesMap[variant] || {}),
       },
     };
   },

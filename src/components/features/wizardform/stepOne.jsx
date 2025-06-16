@@ -14,6 +14,7 @@ import DOBPicker from "./../../shared/ui/DOBPicker";
 import { useFormStep } from './../../../hooks/useFormStep';
 import FormField from './../../shared/ui/FormField';
 import { stepOneSchema } from './../../../utils/schemas/RegistrationSchema';
+import useCheckIdentifierExists from "../../../hooks/useCheckIdentifierExists";
 
 // default values for the form
 const defaultValues = {
@@ -51,10 +52,13 @@ const fields = [
 
 export default function StepOne({ onNext }) {
   // form steps information
+
+  const { checkExists } = useCheckIdentifierExists();
+
   const { control, setValue, watch, handleNextStep, errors } = useFormStep({
     formId: "register",
     defaultValues,
-    schema: stepOneSchema,
+    schema: stepOneSchema(checkExists),
     onNext,
   });
 

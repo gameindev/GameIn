@@ -12,9 +12,6 @@ const Banner = styled.div`
   .banner_image {
     width: 100%;
     height: 100%;
-    background-image: url("/banner.jpg");
-    background-size: cover;
-    background-position: center;
     background-color: ${theme.colors.secondaryGrey[0]};
   }
 

@@ -1,8 +1,7 @@
 import * as Yup from "yup";
-import { checkEmailAndUsernameExists } from "../api/user";
 import { USERTYPES } from "../enum";
 
-export const stepOneSchema = Yup.object().shape({
+export const stepOneSchema = (checkExists) => Yup.object().shape({
   email: Yup.string()
     .trim()
     .required("Enter your email address")
@@ -13,7 +12,7 @@ export const stepOneSchema = Yup.object().shape({
     .test("email-unique", "Email already in use", async function (value) {
       if (!value) return true;
       try {
-        const emailExists = await checkEmailAndUsernameExists({ email: value });
+        const emailExists = await checkExists({ email: value });
         return !emailExists;
       } catch (error) {
         return error;
@@ -30,7 +29,7 @@ export const stepOneSchema = Yup.object().shape({
     .test("username-unique", "Username already taken", async function (value) {
       if (!value) return true;
       try {
-        const usernameExists = await checkEmailAndUsernameExists({
+        const usernameExists = await checkExists({
           username: value,
         });
         return !usernameExists;

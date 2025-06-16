@@ -1,15 +1,12 @@
-// utils/startTokenRefreshScheduler.js
-import { setAccessToken, setRefreshToken, logoutUser } from "../../stores/user/user.action";
-import {jwtDecode} from "jwt-decode";
+// import {jwtDecode} from "jwt-decode";
 import axios from "axios";
-import { USER_ACTION_TYPES } from "../../stores/user/user.types";
 import { store } from "../../stores/store";
+import { logoutUser, setAuth } from "../../stores/slices/auth";
 
 let refreshTimer = null;
 
 export const startTokenRefreshScheduler = () => {
     const { refreshToken, accessTokenExpiry } = store.getState().user;
-    console.log(refreshToken, accessTokenExpiry);
     
     if (!refreshToken || !accessTokenExpiry) return;
 
@@ -28,14 +25,13 @@ export const startTokenRefreshScheduler = () => {
             });
 
             const { accessToken, refreshToken: newRefreshToken } = res.data;
-            const decoded = jwtDecode(accessToken);
+            // const decoded = jwtDecode(accessToken);
 
-            store.dispatch(setAccessToken(accessToken));
-            store.dispatch(setRefreshToken(newRefreshToken));
-            store.dispatch({
-                type: USER_ACTION_TYPES.SET_ACCESS_TOKEN_EXPIRY,
-                payload: decoded.exp * 1000,
-            });
+            store.dispatch(setAuth({ accessToken, refreshToken: newRefreshToken}));
+            // store.dispatch({
+            //     type: USER_ACTION_TYPES.SET_ACCESS_TOKEN_EXPIRY,
+            //     payload: decoded.exp * 1000,
+            // });
 
             // 🌀 restart the scheduler
             startTokenRefreshScheduler();
