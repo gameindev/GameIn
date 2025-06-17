@@ -99,31 +99,17 @@ Use '*' to load all supported relations.`,
     * Fetches a registered user on the application by ID.
     * @param email The ID of the user that you want the API to return
     * @returns User fetched successfully based on the query
-    */
-    @ApiOperation({
-        summary: 'Fetches a registered user on the application by email.',
-    })
-    @ApiQuery({
-        name: 'email',
-        type: String,
-        description: 'The email of the user to fetch',
-        required: true,
-    })
-    @ApiResponse({
-        status: 200,
-        description: 'User fetched successfully based on the query.',
-    })
-
+    */  
     // @UseGuards(AccessTokenGuard)
-    @Get('/by-email')
-    @UseGuards(UserTypeGuard)
-    @UserTypes(UserType.ADMIN, UserType.CREATOR, UserType.BRAND, UserType.COMMUNITY)
-    @UseInterceptors(ClassSerializerInterceptor)
-    getUserByEmail(
-        @Query('email') email: string,
-    ) {
-        return this.usersService.findUserOneByEmail(email);
-    }
+    // @Get('/by-email')
+    // @UseGuards(UserTypeGuard)
+    // @UserTypes(UserType.ADMIN, UserType.CREATOR, UserType.BRAND, UserType.COMMUNITY)
+    // @UseInterceptors(ClassSerializerInterceptor)
+    // getUserByEmail(
+    //     @Query('email') email: string,
+    // ) {
+    //     return this.usersService.findUserOneByEmail(email);
+    // }
 
 
 
@@ -134,7 +120,7 @@ Use '*' to load all supported relations.`,
     * @returns User fetched successfully based on the query
     */
     @ApiOperation({
-        summary: 'Fetches a registered user on the application by identifier.',
+        summary: 'Check a registered user on the application by identifier.',
     })
     @ApiQuery({
         name: 'identifier',
@@ -144,17 +130,17 @@ Use '*' to load all supported relations.`,
     })
     @ApiResponse({
         status: 200,
-        description: 'User fetched successfully based on the query.',
+        description: 'Return true or false based on the query',
     })
 
     // @UseGuards(AccessTokenGuard)
     @Get('/by-identifier')
     @Auth(AuthType.None)
     @UseInterceptors(ClassSerializerInterceptor)
-    getUserByIdentifier(
+    checkUserByIdentifier(
         @Query('identifier') identifier: string,
     ) {
-        return this.usersService.findOneByIdentifier(identifier);
+        return this.usersService.checkOneByIdentifier(identifier);
     }
 
 
@@ -269,7 +255,7 @@ Use '*' to load all supported relations.`,
      * @returns 
      */
     @ApiBearerAuth()
-    @ApiTags('auth')
+    @ApiTags('Auth')
     @ApiOperation({
         summary: 'Assigns a role to an OAuth user'
     })

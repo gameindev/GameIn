@@ -19,6 +19,7 @@ import { CreateGoogleUserProvider } from './create-google-user.provider';
 import { GoogleUser } from '../interfaces/google-user.intefrace';
 import { PathcUserRoleDto } from '../dtos/patch-user-role.dto';
 import { UpdateUserRoleProvider } from './update-user-role.provider';
+import { CheckOneByIdentifierProvider } from './check-one-by-identifier.provider';
 
 /**
  * Users service.
@@ -90,6 +91,12 @@ export class UsersService {
          */
         @Inject(UpdateUserRoleProvider)
         private readonly updateUserRoleProvider: UpdateUserRoleProvider,
+
+        /**
+         * Injectting UpdateUserRoleProvider
+         */
+        @Inject(CheckOneByIdentifierProvider)
+        private readonly checkOneByIdentifierProvider: CheckOneByIdentifierProvider,
     ) { }
 
 
@@ -294,6 +301,12 @@ export class UsersService {
     public async findOneByIdentifier(identifier: string) {
         return await this.findOneUserByIdentifier.findOneByIdentifier(identifier);
     }
+
+
+    public async checkOneByIdentifier(identifier: string) {
+        return await this.checkOneByIdentifierProvider.checkOneByIdentifier(identifier);
+    }
+
 
     public async findOneByGoogleId(googleId: string) {
         return await this.findOneByGoogleIdProvider.findOneByGoogleId(googleId);

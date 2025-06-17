@@ -29,7 +29,7 @@ export class SignInProvider {
     public async signIn(signinDto: SigninDto) {
         // Find the user using email or username
         let user = await this.usersService.findOneByIdentifier(signinDto.identifier);
-
+        console.log(user)
         // Compare the password
         let isEqual: boolean = false
 

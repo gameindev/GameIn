@@ -1,11 +1,12 @@
 /* eslint-disable */
 
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { UserType } from "./enums/user-type.enums";
 import { CreatorProfile } from "src/creator-profiles/creator-profile.entity";
 import { BrandProfile } from "src/brand-profiles/brand-profile.entity";
 import { Exclude } from "class-transformer";
 import { UserBio } from "src/users-bio/user-bio.entity";
+import { SocialIntegration } from "src/social-integration/social-integration.entity";
 
 /**
  * User entity.
@@ -98,6 +99,12 @@ export class User {
         nullable: true,
     })
     userBio: UserBio;
+
+    @OneToMany(() => SocialIntegration, socialIntegration => socialIntegration.user, {
+        cascade: true,
+        eager: true,
+    })
+    socialIntegrations: SocialIntegration[];
     
     // ratingReceived: UserRating[];
     // ratingGiven: UserRating[];

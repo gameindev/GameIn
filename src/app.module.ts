@@ -25,7 +25,9 @@ import { UserBio } from "./users-bio/user-bio.entity";
 import { BrandProfile } from "./brand-profiles/brand-profile.entity";
 import { CreatorProfile } from "./creator-profiles/creator-profile.entity";
 import { User } from "./users/user.entity";
-import { Upload} from "./uploads/upload.entity";
+import { Upload } from "./uploads/upload.entity";
+import { SocialIntegrationModule } from './social-integration/social-integration.module';
+import { SocialIntegration } from './social-integration/social-integration.entity';
 dotenvFlow.config();
 
 const ENV = process.env.NODE_ENV;
@@ -44,6 +46,7 @@ const ENV = process.env.NODE_ENV;
         }),
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
+
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => {
                 return {
@@ -54,15 +57,17 @@ const ENV = process.env.NODE_ENV;
                     password: configService.get('database.password'),
                     database: configService.get('database.name'),
                     // autoLoadEntities: configService.get('database.autoLoadEntities'),
-                    entities: [User, Upload, CreatorProfile, BrandProfile, UserBio],
-                    synchronize: configService.get('database.synchronize')
+                    entities: [User, Upload, CreatorProfile, BrandProfile, UserBio, SocialIntegration],
+                    // synchronize: configService.get('database.synchronize')
+                    synchronize: false
                 }
             }
         }),
-        ConfigModule.forFeature(jwtConfig), 
+        ConfigModule.forFeature(jwtConfig),
         JwtModule.registerAsync(jwtConfig.asProvider()),
         UsersBioModule,
-        UploadsModule
+        UploadsModule,
+        SocialIntegrationModule
     ],
     controllers: [AppController],
     providers: [

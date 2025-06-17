@@ -1,6 +1,6 @@
 import { Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiHeaders, ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiHeaders, ApiOperation } from '@nestjs/swagger';
 import { Express } from 'express';
 import { UploadsService } from './providers/uploads.service';
 
@@ -28,6 +28,7 @@ export class UploadsController {
     @ApiOperation({
         summary: 'Upload a file to the server',
     })
+    @ApiBearerAuth()
     @Post('file')
     @UseInterceptors(FileInterceptor('file'))
     public uploadFile(@UploadedFile() file: Express.Multer.File) {

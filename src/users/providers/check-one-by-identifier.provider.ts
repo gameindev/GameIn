@@ -1,10 +1,11 @@
-import { BadRequestException, Injectable, RequestTimeoutException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, RequestTimeoutException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class FindOneByIdentifierProvider {
+export class CheckOneByIdentifierProvider {
+
     constructor(
         /**
          * Injecting User Repository.
@@ -13,7 +14,7 @@ export class FindOneByIdentifierProvider {
         private readonly userRepository: Repository<User>,
     ) { }
 
-    public async findOneByIdentifier(identifier: string) {
+    public async checkOneByIdentifier(identifier: string): Promise<boolean> {
         if (!identifier) throw new BadRequestException('Missing identifier');
 
         let user: User | undefined = undefined;
@@ -33,10 +34,10 @@ export class FindOneByIdentifierProvider {
         }
 
         if (!user) {
-            throw new BadRequestException('User does not exist.');
+            return false
         }
 
-        return user
+        return true
     }
 
 }
