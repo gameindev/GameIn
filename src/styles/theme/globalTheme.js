@@ -43,6 +43,9 @@ export const GlobalStyles = createGlobalStyle`
 
         .ad-banner{
             min-width: 15.875rem;
+            position: sticky;
+            top: 6.496rem;
+            height: calc(100vh - 6.496rem);
             background: ${({ theme }) => theme.colors.darkText[1]};
         }
     }

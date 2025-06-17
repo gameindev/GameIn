@@ -5,6 +5,9 @@ export const SidebarStyles = styled.aside`
     width: 100%;
     min-width: 20.625rem;
     background: ${({ theme }) => theme.colors.darkText[1]};
+    position: sticky;
+    top: 6.496rem;
+    height: calc(100vh - 6.496rem);
 
     .profile-icons {
       background: ${({ theme }) => theme.colors.textSecondary[0]};
