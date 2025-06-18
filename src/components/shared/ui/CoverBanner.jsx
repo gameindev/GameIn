@@ -5,9 +5,9 @@ import ReusableModal from "./../modals/modal";
 const Banner = styled.div`
   position: relative;
   width: 100%;
-  height: ${(props) => props.$size};
+  height: ${({size}) => size};
   background-color: #4a5568;
-  overflow: hidden;
+  overflow: ${({size}) => size === "auto" ? "unset" : "hidden"};;
 
   .banner_image {
     width: 100%;
@@ -22,9 +22,9 @@ const Banner = styled.div`
   }
 `;
 
-const CoverBanner = ({ coverImage, controls, size = "9.5rem " }) => {
+const CoverBanner = ({ coverImage, controls, size = "9.5rem" }) => {
   return (
-    <Banner $size={size}>
+    <Banner size={size}>
       <div className="banner_overlay" />
       <div className="banner_image">
         <img src={coverImage} alt="Cover" />

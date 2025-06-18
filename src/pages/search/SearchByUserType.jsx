@@ -1,20 +1,21 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router"
 import SectionHeader from "../../components/shared/ui/SectionHeader"
-import { Flame, Search, Star } from "lucide-react"
+import { Check, ChevronDown, Flame, Search, Star, X } from "lucide-react"
 import CreatorBanner from '../../assets/search/creator-search-cover.jpg'
 import BrandBanner from '../../assets/search/brand-search-cover.jpg'
 import CoverBanner from "../../components/shared/ui/CoverBanner"
 import { SearchStyles } from "../../styles/pages/SearchStyles"
-import { TextInput } from "@mantine/core"
+import { Group, TextInput, Grid, Switch, Box } from "@mantine/core"
+import DataView from "../../components/shared/ui/DataViewIcons"
 
 const userTypeData = {
-  creator:{
+  creator: {
     name: "CREATORS",
     icon: <Star size="1.5rem" />,
     coverImage: CreatorBanner
   },
-  brand:{
+  brand: {
     name: "BRANDS",
     icon: <Flame size="1.5rem" />,
     coverImage: BrandBanner
@@ -22,29 +23,131 @@ const userTypeData = {
 }
 
 export default function SearchByUserType() {
-  const { userType } = useParams() 
+  const { userType } = useParams()
   const [searchData, setSearchData] = useState({})
 
-  useEffect(() => {   
+  useEffect(() => {
     userType?.toLowerCase() === "creators" ? setSearchData(userTypeData.creator) : setSearchData(userTypeData.brand)
   }, [setSearchData, userType])
 
-  
+
   if (userType?.toLowerCase() !== "brands" && userType?.toLowerCase() !== "creators") return;
-  
+
   return (
-    searchData && 
-      <SearchStyles>
-        <SectionHeader icon={searchData?.icon} text={searchData?.name} />
-        <CoverBanner coverImage={searchData.coverImage} />
-        <form>
-          <TextInput
-            mt="md"
-            rightSection={<Search />}
-            placeholder="type here"
-            rightSectionPointerEvents="all"
-          />
-        </form>
-      </SearchStyles>
+    searchData &&
+    <SearchStyles>
+      <SectionHeader icon={searchData?.icon} text={searchData?.name} />
+      <CoverBanner coverImage={searchData.coverImage} size="auto" />
+      <form>
+        <Group>
+          <Group>
+            <TextInput
+              className="input-wrapper"
+              size="sm"
+              variant="secondaryGrey"
+              rightSection={<Search />}
+              placeholder="type here"
+              rightSectionPointerEvents="all"
+            />
+            <TextInput
+              className="input-wrapper"
+              size="sm"
+              variant="secondaryGrey"
+              component="select"
+              rightSection={<ChevronDown />}
+              pointer
+            >
+              <option value="1">type(orga,teams,...)</option>
+              <option value="2">2</option>
+            </TextInput>
+            <TextInput
+              className="input-wrapper"
+              size="sm"
+              variant="secondaryGrey"
+              component="select"
+              rightSection={<ChevronDown />}
+              pointer
+            >
+              <option value="1">game</option>
+              <option value="2">2</option>
+            </TextInput>
+            <TextInput
+              className="input-wrapper"
+              size="sm"
+              variant="secondaryGrey"
+              component="select"
+              rightSection={<ChevronDown />}
+              pointer
+            >
+              <option value="1">country</option>
+              <option value="2">2</option>
+            </TextInput>
+            <TextInput
+              className="input-wrapper"
+              size="sm"
+              variant="secondaryGrey"
+              component="select"
+              rightSection={<ChevronDown />}
+              pointer
+            >
+              <option value="1">gamein partner</option>
+              <option value="2">2</option>
+            </TextInput>
+            <TextInput
+              className="input-wrapper"
+              size="sm"
+              variant="secondaryGrey"
+              component="select"
+              rightSection={<ChevronDown />}
+              pointer
+            >
+              <option value="1">followers</option>
+              <option value="2">2</option>
+            </TextInput>
+            <TextInput
+              className="input-wrapper"
+              size="sm"
+              variant="secondaryGrey"
+              component="select"
+              rightSection={<ChevronDown />}
+              pointer
+            >
+              <option value="1">level</option>
+              <option value="2">2</option>
+            </TextInput>
+            <TextInput
+              className="input-wrapper"
+              size="sm"
+              variant="secondaryGrey"
+              component="select"
+              rightSection={<ChevronDown />}
+              pointer
+            >
+              <option value="1">sort by</option>
+              <option value="2">2</option>
+            </TextInput>
+          </Group>
+          <Group justify="space-between" style={{flexDirection: 'column'}}>
+            <Switch
+              size="xl"
+              labelPosition="left"
+              thumbIcon={<Check />}
+              withThumbIndicator={false}
+              label="ai matchmaking"
+            />
+            <Switch
+              size="xl"
+              labelPosition="left"
+              thumbIcon={<Check />}
+              withThumbIndicator={false}
+              label="ai matchmaking"
+            />
+          </Group>
+          <Group justify="space-between" style={{flexDirection: 'column'}}>
+            <DataView size="sm" />
+          </Group>
+        </Group>
+      </form>
+    </SearchStyles>
   )
 }

@@ -46,7 +46,7 @@ export const GlobalStyles = createGlobalStyle`
             position: sticky;
             top: 6.496rem;
             height: calc(100vh - 6.496rem);
-            background: ${({ theme }) => theme.colors.darkText[1]};
+            background: ${({ theme }) => theme.colors.secondaryGrey[1]};
         }
     }
 
@@ -86,22 +86,34 @@ export const GlobalStyles = createGlobalStyle`
         opacity: 0.7 !important;
     }
 
+    /* Mantine Overwrite Styles */
+    .mantine-Switch-input:checked + * > .mantine-Switch-thumb{
+        background-color: ${({ theme }) => theme.colors.primary[0]} !important;
+    }
+
+    .mantine-Switch-labelWrapper{
+        font-size: ${({ theme }) => theme.fontSizes.sm};
+    }
+
     /* .mantine-PasswordInput-innerInput{
         padding: 4rem !important;
     } */
 
      .mantine-RadioCard-card[data-checked] {
-        border: 0.125rem solid ${({ theme }) =>
-          theme.colors.primary[0]} !important;
+        border: 0.125rem solid ${({ theme }) => theme.colors.primary[0]} !important;
      }
 
+
+     /* Lucide icons overwrite styles */
      svg.lucide[width="24"] {
         width: 1.5rem;
         height: 1.5rem;
     }
 
     .avatar-icon-small{
-    transform: scale(1.3);
-  }
+        transform: scale(1.3);
+    }
+
+    
 
 `;
