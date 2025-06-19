@@ -1,4 +1,4 @@
-import { createTheme, virtualColor } from "@mantine/core";
+import { createTheme, rem, virtualColor } from "@mantine/core";
 
 // Custom Button styles using props
 const buttonStyles = {
@@ -17,7 +17,7 @@ const buttonStyles = {
 
     const variantStylesMap = {
       primary: {
-        color: theme.colors.darkText[0],
+        color: theme.colors.secondaryGrey[0],
       },
       secondary: {
         color: theme.colors.textSecondary[0],
@@ -51,23 +51,29 @@ const textStyles = {
 
 // Custom TextInput component styles
 const textInputStyles = {
-  styles: (theme) => ({
+  styles: (theme, params) => {
     // root: {
     //   color: theme.colors.text[0],
     // },
-    input: {
-      fontSize: theme.fontSizes.md,
+
+    const { variant="inputBgColor", size="md" } = params;
+
+    const inputStyles = {
+      fontSize: size? theme.fontSizes?.[size] : theme.fontSizes.md,
       color: theme.white,
-      backgroundColor: theme.colors.inputBgColor[0],
-      padding: "0.45rem 1.375rem",
+      backgroundColor: theme.colors?.[variant]?.[0],
+      padding: `calc(${theme.spacing?.[size]} / 2) ${theme.spacing?.[size]}`,
       borderRadius: theme.radius.md,
       height: "auto",
       "::placeholder": {
         color: theme.colors.white[0],
-        // opacity: 0.7,
-      },
-    },
-  }),
+      }
+    }
+
+    return {
+      input: inputStyles
+    };
+  },
 };
 
 const textLabelStyles = {
@@ -96,14 +102,15 @@ const textLabelStyles = {
 };
 
 const PasswordInputStyles = {
-  styles: (theme) => ({
+  styles: (theme,params) => ({
     input: {
       fontSize: theme.fontSizes.md,
-      padding: "0.45rem 1.375rem",
-      height: "3.125rem",
+      padding: `calc(${theme.spacing.md} / 2) ${theme.spacing.md}`,
+      backgroundColor: theme.colors?.[params.variant] ? theme.colors?.[params.variant]?.[0] : theme.colors.inputBgColor[0],
+      height: `calc(${theme.spacing.md} * 3.25)`,
     },
     innerInput: {
-      padding: "0.45rem 1.375rem",
+      padding: `calc(${theme.spacing.md} / 2) ${theme.spacing.md}`,
     },
   }),
 };
@@ -137,6 +144,19 @@ const gridStyles = {
   }),
 };
 
+const switchStyles = {
+  styles: (theme) => ({
+    track: {
+      backgroundColor: theme.colors.inputBgColor[0],
+      borderRadius: rem(5),
+    },
+    thumb: {
+      backgroundColor: theme.colors.grey[0],
+      borderRadius: rem(5),
+    },  
+  })
+}
+
 // Final Mantine theme object
 export const theme = createTheme({
   primaryColor: "primary",
@@ -144,11 +164,10 @@ export const theme = createTheme({
     primary: Array(10).fill("#5ce5b0"),
     secondary: Array(10).fill("#9D7FEF"),
     text: Array(10).fill("#C2C6CC"),
-    darkText: Array(10).fill("#363A3E"),
     textSecondary: Array(10).fill("#33363A"),
     grey: Array(10).fill("#3C4044"),
     darkGrey: Array(10).fill("#34373C"),
-    secondaryGrey: Array(10).fill("#363A3E"),
+    secondaryGrey: Array(10).fill("#363A3E"), 
     white: Array(10).fill("#fff"),
     black: Array(10).fill("#000"),
     inputBgColor: Array(10).fill("#50565a"),
@@ -183,6 +202,15 @@ export const theme = createTheme({
     default: "1rem",
   },
 
+  spacing: {
+    xs: "0.75rem",
+    sm: "0.85rem",
+    md: "1rem",
+    lg: "1.25rem",
+    xl: "1.5rem",
+    default: "1rem",
+  },
+
   components: {
     Button: buttonStyles,
     Text: textStyles,
@@ -190,6 +218,7 @@ export const theme = createTheme({
     InputWrapper: textLabelStyles,
     PasswordInput: PasswordInputStyles,
     Grid: gridStyles,
+    Switch: switchStyles,
   },
   other: {
     lightBg: "#f5f5f5",

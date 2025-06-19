@@ -2,7 +2,7 @@
 import { LayoutGrid, List, Table } from "lucide-react";
 import { Group, SegmentedControl, Text } from "@mantine/core";
 
-export default function DataView({ viewMode, setViewMode}) {
+export default function DataView({ viewMode, setViewMode, size="md"}) {
 
     const iconProps = {
         style: { display: "block" },
@@ -13,7 +13,7 @@ export default function DataView({ viewMode, setViewMode}) {
         <div className="section_controls">
             <Group className="visible_row"></Group>
             <Group className="segmentControl">
-                <Text>Select View</Text>
+                <Text size={size}>Select View</Text>
                 <SegmentedControl
                     withItemsBorders={false}
                     value={viewMode}
