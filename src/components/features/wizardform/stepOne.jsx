@@ -13,7 +13,7 @@ import { Link } from "react-router";
 import DOBPicker from "./../../shared/ui/DOBPicker";
 import { useFormStep } from './../../../hooks/useFormStep';
 import FormField from './../../shared/ui/FormField';
-import { stepOneSchema } from './../../../utils/schemas/RegistrationSchema';
+import { stepOneSchema } from './../../../utils/schemas/validationSchema';
 import useCheckIdentifierExists from "../../../hooks/useCheckIdentifierExists";
 
 // default values for the form

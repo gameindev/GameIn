@@ -1,65 +1,62 @@
 import { useState } from "react";
-import {
-  Button,
-  Avatar,
-  Text,
-  Stack,
-  TextInput,
-  Textarea,
-  Group,
-} from "@mantine/core";
+import { Button, Avatar, Text, Stack, Group, Box } from "@mantine/core";
+import HexContainer from "../../ui/HexContainer";
+import { theme } from "../../../../styles/theme/customTheme";
 
-export default function EditAvator() {
-  const [profile, setProfile] = useState({
-    avatar: null,
-  });
+export default function EditImage({ type = "avatar", close }) {
+  const [image, setImage] = useState({ preview: null, file: null });
 
-  const handleAvatarChange = (event) => {
-    if (event.target.files && event.target.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setProfile({ ...profile, avatar: e.target.result });
-      };
-      reader.readAsDataURL(event.target.files[0]);
-    }
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setImage({ preview: e.target.result, file });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSave = async () => {
+    if (!image.file) return;
+
+    const formData = new FormData();
+    formData.append(type, image.file);
+    close();
   };
 
   return (
     <Stack>
-      <Group position="apart">
-        <Text size="sm" weight={500}>
-          Profile
-        </Text>
-        <Button size="xs" onClick={close}>
-          Close
-        </Button>
-      </Group>
-      <Avatar
-        src={profile.avatar}
-        alt="Profile Avatar"
-        radius="xl"
-        size="xl"
-        style={{ alignSelf: "center" }}
-      />
+      <Text weight={500} size="sm">
+        {type === "avatar" ? "Profile Picture" : "Cover Photo"}
+      </Text>
+      {type === "avatar" ? (
+        <Group justify="center">
+          <HexContainer size={200} background={theme.colors.inputBgColor[0]}>
+            <img src={image.preview} alt="Avatar" />
+          </HexContainer>
+        </Group>
+      ) : (
+        <img
+          src={image.preview}
+          alt="Cover Preview"
+          style={{ width: "100%", borderRadius: 8 }}
+        />
+      )}
       <input
         type="file"
         accept="image/*"
-        onChange={handleAvatarChange}
+        id={`upload-${type}`}
         style={{ display: "none" }}
-        id="avatar-upload"
+        onChange={handleImageChange}
       />
-      <label htmlFor="avatar-upload">
-        <Button component="span" size="xs">
-          Change Avatar
+      <label htmlFor={`upload-${type}`}>
+        <Button variant="secondary" component="span" size="xs">
+          Change {type === "avatar" ? "Avatar" : "Cover"}
         </Button>
       </label>
-      <Button
-        onClick={() => {
-          console.log("Saving profile:", profile);
-          close();
-        }}
-      >
-        Save Profile
+      <Button variant="primary" onClick={handleSave}>
+        Save {type === "avatar" ? "Avatar" : "Cover"}
       </Button>
     </Stack>
   );

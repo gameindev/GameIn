@@ -18,7 +18,7 @@ const AvatarSection = ({ avatar, size, controls = false, className = "" }) => (
     {controls && (
       <div className="action">
         <ReusableModal title={"Update Profile Picture"}>
-          <EditAvator />
+          {({ close }) => <EditAvator type="avatar" close={close} />}
         </ReusableModal>
       </div>
     )}

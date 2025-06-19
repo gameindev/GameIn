@@ -2,13 +2,14 @@ const routePaths = {
   WELCOMEPAGE: "/",
   LOGIN: "/login",
   REGISTER: "/register",
-  SEARCH:"/search/:userType",
-  ACCOUNTS:{
+  SEARCH: "/search/:userType",
+  ACCOUNTS: {
     DASHBOARD: {
       ROOT: "/dashboard",
     },
     PROFILE: {
       ROOT: "/profile",
+      BIO: "/profile/bio",
       CREATE_TEAM: "/profile/create-team",
     },
     SPONSORSHIPS: {

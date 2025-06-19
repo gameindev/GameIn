@@ -129,7 +129,7 @@ const gridStyles = {
     },
     col: {
       width: "25rem",
-      height: "25rem",
+      minHeight: "25rem",
       Box: {
         height: "25rem",
       },

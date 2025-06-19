@@ -8,7 +8,7 @@ export default function ReusableModal({ title, children }) {
   return (
     <>
       <Modal opened={opened} onClose={close} title={title} centered>
-        {children}
+        {typeof children === "function" ? children({ close }) : children}
       </Modal>
 
       <IconButton onClick={open} />

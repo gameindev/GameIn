@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { theme } from "./../../../styles/theme/customTheme";
 import ReusableModal from "./../modals/modal";
+import EditAvator from "./../modals/EditAvator/EditAvator";
 
 const Banner = styled.div`
   position: relative;
@@ -31,7 +32,9 @@ const CoverBanner = ({ coverImage, controls, size = "9.5rem " }) => {
       </div>
       {controls && (
         <div className="action">
-          <ReusableModal title={"Update Cover Screen"} />
+          <ReusableModal title={"Update Cover Screen"}>
+            {({ close }) => <EditAvator type="cover" close={close} />}
+          </ReusableModal>
         </div>
       )}
     </Banner>
