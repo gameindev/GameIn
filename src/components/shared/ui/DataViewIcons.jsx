@@ -10,21 +10,18 @@ export default function DataView({ viewMode, setViewMode, size="md"}) {
     };
     
     return (
-        <div className="section_controls">
-            <Group className="visible_row"></Group>
-            <Group className="segmentControl">
-                <Text size={size}>Select View</Text>
-                <SegmentedControl
-                    withItemsBorders={false}
-                    value={viewMode}
-                    onChange={(value) => setViewMode(value)}
-                    data={[
-                        { label: <LayoutGrid {...iconProps} />, value: "cards" },
-                        { label: <List {...iconProps} />, value: "list" },
-                        { label: <Table {...iconProps} />, value: "table" },
-                    ]}
-                />
-            </Group>
-        </div>
+        <Group className="segmentControl">
+            <Text size={size}>Select View</Text>
+            <SegmentedControl
+                withItemsBorders={false}
+                value={viewMode}
+                onChange={(value) => setViewMode(value)}
+                data={[
+                    { label: <LayoutGrid {...iconProps} />, value: "cards" },
+                    { label: <List {...iconProps} />, value: "list" },
+                    { label: <Table {...iconProps} />, value: "table" },
+                ]}
+            />
+        </Group>
     )
 }

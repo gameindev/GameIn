@@ -219,6 +219,13 @@ export const theme = createTheme({
     PasswordInput: PasswordInputStyles,
     Grid: gridStyles,
     Switch: switchStyles,
+    SegmentedControl: {
+      styles: () => ({
+        root:{
+          backgroundColor: 'transparent'
+        }
+      })
+    }
   },
   other: {
     lightBg: "#f5f5f5",

@@ -10,7 +10,21 @@ export const SearchStyles = styled.div`
         /* padding: calc(${theme.spacing.xs} / 3); */
     }
 
-    .input-wrapper{
-        flex-basis: 20%;
+    .forms-fields{
+        flex-basis: calc(calc(65% - 0.8rem));
+
+        .input-wrapper{
+            flex-basis: calc(25% - 0.8rem);
+        }
+    }
+
+    .switch-buttons{
+        flex-direction: column;
+        flex-basis: calc(17% - 0.8rem);
+    }
+
+    .pagination{
+        flex-direction: column;
+        flex-basis: calc(18% - 0.8rem);
     }
 `

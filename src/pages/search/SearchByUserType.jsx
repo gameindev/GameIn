@@ -6,8 +6,9 @@ import CreatorBanner from '../../assets/search/creator-search-cover.jpg'
 import BrandBanner from '../../assets/search/brand-search-cover.jpg'
 import CoverBanner from "../../components/shared/ui/CoverBanner"
 import { SearchStyles } from "../../styles/pages/SearchStyles"
-import { Group, TextInput, Grid, Switch, Box } from "@mantine/core"
+import { Group, TextInput, Switch, Button, } from "@mantine/core"
 import DataView from "../../components/shared/ui/DataViewIcons"
+import VisibleRows from "../../components/shared/ui/VisibleRows"
 
 const userTypeData = {
   creator: {
@@ -40,7 +41,7 @@ export default function SearchByUserType() {
       <CoverBanner coverImage={searchData.coverImage} size="auto" />
       <form>
         <Group>
-          <Group>
+          <Group className="forms-fields">
             <TextInput
               className="input-wrapper"
               size="sm"
@@ -127,7 +128,7 @@ export default function SearchByUserType() {
               <option value="2">2</option>
             </TextInput>
           </Group>
-          <Group justify="space-between" style={{flexDirection: 'column'}}>
+          <Group className="switch-buttons" justify="space-between">
             <Switch
               size="xl"
               labelPosition="left"
@@ -143,8 +144,12 @@ export default function SearchByUserType() {
               label="ai matchmaking"
             />
           </Group>
-          <Group justify="space-between" style={{flexDirection: 'column'}}>
+          <Group className="pagination" justify="space-between">
             <DataView size="sm" />
+            <VisibleRows size="sm" />
+          </Group>
+          <Group flex='0 0 100%' justify="end">
+            <Button variant="primary" type="submit">Search</Button>
           </Group>
         </Group>
       </form>
