@@ -6,9 +6,10 @@ import CreatorBanner from '../../assets/search/creator-search-cover.jpg'
 import BrandBanner from '../../assets/search/brand-search-cover.jpg'
 import CoverBanner from "../../components/shared/ui/CoverBanner"
 import { SearchStyles } from "../../styles/pages/SearchStyles"
-import { Group, TextInput, Switch, Button, } from "@mantine/core"
+import { Group, TextInput, Switch, Button, Text, Divider, } from "@mantine/core"
 import DataView from "../../components/shared/ui/DataViewIcons"
 import VisibleRows from "../../components/shared/ui/VisibleRows"
+import Listview from "../../components/searchview/Listview"
 
 const userTypeData = {
   creator: {
@@ -153,6 +154,11 @@ export default function SearchByUserType() {
           </Group>
         </Group>
       </form>
+
+      <Text>RESULTS</Text>
+      <Divider my="sm" variant="dashed" color="white" />
+      <Listview />
+
     </SearchStyles>
   )
 }

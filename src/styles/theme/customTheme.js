@@ -42,11 +42,15 @@ const buttonStyles = {
 
 // Custom Text component styles
 const textStyles = {
-  styles: (theme) => ({
-    root: {
-      color: theme.colors.text[0],
-    },
-  }),
+  styles: (theme, params) => {
+
+    const { colors="text" } = params;
+    return {
+      root: {
+        color: theme.colors?.[colors]?.[0],
+      },
+    }
+  },
 };
 
 // Custom TextInput component styles
@@ -172,6 +176,7 @@ export const theme = createTheme({
     black: Array(10).fill("#000"),
     inputBgColor: Array(10).fill("#50565a"),
     iconHover: Array(10).fill("#dbd162"),
+    skyblue: Array(10).fill("#69B3E7"),
     textWhite: virtualColor({
       name: "textWhite",
       light: "black",
