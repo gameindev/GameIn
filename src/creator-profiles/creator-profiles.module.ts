@@ -5,10 +5,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CreatorProfile } from './creator-profile.entity';
 import { UploadsModule } from 'src/uploads/uploads.module';
 import { UpdateCreatorProfileProvider } from './providers/update-creator-profile.provider';
+import { UpdateCreatorProfilePicProvider } from './providers/update-creator-profile-pic.provider';
+import { UpdateCreatorCoverPicProvider } from './providers/update-creator-cover-pic.provider';
 
 @Module({
     controllers: [CreatorProfilesController],
-    providers: [CreatorProfilesService, UpdateCreatorProfileProvider],
+    providers: [
+        CreatorProfilesService,
+        UpdateCreatorProfileProvider,
+        UpdateCreatorProfilePicProvider,
+        UpdateCreatorCoverPicProvider
+    ],
     imports: [
         TypeOrmModule.forFeature([CreatorProfile]),
         UploadsModule

@@ -36,8 +36,7 @@ export class Upload {
     mime: string;
 
     @Column({
-        type: "varchar",
-        length: 1024,
+        type: 'bigint',
         nullable: false,        
     })
     size: number;

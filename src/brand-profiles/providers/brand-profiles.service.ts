@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { User } from 'src/users/user.entity';
 import { PatchBrandProfileDto } from '../dtos/patch-brandProfile.dto';
 import { UpdateBrandProfileProvider } from './update-brand-profile.provider';
+import { UpdateBrandCoverPicProvider } from './update-brand-cover-pic.provider';
+import { UpdateBrandProfilePicProvider } from './update-brand-profile-pic.provider';
 
 @Injectable()
 export class BrandProfilesService {
@@ -20,6 +22,8 @@ export class BrandProfilesService {
          * Injecting Update Brand Profile Provider.
          */
         private readonly updateBrandProfileProvider: UpdateBrandProfileProvider,
+        private readonly updateBrandProfilePicProvider: UpdateBrandProfilePicProvider,
+        private readonly updateBrandCoverPicProvider: UpdateBrandCoverPicProvider,
     ) { }
 
     /**
@@ -42,4 +46,13 @@ export class BrandProfilesService {
     public async updateBrandProfile(patchBrandProfileDto: PatchBrandProfileDto) {
         return await this.updateBrandProfileProvider.updateBrandProfile(patchBrandProfileDto);
     }
+
+    public async updateBrandProfilePic(profileId: number, file: Express.Multer.File) {
+        return await this.updateBrandProfilePicProvider.updateBrandProfilePic(profileId, file);
+    }
+
+    public async updateBrandCoverPic(profileId: number, file: Express.Multer.File) {
+        return await this.updateBrandCoverPicProvider.updateBrandCoverPic(profileId, file);
+    }
+
 }

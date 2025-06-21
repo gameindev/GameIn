@@ -3,24 +3,23 @@ import { PatchCreatorProfileDto } from '../dtos/patch-creatorProfile.dto';
 import { Repository } from 'typeorm';
 import { CreatorProfile } from '../creator-profile.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Upload } from 'src/uploads/upload.entity';
+import { UploadsService } from 'src/uploads/providers/uploads.service';
 
 @Injectable()
 export class UpdateCreatorProfileProvider {
 
     constructor(
-        /**
-         * Injecting CreatorProfileRepository.
-         */
         @InjectRepository(CreatorProfile)
-        private readonly creatorProfileRepository: Repository<CreatorProfile>,        
-    ){}
+        private readonly creatorProfileRepository: Repository<CreatorProfile>
+    ) { }
 
     public async updateCreatorProfile(patchCreatorProfileDto: PatchCreatorProfileDto) {
-        let creatorProfile = undefined;
+        let creatorProfile: CreatorProfile;
 
         try {
-            creatorProfile = await this.creatorProfileRepository.findOneBy({
-                user: { id: patchCreatorProfileDto.userId, }
+            creatorProfile = await this.creatorProfileRepository.findOne({
+                where: { user: { id: patchCreatorProfileDto.userId } }
             });
         } catch (error) {
             throw new InternalServerErrorException('Error while trying to find creator profile.');
@@ -29,6 +28,9 @@ export class UpdateCreatorProfileProvider {
         if (!creatorProfile) {
             throw new BadRequestException('Creator profile not found.');
         }
+
+        // Update the rest of fields
+        // Object.assign(creatorProfile, patchCreatorProfileDto);
 
         try {
             creatorProfile = await this.creatorProfileRepository.save({
@@ -40,7 +42,5 @@ export class UpdateCreatorProfileProvider {
         }
 
         return creatorProfile;
-
-        
     }
 }

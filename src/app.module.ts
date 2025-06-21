@@ -28,16 +28,14 @@ import { User } from "./users/user.entity";
 import { Upload } from "./uploads/upload.entity";
 import { SocialIntegrationModule } from './social-integration/social-integration.module';
 import { SocialIntegration } from './social-integration/social-integration.entity';
+import { PreferredGamesModule } from './preferred-games/preferred-games.module';
+import { PreferredGames } from "./preferred-games/preferred-games.entity";
 dotenvFlow.config();
 
 const ENV = process.env.NODE_ENV;
 
 @Module({
-    imports: [
-        AuthModule,
-        UsersModule,
-        CreatorProfilesModule,
-        BrandProfilesModule,
+    imports: [        
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: [`.env.${ENV}`, '.env'],
@@ -57,7 +55,7 @@ const ENV = process.env.NODE_ENV;
                     password: configService.get('database.password'),
                     database: configService.get('database.name'),
                     // autoLoadEntities: configService.get('database.autoLoadEntities'),
-                    entities: [User, Upload, CreatorProfile, BrandProfile, UserBio, SocialIntegration],
+                    entities: [User, Upload, CreatorProfile, BrandProfile, UserBio, SocialIntegration, PreferredGames],
                     // synchronize: configService.get('database.synchronize')
                     synchronize: false
                 }
@@ -65,9 +63,14 @@ const ENV = process.env.NODE_ENV;
         }),
         ConfigModule.forFeature(jwtConfig),
         JwtModule.registerAsync(jwtConfig.asProvider()),
+        AuthModule,
+        UsersModule,
+        CreatorProfilesModule,
+        BrandProfilesModule,
         UsersBioModule,
         UploadsModule,
-        SocialIntegrationModule
+        SocialIntegrationModule,
+        PreferredGamesModule
     ],
     controllers: [AppController],
     providers: [

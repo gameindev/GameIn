@@ -1,5 +1,6 @@
+import { PreferredGames } from "src/preferred-games/preferred-games.entity";
 import { User } from "src/users/user.entity";
-import { Column, Entity, Index, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 
 /**
@@ -27,8 +28,16 @@ export class UserBio {
     @OneToOne(() => User, user => user.userBio, {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
-    }) 
+    })
     @JoinColumn()
     user: User
-    
+
+
+    @OneToMany(() => PreferredGames, preferredGame => preferredGame.userBio, {
+        cascade: true,
+        eager: true,
+        nullable: true,
+    })
+    preferredGames: PreferredGames[];
+
 }

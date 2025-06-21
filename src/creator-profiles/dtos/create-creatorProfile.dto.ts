@@ -30,16 +30,6 @@ export class CreateCreatorProfileDto {
     @MaxLength(10)
     gender?: string;
 
-    @ApiPropertyOptional({ example: 1, description: 'ID of uploaded profile image' })
-    @IsOptional()
-    @IsInt()
-    profileImageId?: number;
-
-    @ApiPropertyOptional({ example: 2, description: 'ID of uploaded cover image' })
-    @IsOptional()
-    @IsInt()
-    coverImageId?: number;
-
     @ApiPropertyOptional({ example: 'India', maxLength: 30 })
     @IsOptional()
     @IsString()

@@ -1,7 +1,8 @@
+// s3-upload.provider.ts
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Express } from 'express';
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { v4 as uuid } from 'uuid';
 import { UploadProviderInterface } from '../interfaces/upload.interface';
 
@@ -32,14 +33,10 @@ export class S3UploadProvider implements UploadProviderInterface {
             ContentType: file.mimetype,
         }));
 
-        // 🔑 Return logical key only
-        return key;
+        return `https://${this.bucket}.s3.amazonaws.com/${key}`;
     }
 
     async delete(filePath: string): Promise<void> {
-        await this.s3.send(new DeleteObjectCommand({
-            Bucket: this.bucket,
-            Key: filePath,
-        }));
+        
     }
 }

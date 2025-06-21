@@ -3,9 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreatorProfile } from '../creator-profile.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/users/user.entity';
-import { CreateCreatorProfileDto } from '../dtos/create-creatorProfile.dto';
 import { PatchCreatorProfileDto } from '../dtos/patch-creatorProfile.dto';
 import { UpdateCreatorProfileProvider } from './update-creator-profile.provider';
+import { UpdateCreatorProfilePicProvider } from './update-creator-profile-pic.provider';
+import { UpdateCreatorCoverPicProvider } from './update-creator-cover-pic.provider';
 
 /**
  * Creator Profiles service.
@@ -14,15 +15,15 @@ import { UpdateCreatorProfileProvider } from './update-creator-profile.provider'
 export class CreatorProfilesService {
 
     constructor(
-        /**
-         * Injecting CreatorProfileRepository.
-         */
+ 
         @InjectRepository(CreatorProfile)
         private readonly creatorProfileRepository: Repository<CreatorProfile>, 
-        /**
-         * Injecting Update Creator Profile Provider.
-         */
+
         private readonly updateCreatorProfileProvider: UpdateCreatorProfileProvider,
+
+        private readonly updateCreatorCoverPicProvider: UpdateCreatorCoverPicProvider,
+
+        private readonly updateCreatorProfilePicProvider: UpdateCreatorProfilePicProvider,
     ) {
 
     }
@@ -46,6 +47,15 @@ export class CreatorProfilesService {
      */
     public async updateCreatorProfile(patchCreatorProfileDto: PatchCreatorProfileDto) {
         return await this.updateCreatorProfileProvider.updateCreatorProfile(patchCreatorProfileDto);
+    }
+
+
+    public async updateCreatorProfilePic(profileId: number, file: Express.Multer.File) {
+        return await this.updateCreatorProfilePicProvider.updateCreatorProfilePic(profileId, file);
+    }
+
+    public async updateCreatorCoverPic(profileId: number, file: Express.Multer.File) {
+        return await this.updateCreatorCoverPicProvider.updateCreatorCoverPic(profileId, file);
     }
 
 }

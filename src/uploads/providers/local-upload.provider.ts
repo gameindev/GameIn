@@ -7,17 +7,26 @@ import * as fs from 'fs';
 
 @Injectable()
 export class LocalUploadProvider implements UploadProviderInterface {
+    private readonly uploadRoot = path.resolve(process.cwd(), 'media/uploads');
 
-    async fileUpload(file: Express.Multer.File): Promise<string> {
-        const uploadDir = path.resolve(__dirname, '..', '..', 'uploads');
-        const filename = `${uuid()}-${file.originalname}`;
-        const filepath = path.join(uploadDir, filename);
-
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
+    async upload(file: Express.Multer.File): Promise<string> {
+        if (!fs.existsSync(this.uploadRoot)) {
+            fs.mkdirSync(this.uploadRoot, { recursive: true });
         }
 
-        fs.writeFileSync(filepath, file.buffer);
-        return `/uploads/${filename}`;
+        const filename = `${uuid()}-${file.originalname}`;
+        const absolutePath = path.join(this.uploadRoot, filename);
+        fs.writeFileSync(absolutePath, file.buffer);
+
+        // Only return relative DB path:
+        return `uploads/${filename}`;
+    }
+
+    async delete(filePath: string): Promise<void> {
+        // filePath is: uploads/uuid.png
+        const absolutePath = path.resolve(process.cwd(), 'media', filePath);
+        if (fs.existsSync(absolutePath)) {
+            fs.unlinkSync(absolutePath);
+        }
     }
 }
