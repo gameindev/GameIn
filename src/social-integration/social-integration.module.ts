@@ -1,17 +1,18 @@
 import { Module } from '@nestjs/common';
-import { SocialIntegrationController } from './social-integration.controller';
-import { SocialIntegrationService } from './providers/social-integration.service';
-import { SocialIntegration } from './social-integration.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TwitchModule } from './twitch/twitch.module';
+import { SocialIntegration } from './entities/social-integration.entity';
+import { SocialIntegrationController } from './controllers/social-integration.controller';
+import { SocialIntegrationService } from './providers/social-integration.service';
+import { SocialIntegrationProvider } from './providers/social-integration.provider';
+import { TwitchModule } from './platforms/twitch/twitch.module';
 
 @Module({
-    controllers: [SocialIntegrationController],
-    providers: [SocialIntegrationService],
     imports: [
         TypeOrmModule.forFeature([SocialIntegration]),
         TwitchModule,
     ],
+    controllers: [SocialIntegrationController],
+    providers: [SocialIntegrationService, SocialIntegrationProvider],
     exports: [SocialIntegrationService],
 })
 export class SocialIntegrationModule { }

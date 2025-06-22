@@ -7,8 +7,8 @@ import { CreatorProfile } from './creator-profiles/creator-profile.entity';
 import { BrandProfile } from './brand-profiles/brand-profile.entity';
 import { UserBio } from './users-bio/user-bio.entity';
 import { Upload } from './uploads/upload.entity';
-import { SocialIntegration } from './social-integration/social-integration.entity';
 import { PreferredGames } from './preferred-games/preferred-games.entity';
+import { SocialIntegration } from './social-integration/entities/social-integration.entity';
 
 
 // This loads your .env files just like in your main app

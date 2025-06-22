@@ -1,5 +1,5 @@
-import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { SocialPlatform } from "./enums/social-platform.enums";
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { SocialPlatform } from "../enums/social-platform.enums";
 import { User } from "src/users/user.entity";
 
 @Entity()
@@ -7,14 +7,13 @@ export class SocialIntegration {
     @PrimaryGeneratedColumn()
     id: number;
 
-
     @Index()
     @ManyToOne(() => User, user => user.socialIntegrations, {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
     }) 
     @JoinColumn({ name: 'userId' })
-    user: User
+    user: User;
 
     @Column({
         type: 'enum',
@@ -23,22 +22,13 @@ export class SocialIntegration {
     })
     platform?: SocialPlatform; 
 
-    @Column({
-        type: 'text',
-        nullable: true,
-    })
+    @Column({ type: 'text', nullable: true })
     social_id?: string;
 
-    @Column({
-        type: 'text',
-        nullable: true,
-    })
+    @Column({ type: 'text', nullable: true })
     access_token?: string;
 
-    @Column({
-        type: 'text',
-        nullable: true,
-    })
+    @Column({ type: 'text', nullable: true })
     refresh_token?: string;
 
     @CreateDateColumn()

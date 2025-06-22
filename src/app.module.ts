@@ -26,10 +26,11 @@ import { BrandProfile } from "./brand-profiles/brand-profile.entity";
 import { CreatorProfile } from "./creator-profiles/creator-profile.entity";
 import { User } from "./users/user.entity";
 import { Upload } from "./uploads/upload.entity";
-import { SocialIntegrationModule } from './social-integration/social-integration.module';
-import { SocialIntegration } from './social-integration/social-integration.entity';
 import { PreferredGamesModule } from './preferred-games/preferred-games.module';
 import { PreferredGames } from "./preferred-games/preferred-games.entity";
+import { SocialIntegrationModule } from './social-integration/social-integration.module';
+import twitchConfig from "./social-integration/platforms/twitch/twitch.config";
+import { SocialIntegration } from "./social-integration/entities/social-integration.entity";
 dotenvFlow.config();
 
 const ENV = process.env.NODE_ENV;
@@ -39,7 +40,7 @@ const ENV = process.env.NODE_ENV;
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: [`.env.${ENV}`, '.env'],
-            load: [appConfig, databaseConfig],
+            load: [appConfig, databaseConfig, twitchConfig],
             validationSchema: environmentValidation,
         }),
         TypeOrmModule.forRootAsync({
@@ -55,7 +56,7 @@ const ENV = process.env.NODE_ENV;
                     password: configService.get('database.password'),
                     database: configService.get('database.name'),
                     // autoLoadEntities: configService.get('database.autoLoadEntities'),
-                    entities: [User, Upload, CreatorProfile, BrandProfile, UserBio, SocialIntegration, PreferredGames],
+                    entities: [User, Upload, CreatorProfile, BrandProfile, UserBio, PreferredGames, SocialIntegration],
                     // synchronize: configService.get('database.synchronize')
                     synchronize: false
                 }
@@ -69,8 +70,8 @@ const ENV = process.env.NODE_ENV;
         BrandProfilesModule,
         UsersBioModule,
         UploadsModule,
-        SocialIntegrationModule,
-        PreferredGamesModule
+        PreferredGamesModule,
+        SocialIntegrationModule
     ],
     controllers: [AppController],
     providers: [
