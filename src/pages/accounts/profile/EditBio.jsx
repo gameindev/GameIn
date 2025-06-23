@@ -97,7 +97,7 @@ export default function EditBio() {
                   onFavoriteToggle={(idx) => dispatch(toggleFavorite(idx))}
                 />
 
-                <Button type="submit" variant="primary" width="10rem">
+                <Button type="submit" variant="primary" width="10em">
                   Save
                 </Button>
               </Stack>

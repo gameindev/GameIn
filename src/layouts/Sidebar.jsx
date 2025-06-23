@@ -12,27 +12,27 @@ export default function Sidebar() {
 
   const sidebarItems = [
     {
-      icon: <Home size="1rem" />,
+      icon: <Home size="1em" />,
       label: "Account",
       link: routePaths.ACCOUNTS.DASHBOARD.ROOT,
     },
     {
-      icon: <Newspaper size="1rem" />,
+      icon: <Newspaper size="1em" />,
       label: "News Feed",
       link: routePaths.ACCOUNTS.DASHBOARD.ROOT,
     },
     {
-      icon: <Star size="1rem" />,
+      icon: <Star size="1em" />,
       label: "Creators",
       link: routePaths.SEARCH.replace(":userType", 'creators'),
     },
     {
-      icon: <Flame size="1rem" />,
+      icon: <Flame size="1em" />,
       label: "Brands",
       link: routePaths.SEARCH.replace(":userType", 'brands'),
     },
     {
-      icon: <Bolt size="1rem" />,
+      icon: <Bolt size="1em" />,
       label: "Settings",
       link: routePaths.ACCOUNTS.DASHBOARD.ROOT,
     },
@@ -50,22 +50,22 @@ export default function Sidebar() {
                 size="3em"
                 $backgroundColor={theme.colors.inputBgColor[0]}
                 $rotated
-                $border="0.125rem solid #FFF"
+                $border="0.125emsolid #FFF"
               >
-                <Plus size='1.25rem' color={theme.colors.primary[0]} />
+                <Plus size='1.25em' color={theme.colors.primary[0]} />
               </Hexagon>
             </li>
             <li>
-                <AvatarSection className="avatar-icon-small" size="3em" avatar={coverImage} />
+                <AvatarSection size="3em" avatar={coverImage} />
             </li>
             <li>
-                <AvatarSection className="avatar-icon-small" size="3em" avatar={coverImage} />
+                <AvatarSection size="3em" avatar={coverImage} />
             </li>
             <li>
-                <AvatarSection className="avatar-icon-small" size="3em" avatar={coverImage} />
+                <AvatarSection size="3em" avatar={coverImage} />
             </li>
             <li>
-                <AvatarSection className="avatar-icon-small" size="3em" avatar={coverImage} />
+                <AvatarSection size="3em" avatar={coverImage} />
             </li>
           </ul>
         </div>

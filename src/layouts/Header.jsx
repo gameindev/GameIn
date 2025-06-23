@@ -66,13 +66,13 @@ export default function Header() {
                     <UnstyledButton>
                       <AvatarSection
                         className="avatar-icon-small"
-                        size="3.5rem"
+                        size="2em"
                         avatar={coverImage}
                       />
                     </UnstyledButton>
                   </Menu.Target>
                   <Menu.Dropdown>
-                    <Menu.Label style={{fontSize: "1rem"}}>
+                    <Menu.Label style={{fontSize: "1em"}}>
                       Hello,{" "}
                       {user?.user?.username?.charAt(0).toUpperCase() +
                         user?.user?.username?.slice(1).toLowerCase()}
@@ -97,7 +97,7 @@ export default function Header() {
                     <Button
                       variant="grey"
                       size="sm"
-                      style={{ marginRight: "0.5rem" }}
+                      style={{ marginRight: "0.5em" }}
                     >
                       Sign in
                     </Button>

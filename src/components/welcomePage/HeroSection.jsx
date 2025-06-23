@@ -24,15 +24,15 @@ export default function HeroSection({ scrollToElement }) {
           <Link to="/register" style={{ width: "fit-content"}}>
             <Button
               variant="secondary"
-              padding="0.875rem"
+              padding="0.875em"
               size="lg"
-              width="13rem"
+              width="13em"
             >
               Register
             </Button>
           </Link>
           <Link to="/login" style={{ width: "fit-content"}}>
-            <Button variant="grey" padding="0.875rem" size="lg" width="13rem">
+            <Button variant="grey" padding="0.875em" size="lg" width="13em">
               Sign in
             </Button>
           </Link>

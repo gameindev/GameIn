@@ -40,7 +40,7 @@ const UserProfileBanner = () => {
       {
         name: "Nike",
         logo: Nike,
-        size: "7rem",
+        size: "7em",
       },
       // {
       //   name: "Nike",
@@ -70,16 +70,16 @@ const UserProfileBanner = () => {
                 <Button
                   variant="secondary"
                   size="xs"
-                  padding="0.25rem 0.5rem"
-                  width="6.25rem"
+                  padding="0.25em 0.5em"
+                  width="6.25em"
                 >
                   Follow
                 </Button>
                 <Button
                   variant="primary"
                   size="xs"
-                  padding="0.25rem 0.5rem"
-                  width="6.25rem"
+                  padding="0.25em 0.5em"
+                  width="6.25em"ś
                 >
                   Sponsor
                 </Button>
