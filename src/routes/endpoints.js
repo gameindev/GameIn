@@ -10,6 +10,7 @@ const routePaths = {
     PROFILE: {
       ROOT: "/profile",
       BIO: "/profile/bio",
+      FAQ: "/profile/faq",
       CREATE_TEAM: "/profile/create-team",
     },
     SPONSORSHIPS: {
@@ -27,28 +28,6 @@ const routePaths = {
     INBOX: {
       ROOT: "/inbox",
     },
-  },
-  DASHBOARD: {
-    ROOT: "/dashboard",
-  },
-  PROFILE: {
-    ROOT: "/profile",
-    CREATE_TEAM: "/profile/create-team",
-  },
-  SPONSORSHIPS: {
-    ROOT: "/sponsorships",
-  },
-  OFFERINGS: {
-    ROOT: "/offerings",
-  },
-  STATS: {
-    ROOT: "/stats",
-  },
-  NEWSFEED: {
-    ROOT: "/newsfeed",
-  },
-  INBOX: {
-    ROOT: "/inbox",
   },
 };
 

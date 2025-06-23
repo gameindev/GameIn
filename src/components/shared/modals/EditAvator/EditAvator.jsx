@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button, Avatar, Text, Stack, Group, Box } from "@mantine/core";
 import HexContainer from "../../ui/HexContainer";
 import { theme } from "../../../../styles/theme/customTheme";
+import CoverBanner from "./../../ui/CoverBanner";
 
 export default function EditImage({ type = "avatar", close }) {
   const [image, setImage] = useState({ preview: null, file: null });
@@ -30,6 +31,24 @@ export default function EditImage({ type = "avatar", close }) {
       <Text weight={500} size="sm">
         {type === "avatar" ? "Profile Picture" : "Cover Photo"}
       </Text>
+      {/* <Box
+        pos={"relative"}
+        style={{ borderRadius: theme.radius.md, overflow: "hidden" }}
+      >
+        <CoverBanner size="12.5rem" />
+        <Stack
+          spacing="xl"
+          bg={theme.colors.darkGrey[0]}
+          p={50}
+          pos={"relative"}
+        >
+          <Stack pos={"absolute"} top={-80} left={20}>
+            <HexContainer size={160} background={theme.colors.inputBgColor[0]}>
+              <img src={image.preview} alt="Avatar" />
+            </HexContainer>
+          </Stack>
+        </Stack>
+      </Box> */}
       {type === "avatar" ? (
         <Group justify="center">
           <HexContainer size={200} background={theme.colors.inputBgColor[0]}>
