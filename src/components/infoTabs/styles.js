@@ -5,8 +5,8 @@ export const Tabsection = styled.div`
   position: relative;
   background-color: ${theme.colors.secondaryGrey[0]};
   border-radius: ${theme.radius.md};
-  margin-top: 0.625rem;
-  padding: 1rem 0.5rem;
+  margin-top: 0.625em;
+  padding: 1em 0.5em;
 
   button span {
     font-size: ${theme.fontSizes.sm};
@@ -21,10 +21,10 @@ export const Tabsection = styled.div`
       content: "";
       position: absolute;
       left: 0;
-      bottom: -0.5rem;
+      bottom: -0.5em;
       width: 100%;
-      height: 0.125rem;
-      border-radius: 50rem;
+      height: 0.125em;
+      border-radius: 50em;
       background: ${theme.colors.primary[0]};
     }
   }

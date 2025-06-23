@@ -6,57 +6,88 @@ import { Button, Group, RingProgress, Text } from "@mantine/core";
 import Verifed from "../svg-icons/Verifed";
 import Badge from "../svg-icons/Badge";
 import BadgeLevels from "../svg-icons/LevelBadge";
-import { Twitch, User } from "lucide-react";
+import { User } from "lucide-react";
+import { useMediaQuery } from '@mantine/hooks';
 
 const ListviewStyles = styled.div`
   display: flex;
   align-items: center;
   padding: ${theme.spacing.sm};
   background-color: ${theme.colors.secondaryGrey[0]};
+  gap: ${theme.gap.xs};
 
-  .flex_10{
-    flex-basis: 10%;
+  .avatar, .levels, .progress, .social_info, .action_btns{
+    flex: 1;
+    text-align: center;
   }
 
-  .flex_20{
-    flex-basis: 20%;
+  .list_content{
+    flex: 1 0 25%;
   }
 
-  .flex_40{
-    flex-basis: 40%;
+  .levels{
+    border-left: 1px dashed ${theme.colors.inputBgColor[0]};
+  }
+
+  .progress{
+    border-left: 1px dashed ${theme.colors.inputBgColor[0]};
+    border-right: 1px dashed ${theme.colors.inputBgColor[0]};
+    display: flex;
+    justify-content: center;
+  }
+
+  .social_info{
+    border-right: 1px dashed ${theme.colors.inputBgColor[0]};
+    display: flex;
+    padding: 0 ${theme.gap.xs} 0 0;
+    flex-direction: column;
+    gap: ${theme.gap.xxs};
+
+    .follwers_list{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: ${theme.gap.xs};
+    }
+  }
+
+  .action_btns{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: end;
+    gap: 1em
   }
 `;
 
-
-
-export default function Listview() {
-    // const size = remToPx(7.5)
+export default function Listview({SocialInfo}) {
+    const bigscreen = useMediaQuery('(min-width: 1680px)');
   return (
     <ListviewStyles>
-        <div className="flex_10"><AvatarSection avatar={creator} size="7em" /></div>
-        <div className="flex_40">
-            <Text colors="white" size="xl">Instant Shock</Text>
+        <AvatarSection className="avatar" avatar={creator} size="7em" />
+        <div className="list_content">
+            <Text c="white" size="xl">Instant Shock</Text>
             <Group>
-                <Text>24</Text>
+                <Text size="sm">24</Text>
                 <Verifed />
                 <Badge />
             </Group>
             <Text size="sm">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam</Text>
         </div>
-        <div className="flex_10">
-            <Text size="sm">LEVEL</Text>
-            <BadgeLevels />
+        <div className="levels">
+            <Text size="sm" ta="center" mb="xs">LEVEL</Text>
+            <BadgeLevels width="3.125em" height="4.375em" />
         </div>
-        <div className="flex_10">
+        <div className="progress">
             <RingProgress
-                // size={remToPx('7.5rem')}
-                thickness={7}
+                size={bigscreen ? 120 : 90}
+                thickness={5}
                 roundCaps
                 label={
                     <>
-                        <Text size="sm" ta="center" colors="white"> 1.5M</Text>
-                        <Text size="xs" ta="center">FOLLOWERS</Text>
-                        <Text size="xs" ta="center"><User /></Text>                    
+                        <Text size={bigscreen ? "md" : "sm"} ta="center" c="white"> 1.5M</Text>
+                        <Text size={bigscreen ? "sm" : "xs"} ta="center">FOLLOWERS</Text>
+                        <Text size={bigscreen ? "sm" : "xs"} ta="center"><User /></Text>                    
                     </>
                 }
                 sections={[
@@ -67,41 +98,18 @@ export default function Listview() {
                 ]}
             />
         </div>
-        <div className="flex_20">
-            <Text ta="center">
-                <Twitch size="0.7rem" />
-                <Text span colors="primary">TWITCH</Text>
-                <Text span colors="white">35K</Text>
-            </Text>
-            <Text ta="center">
-                <Twitch size="0.7rem" />
-                <Text span colors="primary">INSTAGRAM</Text>
-                <Text span colors="white">35K</Text>
-            </Text>
-            <Text ta="center">
-                <Twitch size="0.7rem" />
-                <Text span colors="skyblue">X</Text>
-                <Text span colors="white">35K</Text>
-            </Text>
-            <Text ta="center">
-                <Twitch size="0.7rem" />
-                <Text span colors="skyblue">YOUTUBE</Text>
-                <Text span colors="white">35K</Text>
-            </Text>
-            <Text ta="center">
-                <Twitch size="0.7rem" />
-                <Text span colors="secondary">TIKTOK</Text>
-                <Text span colors="white">35K</Text>
-            </Text>
-            <Text ta="center">
-                <Twitch size="0.7rem" />
-                <Text span colors="secondary">DISCORD</Text>
-                <Text span colors="white">35K</Text>
-            </Text>
+        <div className="social_info">
+            {SocialInfo.map(({text, icon, followers, color}) => (
+                <Text className="follwers_list" ta="center" key={text}>
+                    {icon}
+                    <Text size="xs" span c={color}>{text}</Text>
+                    <Text size="xs" span c="white">{followers}</Text>
+                </Text>
+            ))}
         </div>
-        <div className="flex_10">
-            <Button variant="secondary">follow</Button>
-            <Button variant="primary">sponsor</Button>
+        <div className="action_btns">
+            <Button width="6.25em" variant="secondary">follow</Button>
+            <Button width="6.25em" variant="primary">sponsor</Button>
         </div>
     </ListviewStyles>
   )

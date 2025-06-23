@@ -6,27 +6,27 @@ export const HeroSectionStyles = styled.div`
   display: flex;
   align-items: center;
   position: relative;
-  height: calc(100vh - 5.188rem);
+  height: calc(100vh - 5.188em);
 
   .heroContent {
     width: 60%;
 
     img{
-      max-width: 22.5rem;
+      max-width: 22.5em;
     }
 
     .heroTitle {
-      font-size: 3.125rem;
+      font-size: 3.125em;
     }
     .heroSubTitle {
-      font-size: 2.128rem;
+      font-size: 2.128em;
     }
   }
 
   .scroll_down {
     all: unset;
     position: absolute;
-    bottom: 10rem;
+    bottom: 10em;
     left: 50%;
     font-weight: 800;
     cursor: pointer;
@@ -34,11 +34,11 @@ export const HeroSectionStyles = styled.div`
     &::after {
       content: "";
       position: absolute;
-      border-right: 0.25rem solid #ffffff;
-      border-bottom: 0.25rem solid #ffffff;
-      width: 0.625rem;
-      height: 0.625rem;
-      bottom: -1rem;
+      border-right: 0.25emsolid #ffffff;
+      border-bottom: 0.25emsolid #ffffff;
+      width: 0.625em;
+      height: 0.625em;
+      bottom: -1em;
       left: 50%;
       transform: translateX(-50%) rotate(-315deg);
     }
@@ -47,43 +47,43 @@ export const HeroSectionStyles = styled.div`
 
 export const FlexCardStyles = styled.div`
   display: flex;
-  gap: 6.25rem;
-  padding-bottom: 2.5rem;
-  margin-bottom: 3rem;
-  scroll-margin: 6.25rem;
+  gap: 6.25em;
+  padding-bottom: 2.5em;
+  margin-bottom: 3em;
+  scroll-margin: 6.25em;
 
   .creator_card, .sponsor_card{
-    padding: 3.75rem;
-    border-radius: 0.125rem;
-    flex: 0 0 calc(50% - 6.25rem / 2);
-    min-height: 36rem;
+    padding: 3.75em;
+    border-radius: 0.125em;
+    flex: 0 0 calc(50% - 6.25em/ 2);
+    min-height: 36em;
   }
 
   .creator_card {
     background: ${({ theme }) => theme.colors.primary[0]};
 
     .banner_img{
-      max-width: 10rem;
+      max-width: 10em;
     }
   }
 
   .sponsor_card {
     background: ${({ theme }) => theme.colors.secondary[0]};
     .banner_img{
-      max-width: 12.938rem;
+      max-width: 12.938em;
     }
   }
 
   .flexTitle{
-    font-size: 2.188rem;
+    font-size: 2.188em;
     position: relative;
 
     &::after {
         content: "";
         position: absolute;
-        bottom: -1rem;
-        width: 3.5rem;
-        height: 0.125rem;
+        bottom: -1em;
+        width: 3.5em;
+        height: 0.125em;
         background: #ffffff;
         left: 0;
     }
@@ -93,31 +93,31 @@ export const FlexCardStyles = styled.div`
 export const PresentationStyles = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 3rem;
-  border-radius: 0.125rem;
+  margin-bottom: 3em;
+  border-radius: 0.125em;
   background: ${({ theme }) => theme.colors.textSecondary[0]};
-  gap: 3rem;
+  gap: 3em;
 
   .presentation_cardContent {
     flex: 0 0 40%;
-    padding: 3.25rem 0 3.25rem 4.5rem;
+    padding: 3.25em0 3.25em4.5em;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 
     .presentation_cardTitle {
-      font-size: 2.188rem;
+      font-size: 2.188em;
       font-weight: 400;
       line-height: 1;
-      margin-bottom: 2.75rem;
+      margin-bottom: 2.75em;
       position: relative;
 
       &::after {
         content: "";
         position: absolute;
-        bottom: -1.5rem;
-        width: 3.3rem;
-        height: 0.125rem;
+        bottom: -1.5em;
+        width: 3.3em;
+        height: 0.125em;
         background: ${({ theme }) => theme.colors.primary[0]};
         left: 0;
       }
@@ -143,7 +143,7 @@ export const PresentationStyles = styled.div`
     text-align: right;
 
     .presentation_cardContent {
-      padding: 3.25rem 4.5rem 3.25rem 0;
+      padding: 3.25em4.5em3.25em0;
       align-items: flex-end;
 
       .text_block {
@@ -159,13 +159,13 @@ export const PresentationStyles = styled.div`
     }
     &:last-child {
       position: relative;
-      margin-bottom: 15rem;
+      margin-bottom: 15em;
 
       &::after {
         content: "";
         position: absolute;
-        bottom: -15rem;
-        left: -8rem;
+        bottom: -15em;
+        left: -8em;
         background-image: url(/src/assets/homepage/bottom-decor.png);
         width: 100%;
         height: 100%;
@@ -180,7 +180,7 @@ export const PresentationStyles = styled.div`
 export const MileStoneStyles = styled.div`
   .milestone_banner {
     position: relative;
-    margin: 7.5rem 0;
+    margin: 7.5em0;
     background: linear-gradient( 225deg, #9d7fef 0%, #69b3e7 48.8%, #5ce5b0 100%);
     clip-path: polygon(
       -0.018% 0.021%,
@@ -292,8 +292,8 @@ export const MileStoneStyles = styled.div`
       justify-content: center;
       flex-direction: column;
       text-align: center;
-      padding: 5.625rem;
-      max-width: 70rem;
+      padding: 5.625em;
+      max-width: 70em;
       margin: 0 auto;
 
       .startJourney {
@@ -303,21 +303,21 @@ export const MileStoneStyles = styled.div`
         justify-content: center;
 
         img {
-          margin-bottom: 1.25rem;
-          max-width: 18.75rem;
+          margin-bottom: 1.25em;
+          max-width: 18.75em;
         }
 
         h3 {
           color: ${({ theme }) => theme.colors.textWhite[0]};
-          font-size: 2.188rem;
+          font-size: 2.188em;
           font-weight: 900;
           line-height: 1;
-          margin-bottom: 0.125rem;
+          margin-bottom: 0.125em;
         }
 
         p {
           color: ${({ theme }) => theme.colors.textWhite[0]};
-          font-size: 1rem;
+          font-size: 1em;
           font-weight: 400;
           line-height: 1;
         }
@@ -326,26 +326,26 @@ export const MileStoneStyles = styled.div`
       .counts_block {
         display: flex;
         align-items: center;
-        margin-top: 2.75rem;
+        margin-top: 2.75em;
         width: 100%;
         justify-content: space-between;
 
         .count {
           color: ${({ theme }) => theme.colors.textWhite[0]};
-          font-size: 3.75rem;
+          font-size: 3.75em;
           font-weight: 400;
         }
 
         span {
           color: ${({ theme }) => theme.colors.textWhite[0]};
-          font-size: 0.875rem;
+          font-size: 0.875em;
           font-weight: 400;
           text-transform: uppercase;
         }
       }
 
       button {
-        margin-top: 1.875rem;
+        margin-top: 1.875em;
       }
     }
   }

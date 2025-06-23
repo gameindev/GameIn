@@ -18,12 +18,12 @@ const Banner = styled.div`
 
   .action {
     position: absolute;
-    top: 1rem;
-    right: 1.25rem;
+    top: 1em;
+    right: 1.25em;
   }
 `;
 
-const CoverBanner = ({ coverImage, controls, size = "9.5rem" }) => {
+const CoverBanner = ({ coverImage, controls, size = "9.5em" }) => {
   return (
     <Banner size={size}>
       <div className="banner_overlay" />

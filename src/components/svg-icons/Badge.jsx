@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Badge({size="0.75rem"}) {
+export default function Badge({size="0.75em"}) {
   return (
     <svg
         xmlns="http://www.w3.org/2000/svg"

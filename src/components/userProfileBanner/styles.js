@@ -6,39 +6,39 @@ export const BannerWrapper = styled.div`
   background-color: #1f2937;
   border-radius: ${theme.radius.md};
   overflow: hidden;
-  /* box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.3); */
+  /* box-shadow: 0 0.25em 0.75em rgba(0, 0, 0, 0.3); */
 `;
 
 export const UserInformation = styled.div`
   position: relative;
   display: flex;
   align-items: center;
-  padding: 1.25rem;
+  padding: 1.25em;
   background-color: ${theme.colors.secondaryGrey[0]};
   color: white;
 `;
 
 export const UserAvatar = styled.div`
   position: absolute;
-  top: -8rem;
-  left: 0rem;
-  /* width: 10.625rem;
-  height: 11.875rem; */
+  top: -8em;
+  left: 0em;
+  /* width: 10.625em;
+  height: 11.875em; */
   overflow: hidden;
 
   .action {
     position: absolute;
-    bottom: 2rem;
-    right: 3rem;
+    bottom: 2em;
+    right: 3em;
   }
 `;
 
 export const ProfileWrapper = styled.div`
-  margin-left: 13rem;
+  margin-left: 13em;
   flex: 1;
   display: flex;
   align-items: flex-end;
-  gap: 1.5rem;
+  gap: 1.5em;
 
   /* .personal_info {
     flex-grow: 1;
@@ -50,12 +50,12 @@ export const UserSection = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 1.875rem;
-    margin-bottom: 0.5rem;
+    gap: 1.875em;
+    margin-bottom: 0.5em;
   }
 
   .profile_name {
-    font-size: 1.875rem;
+    font-size: 1.875em;
     font-weight: 400;
     line-height: 1.2;
     letter-spacing: 0.02em;
@@ -63,11 +63,11 @@ export const UserSection = styled.div`
   }
 
   .profile_info {
-    font-size: 0.875rem;
+    font-size: 0.875em;
     color: #a0aec0;
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1em;
   }
 `;
 
@@ -75,7 +75,7 @@ export const ProfileStats = styled.div`
   .profile_stats {
     display: flex;
     justify-content: flex-start;
-    gap: 1.25rem;
+    gap: 1.25em;
     color: white;
 
     .stats_section {
@@ -86,14 +86,14 @@ export const ProfileStats = styled.div`
       .views,
       .followers,
       .joined {
-        font-size: 0.625rem;
-        margin: 0 0.188rem 0 0.5rem;
+        font-size: 0.625em;
+        margin: 0 0.188em 0 0.5em;
         font-weight: 800;
         line-height: 1.2;
       }
 
       .helperText {
-        font-size: 0.625rem;
+        font-size: 0.625em;
         font-weight: 400;
         color: #a0aec0;
         text-transform: uppercase;
@@ -103,13 +103,13 @@ export const ProfileStats = styled.div`
 `;
 
 export const BadgeSection = styled.div`
-  border-left: 0.063rem dotted #4a5568;
-  border-right: 0.063rem dotted #4a5568;
+  border-left: 0.063em dotted #4a5568;
+  border-right: 0.063em dotted #4a5568;
   .levels {
     /* flex: 1; */
     display: flex;
     align-items: center;
-    padding: 0 1.25rem;
+    padding: 0 1.25em;
 
     svg text {
       font-family: ${theme.fontFamily};
@@ -120,15 +120,15 @@ export const BadgeSection = styled.div`
 export const SponsorShip = styled.div`
   display: flex;
   align-items: end;
-  gap: 2.5rem;
-  font-size: 0.875rem;
+  gap: 2.5em;
+  font-size: 0.875em;
   color: #a0aec0;
-  padding: 0.5rem;
-  border-right: 0.063rem dotted #4a5568;
+  padding: 0.5em;
+  border-right: 0.063em dotted #4a5568;
   margin-right: auto;
 
   .sponsorship_text {
-    font-size: 0.625rem;
+    font-size: 0.625em;
     font-weight: 400;
     text-transform: uppercase;
   }
@@ -136,20 +136,20 @@ export const SponsorShip = styled.div`
   .sponsorship_badge {
     background-color: #2b6cb0;
     color: white;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    font-size: 0.75rem;
+    padding: 0.25em 0.5em;
+    border-radius: 0.25em;
+    font-size: 0.75em;
   }
 `;
 
 export const ActionWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.5em;
 
   .actions {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.5em;
   }
 `;

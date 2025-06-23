@@ -15,7 +15,7 @@ export default function FlexCard({ scrollToRef }) {
             content={`GameIn helps sponsors break into dynamic gaming spaces with engaged viewership by finding the right gamers and teams to increase their exposure to desired demographics.`}
         />
         <Flex justify="space-between" align="flex-end" mt="xl">
-          <Button variant="darkGrey" padding="0.5rem" size="sm" width="8.125rem">
+          <Button variant="darkGrey" padding="0.5em" size="sm" width="8.125em">
             Search
           </Button>
           <img className="banner_img" src={FindCreator} alt="" />
@@ -29,7 +29,7 @@ export default function FlexCard({ scrollToRef }) {
             content={`Text way to long. Discover sponsorship opportunities more efficient Our sponsorship marketplace provides increased exposure to potential sponsors, streamlines the sponsorship`}
         />
         <Flex justify="space-between" align="flex-end" mt="xl">
-          <Button variant="darkGrey" padding="0.5rem" size="sm" width="8.125rem">
+          <Button variant="darkGrey" padding="0.5em" size="sm" width="8.125em">
             Search
           </Button>
           <img className="banner_img" src={FindBrand} alt="" />

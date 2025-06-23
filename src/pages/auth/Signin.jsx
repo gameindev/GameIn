@@ -96,7 +96,7 @@ export default function Signin() {
 
   return (
     <Container size="md">
-      <Paper radius="sm" p="xl" withBorder bg="#363a3e" my="5rem" mx="xl">
+      <Paper radius="sm" p="xl" withBorder bg="#363a3e" my="5em" mx="xl">
         <form onSubmit={handleSubmit(handleLogin)}>
           <Stack spacing="xl">
             <Title order={2}>Login</Title>
@@ -130,8 +130,8 @@ export default function Signin() {
                 <Button
                   variant="primary"
                   size="sm"
-                  padding="0.5rem"
-                  width="8.5rem"
+                  padding="0.5em"
+                  width="8.5em"
                   type="submit"
                   loading={loading}
                 >

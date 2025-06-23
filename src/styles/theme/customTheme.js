@@ -1,4 +1,4 @@
-import { createTheme, rem, virtualColor } from "@mantine/core";
+import { createTheme, virtualColor } from "@mantine/core";
 
 // Custom Button styles using props
 const buttonStyles = {
@@ -6,7 +6,7 @@ const buttonStyles = {
     const { variant, padding, width, size, height } = params;
 
     const baseStyles = {
-      padding: padding ?? "0.5rem 1rem",
+      padding: padding ?? "0.5em 1em",
       width: width ?? "auto",
       height: height ?? "auto",
       borderRadius: theme.radius.sm,
@@ -42,15 +42,12 @@ const buttonStyles = {
 
 // Custom Text component styles
 const textStyles = {
-  styles: (theme, params) => {
-
-    const { colors="text" } = params;
-    return {
-      root: {
-        color: theme.colors?.[colors]?.[0],
-      },
+  styles: (theme) => ({
+    root: {
+      color: theme.colors.text[0],
+      lineHeight: "normal",
     }
-  },
+  }),
 };
 
 // Custom TextInput component styles
@@ -60,15 +57,17 @@ const textInputStyles = {
     //   color: theme.colors.text[0],
     // },
 
-    const { variant="inputBgColor", size="md" } = params;
+    const { variant="inputBgColor", size="sm" } = params;
 
     const inputStyles = {
       fontSize: size? theme.fontSizes?.[size] : theme.fontSizes.md,
       color: theme.white,
       backgroundColor: theme.colors?.[variant]?.[0],
-      padding: `calc(${theme.spacing?.[size]} / 2) ${theme.spacing?.[size]}`,
+      padding: `${theme.spacing?.[size]}`,
       borderRadius: theme.radius.md,
       height: "auto",
+      lineHeight: "normal",
+      minHeight: "auto",
       "::placeholder": {
         color: theme.colors.white[0],
       }
@@ -86,7 +85,7 @@ const textLabelStyles = {
       fontSize: theme.fontSizes.default,
       color: theme.colors.text[0],
       fontWeight: 500,
-      marginBottom: "0.75rem",
+      marginBottom: "0.75em",
       textTransform: "uppercase",
       letterSpacing: "0.07em",
     },
@@ -94,7 +93,7 @@ const textLabelStyles = {
       fontSize: theme.fontSizes.md,
       color: theme.colors.text[0],
       backgroundColor: theme.colors.inputBgColor[0],
-      padding: "0.45rem 1.375rem",
+      padding: "0.45em 1.375em",
       borderRadius: theme.radius.md,
       height: "auto",
       "::placeholder": {
@@ -124,12 +123,12 @@ const fonts = {
   fontFamily: "Exo2, sans-serif",
   fontFamilyMonospace: "MyriadPro-Bold, sans-serif",
   fontSizes: {
-    xs: "0.75rem",
-    sm: "0.85rem",
-    md: "1rem",
-    lg: "1.25rem",
-    xl: "1.5rem",
-    default: "1rem",
+    xs: "0.75em",
+    sm: "0.85em",
+    md: "1em",
+    lg: "1.25em",
+    xl: "1.5em",
+    default: "1em",
   },
 };
 
@@ -139,25 +138,20 @@ const gridStyles = {
       width: "100%",
     },
     col: {
-      width: "25rem",
-      minHeight: "25rem",
+      width: "25em",
+      minHeight: "25em",
       Box: {
-        height: "25rem",
+        height: "25em",
       },
     },
   }),
 };
 
-const switchStyles = {
+const tableStyles = {
   styles: (theme) => ({
-    track: {
-      backgroundColor: theme.colors.inputBgColor[0],
-      borderRadius: rem(5),
+    table: {
+      backgroundColor: theme.colors.secondaryGrey[0],
     },
-    thumb: {
-      backgroundColor: theme.colors.grey[0],
-      borderRadius: rem(5),
-    },  
   })
 }
 
@@ -190,30 +184,31 @@ export const theme = createTheme({
   },
 
   radius: {
-    xs: "0.125rem",
-    sm: "0.25rem",
-    md: "0.375rem",
-    lg: "0.5rem",
-    xl: "0.75rem",
-    default: "0.375rem",
+    xs: "0.125em",
+    sm: "0.25em",
+    md: "0.375em",
+    lg: "0.5em",
+    xl: "0.75em",
+    default: "0.375em",
   },
 
   gap: {
-    xs: "0.5rem",
-    sm: "0.75rem",
-    md: "1.25rem",
-    lg: "1.5rem",
-    xl: "2rem",
-    default: "1rem",
+    xxs: "0.25em", // Extra Extra Small gap
+    xs: "0.5em",
+    sm: "0.75em",
+    md: "1.25em",
+    lg: "1.5em",
+    xl: "2em",
+    default: "1em",
   },
 
   spacing: {
-    xs: "0.75rem",
-    sm: "0.85rem",
-    md: "1rem",
-    lg: "1.25rem",
-    xl: "1.5rem",
-    default: "1rem",
+    xs: "0.75em",
+    sm: "0.85em",
+    md: "1em",
+    lg: "1.25em",
+    xl: "1.5em",
+    default: "1em",
   },
 
   components: {
@@ -223,7 +218,7 @@ export const theme = createTheme({
     InputWrapper: textLabelStyles,
     PasswordInput: PasswordInputStyles,
     Grid: gridStyles,
-    Switch: switchStyles,
+    Table: tableStyles,
     SegmentedControl: {
       styles: () => ({
         root:{

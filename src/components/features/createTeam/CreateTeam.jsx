@@ -87,7 +87,7 @@ export default function CreateTeam() {
         <SectionHeader icon={<Settings />} text={"CREATE TEAM"} />
       </div>
       <Container size="lg">
-        <Paper radius="sm" bg={"transparent"} my={"5rem"} mx={"xl"}>
+        <Paper radius="sm" bg={"transparent"} my={"5em"} mx={"xl"}>
           {showProgressBar && (
             <Group grow gap={3} mb={40}>
               {FORM_STEPS.map((_, index) => (

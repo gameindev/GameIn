@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Group, rem, Stack, Text } from "@mantine/core";
+import { Box, Button, Group, em, Stack, Text } from "@mantine/core";
 import { theme } from "../../../styles/theme/customTheme";
 import { useFormStep } from "../../../hooks/useFormStep";
 import FormField from "./../../shared/ui/FormField";
@@ -66,10 +66,10 @@ export default function AdminsTeams({ onPrev, onNext }) {
       </Box>
 
       <Group mt="lg" position="center" style={{ justifyContent: "center" }}>
-        <Button variant="grey" w={rem(100)} onClick={handlePrevStep}>
+        <Button variant="grey" w={em(100)} onClick={handlePrevStep}>
           Back
         </Button>
-        <Button variant="primary" w={rem(100)} onClick={handleNextStep}>
+        <Button variant="primary" w={em(100)} onClick={handleNextStep}>
           Next
         </Button>
       </Group>
