@@ -20,9 +20,9 @@ export class SocialIntegrationService {
         return provider.getAuthUrl(user);
     }
 
-    handleCallback(platform: SocialPlatform, code: string, user: ActiveUserData) {
+    handleCallback(platform: SocialPlatform, code: string, state: string) {
         const provider = this.integrationProvider.getProvider(platform);
-        return provider.handleCallback(code, user);
+        return provider.handleCallback(code, state);
     }
 
     fetchStats(platform: SocialPlatform, integrationId: number) {
