@@ -51,8 +51,8 @@ export const GlobalStyles = createGlobalStyle`
         .ad-banner{
             min-width: 14.875em;
             position: sticky;
-            top: 6.496em;
-            height: calc(100vh - 6.496em);
+            top: 5em;
+            height: calc(100vh - 5em);
             background: ${({ theme }) => theme.colors.secondaryGrey[1]};
         }
     }
@@ -111,7 +111,7 @@ export const GlobalStyles = createGlobalStyle`
     }
 
     .avatar-icon-small{
-        transform: scale(1.3);
+        transform: scale(2);
     }
 
     

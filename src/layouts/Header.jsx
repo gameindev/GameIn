@@ -66,7 +66,7 @@ export default function Header() {
                     <UnstyledButton>
                       <AvatarSection
                         className="avatar-icon-small"
-                        size="3.5em"
+                        size="2em"
                         avatar={coverImage}
                       />
                     </UnstyledButton>
