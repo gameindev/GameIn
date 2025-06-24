@@ -31,6 +31,7 @@ import { PreferredGames } from "./preferred-games/preferred-games.entity";
 import { SocialIntegrationModule } from './social-integration/social-integration.module';
 import twitchConfig from "./social-integration/platforms/twitch/twitch.config";
 import { SocialIntegration } from "./social-integration/entities/social-integration.entity";
+import { MetadataModule } from './metadata/metadata.module';
 dotenvFlow.config();
 
 const ENV = process.env.NODE_ENV;
@@ -71,7 +72,8 @@ const ENV = process.env.NODE_ENV;
         UsersBioModule,
         UploadsModule,
         PreferredGamesModule,
-        SocialIntegrationModule
+        SocialIntegrationModule,
+        MetadataModule
     ],
     controllers: [AppController],
     providers: [

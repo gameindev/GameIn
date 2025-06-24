@@ -22,10 +22,13 @@ export class PreferredGames {
     @Column({ type: 'int', default: 0 })
     sortOrder: number;
 
+    @Column({ type: 'jsonb', nullable: true })
+    metadata: Record<string, any>;
+
     @CreateDateColumn()
     createdAt: Date;
-    
-    @UpdateDateColumn() 
+
+    @UpdateDateColumn()
     updatedAt: Date;
-    
+
 }

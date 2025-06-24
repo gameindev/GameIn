@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Patch, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Param, Patch, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { BrandProfilesService } from './providers/brand-profiles.service';
 import { PatchBrandProfileDto } from './dtos/patch-brandProfile.dto';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -84,9 +84,10 @@ export class BrandProfilesController {
     ]))
     updateProfilePic(
         @Param('id') profileId: number,
-        @UploadedFile() profileImageFile: Express.Multer.File,
+        @UploadedFiles() profileImageFile: Express.Multer.File[],
     ) {
-        return this.brandProfilesService.updateBrandProfilePic(profileId, profileImageFile);
+        const file = profileImageFile['profileImageFile'][0];
+        return this.brandProfilesService.updateBrandProfilePic(profileId, file);
     }
 
     /**
@@ -116,8 +117,9 @@ export class BrandProfilesController {
     ]))
     updateCoverPic(
         @Param('id') profileId: number,
-        @UploadedFile() coverImageFile: Express.Multer.File,
+        @UploadedFiles() coverImageFile: Express.Multer.File[],
     ) {
-        return this.brandProfilesService.updateBrandCoverPic(profileId, coverImageFile);
+        const file = coverImageFile['coverImageFile'][0]; 
+        return this.brandProfilesService.updateBrandCoverPic(profileId, file);
     }
 }

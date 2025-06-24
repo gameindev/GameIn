@@ -91,9 +91,10 @@ export class CreatorProfilesController {
     ]))
     updateProfilePic(
         @Param('id') profileId: number,
-        @UploadedFile() profileImageFile: Express.Multer.File,
+        @UploadedFiles() profileImageFile: Express.Multer.File[],
     ) {
-        return this.creatorProfilesService.updateCreatorProfilePic(profileId, profileImageFile);
+        const file = profileImageFile['profileImageFile'][0];
+        return this.creatorProfilesService.updateCreatorProfilePic(profileId, file);
     }
 
 
@@ -124,9 +125,10 @@ export class CreatorProfilesController {
     ]))
     updateCoverPic(
         @Param('id') profileId: number,
-        @UploadedFile() coverImageFile: Express.Multer.File,
+        @UploadedFiles() coverImageFile: Express.Multer.File[],
     ) {
-        return this.creatorProfilesService.updateCreatorCoverPic(profileId, coverImageFile);
+        const file = coverImageFile['coverImageFile'][0];
+        return this.creatorProfilesService.updateCreatorCoverPic(profileId, file);
     }
 
 

@@ -38,6 +38,8 @@ export class TwitchService implements SocialIntegrationServiceInterface {
         return `https://id.twitch.tv/oauth2/authorize?${params.toString()}`;
     }
 
+
+    
     // async handleCallback(code: string, state: string): Promise<void> {
     //     const tokenUrl = 'https://id.twitch.tv/oauth2/token';
     //     const params = new URLSearchParams({

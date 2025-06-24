@@ -38,6 +38,6 @@ export class UserBio {
         eager: true,
         nullable: true,
     })
-    preferredGames: PreferredGames[];
+    preferredGames?: PreferredGames[];
 
 }

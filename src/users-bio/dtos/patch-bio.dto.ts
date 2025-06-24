@@ -1,19 +1,24 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from "@nestjs/swagger";
-import { IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsArray, IsInt, IsNotEmpty, IsOptional, IsString, ValidateNested } from "class-validator";
 import { CreateBioDto } from "./create-bio.dto";
+import { PatchPreferredGamesDto } from "src/preferred-games/dto/patch-preferred-games.dto";
+import { Type } from "class-transformer";
 
 /**
  * Patch bio DTO.
  */
 export class PatchBioDto extends PartialType(CreateBioDto) {
 
-    @ApiProperty({
-        description: 'The id of the user that owns this user bio',
-        type: Number,
-        example: 1,
-        required: true,
-    })
+    @ApiProperty({ description: 'User ID', type: Number, example: 1, required: true })
     @IsInt()
     @IsNotEmpty()
-    userId: number;    
+    userId: number;
+
+    @ApiProperty({ type: [PatchPreferredGamesDto], required: false })
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => PatchPreferredGamesDto)
+    preferredGames?: PatchPreferredGamesDto[];   
+
+
 }
