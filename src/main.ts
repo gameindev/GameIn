@@ -43,9 +43,10 @@ async function bootstrap() {
     });
 
     // ✅ Serve static assets
-    app.useStaticAssets(join(__dirname, 'media', 'uploads'), {
+    app.useStaticAssets(join(process.cwd(), 'media/uploads'), {
         prefix: '/uploads/',
     });
+
 
     await app.listen(process.env.PORT ?? 3000);
 }
