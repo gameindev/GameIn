@@ -7,9 +7,9 @@ import * as fs from 'fs';
 
 @Injectable()
 export class LocalUploadProvider implements UploadProviderInterface {
-    private readonly uploadRoot = path.resolve(process.cwd(), 'media/uploads');
+    private readonly uploadRoot = path.resolve(__dirname, '../../media/uploads');
 
-    async upload(file: Express.Multer.File): Promise<string> {
+    async upload(file: Express.Multer.File) {
         if (!fs.existsSync(this.uploadRoot)) {
             fs.mkdirSync(this.uploadRoot, { recursive: true });
         }
@@ -17,14 +17,13 @@ export class LocalUploadProvider implements UploadProviderInterface {
         const filename = `${uuid()}-${file.originalname}`;
         const absolutePath = path.join(this.uploadRoot, filename);
         fs.writeFileSync(absolutePath, file.buffer);
-
         // Only return relative DB path:
         return `uploads/${filename}`;
     }
 
     async delete(filePath: string): Promise<void> {
         // filePath is: uploads/uuid.png
-        const absolutePath = path.resolve(process.cwd(), 'media', filePath);
+        const absolutePath = path.resolve(__dirname, '../../media/', filePath);
         if (fs.existsSync(absolutePath)) {
             fs.unlinkSync(absolutePath);
         }
