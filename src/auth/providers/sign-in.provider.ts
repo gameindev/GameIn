@@ -3,6 +3,7 @@ import { SigninDto } from '../dtos/signin.dto';
 import { UsersService } from 'src/users/providers/users.service';
 import { HashingProvider } from './hashing.provider';
 import { GenerateTokensProvider } from './generate-tokens.provider';
+import { UserType } from 'src/users/enums/user-type.enums';
 
 @Injectable()
 export class SignInProvider {
@@ -28,8 +29,8 @@ export class SignInProvider {
 
     public async signIn(signinDto: SigninDto) {
         // Find the user using email or username
-        let user = await this.usersService.findOneByIdentifier(signinDto.identifier);
-        console.log(user)
+        let user = await this.usersService.findOneByIdentifier(signinDto.identifier);     
+
         // Compare the password
         let isEqual: boolean = false
 

@@ -23,9 +23,9 @@ export class TwitchService implements SocialIntegrationServiceInterface {
         private readonly config: ConfigType<typeof twitchConfig>,
         @InjectRepository(SocialIntegration)
         private readonly integrationRepo: Repository<SocialIntegration>,
-        
+
         private readonly userService: UsersService// Inject the UserRep
-    ) {}
+    ) { }
 
     getAuthUrl(user: ActiveUserData): string {
         const params = new URLSearchParams({
@@ -39,7 +39,7 @@ export class TwitchService implements SocialIntegrationServiceInterface {
     }
 
 
-    
+
     // async handleCallback(code: string, state: string): Promise<void> {
     //     const tokenUrl = 'https://id.twitch.tv/oauth2/token';
     //     const params = new URLSearchParams({
@@ -59,9 +59,9 @@ export class TwitchService implements SocialIntegrationServiceInterface {
     //     const { access_token, refresh_token } = response.data;
 
     //     const userProfile = await this.getUserProfile(access_token);
-        
+
     //     const user = await this.userRepo.findOne({ where: { id: parseInt(state) } });
-        
+
     //     const integration = await this.integrationRepo.findOne({
     //         where: { user: { id: parseInt(state) }, platform: SocialPlatform.TWITCH }
     //     });
@@ -153,9 +153,41 @@ export class TwitchService implements SocialIntegrationServiceInterface {
         return response.data.data[0];
     }
 
-    async refreshTokenIfNeeded(): Promise<void> {
-        // Implement refresh logic if Twitch supports long term refresh
-        return;
+    async refreshTokenIfNeeded(integrationId: number): Promise<void> {
+        const integration = await this.integrationRepo.findOne({
+            where: { id: integrationId },
+            relations: ['user']
+        });
+
+        if (!integration) {
+            throw new Error('Integration not found');
+        }
+
+        if (!integration.refresh_token) {
+            throw new Error('No refresh token available');
+        }
+
+        const tokenUrl = 'https://id.twitch.tv/oauth2/token';
+        const params = new URLSearchParams({
+            client_id: this.config.twitchClientId,
+            client_secret: this.config.twitchClientSecret,
+            grant_type: 'refresh_token',
+            refresh_token: integration.refresh_token
+        });
+
+        const response = await firstValueFrom(
+            this.httpService.post(tokenUrl, params.toString(), {
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            })
+        );
+
+        const { access_token, refresh_token } = response.data;
+
+        // Update stored tokens
+        integration.access_token = access_token;
+        integration.refresh_token = refresh_token;
+
+        await this.integrationRepo.save(integration);
     }
 
     async fetchAndStoreStats(integrationId: number): Promise<void> {
@@ -163,6 +195,13 @@ export class TwitchService implements SocialIntegrationServiceInterface {
             where: { id: integrationId },
             relations: ['user']
         });
+
+        if (!integration) {
+            throw new Error('Integration not found');
+        }
+
+        // Refresh token first to ensure valid access_token
+        await this.refreshTokenIfNeeded(integrationId);
 
         const followersUrl = `${this.baseUrl}/channels/followers?broadcaster_id=${integration.social_id}`;
         const response = await firstValueFrom(
@@ -173,10 +212,10 @@ export class TwitchService implements SocialIntegrationServiceInterface {
                 },
             }),
         );
-
+        console.log('Response from Twitch:', response.data);
         const followersCount = response.data.total;
 
-        console.log('Fetched followers:', followersCount);
+        return followersCount;
         // Store followers count wherever you want
     }
 }

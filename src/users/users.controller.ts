@@ -190,6 +190,7 @@ Use '*' to load all supported relations.`,
     @ApiBearerAuth()
     @UseGuards(UserTypeGuard)
     @UserTypes(UserType.ADMIN, UserType.CREATOR, UserType.BRAND, UserType.COMMUNITY)
+    @UseInterceptors(ClassSerializerInterceptor)
     @Get("/:id")
     getUserById(
         @Param() getUserParamDto: GetUsersParamDto,

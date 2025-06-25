@@ -32,6 +32,7 @@ import { SocialIntegrationModule } from './social-integration/social-integration
 import twitchConfig from "./social-integration/platforms/twitch/twitch.config";
 import { SocialIntegration } from "./social-integration/entities/social-integration.entity";
 import { MetadataModule } from './metadata/metadata.module';
+import { UserSearchModule } from './user-search/user-search.module';
 dotenvFlow.config();
 
 const ENV = process.env.NODE_ENV;
@@ -73,7 +74,8 @@ const ENV = process.env.NODE_ENV;
         UploadsModule,
         PreferredGamesModule,
         SocialIntegrationModule,
-        MetadataModule
+        MetadataModule,
+        UserSearchModule
     ],
     controllers: [AppController],
     providers: [

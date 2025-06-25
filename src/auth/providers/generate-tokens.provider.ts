@@ -49,8 +49,13 @@ export class GenerateTokensProvider {
             this.signToken(user.id, this.jwtConfiguration.refreshTokenTTL)
         ]);
 
+        
+
         return {
-            user: user,
+            user: {
+                id: user.id,
+                userType: user.userType,
+            },
             accessToken,
             refreshToken
         }
