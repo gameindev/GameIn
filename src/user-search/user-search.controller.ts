@@ -21,8 +21,28 @@ export class UserSearchController {
     @ApiBearerAuth()
     @UseGuards(UserTypeGuard)
     @UserTypes(UserType.ADMIN, UserType.CREATOR, UserType.BRAND, UserType.COMMUNITY)
-    @ApiOperation({ summary: 'Search users by keyword, userType, and country' })
-    @ApiResponse({ status: 200, description: 'Search results returned successfully' })
+    @ApiOperation({
+        summary: 'Search users by keyword, userType, and country',
+        description: `
+            This endpoint allows you to search for users based on the provided search criteria.
+            You can search for users by keyword, userType, and country.
+            The search is case-insensitive and supports partial matches.
+            The results are paginated, with the number of results per page and the current page number specified in the query parameters.
+            The results are sorted by relevance.
+            The results are returned as a paginated list of User objects.
+
+            ### Example Usage:
+             - GET /search/users?keyword=John&userType=BRAND&country=USA
+             - GET /search/users?keyword=John&userType=COMMUNITY&country=USA
+             - GET /search/users?keyword=John&userType=ADMIN&country=USA
+             - GET /search/users?keyword=john&page=2&limit=5
+             - GET /search/users?keyword=gaming      
+            `
+    })
+    @ApiResponse({
+        status: 200,
+        description: `Search results returned successfully`
+    })
     public async searchUsers(@Query() userSearchDto: UserSearchDto) {
         return await this.userSearchService.searchUsers(userSearchDto);
     }
