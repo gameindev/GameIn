@@ -2,6 +2,9 @@ import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
 
+/**
+ * Create user DTO.
+ */
 export class UserSearchDto {
     @ApiPropertyOptional({ description: 'Search keyword (username, email, creator name, brand name)' })
     @IsOptional()
