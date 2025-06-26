@@ -29,6 +29,9 @@ const routePaths = {
       ROOT: "/inbox",
     },
   },
+  SETTINGS:{
+    ROOT: '/settings'
+  }
 };
 
 export default routePaths;

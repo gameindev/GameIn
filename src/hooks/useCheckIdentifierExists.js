@@ -12,8 +12,9 @@ const useCheckIdentifierExists = () => {
     if (username) params.append("identifier", username);
 
     try {
-      const data = await get(`${API_PATHS.USERS.BY_IDENTIFIER}?${params}`);
-      return !!data;
+      const { data } = await get(`${API_PATHS.USERS.BY_IDENTIFIER}?${params}`);
+      if(!data){ return false;}
+      return true;
     } catch (err) {
       console.error("Identifier check failed:", err);
       return false;
