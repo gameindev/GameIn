@@ -5,9 +5,9 @@ export const HeaderSection = styled.header`
   position: sticky;
   top: 0;
   z-index: 99;
-  
-  .headerCard{
-    padding: 1.5em 0;
+
+  .headerCard {
+    padding: 0.75em 0;
   }
 
   .headerFlex {

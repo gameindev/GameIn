@@ -21,15 +21,21 @@ import { currentUser } from "../../../stores/selectors";
 export default function Profile() {
   const navigate = useNavigate();
   const { user } = useSelector(currentUser);
+
+  // const {
+  //   bio,
+  //   introVideoUrl,
+  //   introVideoFile,
+  //   gamesUrl: games,
+  // } = useSelector((state) => state.bio);
+
   const {
-    bio,
-    introVideoUrl,
-    introVideoFile,
-    gamesUrl: games,
-  } = useSelector((state) => state.bio);
+    userBio: { bio: bioFromUser, videoBioUrl, preferredGames = [] } = {},
+  } = user || {};
 
   return (
     <Grid gutter={20}>
+      {/* Bio Section */}
       <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
         <StatBox
           title={"Profile Bio"}
@@ -41,12 +47,9 @@ export default function Profile() {
         >
           <Box p={20}>
             <Stack spacing="md">
-              <VideoPreview
-                videoUrl={introVideoUrl}
-                videoFile={introVideoFile}
-              />
+              <VideoPreview videoUrl={videoBioUrl} videoFile={null} />
 
-              <Text>{bio || user?.userBio?.bio || "No bio added"}</Text>
+              <Text>{bioFromUser || "No bio added"}</Text>
 
               <Flex wrap="wrap" gap="md" align="center" justify="space-between">
                 <Text fw={600} tt="uppercase" fz={theme.fontSizes.sm}>
@@ -54,25 +57,23 @@ export default function Profile() {
                 </Text>
 
                 <Flex gap="md">
-                  {(games?.length ? games.filter((g) => g.favorite) : []).map(
-                    (game, idx) => (
-                      <Flex key={idx} align="center" gap={8}>
-                        <Link target="_blank" to={game?.url}>
-                          <Image
-                            w={32}
-                            h={32}
-                            src={game.favicon?.url}
-                            alt="favicon"
-                            width={32}
-                            height={32}
-                          />
-                        </Link>
-                      </Flex>
-                    )
-                  )}
+                  {preferredGames.map((game, idx) => (
+                    <Flex key={idx} align="center" gap={8}>
+                      <Link target="_blank" to={game?.gameUrl}>
+                        <Image
+                          w={32}
+                          h={32}
+                          src={game?.metadata?.favicon}
+                          alt={game?.metadata?.title || "favicon"}
+                          width={32}
+                          height={32}
+                        />
+                      </Link>
+                    </Flex>
+                  ))}
 
                   {Array.from({
-                    length: 4 - (games?.filter((g) => g.favorite).length || 0),
+                    length: 4 - preferredGames.length,
                   }).map((_, idx) => (
                     <Skeleton
                       animate={false}
@@ -88,11 +89,15 @@ export default function Profile() {
           </Box>
         </StatBox>
       </Grid.Col>
+
+      {/* Social Media Stats */}
       <Grid.Col span={{ base: 12, md: 6, lg: 8 }}>
         <StatBox title={"Social Media Stats"} action={<IconButton />}>
-          <Text></Text>
+          <Text>Coming soon...</Text>
         </StatBox>
       </Grid.Col>
+
+      {/* FAQ Section */}
       <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
         <StatBox
           title={"FAQ"}
@@ -101,8 +106,10 @@ export default function Profile() {
               onClick={() => navigate(routePaths.ACCOUNTS.PROFILE.FAQ)}
             />
           }
-        ></StatBox>
+        />
       </Grid.Col>
+
+      {/* Welcome Section */}
       <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
         <StatBox
           title={"Welcome to Game-In"}
@@ -112,6 +119,8 @@ export default function Profile() {
           <Text>Stat</Text>
         </StatBox>
       </Grid.Col>
+
+      {/* Sponsorship / Team Creation */}
       <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
         <StatBox
           title={"Sponsorships"}

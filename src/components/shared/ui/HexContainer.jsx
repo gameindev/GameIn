@@ -63,15 +63,15 @@ const StyledHexContainer = styled.div`
     object-fit: cover;
     clip-path: inherit;
     object-position: center;
-    border: inherit;
+    /* border: inherit; */
   }
 `;
 
 const HexContainer = ({
   children,
-  radius = 0.15,
+  radius = 0.25,
   angle = "30deg",
-  size = 280,
+  size = 2,
   background,
 }) => {
   return (

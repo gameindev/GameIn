@@ -21,7 +21,8 @@ export default function EditImage({ type = "avatar", close }) {
   const dispatch = useDispatch();
   const { user } = useSelector(currentUser);
   const { patch, loading } = useApi();
-
+  console.log(user);
+  
   const getImageUrl = (path) => (path ? `http://localhost:3000/${path}` : null);
 
   const [image, setImage] = useState({
