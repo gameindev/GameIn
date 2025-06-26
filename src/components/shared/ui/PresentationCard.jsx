@@ -22,8 +22,8 @@ export default function PresentationCard({data}) {
           <Button
             variant="primary"
             size="sm"
-            padding="0.5rem"
-            width="8.5rem"
+            padding="0.5em"
+            width="8.5em"
             mt="xl"
           >
             {btnText}

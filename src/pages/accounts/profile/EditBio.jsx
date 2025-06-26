@@ -13,12 +13,16 @@ import {
   setBio,
   removeGameUrl as removeGameFromRedux,
   toggleFavorite,
+  moveGameUrl,
 } from "../../../stores/slices/bioSlice";
 import StatBox from "../../../components/shared/ui/StatBox";
 import { useNavigate } from "react-router";
+import useApi from "../../../hooks/useApi";
+import { currentUser } from "../../../stores/selectors";
+import { refreshUser } from "../../../stores/thunks/userThunks";
 
 export default function EditBio() {
-  const { control, handleSubmit, setValue } = useForm({
+  const { control, handleSubmit, setValue, reset } = useForm({
     resolver: yupResolver(editBioSchema),
     defaultValues: {
       introVideoUrl: "",
@@ -28,38 +32,64 @@ export default function EditBio() {
     },
   });
 
+  const { user } = useSelector(currentUser);
+  const { patch } = useApi();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const globalBio = useSelector((state) => state.bio);
   const gameUrls = globalBio.gamesUrl;
 
   useEffect(() => {
-    setValue("bio", globalBio.bio);
-    setValue("introVideoUrl", globalBio.introVideoUrl);
-    setValue("introVideoFile", globalBio.introVideoFile);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    reset({
+      bio: globalBio.bio || user?.userBio?.bio || "",
+      introVideoUrl:
+        globalBio.introVideoUrl || user?.userBio?.videoBioUrl || "",
+      introVideoFile: globalBio.introVideoFile || null,
+      gamesUrl: gameUrls || [],
+    });
+  }, [globalBio, user, reset]);
 
-  const removeGameUrl = (index) => {
-    dispatch(removeGameFromRedux(index));
-  };
-
-  const onSubmit = (data) => {
-    dispatch(
-      setBio({
+  const onSubmit = async (data) => {
+    try {
+      const payload = {
         bio: data.bio,
-        introVideoUrl: data.introVideoUrl,
-        introVideoFile: data.introVideoFile,
-      })
-    );
-    alert("Profile Updated Successfully");
-    navigate("/profile");
+        videoBioUrl: data.introVideoUrl,
+        userId: user.id,
+        preferredGames: gameUrls.map((game, index) => ({
+          gameUrl: game.url,
+          sortOrder: index,
+        })),
+      };
+
+      await patch("/users-bio.controller", payload);
+
+      dispatch(
+        setBio({
+          bio: data.bio,
+          introVideoUrl: data.introVideoUrl,
+          introVideoFile: data.introVideoFile,
+          gamesUrl: gameUrls,
+        })
+      );
+      dispatch(refreshUser());
+      alert("Profile Updated Successfully");
+      navigate("/profile");
+    } catch (err) {
+      alert("Failed to update bio");
+      console.error(err);
+    }
   };
 
   return (
     <>
       <Group pos={"relative"} justify="center">
-        <Button pos={"absolute"} left={0} variant="darkGrey" onClick={() => navigate(-1)}>
+        <Button
+          pos={"absolute"}
+          left={0}
+          variant="darkGrey"
+          onClick={() => navigate(-1)}
+        >
           Back
         </Button>
         <Text fz={35} align="center" mb={20}>
@@ -78,6 +108,7 @@ export default function EditBio() {
               <Stack p={20}>
                 {/* Video Input */}
                 <VideoInput control={control} setValue={setValue} />
+
                 {/* Bio input */}
                 <FormField
                   name="bio"
@@ -88,22 +119,26 @@ export default function EditBio() {
                     placeholder: "Enter your Bio",
                   }}
                 />
+
                 {/* Games Url input */}
                 <AddGameInput control={control} />
+
                 {/* Game lists */}
                 <GameList
                   games={gameUrls}
-                  onDelete={(idx) => dispatch(removeGameUrl(idx))}
+                  onDelete={(idx) => dispatch(removeGameFromRedux(idx))}
                   onFavoriteToggle={(idx) => dispatch(toggleFavorite(idx))}
+                  onMove={(from, to) => dispatch(moveGameUrl({ from, to }))}
                 />
 
-                <Button type="submit" variant="primary" width="10rem">
+                <Button type="submit" variant="primary" width="10em">
                   Save
                 </Button>
               </Stack>
             </form>
           </Box>
         </Grid.Col>
+
         <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
           <StatBox title={"Preview"}></StatBox>
         </Grid.Col>

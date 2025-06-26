@@ -35,8 +35,8 @@ const StyledWrapper = styled.div`
     --path: ${pathColor};
     --dot: ${dotColor};
     --duration: ${duration};
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2.5em;
+    height: 2.5em;
     position: relative;
   }
 
@@ -49,15 +49,15 @@ const StyledWrapper = styled.div`
 
   .loader:before {
     content: "";
-    width: 0.375rem;
-    height: 0.375rem;
+    width: 0.375em;
+    height: 0.375em;
     border-radius: 50%;
     position: absolute;
     display: block;
     background: var(--dot);
-    top: 2.3125rem;
-    left: 1.1875rem;
-    transform: translate(-1.125rem, -1.125rem);
+    top: 2.3125em;
+    left: 1.1875em;
+    transform: translate(-1.125em, -1.125em);
     animation: dotRect var(--duration) cubic-bezier(0.785, 0.135, 0.15, 0.86)
       infinite;
   }
@@ -73,7 +73,7 @@ const StyledWrapper = styled.div`
   .loader svg circle {
     fill: none;
     stroke: var(--path);
-    stroke-width: 0.625rem;
+    stroke-width: 0.625em;
     stroke-linejoin: round;
     stroke-linecap: round;
   }
@@ -100,12 +100,12 @@ const StyledWrapper = styled.div`
   }
 
   .loader.triangle {
-    width: 3rem;
+    width: 3em;
   }
 
   .loader.triangle:before {
-    left: 1.3125rem;
-    transform: translate(-0.625rem, -1.125rem);
+    left: 1.3125em;
+    transform: translate(-0.625em, -1.125em);
     animation: dotTriangle var(--duration)
       cubic-bezier(0.785, 0.135, 0.15, 0.86) infinite;
   }
@@ -130,11 +130,11 @@ const StyledWrapper = styled.div`
     }
 
     66% {
-      transform: translate(0.625rem, -1.125rem);
+      transform: translate(0.625em, -1.125em);
     }
 
     100% {
-      transform: translate(-0.625rem, -1.125rem);
+      transform: translate(-0.625em, -1.125em);
     }
   }
 
@@ -162,15 +162,15 @@ const StyledWrapper = styled.div`
     }
 
     50% {
-      transform: translate(1.125rem, -1.125rem);
+      transform: translate(1.125em, -1.125em);
     }
 
     75% {
-      transform: translate(0, -2.25rem);
+      transform: translate(0, -2.25em);
     }
 
     100% {
-      transform: translate(-1.125rem, -1.125rem);
+      transform: translate(-1.125em, -1.125em);
     }
   }
 
@@ -194,7 +194,7 @@ const StyledWrapper = styled.div`
 
   .loader {
     display: inline-block;
-    margin: 0 0.5rem;
+    margin: 0 0.5em;
   }
 `;
 

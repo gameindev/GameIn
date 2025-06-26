@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, TextInput, Group, Box, rem, Text } from "@mantine/core";
+import { Card, TextInput, Group, Box, em, Text } from "@mantine/core";
 import { Plus, X } from "lucide-react";
 import { theme } from "../../../styles/theme/customTheme";
 import styled from "styled-components";
@@ -9,7 +9,7 @@ const CloseIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: ${rem(10)};
+  padding: ${em(10)};
   font-size: ${theme.fontSizes.sm};
   background: ${theme.colors.secondaryGrey[0]};
   border-radius: ${theme.radius.md};
@@ -19,8 +19,8 @@ const CloseIcon = styled.div`
 const UserDetails = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${rem(2)};
-  padding-left: ${rem(4)};
+  gap: ${em(2)};
+  padding-left: ${em(4)};
 `;
 
 const InputCardItem = ({
@@ -65,7 +65,7 @@ const InputCardItem = ({
                 placeholder,
                 styles: {
                   input: {
-                    paddingLeft: rem(4),
+                    paddingLeft: em(4),
                   },
                 },
               }}

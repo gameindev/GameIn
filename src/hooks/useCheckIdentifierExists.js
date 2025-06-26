@@ -11,14 +11,15 @@ const useCheckIdentifierExists = () => {
         if (email) params.append("identifier", email);
         if (username) params.append("identifier", username);
 
-        try {
-            const data = await get(`${API_PATHS.USERS.BY_IDENTIFIER}?${params}`);
-            return !!data;
-        } catch (err) {
-            console.error("Identifier check failed:", err);
-            return false;
-        }
-    };
+    try {
+      const { data } = await get(`${API_PATHS.USERS.BY_IDENTIFIER}?${params}`);
+      if(!data){ return false;}
+      return true;
+    } catch (err) {
+      console.error("Identifier check failed:", err);
+      return false;
+    }
+  };
 
     return { checkExists };
 };

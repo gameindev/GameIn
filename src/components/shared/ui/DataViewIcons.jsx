@@ -6,7 +6,7 @@ export default function DataView({ viewMode, setViewMode, size="md"}) {
 
     const iconProps = {
         style: { display: "block" },
-        size: '1rem',
+        size: '1em',
     };
     
     return (
@@ -17,7 +17,7 @@ export default function DataView({ viewMode, setViewMode, size="md"}) {
                 value={viewMode}
                 onChange={(value) => setViewMode(value)}
                 data={[
-                    { label: <LayoutGrid {...iconProps} />, value: "cards" },
+                    { label: <LayoutGrid {...iconProps} />, value: "grid" },
                     { label: <List {...iconProps} />, value: "list" },
                     { label: <Table {...iconProps} />, value: "table" },
                 ]}

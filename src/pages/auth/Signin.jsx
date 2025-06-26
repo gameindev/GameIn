@@ -18,10 +18,10 @@ import { API_PATHS } from "../../services/endpoints";
 import { showNotification } from "../../utils/helpers";
 import { setUser } from "../../stores/slices/user";
 import { setAuth } from "../../stores/slices/auth";
-import GoogleLoginBtn from "./../../components/shared/oAuth/GoogleLoginBtn";
+import GoogleLoginBtn from "../../components/shared/oAuth/GoogleLoginBtn";
 import routePaths from "../../routes/endpoints";
-import FormField from './../../components/shared/ui/FormField';
-import { loginSchema } from './../../utils/schemas/validationSchema';
+import FormField from "../../components/shared/ui/FormField";
+import { loginSchema } from "../../utils/schemas/validationSchema";
 
 const defaultValues = {
   identifier: "",
@@ -51,43 +51,53 @@ export default function Signin() {
     resolver: yupResolver(loginSchema),
     mode: "onSubmit",
   });
-  const { post, loading, error } = useApi();
+  const { post, get, loading, error } = useApi();
 
   const handleLogin = async (formData) => {
     try {
       const { data } = await post(API_PATHS.AUTH.LOGIN, formData);
+      console.log(data);
+
       dispatch(
         setAuth({
           accessToken: data.accessToken,
           refreshToken: data.refreshToken,
+          user: data.user,
         })
       );
-      dispatch(setUser({ user: data.user }));
-      showNotification(
-        "Login Successful",
-        `Welcome back, ${data?.user?.username}!`
-      );
 
+      const userId = data?.user?.id;
       const userType = data?.user?.userType?.toUpperCase();
 
-      if (!userType) {
-        showNotification(
-          "Login Error",
-          `Unknown user type. Contact support`,
-          "red"
-        );
+      if (!userId || !userType) {
+        showNotification("Login Error", "User information incomplete", "red");
         navigate(routePaths.WELCOMEPAGE);
         return;
       }
-      if (userType === "BRAND") navigate(routePaths.ACCOUNTS.DASHBOARD.ROOT);
 
-      if (userType === "BRAND_ADMIN") navigate(routePaths.ACCOUNTS.DASHBOARD.ROOT);
+      const profileType =
+        userType === "BRAND"
+          ? "brandProfile"
+          : userType === "CREATOR"
+            ? "creatorProfile"
+            : "";
 
-      if (userType === "ADMIN") navigate(routePaths.ACCOUNTS.DASHBOARD.ROOT);
+      const { data: fullUserData } = await get(
+        `/users/${userId}${profileType ? `?populate=${profileType}` : ""}`
+      );
+      console.log(fullUserData);
+
+      dispatch(setUser({ user: fullUserData }));
+      showNotification(
+        "Login Successful",
+        `Welcome back, ${fullUserData.username || "user"}!`
+      );
+
+      navigate(routePaths.ACCOUNTS.DASHBOARD.ROOT);
     } catch (err) {
       showNotification(
         "Login Error",
-        `${err?.message || "Something went wrong"}`,
+        err?.message || "Something went wrong",
         "red"
       );
       navigate(routePaths.WELCOMEPAGE);
@@ -96,13 +106,13 @@ export default function Signin() {
 
   return (
     <Container size="md">
-      <Paper radius="sm" p="xl" withBorder bg="#363a3e" my="5rem" mx="xl">
+      <Paper radius="sm" p="xl" withBorder bg="#363a3e" my="5em" mx="xl">
         <form onSubmit={handleSubmit(handleLogin)}>
           <Stack spacing="xl">
             <Title order={2}>Login</Title>
 
             {error && (
-              <Text color="red" size="sm">
+              <Text c="red" size="sm">
                 {error}
               </Text>
             )}
@@ -123,15 +133,13 @@ export default function Signin() {
               ))}
 
               <Group
-                position="apart"
+                position="center"
                 mt="md"
                 style={{ justifyContent: "center" }}
               >
                 <Button
                   variant="primary"
                   size="sm"
-                  padding="0.5rem"
-                  width="8.5rem"
                   type="submit"
                   loading={loading}
                 >
@@ -146,7 +154,8 @@ export default function Signin() {
                 </Link>
               </Text>
             </Stack>
-            <Group position="apart" style={{ justifyContent: "center" }}>
+
+            <Group position="center" style={{ justifyContent: "center" }}>
               <GoogleLoginBtn />
             </Group>
           </Stack>

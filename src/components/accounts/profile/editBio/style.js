@@ -3,7 +3,7 @@ import { theme } from "./../../../../styles/theme/customTheme";
 
 export const ImageWrapper = styled.div`
   width: 100%;
-  height: 11rem;
+  height: 11em;
   background-size: cover;
   background-position: center;
   cursor: pointer;
@@ -18,13 +18,13 @@ export const PlayIcon = styled.div`
   transform: translate(-50%, -50%);
   background: rgba(0, 0, 0, 0.6);
   border-radius: 50%;
-  width: 3rem;
-  height: 3rem;
+  width: 3em;
+  height: 3em;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 1.5rem;
+  font-size: 1.5em;
 `;
 
 export const VideoWrapper = styled.div`
@@ -32,7 +32,7 @@ export const VideoWrapper = styled.div`
   video {
     border-radius: ${theme.radius.md};
     width: 100%;
-    height: 11rem;
+    height: 11em;
     object-fit: cover;
   }
 `;

@@ -4,7 +4,7 @@ import { theme } from "../../../styles/theme/customTheme";
 const SectionWrapper = styled.div`
   display: flex;
   align-items: center;
-  gap: 1.563rem;
+  gap: 1.563em;
 
   span {
     display: inline-flex;
@@ -17,7 +17,7 @@ const SectionWrapper = styled.div`
   }
 
   .header_text {
-    font-size: 1.563rem;
+    font-size: 1.563em;
     font-weight: 400;
     line-height: 1.4;
     letter-spacing: 0.2em;

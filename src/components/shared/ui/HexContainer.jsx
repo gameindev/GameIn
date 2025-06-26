@@ -2,12 +2,12 @@ import React from "react";
 import styled from "styled-components";
 import { theme } from "../../../styles/theme/customTheme";
 
-const pxToRem = (px) => `${px / 16}rem`;
+const pxToEm = (px) => `${px / 16}em`;
 const StyledHexContainer = styled.div`
   --r: ${({ radius }) => radius};
   --a: ${({ angle }) => angle};
 
-  width: ${({ size }) => pxToRem(size)};
+  width: ${({ size }) => pxToEm(size)};
   background: ${({ background }) => background || theme.colors.inputBgColor[0]};
   aspect-ratio: 1;
   position: relative;
@@ -15,7 +15,7 @@ const StyledHexContainer = styled.div`
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border: 0.063rem solid transparent;
+  border: 0.063em solid transparent;
   --_a: calc(30deg * var(--r));
   --_r: calc(50% * cos(30deg) / cos(30deg * (1 - var(--r))));
 
@@ -63,15 +63,15 @@ const StyledHexContainer = styled.div`
     object-fit: cover;
     clip-path: inherit;
     object-position: center;
-    border: inherit;
+    /* border: inherit; */
   }
 `;
 
 const HexContainer = ({
   children,
-  radius = 0.15,
+  radius = 0.25,
   angle = "30deg",
-  size = 280,
+  size = 2,
   background,
 }) => {
   return (

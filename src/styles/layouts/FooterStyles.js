@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const FooterSection = styled.footer`
-  padding: 4rem 0;
+  padding: 4em 0;
 
   .footerFlex {
     display: flex;
@@ -11,15 +11,11 @@ export const FooterSection = styled.footer`
       flex-basis: 20%;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 1em;
 
       .logo {
-        width: 11.5rem;
-      }      
-
-      select{
-        padding: 0rem 1.25rem !important;
-      }
+        width: 11.5em;
+      }  
     }
 
     .quick-links{
@@ -29,14 +25,14 @@ export const FooterSection = styled.footer`
       text-transform: uppercase;
 
       h5{
-        margin: 0 0 1rem;
+        margin: 0 0 1em;
       }
 
       .gameIn-links{
         ul{
           display: flex;
           flex-direction: column;
-          gap: 0.25rem;
+          gap: 0.25em;
 
           li>a{
             color: ${({ theme }) => theme.colors.textWhite[0]};

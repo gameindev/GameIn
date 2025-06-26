@@ -70,7 +70,7 @@ export default function MultiStepForm() {
   return (
     <>
       <Container size="lg">
-        <Paper radius="sm" p="xl" withBorder bg="#363a3e" my={"5rem"} mx={"xl"}>
+        <Paper radius="sm" p="xl" withBorder bg="#363a3e" my={"5em"} mx={"xl"}>
           <Stack spacing="xl">
             <Flex align="center" gap="xs" justify="start">
               <Text component="span" style={{ display: "inline-flex" }}>

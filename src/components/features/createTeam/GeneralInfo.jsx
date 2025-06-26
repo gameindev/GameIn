@@ -3,7 +3,7 @@ import {
   Box,
   Button,
   Group,
-  rem,
+  em,
   Stack,
   Textarea,
   TextInput,
@@ -50,7 +50,7 @@ const fields = [
 ];
 
 export default function GeneralInfo({ onNext }) {
-  const { control, setValue, watch, handleNextStep } = useFormStep({
+  const { control, handleNextStep } = useFormStep({
     formId: "createTeam",
     defaultValues,
     onNext,
@@ -62,7 +62,7 @@ export default function GeneralInfo({ onNext }) {
         pos={"relative"}
         style={{ borderRadius: theme.radius.md, overflow: "hidden" }}
       >
-        <CoverBanner size="12.5rem" />
+        <CoverBanner size="12.5em" />
         <Stack
           spacing="xl"
           bg={theme.colors.darkGrey[0]}
@@ -91,7 +91,7 @@ export default function GeneralInfo({ onNext }) {
         </Stack>
       </Box>
       <Group mt="lg" position="center" style={{ justifyContent: "center" }}>
-        <Button variant="primary" width={rem(100)} onClick={handleNextStep}>
+        <Button variant="primary" width={em(100)} onClick={handleNextStep}>
           Next
         </Button>
       </Group>

@@ -4,9 +4,15 @@ import HexContainer from "./HexContainer";
 import ReusableModal from "./../modals/modal";
 import EditAvator from "./../modals/EditAvator/EditAvator";
 
-const AvatarSection = ({ avatar, size, controls = false, className = "" }) => (
+const AvatarSection = ({
+  avatar,
+  size,
+  radius,
+  controls = false,
+  className = "",
+}) => (
   <div className={className}>
-    <Hexagon
+    {/* <Hexagon
       $mainRadius={10}
       $roundingRadius={15}
       size={size}
@@ -14,7 +20,14 @@ const AvatarSection = ({ avatar, size, controls = false, className = "" }) => (
       $rotated
     >
       <img src={avatar} alt="Avatar" />
-    </Hexagon>
+    </Hexagon> */}
+    <HexContainer
+      size={size}
+      radius={radius}
+      background={theme.colors.inputBgColor[0]}
+    >
+      <img src={avatar} alt="Avatar" />
+    </HexContainer>
     {controls && (
       <div className="action">
         <ReusableModal title={"Update Profile Picture"}>
@@ -22,9 +35,6 @@ const AvatarSection = ({ avatar, size, controls = false, className = "" }) => (
         </ReusableModal>
       </div>
     )}
-    {/* <HexContainer size={size} background={theme.colors.inputBgColor[0]}>
-      <img src={avatar} alt="Avatar" />
-    </HexContainer> */}
   </div>
 );
 

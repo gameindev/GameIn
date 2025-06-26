@@ -7,8 +7,9 @@ import { persistor } from "../stores/store";
 import { isLoggedIn, currentUser } from "../stores/selectors";
 import routePaths from "../routes/endpoints";
 import coverImage from "../assets/creators/creator_image.jpg";
-import AvatarSection from './../components/shared/ui/AvatarSection';
+import AvatarSection from "./../components/shared/ui/AvatarSection";
 import { logoutUser } from "../stores/slices/auth";
+import useProfileMediaUrls from "../utils/helpers/useProfileMediaUrl";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ export default function Header() {
 
   const user = useSelector(currentUser);
   const isLoggedInUser = useSelector(isLoggedIn);
+  const { avatarUrl } = useProfileMediaUrls();
 
   const handleLogout = async () => {
     dispatch(logoutUser());
@@ -39,8 +41,8 @@ export default function Header() {
     {
       label: "Guidelines",
       path: routePaths.WELCOMEPAGE,
-    }
-  ]
+    },
+  ];
 
   return (
     <HeaderSection>
@@ -66,13 +68,13 @@ export default function Header() {
                     <UnstyledButton>
                       <AvatarSection
                         className="avatar-icon-small"
-                        size="3.5rem"
-                        avatar={coverImage}
+                        size="55"
+                        avatar={avatarUrl || coverImage}
                       />
                     </UnstyledButton>
                   </Menu.Target>
                   <Menu.Dropdown>
-                    <Menu.Label style={{fontSize: "1rem"}}>
+                    <Menu.Label style={{ fontSize: "1em" }}>
                       Hello,{" "}
                       {user?.user?.username?.charAt(0).toUpperCase() +
                         user?.user?.username?.slice(1).toLowerCase()}
@@ -97,7 +99,7 @@ export default function Header() {
                     <Button
                       variant="grey"
                       size="sm"
-                      style={{ marginRight: "0.5rem" }}
+                      style={{ marginRight: "0.5em" }}
                     >
                       Sign in
                     </Button>

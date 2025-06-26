@@ -7,7 +7,7 @@ export default function ReusableModal({ title, children }) {
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title={title} centered>
+      <Modal opened={opened} onClose={close} size={"lg"} title={title} centered>
         {typeof children === "function" ? children({ close }) : children}
       </Modal>
 

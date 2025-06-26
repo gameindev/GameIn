@@ -41,8 +41,8 @@ export default function MileStone() {
             <Button
               variant="secondary"
               size="lg"
-              padding="1rem"
-              width="11.625rem"
+              padding="1em"
+              width="11.625em"
             >
               Register
             </Button>

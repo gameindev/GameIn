@@ -6,7 +6,7 @@ import { ChevronUp, ChevronDown } from "lucide-react";
 const ReadMoreText = styled.div`
   a {
     display: inline-flex;
-    gap: 0.25rem;
+    gap: 0.25em;
     align-items: flex-end;
   }
 `;

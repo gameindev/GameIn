@@ -3,20 +3,20 @@ import styled from "styled-components";
 export const SidebarStyles = styled.aside`
     display: flex;
     width: 100%;
-    min-width: 20.625rem;
+    min-width: 20.625em;
     background: ${({ theme }) => theme.colors.secondaryGrey[1]};
     position: sticky;
-    top: 6.496rem;
-    height: calc(100vh - 6.496rem);
+    top: 5em;
+    height: calc(100vh - 5em);
 
     .profile-icons {
       background: ${({ theme }) => theme.colors.textSecondary[0]};
-      padding: 1.5rem 1rem;
+      padding: 1.5em 1em;
 
       ul {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.5em;
 
         li {
           .profile-hexagon {
@@ -37,20 +37,20 @@ export const SidebarStyles = styled.aside`
     }
 
     .profile-links{
-      padding: 1.5rem 1rem;
-      flex-basis: calc(100% - 4.375rem);
+      padding: 1.5em 1em;
+      flex-basis: calc(100% - 4.375em);
 
       ul{
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.5em;
 
         li>a{
           display: flex;
           align-items: center;
-          padding: 1rem 1.5rem;
-          gap: 0.75rem;
-          border-radius: 0.313rem;
+          padding: 1em 1.5em;
+          gap: 0.75em;
+          border-radius: 0.313em;
           text-decoration: none;
           color: ${({ theme }) => theme.colors.text[0]};
           text-transform: uppercase;
@@ -63,9 +63,9 @@ export const SidebarStyles = styled.aside`
         }
 
         .divider{
-            border: 0.063rem dashed ${({ theme }) => theme.colors.inputBgColor[0]};
+            border: 0.063em dashed ${({ theme }) => theme.colors.inputBgColor[0]};
             width: 100%;
-            margin: 0.75rem 0;
+            margin: 0.75em 0;
         }
       }
     }

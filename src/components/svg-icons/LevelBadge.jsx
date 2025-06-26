@@ -27,7 +27,7 @@ const stars = [
     },
 ];
 
-export default function BadgeLevels({ fill = "#E2BB63", number = "6", width="2.438rem", height="3.375rem" }) {
+export default function BadgeLevels({ fill = "#E2BB63", number = "6", width="2.438em", height="3.375em" }) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
