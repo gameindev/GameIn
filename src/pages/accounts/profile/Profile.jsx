@@ -9,6 +9,7 @@ import {
   Box,
   Flex,
   Skeleton,
+  rgba,
 } from "@mantine/core";
 import routePaths from "./../../../routes/endpoints";
 import IconButton from "../../../components/shared/ui/IconButton";
@@ -86,28 +87,36 @@ export default function Profile() {
           </Box>
         </StatBox>
       </Grid.Col>
+      <Grid.Col span={{ base: 12, md: 6, lg: 8 }}>
+        <StatBox title={"Social Media Stats"} action={<IconButton />}>
+          <Text></Text>
+        </StatBox>
+      </Grid.Col>
       <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-        <StatBox>
+        <StatBox
+          title={"FAQ"}
+          action={
+            <IconButton
+              onClick={() => navigate(routePaths.ACCOUNTS.PROFILE.FAQ)}
+            />
+          }
+        ></StatBox>
+      </Grid.Col>
+      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+        <StatBox
+          title={"Welcome to Game-In"}
+          background={rgba(theme.colors.secondary[0], 0.5)}
+          action={<IconButton />}
+        >
           <Text>Stat</Text>
         </StatBox>
       </Grid.Col>
       <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-        <StatBox>
-          <Text>Stat</Text>
-        </StatBox>
-      </Grid.Col>
-      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-        <StatBox>
-          <Text>Stat</Text>
-        </StatBox>
-      </Grid.Col>
-      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-        <StatBox>
-          <Text>Stat</Text>
-        </StatBox>
-      </Grid.Col>
-      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-        <StatBox title={"Sponsorships"}>
+        <StatBox
+          title={"Sponsorships"}
+          background={rgba(theme.colors.primary[0], 0.3)}
+          action={<IconButton />}
+        >
           <div className="create_team">
             <Link to={routePaths.ACCOUNTS.PROFILE.CREATE_TEAM}>
               <Button>Create Team</Button>
