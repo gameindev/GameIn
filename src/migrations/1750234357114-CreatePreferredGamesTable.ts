@@ -1,13 +1,13 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class CreatePreferredGamesTable1750234357114 implements MigrationInterface {
-    name = 'CreatePreferredGamesTable1750234357114'
+    name = 'CreatePreferredGamesTable1750234357114';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
-            CREATE SEQUENCE preferred_games_id_seq START 1;
+            CREATE SEQUENCE IF NOT EXISTS preferred_games_id_seq START 1;
 
-            CREATE TABLE "preferred_games" (
+            CREATE TABLE IF NOT EXISTS "preferred_games" (
               id integer NOT NULL DEFAULT nextval('preferred_games_id_seq'),
               "userBioId" integer NOT NULL,
               "gameUrl" varchar(100) NOT NULL,
@@ -18,16 +18,15 @@ export class CreatePreferredGamesTable1750234357114 implements MigrationInterfac
               CONSTRAINT "FK_user_bio_preferred_games" FOREIGN KEY ("userBioId") REFERENCES "user_bio"(id) ON DELETE CASCADE ON UPDATE CASCADE
             );
 
-            CREATE INDEX "IDX_user_bio_preferred_games" ON "preferred_games" ("userBioId");
+            CREATE INDEX IF NOT EXISTS "IDX_user_bio_preferred_games" ON "preferred_games" ("userBioId");
         `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
-            DROP INDEX "IDX_user_bio_preferred_games";
-            DROP TABLE "preferred_games";
-            DROP SEQUENCE preferred_games_id_seq;
+            DROP INDEX IF EXISTS "IDX_user_bio_preferred_games";
+            DROP TABLE IF EXISTS "preferred_games";
+            DROP SEQUENCE IF EXISTS preferred_games_id_seq;
         `);
     }
-
 }
