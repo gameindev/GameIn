@@ -46,7 +46,7 @@ const textStyles = {
     root: {
       color: theme.colors.text[0],
       lineHeight: "normal",
-    }
+    },
   }),
 };
 
@@ -57,10 +57,10 @@ const textInputStyles = {
     //   color: theme.colors.text[0],
     // },
 
-    const { variant="inputBgColor", size="sm" } = params;
+    const { variant = "inputBgColor", size = "sm" } = params;
 
     const inputStyles = {
-      fontSize: size? theme.fontSizes?.[size] : theme.fontSizes.md,
+      fontSize: size ? theme.fontSizes?.[size] : theme.fontSizes.md,
       color: theme.white,
       backgroundColor: theme.colors?.[variant]?.[0],
       padding: `${theme.spacing?.[size]}`,
@@ -70,11 +70,11 @@ const textInputStyles = {
       minHeight: "auto",
       "::placeholder": {
         color: theme.colors.white[0],
-      }
-    }
+      },
+    };
 
     return {
-      input: inputStyles
+      input: inputStyles,
     };
   },
 };
@@ -105,11 +105,13 @@ const textLabelStyles = {
 };
 
 const PasswordInputStyles = {
-  styles: (theme,params) => ({
+  styles: (theme, params) => ({
     input: {
       fontSize: theme.fontSizes.md,
       padding: `calc(${theme.spacing.md} / 2) ${theme.spacing.md}`,
-      backgroundColor: theme.colors?.[params.variant] ? theme.colors?.[params.variant]?.[0] : theme.colors.inputBgColor[0],
+      backgroundColor: theme.colors?.[params.variant]
+        ? theme.colors?.[params.variant]?.[0]
+        : theme.colors.inputBgColor[0],
       height: `calc(${theme.spacing.md} * 3.25)`,
     },
     innerInput: {
@@ -141,7 +143,7 @@ const gridStyles = {
       width: "25em",
       minHeight: "25em",
       Box: {
-        height: "25em",
+        minHeight: "25em",
       },
     },
   }),
@@ -152,8 +154,8 @@ const tableStyles = {
     table: {
       backgroundColor: theme.colors.secondaryGrey[0],
     },
-  })
-}
+  }),
+};
 
 // Final Mantine theme object
 export const theme = createTheme({
@@ -165,12 +167,13 @@ export const theme = createTheme({
     textSecondary: Array(10).fill("#33363A"),
     grey: Array(10).fill("#3C4044"),
     darkGrey: Array(10).fill("#34373C"),
-    secondaryGrey: Array(10).fill("#363A3E"), 
+    secondaryGrey: Array(10).fill("#363A3E"),
     white: Array(10).fill("#fff"),
     black: Array(10).fill("#000"),
     inputBgColor: Array(10).fill("#50565a"),
     iconHover: Array(10).fill("#dbd162"),
     skyblue: Array(10).fill("#69B3E7"),
+    accordionBg: Array(10).fill("#3B3F43"),
     textWhite: virtualColor({
       name: "textWhite",
       light: "black",
@@ -221,11 +224,11 @@ export const theme = createTheme({
     Table: tableStyles,
     SegmentedControl: {
       styles: () => ({
-        root:{
-          backgroundColor: 'transparent'
-        }
-      })
-    }
+        root: {
+          backgroundColor: "transparent",
+        },
+      }),
+    },
   },
   other: {
     lightBg: "#f5f5f5",

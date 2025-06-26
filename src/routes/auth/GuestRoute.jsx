@@ -4,7 +4,7 @@ import { isLoggedIn } from "../../stores/selectors";
 import routePaths from "../endpoints";
 
 const GuestRoute = ({ children }) => {
-    const isAuthenticated = useSelector(isLoggedIn);
+  const isAuthenticated = useSelector(isLoggedIn);
 
   if (isAuthenticated) {
     return <Navigate to={routePaths.ACCOUNTS.DASHBOARD.ROOT} replace />;

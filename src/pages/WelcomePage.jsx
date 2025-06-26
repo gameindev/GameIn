@@ -9,9 +9,10 @@ import CreatorBrandUnite from "../assets/homepage/creators-brands-unite.png";
 import SponsorshipOpp from "../assets/homepage/sponsorship-opportunities.png";
 import JoinEcosystem from "../assets/homepage/join-ecosystem.png";
 import GrowYourBusiness from "../assets/homepage/grow-your-business.png";
-import BackgroundVideo from './../components/shared/ui/BackgroundVideo';
+import BackgroundVideo from "./../components/shared/ui/BackgroundVideo";
 
 export default function WelcomePage() {
+
   const scrollToRef = useRef(null);
 
   const scrollToElement = () => {

@@ -8,87 +8,74 @@ import {
   UserInformation,
   ProfileWrapper,
   ActionWrapper,
+  UserAvatar,
 } from "./styles";
 import { Button } from "@mantine/core";
 import LevelBadge from "./LevelBadge";
-import Nike from "../../assets/creators/sponsers.svg";
-import creator from "../../assets/creators/creator_image.jpg";
-import coverImage from "../../assets/creators/cover_image.jpg";
-import { UserAvatar } from "./styles";
 import { useSelector } from "react-redux";
 import { currentUser } from "../../stores/selectors";
 
+const getImageUrl = (path) => (path ? `http://localhost:3000/${path}` : null);
+
 const UserProfileBanner = () => {
-  const userData = {
-    dateOfBirth: "1997-09-08",
-    email: "idiiiotboy@gmail.com",
-    id: 1,
-    isActive: true,
-    isVerified: false,
-    userType: "BRAND",
-    username: "supriseMF",
-    avatar: creator,
-    coverImage: coverImage,
-    age: 24,
-    stats: {
-      views: "11254",
-      followers: "1125",
-      joinedOn: "OCT 23rd, 2022",
-    },
-    level: 5,
-    sponsors: [
-      {
-        name: "Nike",
-        logo: Nike,
-        size: "7em",
-      },
-      // {
-      //   name: "Nike",
-      //   logo: Nike,
-      // },
-    ],
-  };
   const { user } = useSelector(currentUser);
 
+  if (!user) return null;
+
+  const {
+    username,
+    userType,
+    email,
+    dateOfBirth,
+    creatorProfile,
+    brandProfile,
+    userBio,
+  } = user;
+
+  const profile = userType === "CREATOR" ? creatorProfile : brandProfile;
+  const stats = {
+    views: profile?.views || "0",
+    followers: profile?.followers || "0",
+    joinedOn: new Date(user.createdAt).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }),
+  };
+
+  console.log(user);
+  
+
+  const avatarUrl = getImageUrl(profile?.profileImage?.path);
+  const coverImageUrl = getImageUrl(profile?.coverImage?.path);
+
   return (
-    <>
-      <BannerWrapper>
-        <CoverBanner coverImage={userData.coverImage} controls/>
-        <UserInformation>
-          <UserAvatar>
-            <AvatarSection avatar={userData.avatar} size="15em" controls />
-          </UserAvatar>
-          <ProfileWrapper>
-            <div className="personal_info">
-              <UserInfo user={user} />
-              <StatsSection stats={userData.stats} />
+    <BannerWrapper>
+      <CoverBanner coverImage={coverImageUrl} controls />
+      <UserInformation>
+        <UserAvatar>
+          <AvatarSection avatar={avatarUrl} size="15em" controls />
+        </UserAvatar>
+        <ProfileWrapper>
+          <div className="personal_info">
+            <UserInfo user={user} />
+            <StatsSection stats={stats} />
+          </div>
+          <LevelBadge level={profile?.rank || 1} />
+          <SponsorshipSection sponsors={user?.sponsors || []} />
+          <ActionWrapper>
+            <div className="actions">
+              <Button variant="secondary" size="xs">
+                Follow
+              </Button>
+              <Button variant="primary" size="xs">
+                Sponsor
+              </Button>
             </div>
-            <LevelBadge level={userData.level} />
-            <SponsorshipSection sponsors={user} />
-            <ActionWrapper>
-              <div className="actions">
-                <Button
-                  variant="secondary"
-                  size="xs"
-                  padding="0.25em 0.5em"
-                  width="6.25em"
-                >
-                  Follow
-                </Button>
-                <Button
-                  variant="primary"
-                  size="xs"
-                  padding="0.25em 0.5em"
-                  width="6.25em"ś
-                >
-                  Sponsor
-                </Button>
-              </div>
-            </ActionWrapper>
-          </ProfileWrapper>
-        </UserInformation>
-      </BannerWrapper>
-    </>
+          </ActionWrapper>
+        </ProfileWrapper>
+      </UserInformation>
+    </BannerWrapper>
   );
 };
 

@@ -7,7 +7,7 @@ const createPersistConfig = (key, whitelist = []) => ({
   ...(whitelist.length > 0 && { whitelist }),
 });
 
-const authList = ["accessToken","refreshToken"];
+const authList = ["accessToken", "refreshToken", "user"];
 const userList = ["profile"];
 
 export const authPersistConfig = createPersistConfig("auth", authList);

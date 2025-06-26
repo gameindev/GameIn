@@ -16,10 +16,11 @@ import IconButton from "../../../components/shared/ui/IconButton";
 import { useSelector } from "react-redux";
 import { VideoPreview } from "./../../../components/accounts/profile/editBio/VideoPreview";
 import { theme } from "../../../styles/theme/customTheme";
+import { currentUser } from "../../../stores/selectors";
 
 export default function Profile() {
   const navigate = useNavigate();
-
+  const { user } = useSelector(currentUser);
   const {
     bio,
     introVideoUrl,
@@ -45,7 +46,7 @@ export default function Profile() {
                 videoFile={introVideoFile}
               />
 
-              <Text>{bio || "No bio added"}</Text>
+              <Text>{bio || user?.userBio?.bio || "No bio added"}</Text>
 
               <Flex wrap="wrap" gap="md" align="center" justify="space-between">
                 <Text fw={600} tt="uppercase" fz={theme.fontSizes.sm}>
@@ -56,11 +57,11 @@ export default function Profile() {
                   {(games?.length ? games.filter((g) => g.favorite) : []).map(
                     (game, idx) => (
                       <Flex key={idx} align="center" gap={8}>
-                        <Link target="_blank" to={game.url}>
+                        <Link target="_blank" to={game?.url}>
                           <Image
                             w={32}
                             h={32}
-                            src={game.favicon.url}
+                            src={game.favicon?.url}
                             alt="favicon"
                             width={32}
                             height={32}

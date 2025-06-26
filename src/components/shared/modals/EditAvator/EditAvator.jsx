@@ -1,15 +1,53 @@
 import { useState } from "react";
-import { Button, Avatar, Text, Stack, Group, Box } from "@mantine/core";
+import {
+  Button,
+  Text,
+  Stack,
+  Group,
+  Image,
+  FileInput,
+  Alert,
+  Loader,
+} from "@mantine/core";
 import HexContainer from "../../ui/HexContainer";
 import { theme } from "../../../../styles/theme/customTheme";
-import CoverBanner from "./../../ui/CoverBanner";
+import { useSelector, useDispatch } from "react-redux";
+import { currentUser } from "../../../../stores/selectors";
+import useApi from "./../../../../hooks/useApi";
+import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE_MB } from "../../../../utils/enum";
+import { refreshUser } from "./../../../../stores/thunks/userThunks";
 
 export default function EditImage({ type = "avatar", close }) {
-  const [image, setImage] = useState({ preview: null, file: null });
+  const dispatch = useDispatch();
+  const { user } = useSelector(currentUser);
+  const { patch, loading } = useApi();
 
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
+  const getImageUrl = (path) => (path ? `http://localhost:3000/${path}` : null);
+
+  const [image, setImage] = useState({
+    preview: getImageUrl(
+      type === "avatar" ? user?.profileImage?.path : user?.coverImage?.path
+    ),
+    file: null,
+  });
+
+  const [error, setError] = useState(null);
+
+  const profileId = user?.id;
+  const profileType = user?.userType?.toLowerCase();
+
+  const handleImageChange = (file) => {
     if (!file) return;
+
+    if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+      return setError("Only JPEG, JPG, PNG, or WEBP images are allowed.");
+    }
+
+    if (file.size / 1024 / 1024 > MAX_FILE_SIZE_MB) {
+      return setError(`File size should be less than ${MAX_FILE_SIZE_MB}MB.`);
+    }
+
+    setError(null);
 
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -19,11 +57,27 @@ export default function EditImage({ type = "avatar", close }) {
   };
 
   const handleSave = async () => {
-    if (!image.file) return;
+    if (!image.file || !profileId) return;
 
     const formData = new FormData();
-    formData.append(type, image.file);
-    close();
+    formData.append(
+      type === "avatar" ? "profileImageFile" : "coverImageFile",
+      image.file
+    );
+
+    const endpoint = `/${profileType}-profiles/${profileId}/${
+      type === "avatar" ? "profile-pic" : "cover-pic"
+    }`;
+
+    try {
+      await patch(endpoint, formData, {
+        "Content-Type": "multipart/form-data",
+      });
+      dispatch(refreshUser());
+      close();
+    } catch (err) {
+      setError("Failed to upload image.", err);
+    }
   };
 
   return (
@@ -31,50 +85,52 @@ export default function EditImage({ type = "avatar", close }) {
       <Text weight={500} size="sm">
         {type === "avatar" ? "Profile Picture" : "Cover Photo"}
       </Text>
-      {/* <Box
-        pos={"relative"}
-        style={{ borderRadius: theme.radius.md, overflow: "hidden" }}
-      >
-        <CoverBanner size="12.5rem" />
-        <Stack
-          spacing="xl"
-          bg={theme.colors.darkGrey[0]}
-          p={50}
-          pos={"relative"}
-        >
-          <Stack pos={"absolute"} top={-80} left={20}>
-            <HexContainer size={160} background={theme.colors.inputBgColor[0]}>
-              <img src={image.preview} alt="Avatar" />
-            </HexContainer>
-          </Stack>
-        </Stack>
-      </Box> */}
+
       {type === "avatar" ? (
         <Group justify="center">
           <HexContainer size={200} background={theme.colors.inputBgColor[0]}>
-            <img src={image.preview} alt="Avatar" />
+            {image.preview ? (
+              <img
+                src={image.preview}
+                alt="Avatar"
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+            ) : (
+              <Text size="xs" c="dimmed" ta="center" mt="xl">
+                No image available
+              </Text>
+            )}
           </HexContainer>
         </Group>
-      ) : (
-        <img
+      ) : image.preview ? (
+        <Image
           src={image.preview}
           alt="Cover Preview"
-          style={{ width: "100%", borderRadius: 8 }}
+          radius="md"
+          withPlaceholder
+          height={150}
+          fit="cover"
         />
+      ) : (
+        <Text size="xs" c="dimmed" ta="center" mt="sm">
+          No image available
+        </Text>
       )}
-      <input
-        type="file"
-        accept="image/*"
-        id={`upload-${type}`}
-        style={{ display: "none" }}
+
+      <FileInput
+        placeholder={`Select ${type === "avatar" ? "Avatar" : "Cover"} Image`}
+        accept="image/png,image/jpeg,image/webp"
         onChange={handleImageChange}
+        error={error}
       />
-      <label htmlFor={`upload-${type}`}>
-        <Button variant="secondary" component="span" size="xs">
-          Change {type === "avatar" ? "Avatar" : "Cover"}
-        </Button>
-      </label>
-      <Button variant="primary" onClick={handleSave}>
+
+      {error && (
+        <Alert color="red" title="Error" mt="sm">
+          {error}
+        </Alert>
+      )}
+
+      <Button variant="primary" onClick={handleSave} loading={loading}>
         Save {type === "avatar" ? "Avatar" : "Cover"}
       </Button>
     </Stack>

@@ -6,18 +6,18 @@ const StatsSection = ({ stats }) => (
   <ProfileStats>
     <div className="profile_stats">
       <div className="stats_section">
-        <Eye size='0.75em' />
+        <Eye size="0.75em" />
         <Text className="views" size="md" weight={500}>
-          {stats.views || '11,294'}
+          {stats.views}
         </Text>
         <Text className="helperText" size="xs" color="dimmed">
           Views
         </Text>
       </div>
       <div className="stats_section">
-        <UserRound size='0.75em' />
+        <UserRound size="0.75em" />
         <Text className="followers" size="md" weight={500}>
-          {stats?.followers || '1124'}
+          {stats?.followers}
         </Text>
         <Text className="helperText" size="xs" color="dimmed">
           Followers
@@ -28,7 +28,7 @@ const StatsSection = ({ stats }) => (
           Joined:
         </Text>
         <Text className="helperText" size="xs" color="dimmed">
-          {stats?.joined || 'OCT. 23rd, 2022'}
+          {stats?.joinedOn || "OCT. 23rd, 2022"}
         </Text>
       </div>
     </div>

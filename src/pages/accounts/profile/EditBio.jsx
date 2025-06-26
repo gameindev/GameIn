@@ -13,9 +13,12 @@ import {
   setBio,
   removeGameUrl as removeGameFromRedux,
   toggleFavorite,
+  moveGameUrl,
 } from "../../../stores/slices/bioSlice";
 import StatBox from "../../../components/shared/ui/StatBox";
 import { useNavigate } from "react-router";
+import useApi from "../../../hooks/useApi";
+import { currentUser } from "../../../stores/selectors";
 
 export default function EditBio() {
   const { control, handleSubmit, setValue } = useForm({
@@ -27,6 +30,9 @@ export default function EditBio() {
       gamesUrl: [],
     },
   });
+
+  const { user } = useSelector(currentUser);
+  const { patch } = useApi();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -44,22 +50,46 @@ export default function EditBio() {
     dispatch(removeGameFromRedux(index));
   };
 
-  const onSubmit = (data) => {
-    dispatch(
-      setBio({
+  const onSubmit = async (data) => {
+    try {
+      const payload = {
         bio: data.bio,
-        introVideoUrl: data.introVideoUrl,
-        introVideoFile: data.introVideoFile,
-      })
-    );
-    alert("Profile Updated Successfully");
-    navigate("/profile");
+        videoBioUrl: data.introVideoUrl,
+        userId: user.id,
+        preferredGames: gameUrls.map((game, index) => ({
+          gameUrl: game.url,
+          sortOrder: index,
+          metaData: {},
+        })),
+      };
+
+      await patch("/users-bio.controller", payload);
+
+      dispatch(
+        setBio({
+          bio: data.bio,
+          introVideoUrl: data.introVideoUrl,
+          introVideoFile: data.introVideoFile,
+        })
+      );
+
+      alert("Profile Updated Successfully");
+      navigate("/profile");
+    } catch (err) {
+      alert("Failed to update bio");
+      console.error(err);
+    }
   };
 
   return (
     <>
       <Group pos={"relative"} justify="center">
-        <Button pos={"absolute"} left={0} variant="darkGrey" onClick={() => navigate(-1)}>
+        <Button
+          pos={"absolute"}
+          left={0}
+          variant="darkGrey"
+          onClick={() => navigate(-1)}
+        >
           Back
         </Button>
         <Text fz={35} align="center" mb={20}>
@@ -95,6 +125,7 @@ export default function EditBio() {
                   games={gameUrls}
                   onDelete={(idx) => dispatch(removeGameUrl(idx))}
                   onFavoriteToggle={(idx) => dispatch(toggleFavorite(idx))}
+                  onMove={(from, to) => dispatch(moveGameUrl({ from, to }))}
                 />
 
                 <Button type="submit" variant="primary" width="10em">

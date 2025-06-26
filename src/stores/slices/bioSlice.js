@@ -29,8 +29,34 @@ const bioSlice = createSlice({
         state.gamesUrl[index].favorite = !game.favorite;
       }
     },
+    moveGameUrl(state, action) {
+      const { from, to } = action.payload;
+      if (
+        from < 0 ||
+        to < 0 ||
+        from >= state.gamesUrl.length ||
+        to >= state.gamesUrl.length
+      )
+        return;
+
+      const updated = [...state.gamesUrl];
+      const [moved] = updated.splice(from, 1);
+      updated.splice(to, 0, moved);
+
+      updated.forEach((game, index) => {
+        game.sortOrder = index;
+      });
+
+      state.gamesUrl = updated;
+    },
   },
 });
 
-export const { setBio, addGameUrl, removeGameUrl, toggleFavorite  } = bioSlice.actions;
+export const {
+  setBio,
+  addGameUrl,
+  removeGameUrl,
+  toggleFavorite,
+  moveGameUrl,
+} = bioSlice.actions;
 export default bioSlice.reducer;
