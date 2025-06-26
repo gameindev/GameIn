@@ -34,8 +34,8 @@ export const HeroSectionStyles = styled.div`
     &::after {
       content: "";
       position: absolute;
-      border-right: 0.25emsolid #ffffff;
-      border-bottom: 0.25emsolid #ffffff;
+      border-right: 0.25em solid #ffffff;
+      border-bottom: 0.25em solid #ffffff;
       width: 0.625em;
       height: 0.625em;
       bottom: -1em;
@@ -100,7 +100,7 @@ export const PresentationStyles = styled.div`
 
   .presentation_cardContent {
     flex: 0 0 40%;
-    padding: 3.25em0 3.25em4.5em;
+    padding: 3.25em 0 3.25em 4.5em;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -143,7 +143,7 @@ export const PresentationStyles = styled.div`
     text-align: right;
 
     .presentation_cardContent {
-      padding: 3.25em4.5em3.25em0;
+      padding: 3.25em 4.5em 3.25em 0;
       align-items: flex-end;
 
       .text_block {
@@ -180,7 +180,7 @@ export const PresentationStyles = styled.div`
 export const MileStoneStyles = styled.div`
   .milestone_banner {
     position: relative;
-    margin: 7.5em0;
+    margin: 7.5em 0;
     background: linear-gradient( 225deg, #9d7fef 0%, #69b3e7 48.8%, #5ce5b0 100%);
     clip-path: polygon(
       -0.018% 0.021%,
