@@ -1,1 +1,0 @@
-import{l as e,j as s,ab as a,m as r}from"./index-DCh2P-fd.js";import{i as o}from"./selectors-BSredJDX.js";const c=({children:t})=>e(o)?s.jsx(a,{to:r.DASHBOARD.ROOT,replace:!0}):t;export{c as default};

@@ -1,0 +1,1 @@
+function n(r){return typeof r=="string"?{value:r,label:r}:"value"in r&&!("label"in r)?{value:r.value,label:r.value,disabled:r.disabled}:typeof r=="number"?{value:r.toString(),label:r.toString()}:"group"in r?{group:r.group,items:r.items.map(u=>n(u))}:r}function a(r){return r?r.map(u=>n(u)):[]}export{a as g};
