@@ -1,7 +1,7 @@
 import StatBox from "../../../components/shared/ui/StatBox";
 import { Text, Grid } from "@mantine/core";
 import IconButton from "./../../../components/shared/ui/IconButton";
-import OngoingSponsorships from "../../../components/accounts/sponsorships/ongoingSponsorships";
+import OngoingSponsorships from "../../../components/accounts/sponsorships/OngoingSponsorships";
 
 export default function Sponsorships() {
   return (
