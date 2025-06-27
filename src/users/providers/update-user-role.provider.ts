@@ -7,6 +7,8 @@ import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
 import { HashingProvider } from 'src/auth/providers/hashing.provider';
 import { UsersBioService } from 'src/users-bio/providers/users-bio.service';
 import { UserType } from 'src/users/enums/user-type.enums';
+import { CreatorProfilesService } from 'src/creator-profiles/providers/creator-profiles.service';
+import { BrandProfilesService } from 'src/brand-profiles/providers/brand-profiles.service';
 
 @Injectable()
 export class UpdateUserRoleProvider {
@@ -26,6 +28,9 @@ export class UpdateUserRoleProvider {
          */
         @Inject(UsersBioService)
         private readonly userBioService: UsersBioService,
+
+        private readonly creatorProfileService: CreatorProfilesService,
+        private readonly brandProfileService: BrandProfilesService,
     ) { }
 
 
@@ -48,9 +53,17 @@ export class UpdateUserRoleProvider {
         try {
             if (user.userType === null) {
                 user.userType = userType;
+
+                if (user.userType === UserType.CREATOR) {
+                    await this.creatorProfileService.createProfileForUser(user);
+                } else if (user.userType === UserType.BRAND) {
+                    await this.brandProfileService.createProfileForUser(user);
+                }
             }
+
             user.password = hashedPassword;
             await this.userRepository.save(user);
+
         } catch (error) {
             if (error instanceof BadRequestException) {
                 throw error;
@@ -58,7 +71,7 @@ export class UpdateUserRoleProvider {
             throw new InternalServerErrorException('Something went wrong while updating this user');
         }
 
-        if(user.userBio === null) {
+        if (user.userBio === null) {
             await this.userBioService.createUserBio(user);
         }
 
