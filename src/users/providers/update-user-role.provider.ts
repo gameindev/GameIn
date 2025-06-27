@@ -9,6 +9,8 @@ import { UsersBioService } from 'src/users-bio/providers/users-bio.service';
 import { UserType } from 'src/users/enums/user-type.enums';
 import { CreatorProfilesService } from 'src/creator-profiles/providers/creator-profiles.service';
 import { BrandProfilesService } from 'src/brand-profiles/providers/brand-profiles.service';
+import { GenerateTokensProvider } from 'src/auth/providers/generate-tokens.provider';
+import { access } from 'fs';
 
 @Injectable()
 export class UpdateUserRoleProvider {
@@ -31,12 +33,14 @@ export class UpdateUserRoleProvider {
 
         private readonly creatorProfileService: CreatorProfilesService,
         private readonly brandProfileService: BrandProfilesService,
+        private readonly generateTokensProvider: GenerateTokensProvider,
     ) { }
 
 
     async updateOAuthUserRole(patchUserRoleDto: PathcUserRoleDto, userSub: ActiveUserData) {
         const { password, userType } = patchUserRoleDto;
         let user = undefined;
+        let tokens = undefined;
 
         const hashedPassword = await this.hashingProvider.hashPassword(password);
 
@@ -59,6 +63,8 @@ export class UpdateUserRoleProvider {
                 } else if (user.userType === UserType.BRAND) {
                     await this.brandProfileService.createProfileForUser(user);
                 }
+
+                tokens = await this.generateTokensProvider.generateTokens(user);
             }
 
             user.password = hashedPassword;
@@ -75,9 +81,14 @@ export class UpdateUserRoleProvider {
             await this.userBioService.createUserBio(user);
         }
 
+
         return {
-            id: user.id,
-            userType: user.userType,
+            user: {
+                id: user.id,
+                userType: user.userType,
+            },
+            accessTokens: tokens.accessToken,
+            refreshToken: tokens.refreshToken,
         }
     }
 }
