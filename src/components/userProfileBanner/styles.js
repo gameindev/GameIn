@@ -20,21 +20,21 @@ export const UserInformation = styled.div`
 
 export const UserAvatar = styled.div`
   position: absolute;
-  top: -8em;
-  left: 0em;
+  top: -6em;
+  left: 1em;
   /* width: 10.625em;
   height: 11.875em; */
   overflow: hidden;
 
   .action {
     position: absolute;
-    bottom: 2em;
-    right: 3em;
+    bottom: 0.5em;
+    right: 1.5em;
   }
 `;
 
 export const ProfileWrapper = styled.div`
-  margin-left: 13em;
+  margin-left: 12em;
   flex: 1;
   display: flex;
   align-items: flex-end;

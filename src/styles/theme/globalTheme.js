@@ -100,7 +100,8 @@ export const GlobalStyles = createGlobalStyle`
     } */
 
      .mantine-RadioCard-card[data-checked] {
-        border: 0.125em solid ${({ theme }) => theme.colors.primary[0]} !important;
+        border: 0.125em solid ${({ theme }) =>
+          theme.colors.primary[0]} !important;
      }
 
 
@@ -109,11 +110,6 @@ export const GlobalStyles = createGlobalStyle`
         width: 1.5em;
         height: 1.5em;
     }
-
-    .avatar-icon-small{
-        transform: scale(2);
-    }
-
     
 
 `;

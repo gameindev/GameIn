@@ -19,9 +19,10 @@ import StatBox from "../../../components/shared/ui/StatBox";
 import { useNavigate } from "react-router";
 import useApi from "../../../hooks/useApi";
 import { currentUser } from "../../../stores/selectors";
+import { refreshUser } from "../../../stores/thunks/userThunks";
 
 export default function EditBio() {
-  const { control, handleSubmit, setValue } = useForm({
+  const { control, handleSubmit, setValue, reset } = useForm({
     resolver: yupResolver(editBioSchema),
     defaultValues: {
       introVideoUrl: "",
@@ -33,22 +34,21 @@ export default function EditBio() {
 
   const { user } = useSelector(currentUser);
   const { patch } = useApi();
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const globalBio = useSelector((state) => state.bio);
   const gameUrls = globalBio.gamesUrl;
 
   useEffect(() => {
-    setValue("bio", globalBio.bio);
-    setValue("introVideoUrl", globalBio.introVideoUrl);
-    setValue("introVideoFile", globalBio.introVideoFile);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const removeGameUrl = (index) => {
-    dispatch(removeGameFromRedux(index));
-  };
+    reset({
+      bio: globalBio.bio || user?.userBio?.bio || "",
+      introVideoUrl:
+        globalBio.introVideoUrl || user?.userBio?.videoBioUrl || "",
+      introVideoFile: globalBio.introVideoFile || null,
+      gamesUrl: gameUrls || [],
+    });
+  }, [globalBio, user, reset]);
 
   const onSubmit = async (data) => {
     try {
@@ -59,7 +59,6 @@ export default function EditBio() {
         preferredGames: gameUrls.map((game, index) => ({
           gameUrl: game.url,
           sortOrder: index,
-          metaData: {},
         })),
       };
 
@@ -70,9 +69,10 @@ export default function EditBio() {
           bio: data.bio,
           introVideoUrl: data.introVideoUrl,
           introVideoFile: data.introVideoFile,
+          gamesUrl: gameUrls,
         })
       );
-
+      dispatch(refreshUser());
       alert("Profile Updated Successfully");
       navigate("/profile");
     } catch (err) {
@@ -108,6 +108,7 @@ export default function EditBio() {
               <Stack p={20}>
                 {/* Video Input */}
                 <VideoInput control={control} setValue={setValue} />
+
                 {/* Bio input */}
                 <FormField
                   name="bio"
@@ -118,12 +119,14 @@ export default function EditBio() {
                     placeholder: "Enter your Bio",
                   }}
                 />
+
                 {/* Games Url input */}
                 <AddGameInput control={control} />
+
                 {/* Game lists */}
                 <GameList
                   games={gameUrls}
-                  onDelete={(idx) => dispatch(removeGameUrl(idx))}
+                  onDelete={(idx) => dispatch(removeGameFromRedux(idx))}
                   onFavoriteToggle={(idx) => dispatch(toggleFavorite(idx))}
                   onMove={(from, to) => dispatch(moveGameUrl({ from, to }))}
                 />
@@ -135,6 +138,7 @@ export default function EditBio() {
             </form>
           </Box>
         </Grid.Col>
+
         <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
           <StatBox title={"Preview"}></StatBox>
         </Grid.Col>

@@ -14,23 +14,15 @@ import { Button } from "@mantine/core";
 import LevelBadge from "./LevelBadge";
 import { useSelector } from "react-redux";
 import { currentUser } from "../../stores/selectors";
-
-const getImageUrl = (path) => (path ? `${import.meta.env.VITE_ASSET_URL}/${path}` : null);
+import useProfileMediaUrls from "../../utils/helpers/useProfileMediaUrl";
 
 const UserProfileBanner = () => {
   const { user } = useSelector(currentUser);
 
+  const { avatarUrl, coverImageUrl } = useProfileMediaUrls();
   if (!user) return null;
 
-  const {
-    username,
-    userType,
-    email,
-    dateOfBirth,
-    creatorProfile,
-    brandProfile,
-    userBio,
-  } = user;
+  const { userType, creatorProfile, brandProfile } = user;
 
   const profile = userType === "CREATOR" ? creatorProfile : brandProfile;
   const stats = {
@@ -43,18 +35,12 @@ const UserProfileBanner = () => {
     }),
   };
 
-  console.log(user);
-  
-
-  const avatarUrl = getImageUrl(profile?.profileImage?.path);
-  const coverImageUrl = getImageUrl(profile?.coverImage?.path);
-
   return (
     <BannerWrapper>
       <CoverBanner coverImage={coverImageUrl} controls />
       <UserInformation>
         <UserAvatar>
-          <AvatarSection avatar={avatarUrl} size="15em" controls />
+          <AvatarSection avatar={avatarUrl} radius={0.35}  size="180" controls />
         </UserAvatar>
         <ProfileWrapper>
           <div className="personal_info">
