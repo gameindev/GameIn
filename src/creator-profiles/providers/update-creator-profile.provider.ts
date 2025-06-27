@@ -3,7 +3,7 @@ import { PatchCreatorProfileDto } from '../dtos/patch-creatorProfile.dto';
 import { Repository } from 'typeorm';
 import { CreatorProfile } from '../creator-profile.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Upload } from 'src/uploads/upload.entity';
+import { UploadEntity } from 'src/uploads/upload.entity';
 import { UploadsService } from 'src/uploads/providers/uploads.service';
 
 @Injectable()

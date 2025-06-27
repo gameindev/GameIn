@@ -2,21 +2,21 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Express } from 'express';
 import { UploadProviderInterface } from '../interfaces/upload.interface';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Upload } from '../upload.entity';
 import { Repository } from 'typeorm';
+import { UploadEntity } from '../upload.entity';
 
 @Injectable()
 export class UploadsService {
 
     constructor(
-        @InjectRepository(Upload)
-        private readonly uploadRepo: Repository<Upload>,
+        @InjectRepository(UploadEntity)
+        private readonly uploadRepo: Repository<UploadEntity>,
 
         @Inject('UploadProviderInterface')
         private readonly provider: UploadProviderInterface
     ) { }
 
-    async uploadNew(file: Express.Multer.File): Promise<Upload> {
+    async uploadNew(file: Express.Multer.File): Promise<UploadEntity> {
         const relativePath = await this.provider.upload(file);
 
         const upload = this.uploadRepo.create({
@@ -31,7 +31,7 @@ export class UploadsService {
     }
 
 
-    async deleteUpload(existingUpload: Upload): Promise<void> {
+    async deleteUpload(existingUpload: UploadEntity): Promise<void> {
         if (!existingUpload) return;
 
         await this.provider.delete(existingUpload.path);

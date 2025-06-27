@@ -1,4 +1,4 @@
-import { Upload } from "src/uploads/upload.entity";
+import { UploadEntity } from "src/uploads/upload.entity";
 import { UserBio } from "src/users-bio/user-bio.entity";
 import { User } from "src/users/user.entity";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, Index, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
@@ -26,13 +26,13 @@ export class BrandProfile {
     brandName: string;
 
 
-    @OneToOne(() => Upload, { nullable: true, eager: true, cascade: true })
+    @OneToOne(() => UploadEntity, { nullable: true, eager: true, cascade: true })
     @JoinColumn()
-    profileImage: Upload;
+    profileImage: UploadEntity;
 
-    @OneToOne(() => Upload, { nullable: true, eager: true, cascade: true })
+    @OneToOne(() => UploadEntity, { nullable: true, eager: true, cascade: true })
     @JoinColumn()
-    coverImage: Upload;
+    coverImage: UploadEntity;
 
     @Column({
         type: 'text',

@@ -10,7 +10,7 @@ export class CreateUploadTable1750089749558 implements MigrationInterface {
         END IF;
       END $$;
 
-      CREATE TABLE IF NOT EXISTS "upload" (
+      CREATE TABLE IF NOT EXISTS "upload_entity" (
         id integer NOT NULL DEFAULT nextval('upload_id_seq'),
         name character varying(1024) NOT NULL,
         path character varying(1024) NOT NULL,

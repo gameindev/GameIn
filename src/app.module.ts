@@ -25,7 +25,6 @@ import { UserBio } from "./users-bio/user-bio.entity";
 import { BrandProfile } from "./brand-profiles/brand-profile.entity";
 import { CreatorProfile } from "./creator-profiles/creator-profile.entity";
 import { User } from "./users/user.entity";
-import { Upload } from "./uploads/upload.entity";
 import { PreferredGamesModule } from './preferred-games/preferred-games.module';
 import { PreferredGames } from "./preferred-games/preferred-games.entity";
 import { SocialIntegrationModule } from './social-integration/social-integration.module';
@@ -34,6 +33,7 @@ import { SocialIntegration } from "./social-integration/entities/social-integrat
 import { MetadataModule } from './metadata/metadata.module';
 import { UserSearchModule } from './user-search/user-search.module';
 import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
+import { UploadEntity } from "./uploads/upload.entity";
 dotenvFlow.config();
 
 const ENV = process.env.NODE_ENV;
@@ -59,7 +59,7 @@ const ENV = process.env.NODE_ENV;
                     password: configService.get('database.password'),
                     database: configService.get('database.name'),
                     // autoLoadEntities: configService.get('database.autoLoadEntities'),
-                    entities: [User, Upload, CreatorProfile, BrandProfile, UserBio, PreferredGames, SocialIntegration],
+                    entities: [User, UploadEntity, CreatorProfile, BrandProfile, UserBio, PreferredGames, SocialIntegration],
                     // synchronize: configService.get('database.synchronize')
                     synchronize: false
                 }
