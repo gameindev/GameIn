@@ -14,7 +14,7 @@ import { theme } from "../../../../styles/theme/customTheme";
 import { useSelector, useDispatch } from "react-redux";
 import { currentUser } from "../../../../stores/selectors";
 import useApi from "./../../../../hooks/useApi";
-import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE_MB } from "../../../../utils/enum";
+import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE_MB, USERTYPES } from "../../../../utils/enum";
 import { refreshUser } from "./../../../../stores/thunks/userThunks";
 
 export default function EditImage({ type = "avatar", close }) {
@@ -34,7 +34,7 @@ export default function EditImage({ type = "avatar", close }) {
 
   const [error, setError] = useState(null);
 
-  const profileId = user?.id;
+  const profileId = user?.userType === USERTYPES.CREATOR ? user?.creatorProfile?.id : user?.brandProfile?.id;
   const profileType = user?.userType?.toLowerCase();
 
   const handleImageChange = (file) => {
