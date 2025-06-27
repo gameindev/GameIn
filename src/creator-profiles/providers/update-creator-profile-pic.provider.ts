@@ -49,7 +49,11 @@ export class UpdateCreatorProfilePicProvider {
         try {
             return await this.creatorProfileRepository.save(creatorProfile);
         } catch (error) {
-            throw new InternalServerErrorException('Error while trying to update creator profile.');
+            console.error('Error during save:', error);
+            throw new InternalServerErrorException({
+                message: 'Error while trying to update creator profile.',
+                original: error.message,
+            });
         }
     }
 }
