@@ -47,6 +47,7 @@ export class UpdateCreatorProfilePicProvider {
         }
 
         try {
+            console.log('profileImage:', creatorProfile.profileImage);
             return await this.creatorProfileRepository.save(creatorProfile);
         } catch (error) {
             console.error('Error during save:', error);
