@@ -75,6 +75,9 @@ export class UpdateUserRoleProvider {
             await this.userBioService.createUserBio(user);
         }
 
-        return user
+        return {
+            id: user.id,
+            userType: user.userType,
+        }
     }
 }
