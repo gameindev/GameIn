@@ -21,9 +21,8 @@ export default function EditImage({ type = "avatar", close }) {
   const dispatch = useDispatch();
   const { user } = useSelector(currentUser);
   const { patch, loading } = useApi();
-  console.log(user);
-  
-  const getImageUrl = (path) => (path ? `http://localhost:3000/${path}` : null);
+
+  const getImageUrl = (path) => (path ? `${import.meta.env.VITE_ASSET_URL}/${path}` : null);
 
   const [image, setImage] = useState({
     preview: getImageUrl(
@@ -33,10 +32,11 @@ export default function EditImage({ type = "avatar", close }) {
   });
 
   const [error, setError] = useState(null);
-
-  const profileId = user?.userType === USERTYPES.CREATOR ? user?.creatorProfile?.id : user?.brandProfile?.id;
-  const profileType = user?.userType?.toLowerCase();
-
+  
+  const userType = user?.userType?.toLowerCase();
+  const profileType = userType === "brand" ? "brandProfile" : userType === "creator" ? "creatorProfile" : "";
+  const profileId = user?.[profileType].id;
+  
   const handleImageChange = (file) => {
     if (!file) return;
 
@@ -66,7 +66,7 @@ export default function EditImage({ type = "avatar", close }) {
       image.file
     );
 
-    const endpoint = `/${profileType}-profiles/${profileId}/${
+    const endpoint = `/${userType}-profiles/${profileId}/${
       type === "avatar" ? "profile-pic" : "cover-pic"
     }`;
 
