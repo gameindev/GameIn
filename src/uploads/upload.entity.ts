@@ -1,7 +1,7 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { FileType } from "./enums/file-types.enum";
 
-@Entity()
+@Entity('upload')
 export class Upload {
     @PrimaryGeneratedColumn()
     id: number;
