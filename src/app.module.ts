@@ -34,6 +34,8 @@ import { MetadataModule } from './metadata/metadata.module';
 import { UserSearchModule } from './user-search/user-search.module';
 import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
 import { UploadEntity } from "./uploads/upload.entity";
+import { ViewsModule } from './views/views.module';
+import { ProfileView } from "./views/views.entity";
 dotenvFlow.config();
 
 const ENV = process.env.NODE_ENV;
@@ -59,7 +61,16 @@ const ENV = process.env.NODE_ENV;
                     password: configService.get('database.password'),
                     database: configService.get('database.name'),
                     // autoLoadEntities: configService.get('database.autoLoadEntities'),
-                    entities: [User, UploadEntity, CreatorProfile, BrandProfile, UserBio, PreferredGames, SocialIntegration],
+                    entities: [
+                        User,
+                        UploadEntity,
+                        CreatorProfile,
+                        BrandProfile,
+                        UserBio,
+                        PreferredGames,
+                        SocialIntegration,
+                        ProfileView
+                    ],
                     // synchronize: configService.get('database.synchronize')
                     synchronize: false
                 }
@@ -76,7 +87,8 @@ const ENV = process.env.NODE_ENV;
         PreferredGamesModule,
         SocialIntegrationModule,
         MetadataModule,
-        UserSearchModule
+        UserSearchModule,
+        ViewsModule,
     ],
     controllers: [AppController],
     providers: [

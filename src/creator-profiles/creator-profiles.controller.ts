@@ -132,6 +132,7 @@ export class CreatorProfilesController {
         const file = coverImageFile['coverImageFile'][0];
         return this.creatorProfilesService.updateCreatorCoverPic(profileId, file);
     }
+   
 
 
 }
