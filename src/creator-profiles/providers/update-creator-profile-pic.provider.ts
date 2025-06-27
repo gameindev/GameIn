@@ -21,6 +21,8 @@ export class UpdateCreatorProfilePicProvider {
                 relations: ['profileImage'],
             });
 
+            console.log(creatorProfile)
+
         } catch (error) {
             throw new InternalServerErrorException('Error while trying to find creator profile.');
         }

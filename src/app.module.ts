@@ -15,7 +15,7 @@ import * as dotenvFlow from 'dotenv-flow';
 import environmentValidation from "./config/environment.validation";
 import jwtConfig from "./auth/config/jwt.config";
 import { JwtModule } from "@nestjs/jwt";
-import { APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
 import { AccessTokenGuard } from "./auth/guards/access-token/access-token.guard";
 import { AuthenticationGuard } from "./auth/guards/authentication/authentication.guard";
 import { DataResponseInterceptor } from "./common/interceptors/data-response/data-response.interceptor";
@@ -33,12 +33,13 @@ import twitchConfig from "./social-integration/platforms/twitch/twitch.config";
 import { SocialIntegration } from "./social-integration/entities/social-integration.entity";
 import { MetadataModule } from './metadata/metadata.module';
 import { UserSearchModule } from './user-search/user-search.module';
+import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
 dotenvFlow.config();
 
 const ENV = process.env.NODE_ENV;
 
 @Module({
-    imports: [        
+    imports: [
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: [`.env.${ENV}`, '.env'],
@@ -87,6 +88,10 @@ const ENV = process.env.NODE_ENV;
         {
             provide: APP_INTERCEPTOR,
             useClass: DataResponseInterceptor
+        },
+        {
+            provide: APP_FILTER,
+            useClass: AllExceptionsFilter,
         },
         AccessTokenGuard,
     ]

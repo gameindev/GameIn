@@ -94,7 +94,9 @@ export class CreatorProfilesController {
         @UploadedFiles() profileImageFile: Express.Multer.File[],
     ) {
         const file = profileImageFile['profileImageFile'][0];
-        return this.creatorProfilesService.updateCreatorProfilePic(profileId, file);
+        const result = this.creatorProfilesService.updateCreatorProfilePic(profileId, file);
+        console.log("Result", result)
+        return result;
     }
 
 
