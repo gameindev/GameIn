@@ -16,29 +16,63 @@ const GoogleLoginBtn = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { post } = useApi();
+  const { post, get } = useApi();
 
   const handleSuccess = async (response) => {
     try {
-      const { data } = await post(API_PATHS.AUTH.GOOGLE_OAUTH, { token: response?.credential});
+      const { data } = await post(API_PATHS.AUTH.GOOGLE_OAUTH, { token: response?.credential });
 
-      const isProfileIncomplete = !data.user?.userType && !data.user?.password;
-      if(isProfileIncomplete){
+      const isProfileIncomplete = !data.user?.userType;
+      console.log(data.user?.userType)
+      if (isProfileIncomplete) {
         setShowCompleteProfile(true)
-        setAuthTokens({ accessToken: data.accessToken, refreshToken: data.refreshToken, });
-      }else{
-        dispatch(setAuth({ accessToken: data.accessToken, refreshToken: data.refreshToken, }));
-        dispatch(setUser({ user: data.user }));
+        setAuthTokens({ accessToken: data.accessToken, refreshToken: data.refreshToken, user: data.user });
+      } else {
+        dispatch(setAuth({ accessToken: data.accessToken, refreshToken: data.refreshToken, user: data.user }));
+        const userId = data?.user?.id;
+        const userType = data?.user?.userType?.toUpperCase();
+
+        const profileType =
+          userType === "BRAND"
+            ? "brandProfile"
+            : userType === "CREATOR"
+              ? "creatorProfile"
+              : "";
+
+        const { data: fullUserData } = await get(
+          `/users/${userId}${profileType ? `?populate=${profileType}` : ""}`
+        );
+        console.log(fullUserData);
+
+        dispatch(setUser({ user: fullUserData }));
       }
 
     } catch (err) {
-      showNotification( "Login Error", `{${err?.message || "Something went wrong with Google login"} }`, "red" );
+      showNotification("Login Error", `{${err?.message || "Something went wrong with Google login"} }`, "red");
     }
   };
 
-  const handleProfileCompleted = ({ user }) => {
-    dispatch(setAuth({ accessToken: authTokens.accessToken, refreshToken: authTokens.refreshToken }));
-    dispatch(setUser({ user }));
+  const handleProfileCompleted = async ({ user }) => {
+    dispatch(setAuth({ accessToken: user.accessTokens, refreshToken: user.refreshToken, user: user.user }));
+    const userId = user?.user?.id;
+    const userType = user?.user?.userType?.toUpperCase();
+    console.log(user)
+
+    const profileType =
+      userType === "BRAND"
+        ? "brandProfile"
+        : userType === "CREATOR"
+          ? "creatorProfile"
+          : "";
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.accessTokens}`,
+      };
+
+    const { data: fullUserData } = await get(`/users/${userId}${profileType ? `?populate=${profileType}` : ""}`, headers);
+
+    dispatch(setUser({ user: fullUserData }));
     setShowCompleteProfile(false);
     showNotification("Login Successful", `Welcome back, ${user.username}`);
     navigate(routePaths.ACCOUNTS.DASHBOARD.ROOT);

@@ -15,7 +15,7 @@ import LevelBadge from "./LevelBadge";
 import { useSelector } from "react-redux";
 import { currentUser } from "../../stores/selectors";
 
-const getImageUrl = (path) => (path ? `http://localhost:3000/${path}` : null);
+const getImageUrl = (path) => (path ? `${import.meta.env.VITE_ASSET_URL}/${path}` : null);
 
 const UserProfileBanner = () => {
   const { user } = useSelector(currentUser);
