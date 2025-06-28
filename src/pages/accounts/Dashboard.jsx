@@ -3,36 +3,36 @@ import StatBox from "./../../components/shared/ui/StatBox";
 import ReusableModal from "./../../components/shared/modals/modal";
 import { useNavigate } from "react-router";
 import IconButton from "../../components/shared/ui/IconButton";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 
 export default function Dashboard() {
     const navigate = useNavigate();
-    const accessToken = useSelector((state) => state.auth.accessToken);
+    // const accessToken = useSelector((state) => state.auth.accessToken);
 
-    const handleClick = async () => {
-        console.log(accessToken);
-        try {
-            const res = await fetch('http://localhost:3000/api/social-integration/connect?platform=TWITCH', {
-                method: 'GET',
-                credentials: 'include',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                }
-            });
+    // const handleClick = async () => {
+    //     console.log(accessToken);
+    //     try {
+    //         const res = await fetch('http://localhost:3000/api/social-integration/connect?platform=TWITCH', {
+    //             method: 'GET',
+    //             credentials: 'include',
+    //             headers: {
+    //                 'Authorization': `Bearer ${accessToken}`,
+    //             }
+    //         });
 
-            const data = await res.json();  // ✅ This now works
-            window.location.href = data.data.url;  // redirect to Twitch OAuth
-        } catch (error) {
-            console.error('Error initiating Twitch connection:', error);
-        }
-    }
+    //         const data = await res.json();  // ✅ This now works
+    //         window.location.href = data.data.url;  // redirect to Twitch OAuth
+    //     } catch (error) {
+    //         console.error('Error initiating Twitch connection:', error);
+    //     }
+    // }
 
     return (
         <>
             <Grid gutter={20}>
                 <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
                     <StatBox title={"Profile Bio"} action={<ReusableModal title={"Edit Bio"} />}>
-                        <Button onClick={() => handleClick()}>Twitch Login</Button>
+                        {/* <Button onClick={() => handleClick()}>Twitch Login</Button> */}
                     </StatBox>
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>

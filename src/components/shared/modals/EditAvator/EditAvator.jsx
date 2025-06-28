@@ -37,10 +37,6 @@ export default function EditImage({ type = "avatar", close }) {
   });
 
   const [error, setError] = useState(null);
-
-  console.log(user);
-  console.log(profileType);
-  console.log(profileId);
   
   const handleImageChange = (file) => {
     if (!file) return;

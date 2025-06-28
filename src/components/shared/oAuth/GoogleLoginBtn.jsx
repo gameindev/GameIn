@@ -53,7 +53,7 @@ const GoogleLoginBtn = () => {
   };
 
   const handleProfileCompleted = async ({ user }) => {
-    dispatch(setAuth({ accessToken: user.accessTokens, refreshToken: user.refreshToken, user: user.user }));
+    dispatch(setAuth({ accessToken: user.accessToken, refreshToken: user.refreshToken, user: user.user }));
     const userId = user?.user?.id;
     const userType = user?.user?.userType?.toUpperCase();
     console.log(user)
@@ -67,7 +67,7 @@ const GoogleLoginBtn = () => {
 
       const headers = {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.accessTokens}`,
+        Authorization: `Bearer ${user.accessToken}`,
       };
 
     const { data: fullUserData } = await get(`/users/${userId}${profileType ? `?populate=${profileType}` : ""}`, headers);
