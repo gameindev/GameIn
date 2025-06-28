@@ -24,18 +24,23 @@ export default function EditImage({ type = "avatar", close }) {
 
   const getImageUrl = (path) => (path ? `${import.meta.env.VITE_ASSET_URL}/${path}` : null);
 
+  const userType = user?.userType?.toLowerCase();
+  const profileType = userType === "brand" ? "brandProfile" : userType === "creator" ? "creatorProfile" : "";
+  const profileId = user?.[profileType]?.id;
+
+  
   const [image, setImage] = useState({
     preview: getImageUrl(
-      type === "avatar" ? user?.profileImage?.path : user?.coverImage?.path
+      type === "avatar" ? user?.[profileType]?.profileImage?.path : user?.[profileType]?.coverImage?.path
     ),
     file: null,
   });
 
   const [error, setError] = useState(null);
-  
-  const userType = user?.userType?.toLowerCase();
-  const profileType = userType === "brand" ? "brandProfile" : userType === "creator" ? "creatorProfile" : "";
-  const profileId = user?.[profileType]?.id;
+
+  console.log(user);
+  console.log(profileType);
+  console.log(profileId);
   
   const handleImageChange = (file) => {
     if (!file) return;
