@@ -48,7 +48,7 @@ export default function EditBio() {
       introVideoFile: globalBio.introVideoFile || null,
       gamesUrl: gameUrls || [],
     });
-  }, [globalBio, user, reset]);
+  }, [globalBio, user, reset, gameUrls]);
 
   const onSubmit = async (data) => {
     try {

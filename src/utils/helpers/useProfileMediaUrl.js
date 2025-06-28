@@ -4,16 +4,16 @@ import { currentUser } from "../../stores/selectors";
 const getImageUrl = (path) => (path ? `${import.meta.env.VITE_ASSET_URL}/${path}` : null);
 
 export default function useProfileMediaUrls() {
-  const { user } = useSelector(currentUser);
-  const userType = user?.userType;
+  const profile = useSelector(currentUser);
+  const userType = profile?.user?.userType;
 
-  const creatorProfile = user?.creatorProfile;
-  const brandProfile = user?.brandProfile;
+  const creatorProfile = profile?.user?.creatorProfile;
+  const brandProfile = profile?.user?.brandProfile;
 
-  const profile = userType === "CREATOR" ? creatorProfile : brandProfile;
+  const profileType = userType === "CREATOR" ? creatorProfile : brandProfile;
 
-  const avatarUrl = getImageUrl(profile?.profileImage?.path);
-  const coverImageUrl = getImageUrl(profile?.coverImage?.path);
+  const avatarUrl = getImageUrl(profileType?.profileImage?.path);
+  const coverImageUrl = getImageUrl(profileType?.coverImage?.path);
 
   return {
     avatarUrl,
