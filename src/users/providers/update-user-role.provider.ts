@@ -87,7 +87,7 @@ export class UpdateUserRoleProvider {
                 id: user.id,
                 userType: user.userType,
             },
-            accessTokens: tokens.accessToken,
+            accessToken: tokens.accessToken,
             refreshToken: tokens.refreshToken,
         }
     }
