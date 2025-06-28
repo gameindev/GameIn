@@ -35,7 +35,7 @@ export default function EditImage({ type = "avatar", close }) {
   
   const userType = user?.userType?.toLowerCase();
   const profileType = userType === "brand" ? "brandProfile" : userType === "creator" ? "creatorProfile" : "";
-  const profileId = user?.[profileType].id;
+  const profileId = user?.[profileType]?.id;
   
   const handleImageChange = (file) => {
     if (!file) return;
