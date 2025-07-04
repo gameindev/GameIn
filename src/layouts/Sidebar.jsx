@@ -23,12 +23,12 @@ export default function Sidebar() {
     {
       icon: <Star size="1em" />,
       label: "Creators",
-      link: routePaths.SEARCH.replace(":userType", "creators"),
+      link: routePaths.SEARCH.replace(":userType", "creator"),
     },
     {
       icon: <Flame size="1em" />,
       label: "Brands",
-      link: routePaths.SEARCH.replace(":userType", "brands"),
+      link: routePaths.SEARCH.replace(":userType", "brand"),
     },
     {
       icon: <Bolt size="1em" />,

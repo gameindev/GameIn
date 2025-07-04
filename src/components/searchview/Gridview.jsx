@@ -8,6 +8,10 @@ import Badge from "../svg-icons/Badge";
 import { useMediaQuery } from "@mantine/hooks";
 import { User } from "lucide-react";
 import BadgeLevels from "../svg-icons/LevelBadge";
+import { useContext } from "react";
+import { SearchContext } from "../../context/SearchContext";
+import { USERTYPES } from "../../utils/enum";
+import { calculateAge } from "../../utils/helpers/calculateAge";
 
 
 const GridStyles = styled.div`
@@ -62,174 +66,67 @@ const GridStyles = styled.div`
 `;
 
 export default function Gridview({ SocialInfo }) {
+  const { searchData, userType } = useContext(SearchContext);
   const bigscreen = useMediaQuery('(min-width: 1680px)');
   return (
     <Group>
-      <div style={{ flexBasis: 'calc(33.3% - 0.8em)' }}>
-        <GridStyles>
-          <div className="avatar">
-            <AvatarSection className="avatar" avatar={creator} size="112" />
-            <div className="title">
-              <Text c="white" size="xl">Instant <br /> Shock</Text>
-              <Group>
-                <Text size="sm">24</Text>
-                <Verifed />
-                <Badge />
-              </Group>
+      {searchData?.map(({ id, username, dateOfBirth, isVerified }) => (
+        <div style={{ flexBasis: 'calc(33.3% - 0.8em)' }} key={id}>
+          <GridStyles>
+            <div className="avatar">
+              <AvatarSection className="avatar" avatar={creator} size="112" />
+              <div className="title">
+                <Text c="white" size="xl">{username}</Text>
+                <Group>
+                  {userType.toUpperCase() === USERTYPES.CREATOR && <Text size="sm">{calculateAge(dateOfBirth)}</Text>}
+                  {isVerified && <Verifed />}
+                  <Badge />
+                </Group>
+              </div>
             </div>
-          </div>
-          <Text size="sm">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat...</Text>
-          <div className="information">
-            <div className="social_info">
-              {SocialInfo.map(({ text, icon, followers, color }) => (
-                <Text className="follwers_list" ta="center" key={text}>
-                  {icon}
-                  <Text size="xs" span c={color}>{text}</Text>
-                  <Text size="xs" span c="white">{followers}</Text>
-                </Text>
-              ))}
+            <Text size="sm">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat...</Text>
+            <div className="information">
+              <div className="social_info">
+                {SocialInfo.map(({ text, icon, followers, color }) => (
+                  <Text className="follwers_list" ta="center" key={text}>
+                    {icon}
+                    <Text size="xs" span c={color}>{text}</Text>
+                    <Text size="xs" span c="white">{followers}</Text>
+                  </Text>
+                ))}
+              </div>
+              <div className="progress">
+                <RingProgress
+                  size={bigscreen ? 120 : 90}
+                  thickness={5}
+                  roundCaps
+                  label={
+                    <>
+                      <Text size={bigscreen ? "md" : "sm"} ta="center" c="white"> 1.5M</Text>
+                      <Text size={bigscreen ? "sm" : "xs"} ta="center">FOLLOWERS</Text>
+                      <Text size={bigscreen ? "sm" : "xs"} ta="center"><User /></Text>
+                    </>
+                  }
+                  sections={[
+                    { value: 25, color: 'primary' },
+                    { value: 15, color: 'secondary' },
+                    { value: 15, color: 'skyblue' },
+                    { value: 25, color: 'primary' },
+                  ]}
+                />
+              </div>
+              <div className="levels">
+                <Text size="sm" ta="center" mb="xs">LEVEL</Text>
+                <BadgeLevels width="3.125em" height="4.375em" />
+              </div>
             </div>
-            <div className="progress">
-              <RingProgress
-                size={bigscreen ? 120 : 90}
-                thickness={5}
-                roundCaps
-                label={
-                  <>
-                    <Text size={bigscreen ? "md" : "sm"} ta="center" c="white"> 1.5M</Text>
-                    <Text size={bigscreen ? "sm" : "xs"} ta="center">FOLLOWERS</Text>
-                    <Text size={bigscreen ? "sm" : "xs"} ta="center"><User /></Text>
-                  </>
-                }
-                sections={[
-                  { value: 25, color: 'primary' },
-                  { value: 15, color: 'secondary' },
-                  { value: 15, color: 'skyblue' },
-                  { value: 25, color: 'primary' },
-                ]}
-              />
-            </div>
-            <div className="levels">
-              <Text size="sm" ta="center" mb="xs">LEVEL</Text>
-              <BadgeLevels width="3.125em" height="4.375em" />
-            </div>
-          </div>
-          <Group className="action_btns">
-            <Button width="6.25em" variant="secondary">follow</Button>
-            <Button width="6.25em" variant="primary">sponsor</Button>
-          </Group>
-        </GridStyles>
-      </div>
-      <div style={{ flexBasis: 'calc(33.3% - 0.8em)' }}>
-        <GridStyles>
-          <div className="avatar">
-            <AvatarSection className="avatar" avatar={creator} size="112" />
-            <div className="title">
-              <Text c="white" size="xl">Instant <br /> Shock</Text>
-              <Group>
-                <Text size="sm">24</Text>
-                <Verifed />
-                <Badge />
-              </Group>
-            </div>
-          </div>
-          <Text size="sm">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat...</Text>
-          <div className="information">
-            <div className="social_info">
-              {SocialInfo.map(({ text, icon, followers, color }) => (
-                <Text className="follwers_list" ta="center" key={text}>
-                  {icon}
-                  <Text size="xs" span c={color}>{text}</Text>
-                  <Text size="xs" span c="white">{followers}</Text>
-                </Text>
-              ))}
-            </div>
-            <div className="progress">
-              <RingProgress
-                size={bigscreen ? 120 : 90}
-                thickness={5}
-                roundCaps
-                label={
-                  <>
-                    <Text size={bigscreen ? "md" : "sm"} ta="center" c="white"> 1.5M</Text>
-                    <Text size={bigscreen ? "sm" : "xs"} ta="center">FOLLOWERS</Text>
-                    <Text size={bigscreen ? "sm" : "xs"} ta="center"><User /></Text>
-                  </>
-                }
-                sections={[
-                  { value: 25, color: 'primary' },
-                  { value: 15, color: 'secondary' },
-                  { value: 15, color: 'skyblue' },
-                  { value: 25, color: 'primary' },
-                ]}
-              />
-            </div>
-            <div className="levels">
-              <Text size="sm" ta="center" mb="xs">LEVEL</Text>
-              <BadgeLevels width="3.125em" height="4.375em" />
-            </div>
-          </div>
-          <Group className="action_btns">
-            <Button width="6.25em" variant="secondary">follow</Button>
-            <Button width="6.25em" variant="primary">sponsor</Button>
-          </Group>
-        </GridStyles>
-      </div>
-      <div style={{ flexBasis: 'calc(33.3% - 0.8em)' }}>
-        <GridStyles>
-          <div className="avatar">
-            <AvatarSection className="avatar" avatar={creator} size="112" />
-            <div className="title">
-              <Text c="white" size="xl">Instant <br /> Shock</Text>
-              <Group>
-                <Text size="sm">24</Text>
-                <Verifed />
-                <Badge />
-              </Group>
-            </div>
-          </div>
-          <Text size="sm">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat...</Text>
-          <div className="information">
-            <div className="social_info">
-              {SocialInfo.map(({ text, icon, followers, color }) => (
-                <Text className="follwers_list" ta="center" key={text}>
-                  {icon}
-                  <Text size="xs" span c={color}>{text}</Text>
-                  <Text size="xs" span c="white">{followers}</Text>
-                </Text>
-              ))}
-            </div>
-            <div className="progress">
-              <RingProgress
-                size={bigscreen ? 120 : 90}
-                thickness={5}
-                roundCaps
-                label={
-                  <>
-                    <Text size={bigscreen ? "md" : "sm"} ta="center" c="white"> 1.5M</Text>
-                    <Text size={bigscreen ? "sm" : "xs"} ta="center">FOLLOWERS</Text>
-                    <Text size={bigscreen ? "sm" : "xs"} ta="center"><User /></Text>
-                  </>
-                }
-                sections={[
-                  { value: 25, color: 'primary' },
-                  { value: 15, color: 'secondary' },
-                  { value: 15, color: 'skyblue' },
-                  { value: 25, color: 'primary' },
-                ]}
-              />
-            </div>
-            <div className="levels">
-              <Text size="sm" ta="center" mb="xs">LEVEL</Text>
-              <BadgeLevels width="3.125em" height="4.375em" />
-            </div>
-          </div>
-          <Group className="action_btns">
-            <Button width="6.25em" variant="secondary">follow</Button>
-            <Button width="6.25em" variant="primary">sponsor</Button>
-          </Group>
-        </GridStyles>
-      </div>
+            <Group className="action_btns">
+              <Button width="6.25em" variant="secondary">follow</Button>
+              <Button width="6.25em" variant="primary">sponsor</Button>
+            </Group>
+          </GridStyles>
+        </div>
+      ))}
     </Group>
   )
 }

@@ -2,6 +2,8 @@ import { Settings as SettingsIcon } from "lucide-react";
 import SectionHeader from "../../components/shared/ui/SectionHeader";
 import InfoTabs from "../../components/infoTabs/InfoTabs";
 import routePaths from "../../routes/endpoints";
+import { Box } from "@mantine/core";
+import { Outlet } from "react-router";
 
 const SettingsTab = [
   { value: routePaths.SETTINGS.ROOT, label: "GENERAL" },
@@ -15,6 +17,7 @@ export default function Settings() {
     <>
         <SectionHeader icon={<SettingsIcon />} text={"GAMEIN"} />
         <InfoTabs tabLists={SettingsTab} />
+        <Box><Outlet /></Box>
     </>
   )
 }
