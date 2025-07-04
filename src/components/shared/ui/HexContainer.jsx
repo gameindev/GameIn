@@ -71,7 +71,7 @@ const HexContainer = ({
   children,
   radius = 0.25,
   angle = "30deg",
-  size = 2,
+  size = "2",
   background,
 }) => {
   return (

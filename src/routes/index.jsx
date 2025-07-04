@@ -19,6 +19,7 @@ const WelcomePage = lazy(() => import("../pages/WelcomePage"));
 const Register = lazy(() => import("../pages/auth/Register"));
 const Signin = lazy(() => import("../pages/auth/Signin"));
 const SearchByUserType = lazy(() => import("../pages/search/SearchByUserType"));
+const Settings = lazy(() => import("../pages/settings"));
 
 // Features/Components
 const CreateTeam = lazy(() => import("../components/features/createTeam/CreateTeam") );
@@ -66,7 +67,7 @@ const router = createHashRouter([
             },
             { path: routePaths.ACCOUNTS.PROFILE.CREATE_TEAM, element: withSuspense(<CreateTeam />), },
             { path: routePaths.SEARCH, element: withSuspense(<SearchByUserType />), },
-            { path: routePaths.SETTINGS.ROOT, element: withSuspense(<SearchByUserType />), },
+            { path: routePaths.SETTINGS.ROOT, element: withSuspense(<Settings />), },
           ],
         }]
       },

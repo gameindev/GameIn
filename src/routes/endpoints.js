@@ -30,7 +30,10 @@ const routePaths = {
     },
   },
   SETTINGS:{
-    ROOT: '/settings'
+    ROOT: '/settings',
+    ACCOUNT: '/settings/account',
+    CONTACT: '/settings/contact',
+    PRIVACY: '/settings/privacy',
   }
 };
 

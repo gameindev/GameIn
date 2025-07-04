@@ -13,7 +13,7 @@ const tabs = [
   { value: routePaths.ACCOUNTS.INBOX.ROOT, label: "INBOX" },
 ];
 
-export default function InfoTabs() {
+export default function InfoTabs({tabLists = tabs}) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -27,7 +27,7 @@ export default function InfoTabs() {
         variant="none"
       >
         <Tabs.List>
-          {tabs.map((tab) => {
+          {tabLists.map((tab) => {
             const tabValue = tab.value.replace("/", "");
             return (
               <Tabs.Tab key={tabValue} value={tabValue}>

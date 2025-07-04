@@ -33,7 +33,7 @@ export default function Sidebar() {
     {
       icon: <Bolt size="1em" />,
       label: "Settings",
-      link: routePaths.ACCOUNTS.DASHBOARD.ROOT,
+      link: routePaths.SETTINGS.ROOT,
     },
   ];
 

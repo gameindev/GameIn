@@ -68,7 +68,7 @@ export default function Gridview({ SocialInfo }) {
       <div style={{ flexBasis: 'calc(33.3% - 0.8em)' }}>
         <GridStyles>
           <div className="avatar">
-            <AvatarSection className="avatar" avatar={creator} size="7em" />
+            <AvatarSection className="avatar" avatar={creator} size="112" />
             <div className="title">
               <Text c="white" size="xl">Instant <br /> Shock</Text>
               <Group>
@@ -123,7 +123,7 @@ export default function Gridview({ SocialInfo }) {
       <div style={{ flexBasis: 'calc(33.3% - 0.8em)' }}>
         <GridStyles>
           <div className="avatar">
-            <AvatarSection className="avatar" avatar={creator} size="7em" />
+            <AvatarSection className="avatar" avatar={creator} size="112" />
             <div className="title">
               <Text c="white" size="xl">Instant <br /> Shock</Text>
               <Group>
@@ -178,7 +178,7 @@ export default function Gridview({ SocialInfo }) {
       <div style={{ flexBasis: 'calc(33.3% - 0.8em)' }}>
         <GridStyles>
           <div className="avatar">
-            <AvatarSection className="avatar" avatar={creator} size="7em" />
+            <AvatarSection className="avatar" avatar={creator} size="112" />
             <div className="title">
               <Text c="white" size="xl">Instant <br /> Shock</Text>
               <Group>
