@@ -36,6 +36,8 @@ import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
 import { UploadEntity } from "./uploads/upload.entity";
 import { ViewsModule } from './views/views.module';
 import { ProfileView } from "./views/views.entity";
+import { UserFollowModule } from './user-follow/user-follow.module';
+import { UserFollow } from "./user-follow/user-follow.entity";
 dotenvFlow.config();
 
 const ENV = process.env.NODE_ENV;
@@ -69,7 +71,8 @@ const ENV = process.env.NODE_ENV;
                         UserBio,
                         PreferredGames,
                         SocialIntegration,
-                        ProfileView
+                        ProfileView,
+                        UserFollow
                     ],
                     // synchronize: configService.get('database.synchronize')
                     synchronize: false
@@ -89,6 +92,7 @@ const ENV = process.env.NODE_ENV;
         MetadataModule,
         UserSearchModule,
         ViewsModule,
+        UserFollowModule,
     ],
     controllers: [AppController],
     providers: [

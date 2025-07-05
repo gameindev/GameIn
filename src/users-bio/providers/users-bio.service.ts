@@ -44,31 +44,39 @@ export class UsersBioService {
 
 
     public async updateUserBio(patchBioDto: PatchBioDto) {
-
         return await this.dataSource.transaction(async manager => {
             const userBioRepoTx = manager.getRepository(UserBio);
             const preferredGamesRepoTx = manager.getRepository(PreferredGames);
 
-            // Destructure preferredGames separately
             const { preferredGames, userId, ...bioFields } = patchBioDto;
 
-            // Update flat bio fields only
-            await userBioRepoTx.update(userId, bioFields);
+            let userBio = await userBioRepoTx.findOne({
+                where: { user: { id: userId } },
+            });
 
-            // Sync Preferred Games
+            if (userBio) {
+                await userBioRepoTx.update({ user: { id: userId } }, bioFields);
+            } else {
+                userBio = userBioRepoTx.create({
+                    user: { id: userId },
+                    ...bioFields,
+                });
+                userBio = await userBioRepoTx.save(userBio); // ✅ make sure to get inserted id
+            }
+
+
             if (preferredGames) {
-                await this.preferredGamesService.syncPreferredGames(
-                    userId,
-                    preferredGames,
-                );
+                await this.preferredGamesService.syncPreferredGames(userBio.id, preferredGames, manager); // ✅ pass correct FK
             }
 
             const updatedBio = await userBioRepoTx.findOne({
-                where: { id: userId },
+                where: { user: { id: userId } },
                 relations: ['preferredGames'],
             });
 
             return updatedBio;
         });
     }
+
+
 }

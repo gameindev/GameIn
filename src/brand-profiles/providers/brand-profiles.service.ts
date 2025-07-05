@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BrandProfile } from '../brand-profile.entity';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 import { User } from 'src/users/user.entity';
 import { PatchBrandProfileDto } from '../dtos/patch-brandProfile.dto';
 import { UpdateBrandProfileProvider } from './update-brand-profile.provider';
@@ -31,12 +31,13 @@ export class BrandProfilesService {
      * @param user 
      * @returns 
      */
-    public async createProfileForUser(user: User): Promise<BrandProfile> {
-        const profile = this.brandProfileRepository.create({
+    public async createProfileForUser(user: User, queryRunner: QueryRunner): Promise<BrandProfile> {
+        const profile = queryRunner.manager.create(BrandProfile, {
             user: user,
         });
 
-        return this.brandProfileRepository.save(profile);
+        const brandProfile = await queryRunner.manager.save(profile)
+        return brandProfile;
     }
 
     /**

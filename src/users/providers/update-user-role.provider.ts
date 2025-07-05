@@ -1,7 +1,7 @@
 import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { PathcUserRoleDto } from '../dtos/patch-user-role.dto';
 import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
 import { HashingProvider } from 'src/auth/providers/hashing.provider';
@@ -34,61 +34,72 @@ export class UpdateUserRoleProvider {
         private readonly creatorProfileService: CreatorProfilesService,
         private readonly brandProfileService: BrandProfilesService,
         private readonly generateTokensProvider: GenerateTokensProvider,
+        /**
+         * Injecting Datasource.
+         */
+        private readonly dataSource: DataSource,
     ) { }
 
 
     async updateOAuthUserRole(patchUserRoleDto: PathcUserRoleDto, userSub: ActiveUserData) {
         const { password, userType } = patchUserRoleDto;
-        let user = undefined;
-        let tokens = undefined;
 
-        const hashedPassword = await this.hashingProvider.hashPassword(password);
-
-        try {
-            user = await this.userRepository.findOneBy({ id: userSub.sub });
-        } catch (error) {
-            throw new InternalServerErrorException('Something went wrong while fetching user');
-        }
-
-        if (!user) {
-            throw new BadRequestException('User not found');
-        }
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
 
         try {
+            const user = await queryRunner.manager.findOneBy(User, { id: userSub.sub });
+
+            if (!user) {
+                throw new BadRequestException('User not found');
+            }
+
+            let tokens = undefined;
+
+            // Only update userType if null
             if (user.userType === null) {
                 user.userType = userType;
 
-                if (user.userType === UserType.CREATOR) {
-                    await this.creatorProfileService.createProfileForUser(user);
-                } else if (user.userType === UserType.BRAND) {
-                    await this.brandProfileService.createProfileForUser(user);
+                if (userType === UserType.CREATOR) {
+                    await this.creatorProfileService.createProfileForUser(user, queryRunner);
+                } else if (userType === UserType.BRAND) {
+                    await this.brandProfileService.createProfileForUser(user, queryRunner);
                 }
 
                 tokens = await this.generateTokensProvider.generateTokens(user);
             }
 
-            user.password = hashedPassword;
-            await this.userRepository.save(user);
+            user.password = await this.hashingProvider.hashPassword(password);
+            await queryRunner.manager.save(User, user);
 
+            await queryRunner.commitTransaction();
+
+            // Separate: userBio is optional, and safely done outside transaction
+            // if (user.userBio === null) {
+            //     await this.userBioService.createUserBio(user); // If this needs to be transactional too, move it above
+            // }
+
+            return {
+                user: {
+                    id: user.id,
+                    userType: user.userType,
+                },
+                accessToken: tokens?.accessToken,
+                refreshToken: tokens?.refreshToken,
+            };
         } catch (error) {
+            await queryRunner.rollbackTransaction();
+
             if (error instanceof BadRequestException) {
                 throw error;
             }
+
+            console.error('updateOAuthUserRole error:', error);
             throw new InternalServerErrorException('Something went wrong while updating this user');
-        }
-
-        if (user.userBio === null) {
-            await this.userBioService.createUserBio(user);
-        }
-
-
-        return {
-            user: {
-                id: user.id,
-                userType: user.userType,
-            },
-            accessToken: tokens.accessToken,
-            refreshToken: tokens.refreshToken,
+        } finally {
+            await queryRunner.release();
         }
     }
+
 }

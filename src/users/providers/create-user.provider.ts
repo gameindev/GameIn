@@ -1,7 +1,7 @@
 import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateUserDto } from '../dtos/post-create-user.dto';
 import * as bcrypt from 'bcrypt';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { User } from '../user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreatorProfilesService } from 'src/creator-profiles/providers/creator-profiles.service';
@@ -39,40 +39,40 @@ export class CreateUserProvider {
         private readonly hashingProvider: HashingProvider,
 
         /**
-         * Injecting UserBioService.
+         * Injecting Datasource.
          */
-        private readonly userBioService: UsersBioService, // Injecting UserBioService
-    ){}
+        private readonly dataSource: DataSource,
+    ) { }
 
-    /**
-     * Creates a user.
-     * @param createUserDto 
-     * @returns 
-     */
+
     public async createUser(createUserDto: CreateUserDto): Promise<Partial<User>> {
         const { password, ...rest } = createUserDto;
+        const queryRunner = this.dataSource.createQueryRunner()
+        await queryRunner.connect();
+
         const hashedPassword = await this.hashingProvider.hashPassword(password);
-        
-        const newUser = this.userRepository.create({
+
+        await queryRunner.startTransaction()
+
+        const newUser = queryRunner.manager.create(User, {
             ...rest,
             password: hashedPassword,
-        });
-
+        })
 
         try {
-            const savedUser = await this.userRepository.save(newUser);
-            
-            await this.userBioService.createUserBio(savedUser);
+            const savedUser = await queryRunner.manager.save(User, newUser);
 
             if (savedUser.userType === UserType.CREATOR) {
-                await this.creatorProfileService.createProfileForUser(savedUser);
+                await this.creatorProfileService.createProfileForUser(savedUser, queryRunner);
             } else if (savedUser.userType === UserType.BRAND) {
-                await this.brandProfileService.createProfileForUser(savedUser);
+                await this.brandProfileService.createProfileForUser(savedUser, queryRunner);
             }
 
-            return savedUser
+            await queryRunner.commitTransaction();
+
+            return savedUser;
         } catch (error) {
-            // PostgreSQL unique constraint violation code
+            await queryRunner.rollbackTransaction();
             if (error.code === '23505') {
                 const detail = error.detail;
 
@@ -87,6 +87,54 @@ export class CreateUserProvider {
             }
 
             throw new InternalServerErrorException('Failed to create user');
+        } finally {
+            await queryRunner.release();
         }
     }
+
+    /**
+     * Creates a user.
+     * @param createUserDto 
+     * @returns 
+     */
+    // public async createUser(createUserDto: CreateUserDto): Promise<Partial<User>> {
+    //     const { password, ...rest } = createUserDto;
+    //     const hashedPassword = await this.hashingProvider.hashPassword(password);
+
+    //     const newUser = this.userRepository.create({
+    //         ...rest,
+    //         password: hashedPassword,
+    //     });
+
+
+    //     try {
+    //         const savedUser = await this.userRepository.save(newUser);
+
+    //         await this.userBioService.createUserBio(savedUser);
+
+    //         if (savedUser.userType === UserType.CREATOR) {
+    //             await this.creatorProfileService.createProfileForUser(savedUser);
+    //         } else if (savedUser.userType === UserType.BRAND) {
+    //             await this.brandProfileService.createProfileForUser(savedUser);
+    //         }
+
+    //         return savedUser
+    //     } catch (error) {
+    //         // PostgreSQL unique constraint violation code
+    //         if (error.code === '23505') {
+    //             const detail = error.detail;
+
+    //             if (detail.includes('username')) {
+    //                 throw new BadRequestException('Username is already taken');
+    //             } else if (detail.includes('email')) {
+    //                 throw new BadRequestException('Email is already registered');
+    //             }
+
+    //             // fallback
+    //             throw new BadRequestException('User already exists');
+    //         }
+
+    //         throw new InternalServerErrorException('Failed to create user');
+    //     }
+    // }
 }

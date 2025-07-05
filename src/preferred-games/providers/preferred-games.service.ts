@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { EntityManager, Repository } from "typeorm";
 import { PreferredGames } from "../preferred-games.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { PatchPreferredGamesDto } from "../dto/patch-preferred-games.dto";
@@ -14,8 +14,11 @@ export class PreferredGamesService {
     async syncPreferredGames(
         userBioId: number,
         games: PatchPreferredGamesDto[],
+        manager: EntityManager
     ) {
-        const existingGames = await this.preferredGamesRepository.find({
+        const repo = manager.getRepository(PreferredGames);
+
+        const existingGames = await repo.find({
             where: { userBio: { id: userBioId } },
         });
 
@@ -24,18 +27,18 @@ export class PreferredGamesService {
 
         const idsToDelete = existingIds.filter(id => !incomingIds.includes(id));
         if (idsToDelete.length > 0) {
-            await this.preferredGamesRepository.delete(idsToDelete);
+            await repo.delete(idsToDelete);
         }
 
         for (const game of games) {
             if (game.id) {
-                await this.preferredGamesRepository.update(game.id, {
+                await repo.update(game.id, {
                     gameUrl: game.gameUrl,
                     sortOrder: game.sortOrder,
                     metadata: game.metaData,
                 });
             } else {
-                await this.preferredGamesRepository.insert({
+                await repo.save({
                     userBio: { id: userBioId },
                     gameUrl: game.gameUrl,
                     sortOrder: game.sortOrder,
@@ -44,4 +47,6 @@ export class PreferredGamesService {
             }
         }
     }
+
+
 }

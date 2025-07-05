@@ -10,6 +10,7 @@ import { PreferredGames } from './preferred-games/preferred-games.entity';
 import { SocialIntegration } from './social-integration/entities/social-integration.entity';
 import { UploadEntity } from './uploads/upload.entity';
 import { ProfileView } from './views/views.entity';
+import { UserFollow } from './user-follow/user-follow.entity';
 
 
 // This loads your .env files just like in your main app
@@ -24,7 +25,7 @@ export const dataSourceOptions: DataSourceOptions = {
     database: process.env.DB_NAME,
     schema: "public",
     // You MUST list all your entities here for the CLI to find them
-    entities: [User, UploadEntity, CreatorProfile, BrandProfile, UserBio, SocialIntegration, PreferredGames, ProfileView],
+    entities: [User, UploadEntity, CreatorProfile, BrandProfile, UserBio, SocialIntegration, PreferredGames, ProfileView, UserFollow],
     // This tells TypeORM where to find and create migration files
     migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
 

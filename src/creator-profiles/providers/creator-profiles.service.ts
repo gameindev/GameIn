@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreatorProfile } from '../creator-profile.entity';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 import { User } from 'src/users/user.entity';
 import { PatchCreatorProfileDto } from '../dtos/patch-creatorProfile.dto';
 import { UpdateCreatorProfileProvider } from './update-creator-profile.provider';
@@ -33,12 +33,13 @@ export class CreatorProfilesService {
      * @param user 
      * @returns 
      */
-    public async createProfileForUser(user: User): Promise<CreatorProfile> {
-        const profile = this.creatorProfileRepository.create({
+    public async createProfileForUser(user: User, queryRunner: QueryRunner): Promise<CreatorProfile> {
+        const profile = queryRunner.manager.create(CreatorProfile, {
             user: user,
         });
 
-        return this.creatorProfileRepository.save(profile);
+        const creatorProfile = await queryRunner.manager.save(profile)
+        return creatorProfile;
     }
 
     /**

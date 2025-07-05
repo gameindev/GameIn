@@ -1,0 +1,95 @@
+import {
+    Controller,
+    Post,
+    Body,
+    Param,
+    ParseIntPipe,
+    Delete,
+    Get,
+    UseInterceptors,
+    ClassSerializerInterceptor,
+} from '@nestjs/common';
+import { FollowDto } from './dtos/follow.dto';
+import { UserFollowService } from './providers/user-follow.service';
+import { ApiBearerAuth, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
+import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
+
+@ApiTags('User-Follow')
+@Controller('users/:id/follow')
+export class UserFollowController {
+    constructor(private readonly followService: UserFollowService) { }
+
+
+    @ApiOperation({
+        summary: 'Follow a user by ID',
+    })
+    @ApiResponse({
+        status: 201,
+        description: 'User followed successfully',
+    })
+    @ApiBearerAuth()
+    @UseInterceptors(ClassSerializerInterceptor)
+    @Post()
+    async follow(
+        @ActiveUser() user: ActiveUserData,
+        @Body() dto: FollowDto,
+    ) {
+        return this.followService.follow(user.sub, dto);
+    }
+
+    @ApiOperation({
+        summary: 'Unfollow a user by ID',
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'User unfollowed successfully',
+    })
+    @ApiBearerAuth()
+    @Delete(':followingId')
+    async unfollow(
+        @ActiveUser() user: ActiveUserData,
+        @Param('followingId', ParseIntPipe) followingId: number,
+    ) {
+        return this.followService.unfollow(user.sub, followingId);
+    }
+
+    @ApiOperation({
+        summary: 'Get a list of users followed by a user',
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'List of users followed by the user',
+    })
+    @ApiProperty({
+        description: 'User ID to get followers',
+        type: Number,
+    })
+    @ApiBearerAuth()
+    @Get('followers')
+    async getFollowers(
+        @Param('id', ParseIntPipe) userId: number
+    ) {
+        return this.followService.getFollowers(userId);
+    }
+
+    @ApiOperation({
+        summary: 'Get a list of users following a user',
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'List of users following the user',
+    })
+    @ApiProperty({
+        description: 'User ID to get following',
+        type: Number,
+    })
+    @Get('following')
+    @ApiBearerAuth()
+
+    async getFollowing(
+        @Param('id', ParseIntPipe) userId: number
+    ) {
+        return this.followService.getFollowing(userId);
+    }
+}
