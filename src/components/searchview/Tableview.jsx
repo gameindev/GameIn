@@ -3,6 +3,8 @@ import { Gamepad2, Handshake, Instagram, Music, Twitch, Twitter, UserCheck, Yout
 import Verifed from '../svg-icons/Verifed';
 import Badge from '../svg-icons/Badge';
 import BadgeLevels from '../svg-icons/LevelBadge';
+import { useContext } from 'react';
+import { SearchContext } from '../../context/SearchContext';
 
 const elements = [
   {
@@ -149,6 +151,7 @@ const elements = [
 ];
 
 export default function Tableview() {
+  const { searchData } = useContext(SearchContext);
 
   const socialList = (socialLinks) => {
     let totalCount = socialLinks?.reduce((acc, curr) => acc + parseInt(curr.follwers), 0);
@@ -164,18 +167,18 @@ export default function Tableview() {
     )
   }
 
-  const rows = elements.map(({name, info, socialLinks, score}) => (
-    <Table.Tr key={name}>
-      <Table.Td>{name}</Table.Td>
+  const rows = searchData.map(({ id, username, isVerified }) => (
+    <Table.Tr key={id}>
+      <Table.Td>{username}</Table.Td>
       <Table.Td>
         <Group>
-          <Text>{info.country}</Text>
-          {info.verified && <Verifed />}
-          {info.badge && <Badge />}
+          <Text>USA</Text>
+          {isVerified && <Verifed />}
+          <Badge />
         </Group>
       </Table.Td>
-      <Table.Td>{socialList(socialLinks)}</Table.Td>
-      <Table.Td><BadgeLevels number={score} /></Table.Td>
+      <Table.Td>{socialList(elements[0].socialLinks)}</Table.Td>
+      <Table.Td><BadgeLevels number="4" /></Table.Td>
       <Table.Td>
         <Group>
           <ActionIcon color="secondary" size="sm" variant="filled" radius="md">
