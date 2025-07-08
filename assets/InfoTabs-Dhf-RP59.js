@@ -1,0 +1,28 @@
+import{f as R,u as I,j as c,B as $,c as W,U as G,x as V,g as X,v as q,y as J,w as Q,t as g,d as Y,i as Z,q as tt,m as T}from"./index-D9oEtHeb.js";import{g as et}from"./get-auto-contrast-value-Da6zqqWm.js";import{c as at}from"./create-safe-context-BzETH9ei.js";import{c as ot}from"./create-scoped-keydown-handler-O-eo68DQ.js";import{u as st,a as nt}from"./DirectionProvider-D6EKyNqO.js";import{u as lt}from"./use-uncontrolled-NxHOPr4h.js";function k(o,s){return a=>{if(typeof a!="string"||a.trim().length===0)throw new Error(s);return`${o}-${a}`}}const[rt,D]=at("Tabs component was not found in the tree");var O={root:"m_89d60db1","list--default":"m_576c9d4",list:"m_89d33d6d",tab:"m_4ec4dce6",panel:"m_b0c91715",tabSection:"m_fc420b1f",tabLabel:"m_42bbd1ae","tab--default":"m_539e827b","list--outline":"m_6772fbd5","tab--outline":"m_b59ab47c","tab--pills":"m_c3381914"};const it={},L=R((o,s)=>{const a=I("TabsList",it,o),{children:n,className:l,grow:r,justify:d,classNames:i,styles:b,style:v,mod:u,...m}=a,e=D();return c.jsx($,{...m,...e.getStyles("list",{className:l,style:v,classNames:i,styles:b,props:a,variant:e.variant}),ref:s,role:"tablist",variant:e.variant,mod:[{grow:r,orientation:e.orientation,placement:e.orientation==="vertical"&&e.placement,inverted:e.inverted},u],"aria-orientation":e.orientation,__vars:{"--tabs-justify":d},children:n})});L.classes=O;L.displayName="@mantine/core/TabsList";const ct={},U=R((o,s)=>{const a=I("TabsPanel",ct,o),{children:n,className:l,value:r,classNames:d,styles:i,style:b,mod:v,keepMounted:u,...m}=a,e=D(),S=e.value===r,h=e.keepMounted||u||S?n:null;return c.jsx($,{...m,...e.getStyles("panel",{className:l,classNames:d,styles:i,style:[b,S?void 0:{display:"none"}],props:a}),ref:s,mod:[{orientation:e.orientation},v],role:"tabpanel",id:e.getPanelId(r),"aria-labelledby":e.getTabId(r),children:h})});U.classes=O;U.displayName="@mantine/core/TabsPanel";const dt={},F=R((o,s)=>{const a=I("TabsTab",dt,o),{className:n,children:l,rightSection:r,leftSection:d,value:i,onClick:b,onKeyDown:v,disabled:u,color:m,style:e,classNames:S,styles:h,vars:j,mod:N,tabIndex:x,...A}=a,_=W(),{dir:C}=st(),t=D(),y=i===t.value,w=E=>{t.onChange(t.allowTabDeactivation&&i===t.value?null:i),b==null||b(E)},f={classNames:S,styles:h,props:a};return c.jsxs(G,{...A,...t.getStyles("tab",{className:n,style:e,variant:t.variant,...f}),disabled:u,unstyled:t.unstyled,variant:t.variant,mod:[{active:y,disabled:u,orientation:t.orientation,inverted:t.inverted,placement:t.orientation==="vertical"&&t.placement},N],ref:s,role:"tab",id:t.getTabId(i),"aria-selected":y,tabIndex:x!==void 0?x:y||t.value===null?0:-1,"aria-controls":t.getPanelId(i),onClick:w,__vars:{"--tabs-color":m?V(m,_):void 0},onKeyDown:ot({siblingSelector:'[role="tab"]',parentSelector:'[role="tablist"]',activateOnFocus:t.activateTabWithKeyboard,loop:t.loop,orientation:t.orientation||"horizontal",dir:C,onKeyDown:v}),children:[d&&c.jsx("span",{...t.getStyles("tabSection",f),"data-position":"left",children:d}),l&&c.jsx("span",{...t.getStyles("tabLabel",f),children:l}),r&&c.jsx("span",{...t.getStyles("tabSection",f),"data-position":"right",children:r})]})});F.classes=O;F.displayName="@mantine/core/TabsTab";const K="Tabs.Tab or Tabs.Panel component was rendered with invalid value or without value",bt={keepMounted:!0,orientation:"horizontal",loop:!0,activateTabWithKeyboard:!0,variant:"default",placement:"left"},ut=q((o,{radius:s,color:a,autoContrast:n})=>({root:{"--tabs-radius":Q(s),"--tabs-color":V(a,o),"--tabs-text-color":et(n,o)?J({color:a,theme:o,autoContrast:n}):void 0}})),p=R((o,s)=>{const a=I("Tabs",bt,o),{defaultValue:n,value:l,onChange:r,orientation:d,children:i,loop:b,id:v,activateTabWithKeyboard:u,allowTabDeactivation:m,variant:e,color:S,radius:h,inverted:j,placement:N,keepMounted:x,classNames:A,styles:_,unstyled:C,className:t,style:y,vars:w,autoContrast:f,mod:E,...z}=a,P=nt(v),[H,M]=lt({value:l,defaultValue:n,finalValue:null,onChange:r}),B=X({name:"Tabs",props:a,classes:O,className:t,style:y,classNames:A,styles:_,unstyled:C,vars:w,varsResolver:ut});return c.jsx(rt,{value:{placement:N,value:H,orientation:d,id:P,loop:b,activateTabWithKeyboard:u,getTabId:k(`${P}-tab`,K),getPanelId:k(`${P}-panel`,K),onChange:M,allowTabDeactivation:m,variant:e,color:S,radius:h,inverted:j,keepMounted:x,unstyled:C,getStyles:B},children:c.jsx($,{ref:s,id:P,variant:e,mod:[{orientation:d,inverted:d==="horizontal"&&j,placement:d==="vertical"&&N},E],...B("root"),...z,children:i})})});p.classes=O;p.displayName="@mantine/core/Tabs";p.Tab=F;p.Panel=U;p.List=L;const mt=Y.div`
+  position: relative;
+  background-color: ${g.colors.secondaryGrey[0]};
+  border-radius: ${g.radius.md};
+  margin-top: 0.625em;
+  padding: 1em 0.5em;
+
+  button span {
+    font-size: ${g.fontSizes.sm};
+    font-weight: 600;
+  }
+
+  button[data-active] span {
+    position: relative;
+    color: ${g.colors.primary[0]};
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -0.5em;
+      width: 100%;
+      height: 0.125em;
+      border-radius: 50em;
+      background: ${g.colors.primary[0]};
+    }
+  }
+`,pt=[{value:T.ACCOUNTS.DASHBOARD.ROOT,label:"DASHBOARD"},{value:T.ACCOUNTS.PROFILE.ROOT,label:"PROFILE"},{value:T.ACCOUNTS.SPONSORSHIPS.ROOT,label:"SPONSORSHIPS"},{value:T.ACCOUNTS.OFFERINGS.ROOT,label:"OFFERINGS"},{value:T.ACCOUNTS.STATS.ROOT,label:"STATS"},{value:T.ACCOUNTS.NEWSFEED.ROOT,label:"NEWSFEED"},{value:T.ACCOUNTS.INBOX.ROOT,label:"INBOX"}];function gt({tabLists:o=pt}){const s=Z(),n=tt().pathname.split("/")[1];return c.jsx(mt,{children:c.jsx(p,{value:n,onChange:l=>s(`/${l}`),variant:"none",children:c.jsx(p.List,{children:o.map(l=>{const r=l.value.replace("/","");return c.jsx(p.Tab,{value:r,children:l.label},r)})})})})}export{gt as I};
