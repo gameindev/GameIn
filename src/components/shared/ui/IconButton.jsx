@@ -21,7 +21,7 @@ const IconButton = ({
         border: "none",
         transition: "background-color 0.2s ease, transform 0.2s ease",
         "&:hover": {
-          backgroundColor: theme.colors.iconHover[0],
+          backgroundColor: theme.colors.yellow[0],
         },
       })}
     >

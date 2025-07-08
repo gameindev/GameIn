@@ -9,12 +9,11 @@ export default function GameList({
   onMove,
 }) {
   const favoriteCount = games.filter((g) => g.favorite).length;
-
+  
   return (
     <>
       {games?.map((game, index) => (
         <Group key={index} spacing="sm" align="center">
-          <Image w={32} h={32} src={game.favicon?.url} alt="favicon" />
           <Box style={{ flexGrow: 1 }}>
             <Text fw={500}>{game.title}</Text>
             <Text size="xs" c="dimmed">

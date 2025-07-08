@@ -5,6 +5,7 @@ import { UserSection } from "./styles";
 
 const UserInfo = ({ user }) => {
   const age = calculateAge(user?.dateOfBirth);
+  
   return (
     <UserSection>
       <div className="infoSection">

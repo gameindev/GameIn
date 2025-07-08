@@ -39,6 +39,7 @@ export default function EditBio() {
 
   const globalBio = useSelector((state) => state.bio);
   const gameUrls = globalBio.gamesUrl;
+  console.log(gameUrls);
 
   useEffect(() => {
     reset({
@@ -59,6 +60,8 @@ export default function EditBio() {
         preferredGames: gameUrls.map((game, index) => ({
           gameUrl: game.url,
           sortOrder: index,
+          favorite: game.favorite,
+          title: game.title || game.url,
         })),
       };
 

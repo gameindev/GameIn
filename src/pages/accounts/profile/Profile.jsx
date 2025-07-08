@@ -55,7 +55,7 @@ export default function Profile() {
                 <Text fw={600} tt="uppercase" fz={theme.fontSizes.sm}>
                   Preferred Games:
                 </Text>
-
+                {console.log(preferredGames)}
                 <Flex gap="md">
                   {preferredGames.map((game, idx) => (
                     <Flex key={idx} align="center" gap={8}>

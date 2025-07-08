@@ -32,7 +32,7 @@ export default function SponsorshipCards() {
       id: "1",
       sponsor: {
         name: "RED BULL",
-        logo: "https://placehold.co/40x40/FF0000/FFFFFF?text=RB",
+        logo: "https://placehold.co/40x40/50565a/FFFFFF?text=RB",
       },
       type: "ULTIMATE SPONSORSHIP",
       info: "Sponsorship contract description, etc",
@@ -45,7 +45,7 @@ export default function SponsorshipCards() {
       id: "2",
       sponsor: {
         name: "RED BULL",
-        logo: "https://placehold.co/40x40/FF0000/FFFFFF?text=RB",
+        logo: "https://placehold.co/40x40/50565a/FFFFFF?text=RB",
       },
       type: "BASIC SPONSORSHIP",
       info: "Sponsorship contract description, etc",
@@ -58,7 +58,7 @@ export default function SponsorshipCards() {
       id: "3",
       sponsor: {
         name: "RED BULL",
-        logo: "https://placehold.co/40x40/FF0000/FFFFFF?text=RB",
+        logo: "https://placehold.co/40x40/50565a/FFFFFF?text=RB",
       },
       type: "EASTER SPECIAL",
       info: 'Price Pool Sponsorship for event, "C&C Tournament 2025"',
@@ -71,7 +71,7 @@ export default function SponsorshipCards() {
       id: "4",
       sponsor: {
         name: "RED BULL",
-        logo: "https://placehold.co/40x40/FF0000/FFFFFF?text=RB",
+        logo: "https://placehold.co/40x40/50565a/FFFFFF?text=RB",
       },
       type: "XMAS TOURNAMENT",
       info: "Sponsorship contract description, etc",
@@ -114,22 +114,22 @@ export default function SponsorshipCards() {
   return (
     <Box>
       {/* Header */}
-      <Flex p="sm" fw={500} align="center" gap="sm">
+      <Flex p="sm" tt={"uppercase"} fz={theme.fontSizes.xs} fw={500} align="center" gap="sm">  
         <Box flex={1}>Sponsor</Box>
         <EmptySeparator />
-        <Box flex={1}>Type</Box>
+        <Box flex={0.75} ta={"center"}>Type</Box>
         <EmptySeparator />
-        <Box flex={2}>Info</Box>
+        <Box flex={2.5}>Info</Box>
         <EmptySeparator />
-        <Box flex={0.75} ta={"right"}>
+        <Box flex={0.5} ta={"right"}>
           Price (USD)
         </Box>
         <EmptySeparator />
-        <Box flex={1} ta={"center"}>
+        <Box flex={0.75} ta={"center"}>
           Time
         </Box>
         <EmptySeparator />
-        <Box flex={1.5}>Interact</Box>
+        <Box flex={1.25} ta={"center"}>Interact</Box>
       </Flex>
 
       {/* Data Rows */}
@@ -166,17 +166,17 @@ export default function SponsorshipCards() {
               </Box>
               <Separator />
 
-              <Box flex={1}>
+              <Box flex={0.75}>
                 <Text fz={theme.fontSizes.xs}>{sponsorship.type}</Text>
               </Box>
               <Separator />
 
-              <Box flex={2}>
+              <Box flex={2.5}>
                 <Text fz={theme.fontSizes.md}>{sponsorship.info}</Text>
               </Box>
               <Separator />
 
-              <Box flex={0.75} ta={"right"}>
+              <Box flex={0.5} ta={"right"}>
                 <Text
                   fz={theme.fontSizes.sm}
                   fw={700}
@@ -187,7 +187,7 @@ export default function SponsorshipCards() {
               </Box>
               <Separator />
 
-              <Box flex={1} ta={"center"}>
+              <Box flex={0.75} ta={"center"}>
                 <Text
                   fz={theme.fontSizes.sm}
                   fw={700}
@@ -198,7 +198,7 @@ export default function SponsorshipCards() {
               </Box>
               <Separator />
 
-              <Box flex={1.5}>
+              <Box flex={1.25}>
                 <Group gap="0.3em">
                   <ActionIcon size="lg" color="inputBgColor" variant="filled">
                     <Text size="xs">View</Text>
