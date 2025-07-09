@@ -6,9 +6,9 @@ import EditAvator from "./../modals/EditAvator/EditAvator";
 const Banner = styled.div`
   position: relative;
   width: 100%;
-  height: ${({size}) => size};
+  height: ${({ size }) => size};
   background-color: #4a5568;
-  overflow: ${({size}) => size === "auto" ? "unset" : "hidden"};;
+  overflow: ${({ size }) => (size === "auto" ? "unset" : "hidden")};
 
   .banner_image {
     width: 100%;
@@ -28,7 +28,26 @@ const CoverBanner = ({ coverImage, controls, size = "9.5em" }) => {
     <Banner size={size}>
       <div className="banner_overlay" />
       <div className="banner_image">
-        <img src={coverImage} alt="Cover" />
+        {coverImage ? (
+          <img
+            src={coverImage}
+            alt="Cover"
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        ) : (
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: theme.colors.white[0],
+            }}
+          >
+            No Cover Image
+          </div>
+        )}
       </div>
       {controls && (
         <div className="action">

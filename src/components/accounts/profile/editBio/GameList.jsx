@@ -1,6 +1,7 @@
 import React from "react";
 import { Group, Image, Box, Text, Button } from "@mantine/core";
 import { ArrowBigUp , ArrowBigDown } from "lucide-react";
+import { theme } from "../../../../styles/theme/customTheme";
 
 export default function GameList({
   games,
@@ -16,7 +17,7 @@ export default function GameList({
         <Group key={index} spacing="sm" align="center">
           <Box style={{ flexGrow: 1 }}>
             <Text fw={500}>{game.title}</Text>
-            <Text size="xs" c="dimmed">
+            <Text size="xs" c={theme.colors.white[0]}>
               {game.url}
             </Text>
           </Box>

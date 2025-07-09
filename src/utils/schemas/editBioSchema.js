@@ -1,5 +1,8 @@
 import * as Yup from "yup";
 
+const MAX_VIDEO_SIZE_MB = 5;
+const MAX_VIDEO_SIZE_BYTES = MAX_VIDEO_SIZE_MB * 1024 * 1024;
+
 const isSupportedVideoPlatform = (url) => {
   try {
     const parsed = new URL(url);
@@ -25,7 +28,6 @@ export const editBioSchema = Yup.object().shape({
       }
     )
     .url("Enter a valid video URL"),
-
   introVideoFile: Yup.mixed()
     .nullable()
     .notRequired()
@@ -34,10 +36,20 @@ export const editBioSchema = Yup.object().shape({
         return !!context.parent.introVideoUrl;
       }
       return value instanceof File && value.type.startsWith("video/");
-    }),
+    })
+    .test(
+      "file-size",
+      `Video must be under ${MAX_VIDEO_SIZE_MB}MB`,
+      (value, context) => {
+        if (!value) {
+          return !!context.parent.introVideoUrl;
+        }
+        return value.size <= MAX_VIDEO_SIZE_BYTES;
+      }
+    ),
 
   bio: Yup.string()
-    .max(1000, "Bio must be under 500 characters")
+    .max(500, "Bio must be under 500 characters")
     .required("Bio is required"),
 
   //   gamesUrl: Yup.array()

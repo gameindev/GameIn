@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Stack, Textarea, Button, Box, Text, Grid, Group } from "@mantine/core";
 import { useForm } from "react-hook-form";
 import FormField from "../../../components/shared/ui/FormField";
@@ -38,8 +38,24 @@ export default function EditBio() {
   const navigate = useNavigate();
 
   const globalBio = useSelector((state) => state.bio);
-  const gameUrls = globalBio.gamesUrl;
-  console.log(gameUrls);
+  const reduxGames = globalBio.gamesUrl;
+
+  const fetchedGames = useMemo(() => {
+    return (
+      user?.userBio?.preferredGames?.map((game) => ({
+        url: game?.gameUrl,
+        metadata: game?.metadata || {},
+      })) || []
+    );
+  }, [user?.userBio?.preferredGames]);
+
+  const gameUrls = reduxGames?.length ? reduxGames : fetchedGames;
+
+  useEffect(() => {
+    if (!reduxGames.length && fetchedGames.length) {
+      dispatch(setBio({ ...globalBio, gamesUrl: fetchedGames }));
+    }
+  }, [reduxGames, fetchedGames, dispatch, globalBio]);
 
   useEffect(() => {
     reset({
@@ -60,8 +76,6 @@ export default function EditBio() {
         preferredGames: gameUrls.map((game, index) => ({
           gameUrl: game.url,
           sortOrder: index,
-          favorite: game.favorite,
-          title: game.title || game.url,
         })),
       };
 
@@ -120,6 +134,7 @@ export default function EditBio() {
                   componentProps={{
                     label: "Bio",
                     placeholder: "Enter your Bio",
+                    resize: "vertical",
                   }}
                 />
 

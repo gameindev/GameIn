@@ -55,9 +55,8 @@ export default function Profile() {
                 <Text fw={600} tt="uppercase" fz={theme.fontSizes.sm}>
                   Preferred Games:
                 </Text>
-                {console.log(preferredGames)}
                 <Flex gap="md">
-                  {preferredGames.map((game, idx) => (
+                  {preferredGames.slice(0, 4).map((game, idx) => (
                     <Flex key={idx} align="center" gap={8}>
                       <Link target="_blank" to={game?.gameUrl}>
                         <Image
@@ -73,7 +72,7 @@ export default function Profile() {
                   ))}
 
                   {Array.from({
-                    length: 4 - preferredGames.length,
+                    length: 4 - preferredGames.slice(0, 4).length,
                   }).map((_, idx) => (
                     <Skeleton
                       animate={false}

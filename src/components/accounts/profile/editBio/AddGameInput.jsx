@@ -35,7 +35,7 @@ const AddGameInput = ({ control }) => {
         onChange={(e) => setNewGameUrl(e.currentTarget.value)}
         style={{ flexGrow: 1 }}
       />
-      <Button fz={26} lh={1.2} variant="primary" onClick={handleAdd}>
+      <Button fz={18} lh={1.2} variant="primary" onClick={handleAdd}>
         +
       </Button>
     </Group>
