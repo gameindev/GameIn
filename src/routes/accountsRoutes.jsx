@@ -7,12 +7,15 @@ const Profile = lazy(() => import("../pages/accounts/profile/Profile"));
 const SponsorShips = lazy(() =>
   import("../pages/accounts/sponsorships/Sponsorships")
 );
-const Offerings = lazy(() => import("../pages/accounts/Offerings"));
+const Offerings = lazy(() => import("../pages/accounts/offerings/Offerings"));
 const Stats = lazy(() => import("../pages/accounts/Stats"));
 const NewsFeed = lazy(() => import("../pages/accounts/NewsFeed"));
 const Inbox = lazy(() => import("../pages/accounts/Inbox"));
 const EditBio = lazy(() => import("./../pages/accounts/profile/EditBio"));
 const Faq = lazy(() => import("./../pages/accounts/profile/Faq"));
+const CreateOpportunity = lazy(() =>
+  import("../components/accounts/offerings/CreateOpportunity")
+);
 
 const { DASHBOARD, PROFILE, SPONSORSHIPS, OFFERINGS, STATS, NEWSFEED, INBOX } =
   routePaths.ACCOUNTS;
@@ -24,6 +27,7 @@ const accountsdRoutes = [
   { path: PROFILE.FAQ, element: <Faq /> },
   { path: SPONSORSHIPS.ROOT, element: <SponsorShips /> },
   { path: OFFERINGS.ROOT, element: <Offerings /> },
+  { path: OFFERINGS.CREATE_OFFERING, element: <CreateOpportunity /> },
   { path: STATS.ROOT, element: <Stats /> },
   { path: NEWSFEED.ROOT, element: <NewsFeed /> },
   { path: INBOX.ROOT, element: <Inbox /> },

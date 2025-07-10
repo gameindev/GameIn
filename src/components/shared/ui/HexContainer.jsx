@@ -4,11 +4,12 @@ import { theme } from "../../../styles/theme/customTheme";
 
 const pxToEm = (px) => `${px / 16}em`;
 const StyledHexContainer = styled.div`
-  --r: ${({ radius }) => radius};
-  --a: ${({ angle }) => angle};
+  --r: ${({ $radius }) => $radius};
+  --a: ${({ $angle }) => $angle};
 
   width: ${({ size }) => pxToEm(size)};
-  background: ${({ background }) => background || theme.colors.inputBgColor[0]};
+  background: ${({ $background }) =>
+    $background || theme.colors.inputBgColor[0]};
   aspect-ratio: 1;
   position: relative;
   display: flex;
@@ -63,7 +64,6 @@ const StyledHexContainer = styled.div`
     object-fit: cover;
     clip-path: inherit;
     object-position: center;
-    /* border: inherit; */
   }
 `;
 
@@ -77,9 +77,9 @@ const HexContainer = ({
   return (
     <StyledHexContainer
       size={size}
-      background={background}
-      radius={radius}
-      angle={angle}
+      $background={background}
+      $radius={radius}
+      $angle={angle}
     >
       {children}
     </StyledHexContainer>

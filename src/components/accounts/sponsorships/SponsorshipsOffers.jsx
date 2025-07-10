@@ -390,7 +390,7 @@ export default function SponsorshipsOffers() {
                   {/* Task list */}
                   <Box flex={2}>
                     {sponsorship?.details?.tasks?.map((task, i) => (
-                      <>
+                      <React.Fragment key={i}>
                         <Flex gap={"md"}>
                           <Text c={theme.colors.primary[0]} span>
                             {String(i + 1).padStart(2, "0")}
@@ -403,7 +403,7 @@ export default function SponsorshipsOffers() {
                           </Box>
                         </Flex>
                         <Divider my="md" />
-                      </>
+                      </React.Fragment>
                     ))}
                   </Box>
                   {["Pending", "Offered"].includes(sponsorship.status) && (

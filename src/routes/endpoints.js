@@ -18,6 +18,7 @@ const routePaths = {
     },
     OFFERINGS: {
       ROOT: "/offerings",
+      CREATE_OFFERING: "/offerings/create-offering",
     },
     STATS: {
       ROOT: "/stats",
@@ -29,12 +30,12 @@ const routePaths = {
       ROOT: "/inbox",
     },
   },
-  SETTINGS:{
-    ROOT: '/settings',
-    ACCOUNT: '/settings/account',
-    CONTACT: '/settings/contact',
-    PRIVACY: '/settings/privacy',
-  }
+  SETTINGS: {
+    ROOT: "/settings",
+    ACCOUNT: "/settings/account",
+    CONTACT: "/settings/contact",
+    PRIVACY: "/settings/privacy",
+  },
 };
 
 export default routePaths;
