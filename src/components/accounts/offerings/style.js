@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { theme } from "./../../../styles/theme/customTheme";
 
 export const OpportunityBlock = styled.div`
   width: 100%;
@@ -15,5 +16,9 @@ export const OpportunityBlock = styled.div`
       align-items: flex-start;
       gap: 2rem;
     }
+  }
+
+  input {
+    background-color: ${theme.colors.grey[0]} !important;
   }
 `;

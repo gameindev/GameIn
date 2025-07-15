@@ -1,76 +1,90 @@
-import { Box, Button, Grid, Group, Select, Stack, Text } from "@mantine/core";
-import { useNavigate } from "react-router";
-import StatBox from "../../shared/ui/StatBox";
-import SwitchButton from "../../shared/ui/Switch";
-import { theme } from "../../../styles/theme/customTheme";
-import { OpportunityBlock } from "./style";
 import React from "react";
-
-const StreamingLogoInputs = () => (
-  <Stack>
-    <Select
-      label="Platform"
-      data={["Twitch", "YouTube"]}
-      placeholder="Select"
-    />
-    <Select
-      label="Time mode"
-      data={["Live", "Pre-recorded"]}
-      placeholder="Select"
-    />
-    <Select
-      label="Size"
-      data={["150 px", "300 px", "450 px"]}
-      placeholder="Select size"
-    />
-  </Stack>
-);
-
-const opportunitySections = [
-  {
-    number: "01",
-    title: "STREAMING LOGO PLACEMENT",
-    description: "You are offering to place a brand logo in your live stream",
-    statTitle: "01 Streaming logo placement",
-    renderContent: StreamingLogoInputs,
-  },
-  {
-    number: "02",
-    title: "VIDEO: COMMERCIAL BREAK",
-    description: "You are offering to generate product ads in your videos",
-    statTitle: "02 Video: Commercial break",
-    renderContent: null,
-  },
-  {
-    number: "03",
-    title: "SOCIAL MEDIA POSTING",
-    description:
-      "You are offering to place branded posts in your social media accounts",
-    statTitle: "03 Social media posting",
-    renderContent: null,
-  },
-  {
-    number: "04",
-    title: "MERCH, CLOTHING, PRODUCTS",
-    description:
-      "You are offering to place advertisings in your social media accounts",
-    statTitle: "04 Merch, clothing, products",
-    renderContent: null,
-  },
-];
+import { Box, Button, Grid, Group, Text } from "@mantine/core";
+import { useNavigate } from "react-router";
+import { useFormHandler } from "./../../../hooks/useFormHandler";
+import { OpportunityFormFields } from "./OpportunityFormFields";
+import OpportunitySection from "./OpportunitySection";
+import StatBox from "../../shared/ui/StatBox";
 
 export default function CreateOpportunity() {
   const navigate = useNavigate();
-  const Separator = () => (
-    <Box w="100%" h={1} style={{ borderBottom: "0.063rem dashed #50565a" }} />
-  );
+
+  const { control, handleSubmit } = useFormHandler({
+    defaultValues: {
+      streaming: {
+        platform: "",
+        timeMode: "",
+        repetation: "",
+        duration: "",
+        within: "",
+        beginning: "",
+        ending: "",
+        size: "",
+      },
+    },
+    onSubmit: async (data) => {
+      console.log("Form Submitted", data);
+    },
+  });
+
+  const sections = [
+    {
+      number: "01",
+      title: "STREAMING LOGO PLACEMENT",
+      description: "You are offering to place a brand logo in your live stream",
+      statTitle: "01 Streaming logo placement",
+      formContent: <OpportunityFormFields control={control} type="streaming" />,
+      mediaPreview: (
+        <img src="/assets/streaming-logo.png" width="100%" alt="Preview" />
+      ),
+    },
+    {
+      number: "02",
+      title: "VIDEO: COMMERCIAL BREAK",
+      description: "You are offering to generate product ads in your videos",
+      statTitle: "02 Video: Commercial break",
+      formContent: (
+        <OpportunityFormFields control={control} type="videoCommercial" />
+      ),
+      mediaPreview: (
+        <img src="/assets/commercial-break.png" width="100%" alt="Preview" />
+      ),
+    },
+    {
+      number: "03",
+      title: "SOCIAL MEDIA POSTING",
+      description:
+        "You are offering to place branded posts in your social media accounts",
+      statTitle: "03 Social media posting",
+      formContent: (
+        <OpportunityFormFields control={control} type="socialMedia" />
+      ),
+      mediaPreview: (
+        <img src="/assets/social-media-post.png" width="100%" alt="Preview" />
+      ),
+    },
+    {
+      number: "04",
+      title: "MERCH, CLOTHING, PRODUCTS",
+      description:
+        "You are offering to place advertisings in your social media accounts",
+      statTitle: "04 Merch, clothing, products",
+      formContent: (
+        <OpportunityFormFields control={control} type="merchProducts" />
+      ),
+      mediaPreview: (
+        <img src="/assets/social-media-post.png" width="100%" alt="Preview" />
+      ),
+    },
+  ];
+
   return (
-    <>
+    <Box>
       <Group pos={"relative"} justify="center">
         <Button
           pos={"absolute"}
           left={0}
-          variant="darkGrey"
+          variant="light"
           onClick={() => navigate(-1)}
         >
           Back
@@ -80,57 +94,41 @@ export default function CreateOpportunity() {
         </Text>
       </Group>
 
-      {opportunitySections.map((section, index) => (
+      {sections.map((section, index) => (
         <React.Fragment key={index}>
-          <OpportunityBlock key={index}>
-            <Stack py={"3.75rem"}>
-              <Box className="opportunityHeader">
-                <div className="opportunityTitle">
-                  <Text
-                    fz={"3.438rem"}
-                    c={theme.colors.primary[0]}
-                    component="span"
-                  >
-                    {section.number}
-                  </Text>
-                  <Text fz={"1.25rem"} c={theme.colors.white[0]}>
-                    {section.title}
-                  </Text>
-                </div>
-                <div className="opportunitySelector">
-                  <Text fz={theme.fontSizes.sm} mb={"0.625rem"}>
-                    {section.description}
-                  </Text>
-                  <SwitchButton />
-                </div>
-              </Box>
-              <Grid gutter={20}>
-                <Grid.Col span={{ base: 12, md: 4, lg: 4 }}>
-                  <StatBox
-                    title={section.statTitle}
-                    background={
-                      "transparent linear-gradient(45deg,  rgba(157, 127, 239, 0.2) 0%, rgba(105, 179, 231, 0.2) 50%, rgba(92, 229, 176, 0.2) 100%) 0% 0% no-repeat padding-box"
-                    }
-                  />
-                </Grid.Col>
-                <Grid.Col span={{ base: 12, md: 8, lg: 8 }}>
-                  <StatBox>
-                    {console.log(section.renderContent)}
-                    {section.renderContent !== null ? (
-                      section.renderContent()
-                    ) : (
-                      <Text fz={theme.fontSizes.sm}>
-                        Content for {section.title} goes here.
-                      </Text>
-                    )}
-                  </StatBox>
-                </Grid.Col>
-              </Grid>
-            </Stack>
-          </OpportunityBlock>
-          <Separator key={`separator-${index}`} />
+          <OpportunitySection {...section} />
+          <Box w="100%" h={1} style={{ borderBottom: "1px dashed #50565a" }} />
         </React.Fragment>
       ))}
-    </>
+
+      <Group py={"3.75rem"}>
+        <Grid gutter={20}>
+          <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+            <StatBox title={"Set Date & Title"}>
+              <Box p={"2.5rem"}>
+                <OpportunityFormFields control={control} type="dateTitle" />
+              </Box>
+            </StatBox>
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+            <StatBox title={"Set your price"}>
+              <Box p={"2.5rem"}>
+                <OpportunityFormFields control={control} type="price" />
+              </Box>
+            </StatBox>
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+            <StatBox
+              title={"Terms of use"}
+              background={"rgba(105, 179, 231, 0.2)"}
+            >
+              <Box p={"2.5rem"}>
+                <OpportunityFormFields control={control} type="terms" />
+              </Box>
+            </StatBox>
+          </Grid.Col>
+        </Grid>
+      </Group>
+    </Box>
   );
 }
