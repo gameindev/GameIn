@@ -17,8 +17,20 @@ export const OpportunityBlock = styled.div`
       gap: 2rem;
     }
   }
+`;
 
-  input {
+export const OfferingOpportunities = styled.div`
+
+  input,
+  select {
     background-color: ${theme.colors.grey[0]} !important;
+    color: ${theme.colors.text[0]} !important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+
+  .mantine-Select-input,
+  .mantine-NumberInput-input {
+    padding-right: 2rem !important;
   }
 `;

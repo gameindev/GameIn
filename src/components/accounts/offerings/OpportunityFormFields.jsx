@@ -8,299 +8,309 @@ import {
   Text,
   Checkbox,
 } from "@mantine/core";
-import FormField from "../../shared/ui/FormField";
 import { DateInput } from "@mantine/dates";
 import { Link } from "react-router";
+import FormField from "../../shared/ui/FormField";
+import { ChevronDown } from "lucide-react";
+import { OfferingOpportunities } from "./style";
 
-export function OpportunityFormFields({ control, type }) {
-  const platforms = [
+const FORM_CONFIG = {
+  platforms: [
     { value: "youtube", label: "YouTube" },
     { value: "twitch", label: "Twitch" },
     { value: "kick", label: "Kick" },
     { value: "facebook", label: "Facebook" },
     { value: "instagram", label: "Instagram" },
     { value: "twitter", label: "X (Twitter)" },
-  ];
-
-  const timeModes = [
+  ],
+  timeModes: [
     { value: "live", label: "Live" },
     { value: "pre-recorded", label: "Pre-recorded" },
     { value: "shoutout", label: "Shout out" },
-  ];
-
-  const logoSizes = [
+  ],
+  logoSizes: [
     { value: "small", label: "Small" },
     { value: "medium", label: "Medium" },
     { value: "large", label: "Large" },
-  ];
-
-  const durations = [
+  ],
+  durations: [
     { value: "15s", label: "15 seconds" },
     { value: "30s", label: "30 seconds" },
     { value: "60s", label: "60 seconds" },
     { value: "90s", label: "90 seconds" },
     { value: "custom", label: "Custom" },
-  ];
-
-  const postTypes = [
+  ],
+  postTypes: [
     { value: "story", label: "Story" },
     { value: "post", label: "Post" },
     { value: "reel", label: "Reel" },
     { value: "tweet", label: "Tweet" },
-  ];
-
-  const PaymentsType = [
+  ],
+  paymentTypes: [
     { value: "stripe", label: "Stripe" },
     { value: "paypal", label: "PayPal" },
     { value: "crypto", label: "Crypto" },
-  ];
+  ],
+};
+
+const BASE_FIELDS = [
+  {
+    name: "platform",
+    Component: Select,
+    inline: true,
+    componentProps: {
+      data: FORM_CONFIG.platforms,
+      label: "Platform",
+      placeholder: "Select platform",
+      rightSection: <ChevronDown size="1em" />,
+      style: { width: "7.5rem" },
+    },
+  },
+  {
+    name: "timeMode",
+    Component: Select,
+    inline: true,
+    componentProps: {
+      data: FORM_CONFIG.timeModes,
+      label: "Time Mode",
+      placeholder: "Select Time Mode",
+      rightSection: <ChevronDown size="1em" />,
+      style: { width: "7.5rem" },
+    },
+  },
+  {
+    name: "size",
+    Component: Select,
+    inline: true,
+    componentProps: {
+      data: FORM_CONFIG.logoSizes,
+      label: "Logo Size",
+      placeholder: "Select logo size",
+      rightSection: <ChevronDown size="1em" />,
+      style: { width: "7.5rem" },
+    },
+  },
+];
+
+const FIELD_CONFIGS = {
+  streaming: BASE_FIELDS,
+  videoCommercial: [
+    ...BASE_FIELDS,
+    {
+      name: "duration",
+      Component: Select,
+      inline: true,
+      componentProps: {
+        data: FORM_CONFIG.durations,
+        label: "Duration",
+        placeholder: "Select duration",
+        rightSection: <ChevronDown size="1em" />,
+        style: { width: "7.5rem" },
+      },
+    },
+    {
+      name: "repetation",
+      Component: NumberInput,
+      inline: true,
+      componentProps: {
+        label: "Repetation",
+        placeholder: "Enter number of times",
+        min: 0,
+        style: { width: "7.5rem" },
+      },
+    },
+  ],
+  socialMedia: BASE_FIELDS,
+  merchProducts: [
+    {
+      name: "platform",
+      Component: Select,
+      inline: true,
+      componentProps: {
+        data: FORM_CONFIG.platforms,
+        label: "Platform",
+        placeholder: "Select platform",
+        rightSection: <ChevronDown size="1em" />,
+        style: { width: "7.5rem" },
+      },
+    },
+    {
+      name: "timeMode",
+      Component: Select,
+      inline: true,
+      componentProps: {
+        data: FORM_CONFIG.timeModes,
+        label: "Time Mode",
+        placeholder: "Select Time Mode",
+        rightSection: <ChevronDown size="1em" />,
+        style: { width: "7.5rem" },
+      },
+    },
+    {
+      name: "types",
+      Component: Select,
+      inline: true,
+      componentProps: {
+        data: FORM_CONFIG.postTypes,
+        label: "Type",
+        placeholder: "Select type of post",
+        rightSection: <ChevronDown size="1em" />,
+        style: { width: "7.5rem" },
+      },
+    },
+  ],
+  dateTitle: [
+    {
+      name: "startDate",
+      Component: DateInput,
+      inline: true,
+      componentProps: {
+        label: "Start Date",
+        placeholder: "Start date",
+        valueFormat: "DD/MM/YYYY",
+        clearable: true,
+        style: { width: "7.5rem" },
+      },
+    },
+    {
+      name: "endDate",
+      Component: DateInput,
+      inline: true,
+      componentProps: {
+        label: "End Date",
+        placeholder: "End date",
+        valueFormat: "DD/MM/YYYY",
+        clearable: true,
+        style: { width: "7.5rem" },
+      },
+    },
+    {
+      name: "title",
+      Component: TextInput,
+      inline: false,
+      componentProps: {
+        label: "Title",
+        placeholder: "Enter title",
+        style: { width: "100%" },
+      },
+    },
+    {
+      name: "description",
+      Component: Textarea,
+      inline: false,
+      componentProps: {
+        label: "Description",
+        placeholder: "Enter description",
+        style: { width: "100%" },
+      },
+    },
+  ],
+  price: [
+    {
+      name: "choosePrice",
+      Component: TextInput,
+      inline: true,
+      componentProps: {
+        label: "Choose your price",
+        placeholder: "Enter your price",
+        type: "number",
+        rightSection: <span style={{ color: "#888", fontSize: 14 }}>USD</span>,
+        style: { width: "7.5rem" },
+      },
+    },
+    {
+      name: "gameinFee",
+      Component: TextInput,
+      inline: true,
+      componentProps: {
+        label: "+ 5% gamein fee",
+        disabled: true,
+        value: "75.00",
+        rightSection: <span style={{ color: "#888", fontSize: 14 }}>USD</span>,
+        style: { width: "7.5rem" },
+      },
+    },
+    {
+      name: "gameinTax",
+      Component: TextInput,
+      inline: true,
+      componentProps: {
+        label: "+ 15.3% tax = total",
+        disabled: true,
+        value: "1.815,98",
+        rightSection: <span style={{ color: "#888", fontSize: 14 }}>USD</span>,
+        style: { width: "7.5rem" },
+      },
+    },
+    {
+      name: "paymentType",
+      Component: Select,
+      inline: true,
+      componentProps: {
+        data: FORM_CONFIG.paymentTypes,
+        label: "Payment method",
+        placeholder: "Select method",
+        rightSection: <ChevronDown size="1em" />,
+        style: { width: "7.5rem" },
+      },
+    },
+  ],
+  terms: [
+    {
+      name: "acknowledgement",
+      Component: Checkbox,
+      componentProps: {
+        label: "check if you have read and understood the terms of use",
+      },
+      wrapper: (children) => (
+        <Stack key={Math.random()}>
+          <Text fw={600} c="blue.3" align="center">
+            community simplified
+          </Text>
+          <Text>
+            We have implemented a minimum of terms to be agreed on, which
+            includes the license, a damage limitation clause and a 50%
+            performance bonus ciplinary
+          </Text>
+          <Link to="/terms-of-use" style={{ textDecoration: "none" }}>
+            <Text
+              size="sm"
+              align="center"
+              fw={600}
+              c="white"
+              style={{ cursor: "pointer" }}
+            >
+              read more
+            </Text>
+          </Link>
+          {children}
+        </Stack>
+      ),
+    },
+  ],
+};
+
+export default function OpportunityFormFields({ control, type }) {
+  const fields = FIELD_CONFIGS[type] || [];
 
   return (
     <>
-      {(type === "streaming" ||
-        type === "videoCommercial" ||
-        type === "socialMedia") && (
-        <>
-          <FormField
-            name={`${type}.platform`}
-            control={control}
-            Component={Select}
-            inline={true}
-            componentProps={{
-              data: platforms,
-              label: "Platform",
-              placeholder: "Select platform",
-            }}
-          />
-          <FormField
-            name={`${type}.timeMode`}
-            control={control}
-            Component={Select}
-            inline={true}
-            componentProps={{
-              data: timeModes,
-              label: "Time Mode",
-              placeholder: "Select Time Mode",
-            }}
-          />
-          <FormField
-            name={`${type}.size`}
-            control={control}
-            Component={Select}
-            inline={true}
-            componentProps={{
-              data: logoSizes,
-              label: "Logo Size",
-              placeholder: "Select logo size",
-            }}
-          />
-        </>
-      )}
-
-      {type === "videoCommercial" && (
-        <>
-          <FormField
-            name={`${type}.duration`}
-            control={control}
-            Component={Select}
-            inline={true}
-            componentProps={{
-              data: durations,
-              label: "Duration",
-              placeholder: "Select duration",
-            }}
-          />
-          <FormField
-            name={`${type}.Repetation`}
-            control={control}
-            Component={NumberInput}
-            inline={true}
-            componentProps={{
-              label: "Repetation",
-              placeholder: "Enter number of times",
-              min: 0,
-            }}
-          />
-        </>
-      )}
-
-      {type === "merchProducts" && (
-        <>
-          <FormField
-            name={`${type}.platform`}
-            control={control}
-            Component={Select}
-            inline={true}
-            componentProps={{
-              data: platforms,
-              label: "Platform",
-              placeholder: "Select platform",
-            }}
-          />
-          <FormField
-            name={`${type}.timeMode`}
-            control={control}
-            Component={Select}
-            inline={true}
-            componentProps={{
-              data: timeModes,
-              label: "Time Mode",
-              placeholder: "Select Time Mode",
-            }}
-          />
-          <FormField
-            name={`${type}.types`}
-            control={control}
-            Component={Select}
-            inline={true}
-            componentProps={{
-              data: postTypes,
-              label: "Type",
-              placeholder: "Select type of post",
-            }}
-          />
-        </>
-      )}
-
-      {type === "dateTitle" && (
-        <>
-          <FormField
-            name="dateTitle.startDate"
-            control={control}
-            Component={DateInput}
-            inline={true}
-            componentProps={{
-              label: "Start Date",
-              placeholder: "Start date",
-              valueFormat: "DD/MM/YYYY",
-              clearable: true,
-            }}
-          />
-          <FormField
-            name="dateTitle.endDate"
-            control={control}
-            Component={DateInput}
-            inline={true}
-            componentProps={{
-              label: "End Date",
-              placeholder: "End date",
-              valueFormat: "DD/MM/YYYY",
-              clearable: true,
-            }}
-          />
-          <FormField
-            name="dateTitle.title"
-            control={control}
-            Component={TextInput}
-            componentProps={{
-              label: "Title",
-              placeholder: "Enter title",
-            }}
-          />
-          <FormField
-            name="dateTitle.description"
-            control={control}
-            Component={Textarea}
-            componentProps={{
-              label: "Description",
-              placeholder: "Enter description",
-            }}
-          />
-        </>
-      )}
-
-      {type === "price" && (
-        <>
-          <FormField
-            name="price.choosePrice"
-            control={control}
-            Component={TextInput}
-            inline={true}
-            componentProps={{
-              label: "Choose your price",
-              placeholder: "Enter your price",
-              type: "number",
-              rightSection: (
-                <span style={{ color: "#888", fontSize: 14 }}>USD</span>
-              ),
-            }}
-          />
-          <FormField
-            name="price.gaminFee"
-            control={control}
-            Component={TextInput}
-            inline={true}
-            componentProps={{
-              label: "+ 5% gamein fee",
-              disabled: true,
-              value: "75.00",
-              rightSection: (
-                <span style={{ color: "#888", fontSize: 14 }}>USD</span>
-              ),
-            }}
-          />
-          <FormField
-            name="price.tax"
-            control={control}
-            Component={TextInput}
-            inline={true}
-            componentProps={{
-              label: "+ 15.3% tax = total",
-              disabled: true,
-              value: "1.815,98",
-              rightSection: (
-                <span style={{ color: "#888", fontSize: 14 }}>USD</span>
-              ),
-            }}
-          />
-
-          <FormField
-            name={`${type}.paymentType`}
-            control={control}
-            Component={Select}
-            inline={true}
-            componentProps={{
-              data: PaymentsType,
-              label: "Payment method",
-              placeholder: "Select method",
-            }}
-          />
-        </>
-      )}
-
-      {type === "terms" && (
-        <>
-          <Stack>
-            <Text fw={600} c="blue.3" align="center">
-              community simplified
-            </Text>
-            <Text>
-              We have implemented a minimum of terms to be agreed on, which
-              includes the license, a damage limitation clause and a 50%
-              performance bonus
-            </Text>
-            <Link>
-              <Text
-                size="sm"
-                align="center"
-                fw={600}
-                c="white"
-                style={{ cursor: "pointer" }}
-              >
-                read more
-              </Text>
-            </Link>
+      <OfferingOpportunities>
+        {fields.map(({ name, Component, componentProps, wrapper, inline }) => {
+          const fieldName = `${type}.${name}`;
+          const field = (
             <FormField
-              name="acknowledgement"
+              key={fieldName}
+              name={fieldName}
               control={control}
-              Component={Checkbox}
-              componentProps={{
-                label: "check if you have read and understood the terms of use",
-              }}
+              Component={Component}
+              inline={inline}
+              componentProps={componentProps}
             />
-          </Stack>
-        </>
-      )}
+          );
+          return wrapper ? wrapper(field) : field;
+        })}
+      </OfferingOpportunities>
     </>
   );
 }

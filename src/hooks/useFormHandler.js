@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export function useFormHandler({
   schema,
@@ -9,7 +9,15 @@ export function useFormHandler({
   onSuccess,
   onError,
 }) {
+  const isMounted = useRef(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const {
     control,
@@ -30,12 +38,15 @@ export function useFormHandler({
 
   const submit = handleSubmit(async (data) => {
     try {
-      setIsSubmitting(true);
+      if (isMounted.current) setIsSubmitting(true);
+
       const result = await onSubmit?.(data);
-      setIsSubmitting(false);
+
+      if (isMounted.current) setIsSubmitting(false);
+
       onSuccess?.(result);
     } catch (err) {
-      setIsSubmitting(false);
+      if (isMounted.current) setIsSubmitting(false);
       onError?.(err);
     }
   });

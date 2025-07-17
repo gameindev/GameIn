@@ -18,8 +18,10 @@ export default function StatBox({
       w={"100%"}
       h={"100%"}
       p="md"
-      bg={background || theme.colors.secondaryGrey[0]}
-      style={{ borderRadius: theme.radius.md }}
+      style={{
+        background: background || theme.colors.secondaryGrey[0],
+        borderRadius: theme.radius.md,
+      }}
     >
       <Flex justify="space-between" align="center" className="box_header">
         <Text c={theme.colors.white[0]} className="title">

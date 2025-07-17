@@ -1,8 +1,7 @@
 import React from "react";
-import { Box, Button, Flex, Grid, Group, Text } from "@mantine/core";
+import { Box, Button, Flex, Grid, Group, Image, Text } from "@mantine/core";
 import { useNavigate } from "react-router";
 import { useFormHandler } from "./../../../hooks/useFormHandler";
-import OpportunitySection from "./OpportunitySection";
 import OpportunityFormFields from "./OpportunityFormFields";
 import StatBox from "../../shared/ui/StatBox";
 import SwitchButton from "../../shared/ui/Switch";
@@ -32,10 +31,10 @@ const defaultValues = {
     paymentType: "",
   },
   terms: { acknowledgement: false },
-  sponsorEdit: false,
+  sponsorEdit: true,
 };
 
-export default function CreateOpportunity() {
+export default function EditOpportunity() {
   const navigate = useNavigate();
 
   const { control, handleSubmit } = useFormHandler({
@@ -82,54 +81,65 @@ export default function CreateOpportunity() {
     <Box component="form" onSubmit={handleSubmit}>
       <Group justify="center" mb={20}>
         <Text fz={35} align="center">
-          Setup Your Sponsorship Opportunity
+          Edit this sponsorship opportunity
         </Text>
       </Group>
 
-      {sections.map(({ number, title, description, type, image }) => (
-        <React.Fragment key={type}>
-          <OpportunitySection
-            number={number}
-            title={title}
-            description={description}
-            type={type}
-            control={control}
-            statTitle={`${number} ${title}`}
-            formContent={
-              <OpportunityFormFields control={control} type={type} />
-            }
-            mediaPreview={image}
-          />
-          <Box w="100%" h={1} style={{ borderBottom: "1px dashed #50565a" }} />
-        </React.Fragment>
-      ))}
+      <Grid gutter={20}>
+        {sections.map(({ number, title, type, image }) => (
+          <Grid.Col key={type} span={{ base: 12, md: 6, lg: 4 }}>
+            <StatBox
+              title={
+                <Text component="span">
+                  <Text component="span" fw={700} inherit>
+                    {number}
+                  </Text>{" "}
+                  {title}
+                </Text>
+              }
+            >
+              <Box p="2.5rem">
+                <Box w={"100%"} h={"5rem"} mb={"md"}>
+                  <Image
+                    w={"100%"}
+                    h={"100%"}
+                    fit="cover"
+                    radius="md"
+                    src={image}
+                  />
+                </Box>
+                <OpportunityFormFields control={control} type={type} />
+              </Box>
+            </StatBox>
+          </Grid.Col>
+        ))}
+        <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+          <StatBox title="Set Date & Title">
+            <Box p="2.5rem">
+              <OpportunityFormFields control={control} type="dateTitle" />
+            </Box>
+          </StatBox>
+        </Grid.Col>
+
+        <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+          <StatBox title="Set your price">
+            <Box p="2.5rem">
+              <OpportunityFormFields control={control} type="price" />
+            </Box>
+          </StatBox>
+        </Grid.Col>
+
+        <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+          <StatBox title="Terms of use" background="rgba(105, 179, 231, 0.2)">
+            <Box p="2.5rem">
+              <OpportunityFormFields control={control} type="terms" />
+            </Box>
+          </StatBox>
+        </Grid.Col>
+      </Grid>
 
       <Group py="3.75rem">
-        <Grid gutter={20}>
-          <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-            <StatBox title="Set Date & Title">
-              <Box p="2.5rem">
-                <OpportunityFormFields control={control} type="dateTitle" />
-              </Box>
-            </StatBox>
-          </Grid.Col>
-
-          <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-            <StatBox title="Set your price">
-              <Box p="2.5rem">
-                <OpportunityFormFields control={control} type="price" />
-              </Box>
-            </StatBox>
-          </Grid.Col>
-
-          <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-            <StatBox title="Terms of use" background="rgba(105, 179, 231, 0.2)">
-              <Box p="2.5rem">
-                <OpportunityFormFields control={control} type="terms" />
-              </Box>
-            </StatBox>
-          </Grid.Col>
-        </Grid>
+        <Grid gutter={20}></Grid>
       </Group>
 
       <Box w="100%" h={1} style={{ borderBottom: "1px dashed #50565a" }} />

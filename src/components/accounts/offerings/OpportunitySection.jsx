@@ -4,6 +4,7 @@ import SwitchButton from "./../../shared/ui/Switch";
 import StatBox from "./../../shared/ui/StatBox";
 import { theme } from "../../../styles/theme/customTheme";
 import { OpportunityBlock } from "./style";
+import FormField from "../../shared/ui/FormField";
 
 export default function OpportunitySection({
   number,
@@ -12,6 +13,8 @@ export default function OpportunitySection({
   statTitle,
   formContent,
   mediaPreview,
+  control,
+  type,
 }) {
   return (
     <OpportunityBlock>
@@ -29,7 +32,14 @@ export default function OpportunitySection({
             <Text fz={theme.fontSizes.sm} mb={"0.625rem"}>
               {description}
             </Text>
-            <SwitchButton />
+            <FormField
+              name={`${type}.enabled`}
+              control={control}
+              Component={SwitchButton}
+              componentProps={{
+                label: "",
+              }}
+            />
           </div>
         </Box>
         <Grid gutter={20}>
@@ -48,7 +58,7 @@ export default function OpportunitySection({
             </StatBox>
           </Grid.Col>
           <Grid.Col span={{ base: 12, md: 8, lg: 8 }}>
-            <StatBox></StatBox>
+            <StatBox title={" "} background={`url(${mediaPreview})`}></StatBox>
           </Grid.Col>
         </Grid>
       </Stack>

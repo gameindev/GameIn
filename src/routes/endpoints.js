@@ -19,6 +19,7 @@ const routePaths = {
     OFFERINGS: {
       ROOT: "/offerings",
       CREATE_OFFERING: "/offerings/create-offering",
+      EDIT_OFFERING: "/offerings/edit-offering"
     },
     STATS: {
       ROOT: "/stats",

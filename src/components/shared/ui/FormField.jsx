@@ -1,13 +1,14 @@
 /* eslint-disable */
 
+import React, { memo } from "react";
 import { Controller } from "react-hook-form";
 import { Text } from "@mantine/core";
 
-export default function FormField({
+function FormFieldComponent({
   name,
   control,
   Component,
-  componentProps,
+  componentProps = {},
   inline = false,
 }) {
   return (
@@ -15,13 +16,15 @@ export default function FormField({
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => {
-        const component = (
+        const element = (
           <Component
             {...field}
             {...componentProps}
             label={!inline ? componentProps.label : undefined}
             error={error?.message}
-            style={inline ? { flex: 1 } : undefined}
+            // style={inline ? { flex: 0 } : undefined}
+            value={field.value}
+            onChange={field.onChange}
           />
         );
 
@@ -32,17 +35,20 @@ export default function FormField({
                 display: "flex",
                 alignItems: "center",
                 gap: "1rem",
-                marginBottom: "1rem",
+                marginBottom: "0.625rem",
+                justifyContent: "space-between",
               }}
             >
               <Text w={120}>{componentProps.label}</Text>
-              {component}
+              {element}
             </div>
           );
         }
 
-        return component;
+        return element;
       }}
     />
   );
 }
+
+export default memo(FormFieldComponent);
