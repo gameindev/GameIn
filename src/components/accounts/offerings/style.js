@@ -20,7 +20,6 @@ export const OpportunityBlock = styled.div`
 `;
 
 export const OfferingOpportunities = styled.div`
-
   input,
   select {
     background-color: ${theme.colors.grey[0]} !important;
@@ -32,5 +31,15 @@ export const OfferingOpportunities = styled.div`
   .mantine-Select-input,
   .mantine-NumberInput-input {
     padding-right: 2rem !important;
+  }
+`;
+
+export const InlineFields = styled.div`
+  p.mantine-Text-root {
+    display: none;
+  }
+  .mantine-Select-input,
+  .mantine-NumberInput-input {
+    padding-right: 1rem !important;
   }
 `;

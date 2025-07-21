@@ -67,7 +67,7 @@ const textInputStyles = {
       borderRadius: theme.radius.md,
       height: "auto",
       lineHeight: "normal",
-      minHeight: "auto",
+      // minHeight: "auto",
       "::placeholder": {
         color: theme.colors.white[0],
       },

@@ -1,10 +1,20 @@
 import React from "react";
-import { Box, Button, Flex, Grid, Group, Image, Text } from "@mantine/core";
+import {
+  ActionIcon,
+  Box,
+  Button,
+  Flex,
+  Grid,
+  Group,
+  Image,
+  Text,
+  Textarea,
+  FileInput,
+} from "@mantine/core";
 import { useNavigate } from "react-router";
-import { useFormHandler } from "./../../../hooks/useFormHandler";
+import { useFormHandler } from "../../../hooks/useFormHandler";
 import OpportunityFormFields from "./OpportunityFormFields";
 import StatBox from "../../shared/ui/StatBox";
-import SwitchButton from "../../shared/ui/Switch";
 import FormField from "../../shared/ui/FormField";
 import streamingLogo from "../../../assets/accounts/offerings/streaming-logo.png";
 import commercialBreak from "../../../assets/accounts/offerings/commercial-break.png";
@@ -32,54 +42,57 @@ const defaultValues = {
   },
   terms: { acknowledgement: false },
   sponsorEdit: true,
+  note: `Dear creator XYZ,
+  We like your content and want to support this tournament! We are looking for a permanent Logo Placement throughout the tournament and a Commercial Break after every game, therefore we can skip all social media posts or merch. We uploaded all the data for you to download here: https://www.googledrive... We are looking forward to work with you!,`,
+  uploadLogo: null,
 };
+
+const sections = [
+  {
+    number: "01",
+    title: "STREAMING LOGO PLACEMENT",
+    description: "You are offering to place a brand logo in your live stream",
+    type: "streaming",
+    image: streamingLogo,
+  },
+  {
+    number: "02",
+    title: "VIDEO: COMMERCIAL BREAK",
+    description: "You are offering to generate product ads in your videos",
+    type: "videoCommercial",
+    image: commercialBreak,
+  },
+  {
+    number: "03",
+    title: "SOCIAL MEDIA POSTING",
+    description: "You are offering to post branded content on social media",
+    type: "socialMedia",
+    image: socialMediaPost,
+  },
+  {
+    number: "04",
+    title: "MERCH, CLOTHING, PRODUCTS",
+    description: "You are offering to advertise via merch or physical products",
+    type: "merchProducts",
+    image: merchProducts,
+  },
+];
 
 export default function EditOpportunity() {
   const navigate = useNavigate();
 
-  const { control, handleSubmit } = useFormHandler({
+  const { control, handleSubmit, watch } = useFormHandler({
     defaultValues,
     onSubmit: async (data) => {
       console.log("Form Submitted", data);
     },
   });
 
-  const sections = [
-    {
-      number: "01",
-      title: "STREAMING LOGO PLACEMENT",
-      description: "You are offering to place a brand logo in your live stream",
-      type: "streaming",
-      image: streamingLogo,
-    },
-    {
-      number: "02",
-      title: "VIDEO: COMMERCIAL BREAK",
-      description: "You are offering to generate product ads in your videos",
-      type: "videoCommercial",
-      image: commercialBreak,
-    },
-    {
-      number: "03",
-      title: "SOCIAL MEDIA POSTING",
-      description:
-        "You are offering to place branded posts in your social media accounts",
-      type: "socialMedia",
-      image: socialMediaPost,
-    },
-    {
-      number: "04",
-      title: "MERCH, CLOTHING, PRODUCTS",
-      description:
-        "You are offering to place advertisings in your social media accounts",
-      type: "merchProducts",
-      image: merchProducts,
-    },
-  ];
+  const uploadedLogo = watch("uploadLogo");
 
   return (
     <Box component="form" onSubmit={handleSubmit}>
-      <Group justify="center" mb={20}>
+      <Group py="3.75rem" justify="center" mb={20}>
         <Text fz={35} align="center">
           Edit this sponsorship opportunity
         </Text>
@@ -91,7 +104,7 @@ export default function EditOpportunity() {
             <StatBox
               title={
                 <Text component="span">
-                  <Text component="span" fw={700} inherit>
+                  <Text component="span" fw={700}>
                     {number}
                   </Text>{" "}
                   {title}
@@ -99,20 +112,24 @@ export default function EditOpportunity() {
               }
             >
               <Box p="2.5rem">
-                <Box w={"100%"} h={"5rem"} mb={"md"}>
-                  <Image
-                    w={"100%"}
-                    h={"100%"}
-                    fit="cover"
-                    radius="md"
-                    src={image}
-                  />
-                </Box>
-                <OpportunityFormFields control={control} type={type} />
+                <Image
+                  src={image}
+                  radius="md"
+                  w="100%"
+                  h="5rem"
+                  mb="md"
+                  fit="cover"
+                />
+                <OpportunityFormFields
+                  control={control}
+                  type={type}
+                  mode="edit"
+                />
               </Box>
             </StatBox>
           </Grid.Col>
         ))}
+
         <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
           <StatBox title="Set Date & Title">
             <Box p="2.5rem">
@@ -130,6 +147,78 @@ export default function EditOpportunity() {
         </Grid.Col>
 
         <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+          <StatBox title="Leave a note">
+            <Box p="2.5rem">
+              <FormField
+                name="note"
+                control={control}
+                Component={Textarea}
+                componentProps={{
+                  placeholder: "Write your custom message here...",
+                  autosize: true,
+                  minRows: 4,
+                  maxRows: 10,
+                }}
+              />
+              <Flex gap={20} align="center" mt="lg">
+                <ActionIcon size="lg" color="inputBgColor" variant="filled">
+                  <Text size="xs">Inbox</Text>
+                </ActionIcon>
+                <Text>Get in touch with creator</Text>
+              </Flex>
+            </Box>
+          </StatBox>
+        </Grid.Col>
+
+        <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+          <StatBox title="Upload your logo">
+            <Box p="2.5rem">
+              <Text mb="sm">
+                Submit your Logo as PDF, SVG, EPS vector graphic or PNG pixel
+                graphic with a min. of 1000px width and transparent background
+                if possible. All other data must be exchanged directly.
+              </Text>
+              <Box>
+                <Flex gap={20} align={"center"} mt={"lg"}>
+                  <ActionIcon size="lg" color="inputBgColor" variant="filled">
+                    <FormField
+                      name="uploadLogo"
+                      control={control}
+                      Component={FileInput}
+                      componentProps={{
+                        placeholder: "Upload logo",
+                        accept: ".png,.svg,.pdf,.eps",
+                      }}
+                    />
+                  </ActionIcon>
+                  <Text>Upload</Text>
+                </Flex>
+              </Box>
+              <Box mt="lg">
+                <Text my="sm">Preview</Text>
+                {uploadedLogo ? (
+                  <Image
+                    src={URL.createObjectURL(uploadedLogo)}
+                    w="100%"
+                    h="4rem"
+                    fit="cover"
+                    radius="md"
+                  />
+                ) : (
+                  <Image
+                    radius="md"
+                    src={null}
+                    h="4rem"
+                    w="100%"
+                    fallbackSrc="https://placehold.co/600x400?text=Placeholder"
+                  />
+                )}
+              </Box>
+            </Box>
+          </StatBox>
+        </Grid.Col>
+
+        <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
           <StatBox title="Terms of use" background="rgba(105, 179, 231, 0.2)">
             <Box p="2.5rem">
               <OpportunityFormFields control={control} type="terms" />
@@ -138,32 +227,15 @@ export default function EditOpportunity() {
         </Grid.Col>
       </Grid>
 
-      <Group py="3.75rem">
-        <Grid gutter={20}></Grid>
-      </Group>
-
       <Box w="100%" h={1} style={{ borderBottom: "1px dashed #50565a" }} />
 
-      <Group py={"3.75rem"} align={"center"} justify={"center"}>
+      <Group py="3.75rem" align="center" justify="center">
         <Flex gap={32}>
-          <Button
-            width="11.875rem"
-            variant="inputBgColor"
-            onClick={() => navigate(-1)}
-          >
+          <Button variant="inputBgColor" onClick={() => navigate(-1)}>
             Back
           </Button>
-          <Flex w={"25%"} ta={"right"}>
-            <Text>Can sponsor edit you offer</Text>
-            <FormField
-              name="sponsorEdit"
-              control={control}
-              Component={SwitchButton}
-              componentProps={{ label: "" }}
-            />
-          </Flex>
-          <Button width="11.875rem" variant="primary" type="submit">
-            Save
+          <Button variant="primary" type="submit">
+            Request Sponsorship
           </Button>
         </Flex>
       </Group>
