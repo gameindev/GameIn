@@ -42,7 +42,7 @@ export default function CompleteProfile({ opened, onComplete, accessToken }) {
         formData,
         headers
       );
-      onComplete({ user: data });
+      onComplete(data);
     } catch (error) {
       return Promise.reject("Complete profile error:", error);
     }

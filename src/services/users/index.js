@@ -26,7 +26,7 @@ export const createUser = async (formData, post) => {
   }
 };
 
-export const getUserProfile = async (get, userId, userType, accessToken) => {
+export const getUserProfile = async (get, userId, userType) => {
   const profileMap = {
     BRAND: "brandProfile",
     CREATOR: "creatorProfile",
@@ -34,13 +34,7 @@ export const getUserProfile = async (get, userId, userType, accessToken) => {
   };
   const profileType = profileMap[userType?.toUpperCase()] || "";
 
-  const getAuthHeaders = (accessToken) => ({
-    Authorization: `Bearer ${accessToken}`,
-  });
-
-  const { data } = await get(
-    `/users/${userId}${profileType ? `?populate=${profileType}` : ""}`,
-    getAuthHeaders(accessToken)
-  );
+  const { data } = await get(`/users/${userId}${profileType ? `?populate=${profileType}` : ""}`);
+  
   return data;
 };

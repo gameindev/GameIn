@@ -19,7 +19,6 @@ const routePaths = {
     OFFERINGS: {
       ROOT: "/offerings",
       CREATE_OFFERING: "/offerings/create-offering",
-      EDIT_OFFERING: "/offerings/edit-offering"
     },
     STATS: {
       ROOT: "/stats",
@@ -37,6 +36,12 @@ const routePaths = {
     CONTACT: "/settings/contact",
     PRIVACY: "/settings/privacy",
   },
+  FOOTER:{
+    ROOT: "/footer",
+    ABOUT: "/footer/about",
+    INFO: "/footer/info",
+    TERMS: "/footer/terms",
+  }
 };
 
 export default routePaths;

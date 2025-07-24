@@ -1,19 +1,20 @@
 import { GoogleLogin } from "@react-oauth/google";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { useNavigate } from "react-router";
-import { useDispatch } from "react-redux";
 
 import CompleteProfile from "./CompleteProfile";
 import useOAuthLogin from "../../../hooks/useOAuthLogin";
 import { showNotification } from "../../../utils/helpers";
 import routePaths from "../../../routes/endpoints";
+import { currentUser } from "../../../stores/selectors";
+import { useSelector } from "react-redux";
 
 const OAuthLoginBtn = () => {
   const [showCompleteProfile, setShowCompleteProfile] = useState(false);
   const [authTokens, setAuthTokens] = useState(null);
-  const [count, setCount] = useState(0);
 
-  const dispatch = useDispatch();
+  const { user } = useSelector(currentUser) || {};;
+
   const navigate = useNavigate();
   const { handleOAuthLogin, completeUserProfile } = useOAuthLogin();
 
@@ -31,14 +32,13 @@ const OAuthLoginBtn = () => {
 
       const { isProfileIncomplete, authData } = result;
 
-      if (isProfileIncomplete) {
+      if (!isProfileIncomplete) {
         setAuthTokens(authData);
-        setCount((prev) => prev + 1);
         setShowCompleteProfile(true);
       } else {
         showNotification(
           "Login Successful",
-          `Welcome back, ${authData.user.username}`
+          `Welcome back, ${user?.username}`
         );
         navigate(routePaths.ACCOUNTS.DASHBOARD.ROOT);
       }
@@ -51,18 +51,12 @@ const OAuthLoginBtn = () => {
     }
   };
 
-  useEffect(() => {
-    console.log("Show complete profile?", showCompleteProfile);
-    console.log("Access token:", authTokens?.accessToken);
-    console.log("Count:", count);
-  }, [showCompleteProfile, authTokens, count]);
-
   const onProfileCompleted = async (authData) => {
     await completeUserProfile(authData);
     setShowCompleteProfile(false);
     showNotification(
       "Login Successful",
-      `Welcome back, ${authData.user.username}`
+      `Welcome back, ${user?.username}`
     );
     navigate(routePaths.ACCOUNTS.DASHBOARD.ROOT);
   };
