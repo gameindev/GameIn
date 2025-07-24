@@ -22,6 +22,7 @@ import GoogleLoginBtn from "../../components/shared/oAuth/GoogleLoginBtn";
 import routePaths from "../../routes/endpoints";
 import FormField from "../../components/shared/ui/FormField";
 import { loginSchema } from "../../utils/schemas/validationSchema";
+import OAuthLoginBtn from "../../components/shared/oAuth/OAuthLoginBtn";
 
 const defaultValues = {
   identifier: "",
@@ -156,7 +157,8 @@ export default function Signin() {
             </Stack>
 
             <Group position="center" style={{ justifyContent: "center" }}>
-              <GoogleLoginBtn />
+              {/* <GoogleLoginBtn /> */}
+              <OAuthLoginBtn />
             </Group>
           </Stack>
         </form>

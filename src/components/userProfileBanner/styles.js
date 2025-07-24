@@ -56,7 +56,7 @@ export const UserSection = styled.div`
 
   .profile_name {
     font-size: 1.875em;
-    font-weight: 400;
+    font-weight: 600;
     line-height: 1.2;
     letter-spacing: 0.02em;
     color: ${theme.colors.white[0]};

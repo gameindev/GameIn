@@ -5,7 +5,7 @@ export const showNotification = (title, message, color = "green") => {
         title,
         message,
         color,
-        position: "bottom-right",
+        position: "top-right",
     });
 };
 

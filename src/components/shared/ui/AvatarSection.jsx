@@ -26,7 +26,22 @@ const AvatarSection = ({
       radius={radius}
       background={theme.colors.inputBgColor[0]}
     >
-      <img src={avatar} alt="Avatar" />
+      {avatar ? (
+        <img src={avatar} alt="Avatar" />
+      ) : (
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: theme.colors.white[0],
+          }}
+        >
+          No Avatar
+        </div>
+      )}
     </HexContainer>
     {controls && (
       <div className="action">
