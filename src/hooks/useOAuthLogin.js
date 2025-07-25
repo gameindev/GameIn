@@ -50,6 +50,7 @@ const useOAuthLogin = () => {
       accessToken
     );
     dispatch(setUser({ user: fullUserData }));
+
   };
 
   return { handleOAuthLogin, completeUserProfile };

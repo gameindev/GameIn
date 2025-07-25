@@ -1,16 +1,18 @@
 import { GoogleLogin } from "@react-oauth/google";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+
 import CompleteProfile from "./CompleteProfile";
 import useOAuthLogin from "../../../hooks/useOAuthLogin";
 import { showNotification } from "../../../utils/helpers";
 import routePaths from "../../../routes/endpoints";
-import { useSelector } from "react-redux";
 import { currentUser } from "../../../stores/selectors";
+import { useSelector } from "react-redux";
 
 const OAuthLoginBtn = () => {
   const [showCompleteProfile, setShowCompleteProfile] = useState(false);
   const [authTokens, setAuthTokens] = useState(null);
+
   const { user } = useSelector(currentUser) || {};
 
   const navigate = useNavigate();
@@ -30,14 +32,11 @@ const OAuthLoginBtn = () => {
 
       const { isProfileIncomplete, authData } = result;
 
-      if (isProfileIncomplete) {
+      if (!isProfileIncomplete) {
         setAuthTokens(authData);
         setShowCompleteProfile(true);
       } else {
-        showNotification(
-          "Login Successful",
-          `Welcome back, ${user.username}`
-        );
+        showNotification("Login Successful", `Welcome back, ${user?.username}`);
         navigate(routePaths.ACCOUNTS.DASHBOARD.ROOT);
       }
     } catch (err) {
@@ -52,10 +51,7 @@ const OAuthLoginBtn = () => {
   const onProfileCompleted = async (authData) => {
     await completeUserProfile(authData);
     setShowCompleteProfile(false);
-    showNotification(
-      "Login Successful",
-      `Welcome back, ${user.username}`
-    );
+    showNotification("Login Successful", `Welcome back, ${user?.username}`);
     navigate(routePaths.ACCOUNTS.DASHBOARD.ROOT);
   };
 
