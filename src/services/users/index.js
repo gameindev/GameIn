@@ -35,6 +35,7 @@ export const getUserProfile = async (get, userId, userType, accessToken) => {
   const profileType = profileMap[userType?.toUpperCase()] || "";
 
   const getAuthHeaders = (accessToken) => ({
+    "Content-Type": "application/json",
     Authorization: `Bearer ${accessToken}`,
   });
 

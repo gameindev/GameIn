@@ -29,9 +29,8 @@ export default function Profile() {
   //   gamesUrl: games,
   // } = useSelector((state) => state.bio);
 
-  const {
-    userBio: { bio: bioFromUser, videoBioUrl, preferredGames = [] } = {},
-  } = user || {};
+  const userBio = (user && user.userBio) || {};
+  const { bio: bioFromUser, videoBioUrl, preferredGames = [] } = userBio;
 
   return (
     <Grid gutter={20}>

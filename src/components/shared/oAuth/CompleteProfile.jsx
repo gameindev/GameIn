@@ -22,7 +22,6 @@ const defaultValues = {
 };
 
 export default function CompleteProfile({ opened, onComplete, accessToken }) {
-  console.log("🚀 CompleteProfile props", opened, accessToken);
   const { control, handleSubmit } = useForm({
     defaultValues,
     resolver: yupResolver(OAuthProfile),
@@ -42,7 +41,7 @@ export default function CompleteProfile({ opened, onComplete, accessToken }) {
         formData,
         headers
       );
-      onComplete({ user: data });
+      onComplete(data);
     } catch (error) {
       return Promise.reject("Complete profile error:", error);
     }

@@ -18,11 +18,10 @@ const useOAuthLogin = () => {
         post
       );
 
-      // dispatch(setAuth({ accessToken, refreshToken, user }));
-
       const isProfileIncomplete = !user?.userType;
 
       if (!isProfileIncomplete) {
+        dispatch(setAuth({ accessToken, refreshToken, user }));
         const fullUserData = await getUserProfile(
           get,
           user.id,
@@ -43,14 +42,13 @@ const useOAuthLogin = () => {
 
   const completeUserProfile = async (authData) => {
     const { accessToken, user } = authData;
+    dispatch(setAuth(authData));
     const fullUserData = await getUserProfile(
       get,
       user.id,
       user.userType,
       accessToken
     );
-
-    dispatch(setAuth(authData));
     dispatch(setUser({ user: fullUserData }));
   };
 
