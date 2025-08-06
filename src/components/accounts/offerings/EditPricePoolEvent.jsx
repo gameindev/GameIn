@@ -19,8 +19,6 @@ import StatBox from "../../shared/ui/StatBox";
 import FormField from "../../shared/ui/FormField";
 import streamingLogo from "../../../assets/accounts/offerings/streaming-logo.png";
 import commercialBreak from "../../../assets/accounts/offerings/commercial-break.png";
-import socialMediaPost from "../../../assets/accounts/offerings/social-media-post.png";
-import merchProducts from "../../../assets/accounts/offerings/merch-products.png";
 
 const defaultValues = {
   streaming: { enabled: false, platform: "", timeMode: "", size: "" },
@@ -63,23 +61,9 @@ const sections = [
     type: "videoCommercial",
     image: commercialBreak,
   },
-  {
-    number: "03",
-    title: "SOCIAL MEDIA POSTING",
-    description: "You are offering to post branded content on social media",
-    type: "socialMedia",
-    image: socialMediaPost,
-  },
-  {
-    number: "04",
-    title: "MERCH, CLOTHING, PRODUCTS",
-    description: "You are offering to advertise via merch or physical products",
-    type: "merchProducts",
-    image: merchProducts,
-  },
 ];
 
-export default function EditOpportunity() {
+export default function EditPricePoolEvent() {
   const navigate = useNavigate();
 
   const { control, handleSubmit, watch } = useFormHandler({
@@ -94,12 +78,35 @@ export default function EditOpportunity() {
   return (
     <Box component="form" onSubmit={handleSubmit}>
       <Group py="3.75rem" justify="center" mb={20}>
-        <Text fz={35} align="center">
-          Edit this sponsorship opportunity
+        <Text
+          fz={35}
+          align="center"
+          style={{ display: "flex", flexDirection: "column" }}
+        >
+          Edit this
+          <Text component="span" fw={700} c={"#E2BB63"}>
+            {""} price pool event sponsorship
+          </Text>
         </Text>
       </Group>
 
       <Grid gutter={20}>
+        <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+          <StatBox title="Title (preview only)">
+            <Box p="2.5rem">
+              <OpportunityFormFields control={control} type="pricePoolTitle" />
+            </Box>
+          </StatBox>
+        </Grid.Col>
+
+        <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+          <StatBox title="Edit infos (optional for events)">
+            <Box p="2.5rem">
+              <OpportunityFormFields control={control} type="editInfos" />
+            </Box>
+          </StatBox>
+        </Grid.Col>
+
         {sections.map(({ number, title, type, image }) => (
           <Grid.Col key={type} span={{ base: 12, md: 6, lg: 4 }}>
             <StatBox
@@ -111,6 +118,7 @@ export default function EditOpportunity() {
                   {title}
                 </Text>
               }
+              background="rgba(157, 127, 239, 0.1)"
             >
               <Box p="2.5rem">
                 <Image
@@ -130,14 +138,6 @@ export default function EditOpportunity() {
             </StatBox>
           </Grid.Col>
         ))}
-
-        <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-          <StatBox title="Set Date & Title">
-            <Box p="2.5rem">
-              <OpportunityFormFields control={control} type="dateTitle" />
-            </Box>
-          </StatBox>
-        </Grid.Col>
 
         <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
           <StatBox title="Set your price">

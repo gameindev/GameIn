@@ -10,19 +10,23 @@ function FormFieldComponent({
   Component,
   componentProps = {},
   inline = false,
+  render,
 }) {
   return (
     <Controller
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => {
+        if (render) {
+          return render({ field, error });
+        }
+
         const element = (
           <Component
             {...field}
             {...componentProps}
             label={!inline ? componentProps.label : undefined}
             error={error?.message}
-            // style={inline ? { flex: 0 } : undefined}
             value={field.value}
             onChange={field.onChange}
           />

@@ -19,10 +19,10 @@ const useOAuthLogin = () => {
       );
 
       const isProfileIncomplete = !user?.userType;
-
+      let fullUserData = null;
       if (!isProfileIncomplete) {
         dispatch(setAuth({ accessToken, refreshToken, user }));
-        const fullUserData = await getUserProfile(
+        fullUserData = await getUserProfile(
           get,
           user.id,
           user.userType,
@@ -34,6 +34,7 @@ const useOAuthLogin = () => {
       return {
         isProfileIncomplete,
         authData: { accessToken, refreshToken, user },
+        fullUserData,
       };
     } catch (err) {
       return { error: err?.message || `Login failed for ${provider}` };
@@ -50,7 +51,7 @@ const useOAuthLogin = () => {
       accessToken
     );
     dispatch(setUser({ user: fullUserData }));
-
+    return fullUserData;
   };
 
   return { handleOAuthLogin, completeUserProfile };

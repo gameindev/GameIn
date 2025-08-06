@@ -52,6 +52,16 @@ const FORM_CONFIG = {
     { value: "paypal", label: "PayPal" },
     { value: "crypto", label: "Crypto" },
   ],
+  eventTypes: [
+    { value: "tournament", label: "Tournament" },
+    { value: "league", label: "League" },
+    { value: "event", label: "Event" },
+  ],
+  chooseGame: [
+    { value: "game1", label: "Game 1" },
+    { value: "game2", label: "Game 2" },
+    { value: "game3", label: "Game 3" },
+  ],
 };
 
 const getFieldConfigs = (mode, type) => {
@@ -247,6 +257,97 @@ const getFieldConfigs = (mode, type) => {
           label: "Description",
           placeholder: "Enter description",
           style: { width: "100%" },
+        },
+      },
+    ],
+    pricePoolTitle: [
+      {
+        name: "title",
+        Component: Textarea,
+        inline: false,
+        componentProps: {
+          label: "Title",
+          placeholder: "Enter title",
+          style: { width: "100%" },
+        },
+      },
+      {
+        name: "description",
+        Component: Textarea,
+        inline: false,
+        componentProps: {
+          label: "Description",
+          placeholder: "Enter description",
+          style: { width: "100%" },
+        },
+      },
+    ],
+    editInfos: [
+      {
+        name: "streamingPlatform",
+        Component: TextInput,
+        inline: true,
+        componentProps: {
+          label: "Streaming Platform",
+          style: { width: "7.5rem" },
+        },
+      },
+      {
+        name: "eventType",
+        Component: Select,
+        inline: true,
+        componentProps: {
+          data: FORM_CONFIG.eventTypes,
+          label: "Event Type",
+          placeholder: "Select type of post",
+          rightSection: <ChevronDown size="1em" />,
+          style: { width: "7.5rem" },
+        },
+      },
+      {
+        name: "eventStartDate",
+        Component: DateInput,
+        inline: true,
+        componentProps: {
+          label: "Event Starting",
+          placeholder: "Start date",
+          valueFormat: "DD/MM/YYYY",
+          clearable: true,
+          style: { width: "7.5rem" },
+        },
+      },
+      {
+        name: "eventEndDate",
+        Component: DateInput,
+        inline: true,
+        componentProps: {
+          label: "Event Ending",
+          placeholder: "End date",
+          valueFormat: "DD/MM/YYYY",
+          clearable: true,
+          style: { width: "7.5rem" },
+        },
+      },
+      {
+        name: "chooseGame",
+        Component: Select,
+        inline: true,
+        componentProps: {
+          data: FORM_CONFIG.chooseGame,
+          label: "Choose Game",
+          placeholder: "Select type of post",
+          rightSection: <ChevronDown size="1em" />,
+          style: { width: "7.5rem" },
+        },
+      },
+      {
+        name: "estimatedViewCount",
+        Component: TextInput,
+        inline: true,
+        componentProps: {
+          label: "Estimated View Count",
+          placeholder: "Enter title",
+          style: { width: "7.5rem" },
         },
       },
     ],

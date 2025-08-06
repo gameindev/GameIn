@@ -20,6 +20,10 @@ const EditOpportunity = lazy(() =>
   import("../components/accounts/offerings/EditOpportunity")
 );
 
+const EditPricePoolEvent = lazy(() =>
+  import("../components/accounts/offerings/EditPricePoolEvent")
+);
+
 const { DASHBOARD, PROFILE, SPONSORSHIPS, OFFERINGS, STATS, NEWSFEED, INBOX } =
   routePaths.ACCOUNTS;
 
@@ -32,6 +36,7 @@ const accountsdRoutes = [
   { path: OFFERINGS.ROOT, element: <Offerings /> },
   { path: OFFERINGS.CREATE_OFFERING, element: <CreateOpportunity /> },
   { path: OFFERINGS.EDIT_OFFERING, element: <EditOpportunity /> },
+  { path: OFFERINGS.EDIT_PRICEPOOLEVENT, element: <EditPricePoolEvent /> },
   { path: STATS.ROOT, element: <Stats /> },
   { path: NEWSFEED.ROOT, element: <NewsFeed /> },
   { path: INBOX.ROOT, element: <Inbox /> },
