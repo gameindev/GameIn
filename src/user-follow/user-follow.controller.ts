@@ -8,6 +8,7 @@ import {
     Get,
     UseInterceptors,
     ClassSerializerInterceptor,
+    BadRequestException,
 } from '@nestjs/common';
 import { FollowDto } from './dtos/follow.dto';
 import { UserFollowService } from './providers/user-follow.service';
@@ -16,7 +17,7 @@ import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
 
 @ApiTags('User-Follow')
-@Controller('users/:id/follow')
+@Controller('users')
 export class UserFollowController {
     constructor(private readonly followService: UserFollowService) { }
 
@@ -30,11 +31,14 @@ export class UserFollowController {
     })
     @ApiBearerAuth()
     @UseInterceptors(ClassSerializerInterceptor)
-    @Post()
+    @Post('follow')
     async follow(
         @ActiveUser() user: ActiveUserData,
         @Body() dto: FollowDto,
     ) {
+        if (dto.followingId == user.sub) {
+            throw new BadRequestException('Self following is not allowed!');
+        }
         return this.followService.follow(user.sub, dto);
     }
 
@@ -46,7 +50,7 @@ export class UserFollowController {
         description: 'User unfollowed successfully',
     })
     @ApiBearerAuth()
-    @Delete(':followingId')
+    @Delete(':followingId/follow')
     async unfollow(
         @ActiveUser() user: ActiveUserData,
         @Param('followingId', ParseIntPipe) followingId: number,
@@ -66,7 +70,7 @@ export class UserFollowController {
         type: Number,
     })
     @ApiBearerAuth()
-    @Get('followers')
+    @Get(':id/followers')
     async getFollowers(
         @Param('id', ParseIntPipe) userId: number
     ) {
@@ -84,7 +88,7 @@ export class UserFollowController {
         description: 'User ID to get following',
         type: Number,
     })
-    @Get('following')
+    @Get(':id/following')
     @ApiBearerAuth()
 
     async getFollowing(

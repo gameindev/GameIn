@@ -5,5 +5,5 @@ export interface SocialIntegrationServiceInterface {
     getAuthUrl(user: ActiveUserData): string;
     handleCallback(code: string, state: string): Promise<void>;
     refreshTokenIfNeeded(integrationId: number): Promise<void>;
-    fetchAndStoreStats(integrationId: number): Promise<void>;
+    fetchAndStoreStats(integrationId: number): Promise<any>;
 }

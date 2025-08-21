@@ -190,21 +190,22 @@ export class TwitchService implements SocialIntegrationServiceInterface {
         await this.integrationRepo.save(integration);
     }
 
-    async fetchAndStoreStats(integrationId: number): Promise<void> {
+    async fetchAndStoreStats(integrationId: number): Promise<any> {
         const integration = await this.integrationRepo.findOne({
             where: { id: integrationId },
-            relations: ['user']
+            relations: ['user'],
         });
 
         if (!integration) {
             throw new Error('Integration not found');
         }
 
-        // Refresh token first to ensure valid access_token
+        // 1. Refresh access token if needed
         await this.refreshTokenIfNeeded(integrationId);
 
+        // 2. Fetch followers count
         const followersUrl = `${this.baseUrl}/channels/followers?broadcaster_id=${integration.social_id}`;
-        const response = await firstValueFrom(
+        const followersResponse = await firstValueFrom(
             this.httpService.get(followersUrl, {
                 headers: {
                     Authorization: `Bearer ${integration.access_token}`,
@@ -212,10 +213,41 @@ export class TwitchService implements SocialIntegrationServiceInterface {
                 },
             }),
         );
-        console.log('Response from Twitch:', response.data);
-        const followersCount = response.data.total;
 
-        return followersCount;
-        // Store followers count wherever you want
+        const followersCount = followersResponse.data.total ?? 0;
+
+        // 3. Fetch most viewed video
+        const videosUrl = `${this.baseUrl}/videos?user_id=${integration.social_id}&sort=views`;
+        const videosResponse = await firstValueFrom(
+            this.httpService.get(videosUrl, {
+                headers: {
+                    Authorization: `Bearer ${integration.access_token}`,
+                    'Client-Id': this.config.twitchClientId,
+                },
+            }),
+        );
+
+        const videos = videosResponse.data.data ?? [];
+        const mostViewedVideo = videos.length > 0 ? videos[0] : null;
+
+        const mostViewed = mostViewedVideo
+            ? {
+                title: mostViewedVideo.title,
+                views: mostViewedVideo.view_count,
+                url: mostViewedVideo.url,
+            }
+            : null;
+
+        // 4. Log or store as needed
+        console.log(`[Twitch Stats] User ${integration.user.id}`, {
+            followersCount,
+            mostViewed,
+        });
+
+        // 5. Return the stats (you can also persist them)
+        return {
+            followersCount,
+            mostViewed,
+        };
     }
 }
