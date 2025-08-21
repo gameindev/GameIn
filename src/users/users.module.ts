@@ -16,6 +16,7 @@ import { CreateGoogleUserProvider } from './providers/create-google-user.provide
 import { UpdateUserRoleProvider } from './providers/update-user-role.provider';
 import { UsersBioModule } from "src/users-bio/users-bio.module";
 import { CheckOneByIdentifierProvider } from './providers/check-one-by-identifier.provider';
+import { EmailsModule } from "src/emails/emails.module";
 
 
 /**
@@ -41,6 +42,7 @@ import { CheckOneByIdentifierProvider } from './providers/check-one-by-identifie
         BrandProfilesModule,
         UsersBioModule,
         forwardRef(() => AuthModule),
+        EmailsModule
     ],
 })
 export class UsersModule { }

@@ -9,6 +9,8 @@ import { BrandProfilesService } from 'src/brand-profiles/providers/brand-profile
 import { UserType } from '../enums/user-type.enums';
 import { HashingProvider } from 'src/auth/providers/hashing.provider';
 import { UsersBioService } from 'src/users-bio/providers/users-bio.service';
+import { generateToken } from '../utils/common-utilities';
+import { EmailsService } from 'src/emails/emails.service';
 
 @Injectable()
 export class CreateUserProvider {
@@ -39,6 +41,11 @@ export class CreateUserProvider {
         private readonly hashingProvider: HashingProvider,
 
         /**
+         * Injecting EmailService
+         */
+        private readonly emailService: EmailsService,
+
+        /**
          * Injecting Datasource.
          */
         private readonly dataSource: DataSource,
@@ -56,8 +63,18 @@ export class CreateUserProvider {
 
         const newUser = queryRunner.manager.create(User, {
             ...rest,
+            token: generateToken(),
             password: hashedPassword,
         })
+
+        // Send a verification email
+        const email = this.emailService.sendTemplate('verify-account', {
+            username: newUser.username,
+            verifyUrl: 'http://localhost:3000?token='+newUser.token,
+        }, {
+            subject: 'GameIn Account Verification',
+            to: newUser.email,
+        });
 
         try {
             const savedUser = await queryRunner.manager.save(User, newUser);

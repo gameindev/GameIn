@@ -38,6 +38,9 @@ import { ViewsModule } from './views/views.module';
 import { ProfileView } from "./views/views.entity";
 import { UserFollowModule } from './user-follow/user-follow.module';
 import { UserFollow } from "./user-follow/user-follow.entity";
+import { EmailsModule } from './emails/emails.module';
+import sesConfig from "./emails/config/ses.config";
+import smtpConfig from "./emails/config/smtp.config";
 dotenvFlow.config();
 
 const ENV = process.env.NODE_ENV;
@@ -47,7 +50,7 @@ const ENV = process.env.NODE_ENV;
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: [`.env.${ENV}`, '.env'],
-            load: [appConfig, databaseConfig, twitchConfig],
+            load: [appConfig, databaseConfig, twitchConfig, sesConfig, smtpConfig],
             validationSchema: environmentValidation,
         }),
         TypeOrmModule.forRootAsync({
@@ -93,6 +96,7 @@ const ENV = process.env.NODE_ENV;
         UserSearchModule,
         ViewsModule,
         UserFollowModule,
+        EmailsModule,
     ],
     controllers: [AppController],
     providers: [

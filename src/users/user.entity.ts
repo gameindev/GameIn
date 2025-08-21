@@ -93,6 +93,12 @@ export class User {
     })
     isFirst?: boolean;
 
+    @Column({
+        default: null,
+        nullable: true
+    })
+    token?: string;
+
     @OneToOne(() => UserBio, userBio => userBio.user, {
         cascade: true,
         eager: true,

@@ -9,6 +9,9 @@
     },
     "[typescript]": {
         "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "[handlebars]": {
+        "editor.defaultFormatter": "mohd-akram.vscode-html-format"
     }
   }
   
