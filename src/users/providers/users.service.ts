@@ -35,18 +35,6 @@ export class UsersService {
         private userRepository: Repository<User>,
 
         /**
-         * Inject CreatorProfileService.
-         */
-        @Inject(CreatorProfilesService)
-        private readonly creatorProfileService: CreatorProfilesService,
-
-        /**
-         * Inject BrandProfilesService.
-         */
-        @Inject(BrandProfilesService)
-        private readonly brandProfileService: BrandProfilesService,
-
-        /**
          * Injecting createUserProvider.
          */
         @Inject(CreateUserProvider)

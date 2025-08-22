@@ -3,6 +3,7 @@ import { User } from '../users/user.entity';
 
 @Entity('user_follow')
 @Unique(['follower', 'following'])
+@Index('IDX_follower_following', ['follower', 'following'])
 export class UserFollow {
     @PrimaryGeneratedColumn()
     id: number;

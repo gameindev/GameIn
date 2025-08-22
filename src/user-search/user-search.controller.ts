@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { ClassSerializerInterceptor, Controller, Get, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserSearchService } from './providers/user-search.service';
 import { UserSearchDto } from './dtos/user-search.dto';
 import { ApiBearerAuth, ApiOperation, ApiProperty, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -51,6 +51,7 @@ export class UserSearchController {
     })
     @Get('users')
     @ApiBearerAuth()
+    @UseInterceptors(ClassSerializerInterceptor)
     @UseGuards(UserTypeGuard)
     @UserTypes(UserType.ADMIN, UserType.CREATOR, UserType.BRAND, UserType.COMMUNITY)
     public async searchUsers(@Query() userSearchDto: UserSearchDto) {
