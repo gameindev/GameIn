@@ -45,3 +45,27 @@ export const getUserProfile = async (get, userId, userType, accessToken) => {
   );
   return data;
 };
+
+export const getFollowerStats = (user) => {
+  if (!user) return { totalFollowers: 0, socials: [] };
+
+  const profileMap = {
+    CREATOR: "creatorProfile",
+    BRAND: "brandProfile",
+    COMMUNITY: "communityProfile",
+  };
+
+  const profileKey = profileMap[user.userType?.toUpperCase()];
+  const profile = user[profileKey] || {};
+
+  const totalFollowers = profile.followers || 0;
+
+  const socials = Object.entries(profile.followers || {}).map(
+    ([platform, count]) => ({
+      text: platform,
+      followers: count,
+    })
+  );
+
+  return { totalFollowers, socials };
+};

@@ -87,7 +87,7 @@ export const ProfileStats = styled.div`
       .followers,
       .joined {
         font-size: 0.625em;
-        margin: 0 0.188em 0 0.5em;
+        margin: 0 0.5em 0 0.5em;
         font-weight: 800;
         line-height: 1.2;
       }

@@ -17,3 +17,5 @@ export const userPersistConfig = createPersistConfig("user", userList);
 export const formPersistConfig = createPersistConfig("multiStepForm");
 
 export const bioPersistConfig = createPersistConfig("bio");
+
+export const followPersistConfig = createPersistConfig("follow");

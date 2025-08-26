@@ -43,7 +43,7 @@ const GoogleLoginBtn = () => {
           `/users/${userId}${profileType ? `?populate=${profileType}` : ""}`
         );
         console.log(fullUserData);
-
+      console.log("data", fullUserData);
         dispatch(setUser({ user: fullUserData }));
       }
 
@@ -71,7 +71,7 @@ const GoogleLoginBtn = () => {
       };
 
     const { data: fullUserData } = await get(`/users/${userId}${profileType ? `?populate=${profileType}` : ""}`, headers);
-
+      
     dispatch(setUser({ user: fullUserData }));
     setShowCompleteProfile(false);
     showNotification("Login Successful", `Welcome back, ${user.username}`);

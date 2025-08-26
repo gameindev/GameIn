@@ -1,149 +1,160 @@
-import { ActionIcon, Group, Table, Text } from '@mantine/core';
-import { Gamepad2, Handshake, Instagram, Music, Twitch, Twitter, UserCheck, Youtube } from 'lucide-react';
-import Verifed from '../svg-icons/Verifed';
-import Badge from '../svg-icons/Badge';
-import BadgeLevels from '../svg-icons/LevelBadge';
-import { useContext } from 'react';
-import { SearchContext } from '../../context/SearchContext';
+import { ActionIcon, Group, Table, Text } from "@mantine/core";
+import {
+  Gamepad2,
+  Handshake,
+  Instagram,
+  Music,
+  Twitch,
+  Twitter,
+  UserCheck,
+  Youtube,
+} from "lucide-react";
+import Verifed from "../svg-icons/Verifed";
+import Badge from "../svg-icons/Badge";
+import BadgeLevels from "../svg-icons/LevelBadge";
+import { useContext, useMemo } from "react";
+import { SearchContext } from "../../context/SearchContext";
+import { useSelector } from "react-redux";
+import { currentUser } from "../../stores/selectors";
 
 const elements = [
   {
-    name: 'NVIDIA',
+    name: "NVIDIA",
     info: {
-      country: 'USA',
+      country: "USA",
       verified: true,
       badge: true,
     },
     socialLinks: [
       {
-        name: 'twitch',
-        follwers: '120k',
+        name: "twitch",
+        follwers: "120k",
         icon: <Twitch size="0.7em" />,
-        url: 'twitch.com/'
+        url: "twitch.com/",
       },
       {
-        name: 'instagram',
-        follwers: '120k',
+        name: "instagram",
+        follwers: "120k",
         icon: <Instagram size="0.7em" />,
-        url: 'instagram.com/'
+        url: "instagram.com/",
       },
       {
-        name: 'twitter',
-        follwers: '120k',
+        name: "twitter",
+        follwers: "120k",
         icon: <Twitter size="0.7em" />,
-        url: 'twitter.com/'
+        url: "twitter.com/",
       },
       {
-        name: 'youtube',
-        follwers: '120k',
+        name: "youtube",
+        follwers: "120k",
         icon: <Youtube size="0.7em" />,
-        url: 'youtube.com/'
+        url: "youtube.com/",
       },
       {
-        name: 'tiktok',
-        follwers: '120k',
+        name: "tiktok",
+        follwers: "120k",
         icon: <Music size="0.7em" />,
-        url: 'youtube.com/'
+        url: "youtube.com/",
       },
       {
-        name: 'discord',
-        follwers: '120k',
+        name: "discord",
+        follwers: "120k",
         icon: <Gamepad2 size="0.7em" />,
-        url: 'dicord.com/'
+        url: "dicord.com/",
       },
     ],
     score: 5,
   },
   {
-    name: 'NVIDIA',
+    name: "NVIDIA",
     info: {
-      country: 'USA',
+      country: "USA",
       verified: true,
       badge: true,
     },
     socialLinks: [
       {
-        name: 'twitch',
-        follwers: '120k',
+        name: "twitch",
+        follwers: "120k",
         icon: <Twitch size="0.7em" />,
-        url: 'twitch.com/'
+        url: "twitch.com/",
       },
       {
-        name: 'instagram',
-        follwers: '120k',
+        name: "instagram",
+        follwers: "120k",
         icon: <Instagram size="0.7em" />,
-        url: 'instagram.com/'
+        url: "instagram.com/",
       },
       {
-        name: 'twitter',
-        follwers: '120k',
+        name: "twitter",
+        follwers: "120k",
         icon: <Twitter size="0.7em" />,
-        url: 'twitter.com/'
+        url: "twitter.com/",
       },
       {
-        name: 'youtube',
-        follwers: '120k',
+        name: "youtube",
+        follwers: "120k",
         icon: <Youtube size="0.7em" />,
-        url: 'youtube.com/'
+        url: "youtube.com/",
       },
       {
-        name: 'tiktok',
-        follwers: '120k',
+        name: "tiktok",
+        follwers: "120k",
         icon: <Music size="0.7em" />,
-        url: 'youtube.com/'
+        url: "youtube.com/",
       },
       {
-        name: 'discord',
-        follwers: '120k',
+        name: "discord",
+        follwers: "120k",
         icon: <Gamepad2 size="0.7em" />,
-        url: 'dicord.com/'
+        url: "dicord.com/",
       },
     ],
     score: 4,
   },
   {
-    name: 'NVIDIA',
+    name: "NVIDIA",
     info: {
-      country: 'USA',
+      country: "USA",
       verified: true,
       badge: true,
     },
     socialLinks: [
       {
-        name: 'twitch',
-        follwers: '120k',
+        name: "twitch",
+        follwers: "120k",
         icon: <Twitch size="0.7em" />,
-        url: 'twitch.com/'
+        url: "twitch.com/",
       },
       {
-        name: 'instagram',
-        follwers: '120k',
+        name: "instagram",
+        follwers: "120k",
         icon: <Instagram size="0.7em" />,
-        url: 'instagram.com/'
+        url: "instagram.com/",
       },
       {
-        name: 'twitter',
-        follwers: '120k',
+        name: "twitter",
+        follwers: "120k",
         icon: <Twitter size="0.7em" />,
-        url: 'twitter.com/'
+        url: "twitter.com/",
       },
       {
-        name: 'youtube',
-        follwers: '120k',
+        name: "youtube",
+        follwers: "120k",
         icon: <Youtube size="0.7em" />,
-        url: 'youtube.com/'
+        url: "youtube.com/",
       },
       {
-        name: 'tiktok',
-        follwers: '120k',
+        name: "tiktok",
+        follwers: "120k",
         icon: <Music size="0.7em" />,
-        url: 'youtube.com/'
+        url: "youtube.com/",
       },
       {
-        name: 'discord',
-        follwers: '120k',
+        name: "discord",
+        follwers: "120k",
         icon: <Gamepad2 size="0.7em" />,
-        url: 'dicord.com/'
+        url: "dicord.com/",
       },
     ],
     score: 6,
@@ -151,23 +162,31 @@ const elements = [
 ];
 
 export default function Tableview() {
+  const { user } = useSelector(currentUser);
   const { searchData } = useContext(SearchContext);
 
+  const filteredSearchData = useMemo(() => {
+    return searchData?.filter(({ id }) => id !== user.id);
+  }, [searchData, user.id]);
+
   const socialList = (socialLinks) => {
-    let totalCount = socialLinks?.reduce((acc, curr) => acc + parseInt(curr.follwers), 0);
+    let totalCount = socialLinks?.reduce(
+      (acc, curr) => acc + parseInt(curr.follwers),
+      0
+    );
     return (
       <Group>
         <Text>{totalCount}K</Text>
         <Group gap={"sm"}>
-          {socialLinks?.map(({ name, icon }) => (
-            icon && <div key={name}>{icon}</div>
-          ))}
+          {socialLinks?.map(
+            ({ name, icon }) => icon && <div key={name}>{icon}</div>
+          )}
         </Group>
       </Group>
-    )
-  }
+    );
+  };
 
-  const rows = searchData.map(({ id, username, isVerified }) => (
+  const rows = filteredSearchData.map(({ id, username, isVerified }) => (
     <Table.Tr key={id}>
       <Table.Td>{username}</Table.Td>
       <Table.Td>
@@ -178,14 +197,16 @@ export default function Tableview() {
         </Group>
       </Table.Td>
       <Table.Td>{socialList(elements[0].socialLinks)}</Table.Td>
-      <Table.Td><BadgeLevels number="4" /></Table.Td>
+      <Table.Td>
+        <BadgeLevels number="4" />
+      </Table.Td>
       <Table.Td>
         <Group>
           <ActionIcon color="secondary" size="sm" variant="filled" radius="md">
-            <Handshake/>
+            <Handshake />
           </ActionIcon>
           <ActionIcon color="primary" size="sm" variant="filled" radius="md">
-            <UserCheck/>
+            <UserCheck />
           </ActionIcon>
         </Group>
       </Table.Td>
@@ -207,5 +228,5 @@ export default function Tableview() {
         <Table.Tbody>{rows}</Table.Tbody>
       </Table>
     </Table.ScrollContainer>
-  )
+  );
 }

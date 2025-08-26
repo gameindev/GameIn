@@ -80,13 +80,13 @@ export default function Signin() {
         userType === "BRAND"
           ? "brandProfile"
           : userType === "CREATOR"
-            ? "creatorProfile"
-            : "";
+          ? "creatorProfile"
+          : "";
 
       const { data: fullUserData } = await get(
         `/users/${userId}${profileType ? `?populate=${profileType}` : ""}`
       );
-      console.log(fullUserData);
+      console.log("signin data", fullUserData);
 
       dispatch(setUser({ user: fullUserData }));
       showNotification(

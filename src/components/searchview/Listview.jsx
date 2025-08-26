@@ -8,13 +8,14 @@ import Badge from "../svg-icons/Badge";
 import BadgeLevels from "../svg-icons/LevelBadge";
 import { Search, User } from "lucide-react";
 import { useMediaQuery } from "@mantine/hooks";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useMemo } from "react";
 import { SearchContext } from "../../context/SearchContext";
 import { USERTYPES } from "../../utils/enum";
 import { calculateAge } from "../../utils/helpers/calculateAge";
-import useApi from "../../hooks/useApi";
 import { useSelector } from "react-redux";
 import { currentUser } from "../../stores/selectors";
+import FollowButton from "../shared/ui/FollowButton";
+import { getFollowerStats } from "../../services/users";
 
 const ListviewStyles = styled.div`
   display: flex;
@@ -78,51 +79,15 @@ export default function Listview({ SocialInfo }) {
   const bigscreen = useMediaQuery("(min-width: 1680px)");
   console.log("Listview searchData:", searchData);
 
-  const { post, get, del } = useApi();
-
-  const [followedUsers, setFollowedUsers] = useState([]);
-
-  useEffect(() => {
-    const fetchFollowedUsers = async () => {
-      try {
-        const response = await get(`/users/${user.id}/follow/followers`);
-        console.log(response);
-
-        const ids = response?.data?.map((u) => u.id);
-        setFollowedUsers(ids);
-      } catch (err) {
-        console.error("Failed to load followed users:", err);
-      }
-    };
-
-    fetchFollowedUsers();
-  }, []);
-
-  const handleFollow = async (followId) => {
-    try {
-      const isAlreadyFollowed = followedUsers.includes(followId);
-      console.log(isAlreadyFollowed, "isAlreadyFollowed");
-
-      if (isAlreadyFollowed) {
-        await del(`/users/${user.id}/follow/${followId}`, {
-          followingId : followId,
-        });
-        setFollowedUsers((prev) => prev.filter((id) => id !== followId));
-      } else {
-        await post(`/users/${user.id}/follow`, { followingId: followId });
-        setFollowedUsers((prev) => [...prev, followId]);
-      }
-    } catch (error) {
-      console.error("Error toggling follow status:", error);
-    }
-  };
-
   const filteredSearchData = useMemo(() => {
     return searchData?.filter(({ id }) => id !== user.id);
   }, [searchData, user.id]);
 
-  return filteredSearchData?.map(
-    ({ id, username, dateOfBirth, isVerified }) => (
+  return filteredSearchData?.map((userItem) => {
+    const { id, username, dateOfBirth, isVerified } = userItem;
+    const { totalFollowers } = getFollowerStats(userItem);
+    
+    return (
       <ListviewStyles key={id}>
         <AvatarSection className="avatar" avatar={creator} size="7em" />
         <div className="list_content">
@@ -157,7 +122,7 @@ export default function Listview({ SocialInfo }) {
               <>
                 <Text size={bigscreen ? "md" : "sm"} ta="center" c="white">
                   {" "}
-                  1.5M
+                  {totalFollowers || 0}
                 </Text>
                 <Text size={bigscreen ? "sm" : "xs"} ta="center">
                   FOLLOWERS
@@ -189,18 +154,17 @@ export default function Listview({ SocialInfo }) {
           ))}
         </div>
         <div className="action_btns">
-          <Button
+          <FollowButton
+            targetUserId={id}
             width="6.25em"
-            variant="secondary"
-            onClick={() => handleFollow(id)}
-          >
-            {followedUsers.includes(id) ? "Following" : "Follow"}
-          </Button>
+            onChange={(newStatus) => console.log("Followed:", newStatus)}
+          />
+
           <Button width="6.25em" variant="primary">
             sponsor
           </Button>
         </div>
       </ListviewStyles>
-    )
-  );
+    );
+  });
 }

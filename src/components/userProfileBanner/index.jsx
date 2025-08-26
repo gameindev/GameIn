@@ -18,6 +18,7 @@ import useProfileMediaUrls from "../../utils/helpers/useProfileMediaUrl";
 
 const UserProfileBanner = () => {
   const { user } = useSelector(currentUser);
+  console.log(user);
 
   const { avatarUrl, coverImageUrl } = useProfileMediaUrls();
   if (!user) return null;
@@ -25,6 +26,7 @@ const UserProfileBanner = () => {
   const { userType, creatorProfile, brandProfile } = user;
 
   const profile = userType === "CREATOR" ? creatorProfile : brandProfile;
+  
   const stats = {
     views: profile?.views || "0",
     followers: profile?.followers || "0",

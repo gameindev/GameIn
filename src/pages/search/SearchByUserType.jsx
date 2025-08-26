@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import SectionHeader from "../../components/shared/ui/SectionHeader";
 import { ChevronDown, Flame, Search, Star, X } from "lucide-react";
@@ -37,6 +37,13 @@ import useApi from "../../hooks/useApi";
 import { API_PATHS } from "../../services/endpoints";
 import { USERTYPES } from "../../utils/enum";
 import { SearchContext } from "../../context/SearchContext";
+import {
+  setFollowedUserIds,
+  setFollowers,
+  setFollowing,
+} from "../../stores/slices/followSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { currentUser } from "../../stores/selectors";
 
 const userTypeData = {
   creator: {
@@ -196,29 +203,56 @@ export default function SearchByUserType() {
   const { userType } = useParams();
   const [roleData, setRoleData] = useState({});
   const [view, setView] = useState("list");
-  const { control, handleSubmit } = useForm({ defaultValues });
+  const { control, handleSubmit, reset } = useForm({ defaultValues });
   const [searchData, setSearchData] = useState([]);
   const { get } = useApi();
+  const { user } = useSelector(currentUser) || {};
+  const dispatch = useDispatch();
+  const lastQueryRef = useRef(null);
 
   useEffect(() => {
     userType?.toUpperCase() === USERTYPES.CREATOR
       ? setRoleData(userTypeData.creator)
       : setRoleData(userTypeData.brand);
-  }, [setRoleData, userType]);
 
-  if (userType?.toUpperCase() !== USERTYPES.BRAND && userType?.toUpperCase() !== USERTYPES.CREATOR) return;
+    setSearchData([]);
+    reset(defaultValues);
+  }, [setRoleData, userType, reset]);
 
-  const onSubmit = async formData => {
+  if (
+    userType?.toUpperCase() !== USERTYPES.BRAND &&
+    userType?.toUpperCase() !== USERTYPES.CREATOR
+  )
+    return;
+
+  const onSubmit = async (formData) => {
     const { search_input, country } = formData;
+    const currentQuery = {
+      keyword: search_input?.trim() || "",
+      userType: userType?.toUpperCase(),
+      country: country || "",
+    };
+    if (
+      lastQueryRef.current &&
+      JSON.stringify(lastQueryRef.current) === JSON.stringify(currentQuery)
+    ) {
+      console.log("No change in search input, skipping API call");
+      return;
+    }
     try {
-      const { data } = await get(
-        API_PATHS.SEARCH({
-          keyword: search_input,
-          userType: userType?.toUpperCase(),
-          country,
-        })
-      );
+      const { data } = await get(API_PATHS.SEARCH(currentQuery));
       setSearchData(data);
+
+      if (user?.id) {
+        const followingRes = await get(API_PATHS.FOLLOW.GET_FOLLOWING(user.id));
+        const followingList = followingRes?.data || [];
+        dispatch(setFollowing(followingList));
+        dispatch(setFollowedUserIds(followingList.map((u) => u.id)));
+
+        const followersRes = await get(API_PATHS.FOLLOW.GET_FOLLOWERS(user.id));
+        dispatch(setFollowers(followersRes?.data || []));
+      }
+      lastQueryRef.current = currentQuery;
     } catch (error) {
       return Promise.reject("Complete profile error:", error);
     }
@@ -295,13 +329,19 @@ export default function SearchByUserType() {
         </form>
 
         <Text>RESULTS</Text>
-        <Divider my="sm" variant="dashed" color="white" />
+        <Divider my="sm" variant="dashed" color="#50565a" />
 
         {searchData?.results?.length ? (
-          <SearchContext.Provider value={{ searchData: searchData?.results, userType }}>
+          <SearchContext.Provider
+            value={{ searchData: searchData?.results, userType }}
+          >
             {view && viewList[view]}
           </SearchContext.Provider>
-        ) : <Text c="dimmed" ta="center" size="md">No results found</Text>}
+        ) : (
+          <Text c="dimmed" ta="center" size="md">
+            No results found
+          </Text>
+        )}
       </SearchStyles>
     )
   );
