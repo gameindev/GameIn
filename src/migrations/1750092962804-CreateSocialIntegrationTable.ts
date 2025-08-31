@@ -16,8 +16,8 @@ export class CreateSocialIntegrationTable1750092962804 implements MigrationInter
         social_id text,
         access_token text,
         refresh_token text,
-        created_at TIMESTAMP DEFAULT now(),
-        updated_at TIMESTAMP DEFAULT now(),
+        createdAt TIMESTAMP DEFAULT now(),
+        updatedAt TIMESTAMP DEFAULT now(),
         CONSTRAINT PK_social_integration_id PRIMARY KEY (id),
         CONSTRAINT FK_user_social_integration FOREIGN KEY ("userId") REFERENCES "user"(id) ON DELETE CASCADE ON UPDATE CASCADE
       );

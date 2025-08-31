@@ -27,6 +27,10 @@ export class TwitchService implements SocialIntegrationServiceInterface {
         private readonly userService: UsersService// Inject the UserRep
     ) { }
 
+    async probeProfile(accessToken: string): Promise<any>{
+        return {}
+    }
+
     getAuthUrl(user: ActiveUserData): string {
         const params = new URLSearchParams({
             client_id: this.config.twitchClientId,
@@ -153,7 +157,7 @@ export class TwitchService implements SocialIntegrationServiceInterface {
         return response.data.data[0];
     }
 
-    async refreshTokenIfNeeded(integrationId: number): Promise<void> {
+    async refreshTokenIfNeeded(integrationId: number): Promise<{ access_token: string; refresh_token?: string }> {
         const integration = await this.integrationRepo.findOne({
             where: { id: integrationId },
             relations: ['user']
@@ -188,6 +192,8 @@ export class TwitchService implements SocialIntegrationServiceInterface {
         integration.refresh_token = refresh_token;
 
         await this.integrationRepo.save(integration);
+
+        return {access_token, refresh_token}
     }
 
     async fetchAndStoreStats(integrationId: number): Promise<any> {

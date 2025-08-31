@@ -19,7 +19,6 @@ export class UserSearchService {
             .leftJoinAndSelect('user.creatorProfile', 'creator')
             .leftJoinAndSelect('user.brandProfile', 'brand')
             .where('user.isActive = true');
-        console.log(query);
 
         if (userType) {
             query = query.andWhere('user.userType = :userType', { userType });

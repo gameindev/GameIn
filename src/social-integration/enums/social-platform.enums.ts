@@ -7,5 +7,6 @@ export enum SocialPlatform {
     YOUTUBE = "YOUTUBE",
     TIKTOK = "TIKTOK",
     DISCORD = "DISCORD",
-    FACEBOOK = "FACEBOOK"
 }
+
+export type ConnectionState = 'ADD' | 'CONNECT' | 'CONNECTED';

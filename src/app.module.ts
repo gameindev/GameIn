@@ -41,6 +41,8 @@ import { UserFollow } from "./user-follow/user-follow.entity";
 import { EmailsModule } from './emails/emails.module';
 import sesConfig from "./emails/config/ses.config";
 import smtpConfig from "./emails/config/smtp.config";
+import discordConfig from "./social-integration/platforms/discord/discord.config";
+import xConfig from "./social-integration/platforms/x/x.config";
 dotenvFlow.config();
 
 const ENV = process.env.NODE_ENV;
@@ -50,7 +52,7 @@ const ENV = process.env.NODE_ENV;
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: [`.env.${ENV}`, '.env'],
-            load: [appConfig, databaseConfig, twitchConfig, sesConfig, smtpConfig],
+            load: [appConfig, databaseConfig, twitchConfig, xConfig, sesConfig, smtpConfig, discordConfig],
             validationSchema: environmentValidation,
         }),
         TypeOrmModule.forRootAsync({

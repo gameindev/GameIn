@@ -1,16 +1,48 @@
-import { Controller, Get, Query, Req } from '@nestjs/common';
+import { Controller, Get, ParseEnumPipe, Query, Req } from '@nestjs/common';
 import { SocialIntegrationService } from './providers/social-integration.service';
 import { SocialPlatform } from './enums/social-platform.enums';
 import { Request } from 'express';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { AuthType } from 'src/auth/enums/auth-type.enum';
 import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
 
+@ApiTags('Social Integration')
 @Controller('social-integration')
+@ApiBearerAuth()
 export class SocialIntegrationController {
     constructor(private readonly service: SocialIntegrationService) { }
+
+
+    /**
+   * Returns Add / Connect / Connected for a single platform
+   */
+    @Get('status')
+    // @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: 'Check connection status for a platform' })
+    @ApiQuery({ name: 'platform', enum: SocialPlatform })
+    async getStatus(
+        @Query('platform') platform: SocialPlatform,
+        @ActiveUser() user: ActiveUserData
+    ) {
+        return this.service.checkConnection(user.sub, platform);
+    }
+
+
+    /**
+   * Returns status for all supported platforms
+   */
+    @Get('status/all')
+    // @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: 'Check connection status for all platforms' })
+    async getAllStatuses(
+        @ActiveUser() user: ActiveUserData
+    ) {
+        const userId = user.sub; // e.g., req.user.id
+        const platforms = Object.values(SocialPlatform);
+        return this.service.checkAll(userId, platforms);
+    }
 
     /**
      * @description Get the URL for the OAuth2 flow
@@ -18,7 +50,6 @@ export class SocialIntegrationController {
      * @returns The URL for the OAuth2 flow
      */
     @Get('connect')
-    @ApiBearerAuth()
     @Auth(AuthType.Bearer)
     async getAuthUrl(
         @Query('platform') platform: SocialPlatform,
@@ -37,7 +68,6 @@ export class SocialIntegrationController {
      * @returns The URL to redirect to
      */
     @Get('callback')
-    @ApiBearerAuth()
     @Auth(AuthType.None)
     async handleCallback(
         @Query('platform') platform: SocialPlatform,
@@ -45,13 +75,12 @@ export class SocialIntegrationController {
         @Query('state') state: string
     ) {
         await this.service.handleCallback(platform, code, state);
-        return { message: 'Twitch Connected!' };
+        return { success: true, message: 'Platform Connected!' };
     }
 
 
 
     @Get('stats')
-    @ApiBearerAuth()
     @Auth(AuthType.Bearer)
     async fetchStats(
         @Query('platform') platform: SocialPlatform,
