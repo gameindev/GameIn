@@ -14,7 +14,7 @@ export class PreferredGames {
     user_bio: UserBio;
 
     @Column({
-        type: 'text',
+        type: 'varchar',
         nullable: true,
         length:100
     })

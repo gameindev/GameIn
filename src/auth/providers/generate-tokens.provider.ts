@@ -53,12 +53,12 @@ export class GenerateTokensProvider {
 
         return {
             user: {
-                id: user.id,
+                id: user.id, 
                 user_type: user.user_type,
             },
             accessToken,
             refreshToken
         }
-
+ 
     }
 }

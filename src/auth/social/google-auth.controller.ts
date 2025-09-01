@@ -9,11 +9,11 @@ import { AuthType } from '../enums/auth-type.enum';
 export class GoogleAuthController {
 
     constructor(
-        /**
+        /** 
          * Inject the GoogleAuthService
          */
         private readonly googleAuthService: GoogleAuthService,
-    ) { }
+    ) { } 
     
     @Post()
     public authenticate(@Body() googleTokenDto: GoogleTokenDto) {

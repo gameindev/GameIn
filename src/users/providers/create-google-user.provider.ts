@@ -26,7 +26,10 @@ export class CreateGoogleUserProvider {
             });
            
             
-           return await this.usersRepository.save(user);          
+           const savedUser =  await this.usersRepository.save(user);          
+           
+           console.log(savedUser)
+           return savedUser;
            
        } catch (error) {
            throw new ConflictException(error, {

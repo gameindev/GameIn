@@ -29,7 +29,7 @@ export class UserBio {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
     })
-    @JoinColumn()
+    @JoinColumn({ name: 'user_id' })
     user: User
 
 

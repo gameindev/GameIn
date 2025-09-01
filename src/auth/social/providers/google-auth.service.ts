@@ -66,7 +66,7 @@ export class GoogleAuthService implements OnModuleInit {
             });
 
 
-            return this.generateTokensProvider.generateTokens(newUser[0]);
+            return this.generateTokensProvider.generateTokens(newUser);
         } catch (error) {
             // throw UnauthorizedException if the user is not found
             throw new UnauthorizedException('Google authentication failed');
