@@ -12,10 +12,10 @@ export class BrandProfile {
     id: number;
 
     @Index()
-    @OneToOne(() => User, user => user.brandProfile, {
+    @OneToOne(() => User, user => user.brand_profile, {
         onDelete: 'CASCADE',
     })
-    @JoinColumn()
+    @JoinColumn({ name: 'user_id' })
     user: User;
 
     @Column({
@@ -23,22 +23,21 @@ export class BrandProfile {
         length: 30,
         nullable: true,
     })
-    brandName: string;
-
-
-    @OneToOne(() => UploadEntity, { nullable: true, eager: true, cascade: true })
-    @JoinColumn()
-    profileImage: UploadEntity;
+    brand_name: string;
 
     @OneToOne(() => UploadEntity, { nullable: true, eager: true, cascade: true })
-    @JoinColumn()
-    coverImage: UploadEntity;
+    @JoinColumn({ name: 'profile_image_id' })
+    profile_image: UploadEntity;
+
+    @OneToOne(() => UploadEntity, { nullable: true, eager: true, cascade: true })
+    @JoinColumn({ name: 'cover_image_id' })
+    cover_image: UploadEntity;
 
     @Column({
         type: 'text',
         nullable: true,
     })
-    headOffice: string;
+    head_office: string;    
 
     @Column({
         type: 'varchar',
@@ -75,12 +74,12 @@ export class BrandProfile {
     rank: number;
 
     @CreateDateColumn()
-    createdAt: Date;
+    created_at: Date;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updated_at: Date;   
 
     @DeleteDateColumn()
-    deletedAt: Date;
+    deleted_at: Date;
 
 }

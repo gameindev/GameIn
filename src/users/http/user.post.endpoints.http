@@ -6,6 +6,6 @@ Content-Type: application/json
     "username": "Ron Wisley",
     "email": "ron@email.com",
     "password": "Kj#9mP$2nL",
-    "userType": "CREATOR",
-    "dateOfBirth": "01-01-1990"
+    "user_type": "CREATOR",
+    "date_of_birth": "01-01-1990"
 } 

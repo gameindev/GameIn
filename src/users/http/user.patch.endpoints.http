@@ -7,8 +7,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIyLCJlbWFpb
     "username": "johndoe",
     "email": "johndoe@email.com",
     "password": "Allizw3ll#",
-    "userType": "BRAND",
-    "dateOfBirth": "01-01-1998"
+    "user_type": "BRAND",
+    "date_of_birth": "01-01-1998"
 }
 
 
@@ -19,5 +19,5 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIyLCJlbWFpb
 
 {
     "password": "All2On3#",
-    "userType": "BRAND"
+    "user_type": "BRAND"
 }

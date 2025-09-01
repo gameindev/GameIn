@@ -5,14 +5,8 @@ export class CreatePaymentTable1756617183082 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
-            DO $$ BEGIN
-                IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'payment_id_seq') THEN
-                    CREATE SEQUENCE payment_id_seq START 1;
-                END IF;
-            END $$;
-
             CREATE TABLE IF NOT EXISTS "payment" (
-                id integer NOT NULL DEFAULT nextval('payment_id_seq'),
+                id SERIAL NOT NULL PRIMARY KEY,
                 payment_intent_id integer NOT NULL,
                 provider_payment_id TEXT UNIQUE,
                 amount_captured NUMERIC(12,2) NOT NULL,
@@ -23,9 +17,10 @@ export class CreatePaymentTable1756617183082 implements MigrationInterface {
                 failure_message TEXT,
                 meta_data JSONB,
                 succeeded_at TIMESTAMP,
-                "createdAt" timestamp DEFAULT now() NOT NULL,
+                "created_at" timestamp DEFAULT now() NOT NULL,
+                "updated_at" timestamp DEFAULT now() NOT NULL,
+                "deleted_at" timestamp,
 
-                CONSTRAINT "PK_yu67i9b4d57678uy2348467a345" PRIMARY KEY (id),
                 CONSTRAINT "FK_86109oiy8b30akjui7t45dby679" FOREIGN KEY ("payment_intent_id") REFERENCES "payment_intent"(id) ON DELETE CASCADE
             );
         `);
@@ -34,7 +29,6 @@ export class CreatePaymentTable1756617183082 implements MigrationInterface {
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
             DROP TABLE IF EXISTS "payment";
-            DROP SEQUENCE IF EXISTS "payment_id_seq";
         `);
     }
 

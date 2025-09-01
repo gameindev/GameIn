@@ -48,7 +48,7 @@ export class UsersController {
         description: `
     Returns paginated users. Use the 'populate' query param to load related entities.
 
-    - Use \`populate=creatorProfile\`, \`brandProfile\`, etc. to include specific relations
+    - Use \`populate=creator_profile\`, \`brand_profile\`, etc. to include specific relations
     - Use \`populate=*\` to include all supported relations dynamically
   `,
     })
@@ -72,11 +72,11 @@ export class UsersController {
         required: false,
         description: `Comma-separated list of relations to include.
 Options depend on valid relations in User entity, e.g.:
-  - creatorProfile
-  - brandProfile
+  - creator_profile
+  - brand_profile
 
 Use '*' to load all supported relations.`,
-        example: 'creatorProfile,ratingsGiven',
+        example: 'creator_profile,ratings_given',
     })
     @ApiResponse({
         status: 200,
@@ -159,11 +159,11 @@ Use '*' to load all supported relations.`,
       Returns user data by ID. You can optionally include related entities using the \`populate\` query param.
       
       ### Populate Options:
-      - \`creatorProfile\`: Include Creator Profile (for users with userType: CREATOR)
-      - \`brandProfile\`: Include Brand Profile (if applicable)
-      - \`ratingsGiven\`: Ratings this user has given
-      - \`ratingsReceived\`: Ratings this user has received
-      - \`userFaqs\`: FAQs associated with the user
+      - \`creator_profile\`: Include Creator Profile (for users with userType: CREATOR)
+      - \`brand_profile\`: Include Brand Profile (if applicable)
+      - \`ratings_given\`: Ratings this user has given
+      - \`ratings_received\`: Ratings this user has received
+      - \`user_faqs\`: FAQs associated with the user
       - \`*\`: Include all supported relations
       
       Use comma-separated values to load multiple relations.
@@ -181,7 +181,7 @@ Use '*' to load all supported relations.`,
         type: String,
         description: `Optional. Comma-separated list of valid relation keys.
       Only valid relations on the User entity will be included. Invalid values will be ignored.`,
-        example: 'creatorProfile,ratingsReceived',
+        example: 'creator_profile,ratings_received',
     })
     @ApiResponse({
         status: 200,

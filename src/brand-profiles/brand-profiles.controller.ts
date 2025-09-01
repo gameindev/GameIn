@@ -37,9 +37,9 @@ export class BrandProfilesController {
         schema: {
             type: 'object',
             properties: {
-                userId: { type: 'number', example: 1 },
-                brandName: { type: 'string', example: 'Brand Name' },
-                headOffice: { type: 'string', example: 'Head Office' },
+                user_id: { type: 'number', example: 1 },
+                brand_name: { type: 'string', example: 'Brand Name' },
+                head_office: { type: 'string', example: 'Head Office' },
                 contact: { type: 'string', example: '0123456789' },
                 website: { type: 'string', example: 'www.example.com' },
                 followers: { type: 'number', example: 1000 },
@@ -73,20 +73,20 @@ export class BrandProfilesController {
         schema: {
             type: 'object',
             properties: {
-                profileImageFile: { type:'string', format: 'binary' }
+                profile_image: { type:'string', format: 'binary' }
             }
         }
     })
     @ApiBearerAuth()
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileFieldsInterceptor([
-        { name: 'profileImageFile', maxCount: 1 }
+        { name: 'profile_image', maxCount: 1 }
     ]))
     updateProfilePic(
         @Param('id') profileId: number,
         @UploadedFiles() profileImageFile: Express.Multer.File[],
     ) {
-        const file = profileImageFile['profileImageFile'][0];
+        const file = profileImageFile['profile_image'][0];
         return this.brandProfilesService.updateBrandProfilePic(profileId, file);
     }
 
@@ -106,20 +106,20 @@ export class BrandProfilesController {
         schema: {
             type: 'object',
             properties: {
-                coverImageFile: { type:'string', format: 'binary' }
+                cover_image: { type:'string', format: 'binary' }
             }
         }
     })
     @ApiBearerAuth()
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileFieldsInterceptor([
-        { name: 'coverImageFile', maxCount: 1 }
+        { name: 'cover_image', maxCount: 1 }
     ]))
     updateCoverPic(
         @Param('id') profileId: number,
         @UploadedFiles() coverImageFile: Express.Multer.File[],
     ) {
-        const file = coverImageFile['coverImageFile'][0]; 
+        const file = coverImageFile['cover_image'][0]; 
         return this.brandProfilesService.updateBrandCoverPic(profileId, file);
     }
 }

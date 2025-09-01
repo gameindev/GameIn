@@ -5,20 +5,21 @@ export class CreatePreferredGamesTable1750234357114 implements MigrationInterfac
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
-            CREATE SEQUENCE IF NOT EXISTS preferred_games_id_seq START 1;
 
             CREATE TABLE IF NOT EXISTS "preferred_games" (
-              id integer NOT NULL DEFAULT nextval('preferred_games_id_seq'),
-              "userBioId" integer NOT NULL,
-              "gameUrl" varchar(100) NOT NULL,
-              "sortOrder" integer DEFAULT 0,
-              "createdAt" timestamp DEFAULT now() NOT NULL,
-              "updatedAt" timestamp DEFAULT now() NOT NULL,
-              CONSTRAINT "PK_preferred_games_id" PRIMARY KEY (id),
-              CONSTRAINT "FK_user_bio_preferred_games" FOREIGN KEY ("userBioId") REFERENCES "user_bio"(id) ON DELETE CASCADE ON UPDATE CASCADE
+                id SERIAL NOT NULL PRIMARY KEY,
+                "user_bio_id" integer NOT NULL,
+                "game_url" varchar(100) NOT NULL,
+                "sort_order" integer DEFAULT 0 NOT NULL,    
+                "created_at" timestamp DEFAULT now() NOT NULL,
+                "updated_at" timestamp DEFAULT now() NOT NULL,
+                "deleted_at" timestamp,
+                
+                CONSTRAINT "FK_user_bio_preferred_games" FOREIGN KEY ("user_bio_id") REFERENCES "user_bio"(id) ON DELETE CASCADE ON UPDATE CASCADE,
+                CONSTRAINT "UQ_user_bio_game_url" UNIQUE ("user_bio_id", "game_url")
             );
 
-            CREATE INDEX IF NOT EXISTS "IDX_user_bio_preferred_games" ON "preferred_games" ("userBioId");
+            CREATE INDEX IF NOT EXISTS "IDX_user_bio_preferred_games" ON "preferred_games" ("user_bio_id");
         `);
     }
 
@@ -26,7 +27,6 @@ export class CreatePreferredGamesTable1750234357114 implements MigrationInterfac
         await queryRunner.query(`
             DROP INDEX IF EXISTS "IDX_user_bio_preferred_games";
             DROP TABLE IF EXISTS "preferred_games";
-            DROP SEQUENCE IF EXISTS preferred_games_id_seq;
         `);
     }
 }

@@ -48,30 +48,30 @@ export class UsersBioService {
             const userBioRepoTx = manager.getRepository(UserBio);
             const preferredGamesRepoTx = manager.getRepository(PreferredGames);
 
-            const { preferredGames, userId, ...bioFields } = patchBioDto;
+            const { preferred_games, user_id, ...bioFields } = patchBioDto;
 
             let userBio = await userBioRepoTx.findOne({
-                where: { user: { id: userId } },
+                where: { user: { id: user_id } },
             });
 
             if (userBio) {
-                await userBioRepoTx.update({ user: { id: userId } }, bioFields);
+                await userBioRepoTx.update({ user: { id: user_id } }, bioFields);
             } else {
                 userBio = userBioRepoTx.create({
-                    user: { id: userId },
+                    user: { id: user_id },
                     ...bioFields,
                 });
                 userBio = await userBioRepoTx.save(userBio); // ✅ make sure to get inserted id
             }
 
 
-            if (preferredGames) {
-                await this.preferredGamesService.syncPreferredGames(userBio.id, preferredGames, manager); // ✅ pass correct FK
+            if (preferred_games) {
+                await this.preferredGamesService.syncPreferredGames(userBio.id, preferred_games, manager); // ✅ pass correct FK
             }
 
             const updatedBio = await userBioRepoTx.findOne({
-                where: { user: { id: userId } },
-                relations: ['preferredGames'],
+                where: { user: { id: user_id } },
+                relations: ['preferred_games'],
             });
 
             return updatedBio;

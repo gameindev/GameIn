@@ -9,18 +9,18 @@ export class UserFollow {
     id: number;
 
     @ManyToOne(() => User, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'followerId' })
+    @JoinColumn({ name: 'follower_id' })
     @Index()
     follower: User;
 
     @ManyToOne(() => User, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'followingId' })
+    @JoinColumn({ name: 'following_id' })
     @Index()
     following: User;
 
     @CreateDateColumn()
-    createdAt: Date;
+    created_at: Date;
 
     @DeleteDateColumn()
-    deletedAt: Date;
+    deleted_at: Date;
 }

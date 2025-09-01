@@ -5,14 +5,9 @@ export class CreateInvoiceTable1756614964725 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
-            DO $$ BEGIN
-                IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'invoice_id_seq') THEN
-                    CREATE SEQUENCE invoice_id_seq START 1;
-                END IF;
-            END $$;
 
             CREATE TABLE IF NOT EXISTS "invoice" (
-                id integer NOT NULL DEFAULT nextval('invoice_id_seq'),
+                id SERIAL NOT NULL PRIMARY KEY,
                 order_id integer NOT NULL,
                 invoice_number varchar(30) NOT NULL,
                 status invoice_status_enum NOT NULL,
@@ -23,10 +18,10 @@ export class CreateInvoiceTable1756614964725 implements MigrationInterface {
                 issued_at  TIMESTAMP NOT NULL DEFAULT now(),
                 due_at  TIMESTAMP,
                 pdf_url TEXT,
-                "createdAt" timestamp DEFAULT now() NOT NULL,
-                "updatedAt" timestamp DEFAULT now() NOT NULL,
-
-                CONSTRAINT "PK_6a67i9b4d57fyu678348467a345" PRIMARY KEY (id),
+                "created_at" timestamp DEFAULT now() NOT NULL,
+                "updated_at" timestamp DEFAULT now() NOT NULL,
+                "deleted_at" timestamp,
+       
                 CONSTRAINT "REL_861ejhd65m84kui89oiu89e543" UNIQUE ("invoice_number"),
                 CONSTRAINT "FK_861c4abn6750aa14wrt45dby679" FOREIGN KEY ("order_id") REFERENCES "offer_order"(id) ON DELETE CASCADE
             );
@@ -36,7 +31,6 @@ export class CreateInvoiceTable1756614964725 implements MigrationInterface {
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
             DROP TABLE IF EXISTS "invoice";
-            DROP SEQUENCE IF EXISTS "invoice_id_seq";
         `);
     }
 

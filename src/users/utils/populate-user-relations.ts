@@ -20,18 +20,18 @@ export async function populateUserRelations({
     const tasks = users.map(async (user) => {
         if (
             requestedRelations.includes('creatorProfile') &&
-            user.userType === UserType.CREATOR
+            user.user_type === UserType.CREATOR
         ) {
-            user.creatorProfile = await creatorProfileRepo.findOne({
+            user.creator_profile = await creatorProfileRepo.findOne({
                 where: { user: { id: user.id } },
             });
         }
 
         if (
             requestedRelations.includes('brandProfile') &&
-            user.userType === UserType.BRAND
+            user.user_type === UserType.BRAND
         ) {
-            user.brandProfile = await brandProfileRepo.findOne({
+            user.brand_profile = await brandProfileRepo.findOne({
                 where: { user: { id: user.id } },
             });
         }

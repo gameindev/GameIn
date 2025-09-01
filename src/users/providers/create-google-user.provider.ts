@@ -19,10 +19,10 @@ export class CreateGoogleUserProvider {
     public async createGoogleUser(googleUser: GoogleUser){
        try {
             const user = this.usersRepository.create({
-                googleId: googleUser.googleId,
+                google_id: googleUser.google_id,
                 email: googleUser.email,
                 username: googleUser.given_name,
-                userType: null
+                user_type: null
             });
            
             

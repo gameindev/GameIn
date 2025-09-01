@@ -30,8 +30,8 @@ export class UsersBioController {
     async updateUserBio(
         @Body() patchUserBioDto: PatchBioDto,
     ) {
-        if (patchUserBioDto.preferredGames) {
-            patchUserBioDto.preferredGames = await this.metadataService.enrichPreferredGames(patchUserBioDto.preferredGames);
+        if (patchUserBioDto.preferred_games) {
+            patchUserBioDto.preferred_games = await this.metadataService.enrichPreferredGames(patchUserBioDto.preferred_games); 
         }
 
         return await this.userBioService.updateUserBio(patchUserBioDto);

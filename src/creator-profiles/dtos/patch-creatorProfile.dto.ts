@@ -17,5 +17,5 @@ export class PatchCreatorProfileDto extends PartialType(CreateCreatorProfileDto)
     })
     @IsInt()
     @IsNotEmpty()
-    userId: number;
+    user_id: number;
 }

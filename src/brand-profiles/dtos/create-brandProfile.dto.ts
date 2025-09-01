@@ -8,23 +8,23 @@ export class CreateBrandProfileDto {
     @IsString()
     @IsOptional()
     @MaxLength(30)
-    brandName?: string;
+    brand_name?: string;
 
     @ApiPropertyOptional({ example: 1, description: 'ID of uploaded profile image' })
     @IsOptional()
     @IsInt()
-    profileImageId?: number;
+    profile_image_id?: number;
 
     @ApiPropertyOptional({ example: 2, description: 'ID of uploaded cover image' })
     @IsOptional()
     @IsInt()
-    coverImageId?: number;
+    cover_image_id?: number;
 
     @ApiPropertyOptional({ example: 'New York', maxLength: 30 })
     @IsOptional()
     @IsString()
     @MaxLength(30)
-    headOffice?: string;
+    head_office?: string;
 
     @ApiPropertyOptional({ example: '+91-9876543210', maxLength: 20 })
     @IsOptional()

@@ -19,7 +19,7 @@ export class PreferredGamesService {
         const repo = manager.getRepository(PreferredGames);
 
         const existingGames = await repo.find({
-            where: { userBio: { id: userBioId } },
+            where: { user_bio: { id: userBioId } },
         });
 
         const existingIds = existingGames.map(g => g.id);
@@ -33,16 +33,16 @@ export class PreferredGamesService {
         for (const game of games) {
             if (game.id) {
                 await repo.update(game.id, {
-                    gameUrl: game.gameUrl,
-                    sortOrder: game.sortOrder,
-                    metadata: game.metaData,
+                    game_url: game.game_url,
+                    sort_order: game.sort_order,
+                    meta_data: game.meta_data,
                 });
             } else {
                 await repo.save({
-                    userBio: { id: userBioId },
-                    gameUrl: game.gameUrl,
-                    sortOrder: game.sortOrder,
-                    metadata: game.metaData,
+                    user_bio: { id: userBioId },
+                    game_url: game.game_url,
+                    sort_order: game.sort_order,
+                    meta_data: game.meta_data,
                 });
             }
         }

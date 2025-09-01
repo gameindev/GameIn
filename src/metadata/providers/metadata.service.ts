@@ -86,10 +86,10 @@ export class MetadataService {
     async enrichPreferredGames(preferredGames: PatchPreferredGamesDto[]): Promise<PatchPreferredGamesDto[]> {
         const enriched = await Promise.all(
             preferredGames.map(async (game) => {
-                const metadata = await this.extractMetadata(game.gameUrl);
+                const metadata = await this.extractMetadata(game.game_url);
                 return {
                     ...game,
-                    metaData: metadata,
+                    meta_data: metadata,
                 };
             })
         );

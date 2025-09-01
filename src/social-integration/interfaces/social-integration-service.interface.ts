@@ -16,7 +16,7 @@ export interface SocialIntegrationServiceInterface {
 }
 
 export interface ConnectionCheckResult {
-    userId: number;
+    user_id: number;
     platform: SocialPlatform; // your enum
     state: ConnectionState;   // 'ADD' | 'CONNECT' | 'CONNECTED'
     label: 'Add' | 'Connect' | 'Connected';

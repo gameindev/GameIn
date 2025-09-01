@@ -1,6 +1,6 @@
 import { PreferredGames } from "src/preferred-games/preferred-games.entity";
 import { User } from "src/users/user.entity";
-import { Column, Entity, Index, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, Index, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 
 /**
@@ -21,11 +21,11 @@ export class UserBio {
         type: 'text',
         nullable: true,
     })
-    videoBioUrl: string;
+    video_bio_url: string;
 
 
     @Index()
-    @OneToOne(() => User, user => user.userBio, {
+    @OneToOne(() => User, user => user.user_bio, {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
     })
@@ -33,11 +33,20 @@ export class UserBio {
     user: User
 
 
-    @OneToMany(() => PreferredGames, preferredGame => preferredGame.userBio, {
+    @OneToMany(() => PreferredGames, preferredGame => preferredGame.user_bio, {
         cascade: true,
         eager: true,
         nullable: true,
     })
-    preferredGames?: PreferredGames[];
+    preferred_games?: PreferredGames[];
+
+    @CreateDateColumn()
+    created_at: Date;
+
+    @UpdateDateColumn()
+    updated_at: Date;
+
+    @DeleteDateColumn()
+    deleted_at: Date;
 
 }

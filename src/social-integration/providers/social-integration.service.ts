@@ -47,21 +47,21 @@ export class SocialIntegrationService {
         // 1) No row at all => "ADD"
         const row = await this.integrationRepo.findOne({ where: { user: { id: userId }, platform } });
         if (!row) {
-            return { userId, platform, state: 'ADD', label: this.labelFor('ADD') };
+            return { user_id: userId, platform, state: 'ADD', label: this.labelFor('ADD') };
         }
 
         // 2) Need a provider implementation
         const provider = this.providers[platform];
         if (!provider) {
             this.logger.error(`No social provider registered for ${platform}`);
-            return { userId, platform, state: 'CONNECT', label: this.labelFor('CONNECT'), warning: 'NO_PROVIDER' };
+            return { user_id: userId, platform, state: 'CONNECT', label: this.labelFor('CONNECT'), warning: 'NO_PROVIDER' };
         }
 
         // 3) Probe with current access token
         try {
             const profile = await provider.probeProfile(row.access_token);
             const summary = provider.profileSummary?.(profile);
-            return { userId, platform, state: 'CONNECTED', label: this.labelFor('CONNECTED'), summary };
+            return { user_id: userId, platform, state: 'CONNECTED', label: this.labelFor('CONNECTED'), summary };
         } catch (err) {
             // 4) Try refresh on auth failure (if refresh_token + provider supports refresh)
             if (this.isUnauthorized(err) && row.refresh_token && provider.refreshTokenIfNeeded(userId, row.refresh_token)) {
@@ -76,7 +76,7 @@ export class SocialIntegrationService {
                         try {
                             const profile = await provider.probeProfile(row.access_token);
                             const summary = provider.profileSummary?.(profile);
-                            return { userId, platform, state: 'CONNECTED', label: this.labelFor('CONNECTED'), refreshed: true, summary };
+                            return { user_id: userId, platform, state: 'CONNECTED', label: this.labelFor('CONNECTED'), refreshed: true, summary };
                         } catch (err2) {
                             this.logger.warn(`Re-probe failed after refresh (${platform}): ${err2?.message ?? err2}`);
                         }
@@ -88,11 +88,11 @@ export class SocialIntegrationService {
 
             // 5) Rate limited => token likely valid; keep "CONNECTED" but warn UI (e.g., grey tooltip)
             if (this.isRateLimited(err)) {
-                return { userId, platform, state: 'CONNECTED', label: this.labelFor('CONNECTED'), warning: 'RATE_LIMIT' };
+                return { user_id: userId, platform, state: 'CONNECTED', label: this.labelFor('CONNECTED'), warning: 'RATE_LIMIT' };
             }
 
             // 6) Anything else => we have a row but it’s not usable => "CONNECT" (re-auth)
-            return { userId, platform, state: 'CONNECT', label: this.labelFor('CONNECT') };
+            return { user_id: userId, platform, state: 'CONNECT', label: this.labelFor('CONNECT') };
         }
     }
 

@@ -20,7 +20,7 @@ export class UserFollowService {
     async follow(followerId: number, dto: FollowDto) {
         const follower = await this.userRepo.findOne({ where: { id: followerId } });
         const following = await this.userRepo.findOne({ 
-            where: { id: dto.followingId },
+            where: { id: dto.following_id },
             relations: ['creatorProfile', 'brandProfile']
         });
 
@@ -29,16 +29,16 @@ export class UserFollowService {
         const existing = await this.followRepo.findOne({
             where: {
                 follower: { id: followerId },
-                following: { id: dto.followingId },
+                following: { id: dto.following_id },
             },
             relations: ['follower', 'following'],
             withDeleted: true,
         });
 
         if (existing) {
-            if (existing.deletedAt) {
+            if (existing.deleted_at) {
                 // Reactivate soft-deleted follow
-                existing.deletedAt = null;
+                existing.deleted_at = null;
                 const result = await this.followRepo.save(existing);
                 await this.increaseFollowerCount(following);
 
@@ -92,26 +92,26 @@ export class UserFollowService {
 
 
     async increaseFollowerCount(user: User) {
-        if (user.creatorProfile != null && user.brandProfile == null) {
-            user.creatorProfile.followers++;
+        if (user.creator_profile != null && user.brand_profile == null) {
+            user.creator_profile.followers++;
             return await this.userRepo.save(user);
         }
 
-        if (user.brandProfile != null && user.creatorProfile == null) {
-            user.brandProfile.followers++;
+        if (user.brand_profile != null && user.creator_profile == null) {
+            user.brand_profile.followers++;
             return await this.userRepo.save(user);
         }
     }
 
 
     async descreaseFollowerCount(user: User) {
-        if (user.creatorProfile != null && user.brandProfile == null) {
-            user.creatorProfile.followers--;
+        if (user.creator_profile != null && user.brand_profile == null) {
+            user.creator_profile.followers--;
             return await this.userRepo.save(user);
         }
 
-        if (user.brandProfile != null && user.creatorProfile == null) {
-            user.brandProfile.followers--;
+        if (user.brand_profile != null && user.creator_profile == null) {
+            user.brand_profile.followers--;
             return await this.userRepo.save(user);
         }
     }

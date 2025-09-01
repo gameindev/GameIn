@@ -19,7 +19,7 @@ export class UpdateCreatorProfileProvider {
 
         try {
             creatorProfile = await this.creatorProfileRepository.findOne({
-                where: { user: { id: patchCreatorProfileDto.userId } }
+                where: { user: { id: patchCreatorProfileDto.user_id } }
             });
         } catch (error) {
             throw new InternalServerErrorException('Error while trying to find creator profile.');

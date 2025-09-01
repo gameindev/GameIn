@@ -13,32 +13,34 @@ export class UserSearchService {
     ) { }
 
     async searchUsers(dto: UserSearchDto) {
-        const { keyword, userType, country, page, limit } = dto;
+        const { keyword, user_type, country, page, limit } = dto;
 
         let query = this.userRepository.createQueryBuilder('user')
-            .leftJoinAndSelect('user.creatorProfile', 'creator')
-            .leftJoinAndSelect('user.brandProfile', 'brand')
-            .where('user.isActive = true');
+            .leftJoinAndSelect('user.creator_profile', 'creator')
+            .leftJoinAndSelect('user.brand_profile', 'brand')
+            .where('user.is_active = true');
 
-        if (userType) {
-            query = query.andWhere('user.userType = :userType', { userType });
+        if (user_type) {
+            query = query.andWhere('user.user_type = :user_type', { user_type: user_type });
         }
 
         if (keyword) {
             query = query.andWhere(new Brackets(qb => {
                 qb.where('user.username ILIKE :keyword', { keyword: `%${keyword}%` })
                     .orWhere('user.email ILIKE :keyword', { keyword: `%${keyword}%` })
-                    .orWhere('creator.firstName ILIKE :keyword', { keyword: `%${keyword}%` })
-                    .orWhere('creator.lastName ILIKE :keyword', { keyword: `%${keyword}%` })
-                    .orWhere('brand.brandName ILIKE :keyword', { keyword: `%${keyword}%` })
-                    .orWhere('brand.headOffice ILIKE :keyword', { keyword: `%${keyword}%` });
+                    .orWhere('creator.first_name ILIKE :keyword', { keyword: `%${keyword}%` })
+                    .orWhere('creator.last_name ILIKE :keyword', { keyword: `%${keyword}%` })
+                    .orWhere('brand.brand_name ILIKE :keyword', { keyword: `%${keyword}%` })
+                    .orWhere('brand.head_office ILIKE :keyword', { keyword: `%${keyword}%` });
             }));
         }
 
         if (country) {
             query = query.andWhere(new Brackets(qb => {
                 qb.where('creator.country ILIKE :country', { country: `%${country}%` })
-                    .orWhere('brand.headOffice ILIKE :country', { country: `%${country}%` });
+                    .orWhere('brand.head_office ILIKE :country', { country: `%${country}%` })
+                    .orWhere('brand.country ILIKE :country', { country: `%${country}%` })
+                    .orWhere('user.country ILIKE :country', { country: `%${country}%` });
             }));
         }
 

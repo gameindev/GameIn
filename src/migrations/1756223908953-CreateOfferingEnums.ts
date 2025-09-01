@@ -35,35 +35,7 @@ export class CreateOfferingEnums1756223908953 implements MigrationInterface {
             END $$;
         `);
 
-        await queryRunner.query(`
-            DO $$ BEGIN
-                IF NOT EXISTS (
-                    SELECT 1 FROM pg_type WHERE typname = 'time_mode_enum'
-                ) THEN
-                    CREATE TYPE "time_mode_enum" AS ENUM ('LIVE', 'VOD', 'SCHEDULED');
-                END IF; 
-            END $$;
-        `);
-
-        await queryRunner.query(`
-            DO $$ BEGIN
-                IF NOT EXISTS (
-                    SELECT 1 FROM pg_type WHERE typname = 'size_preset_enum'
-                ) THEN
-                    CREATE TYPE "size_preset_enum" AS ENUM ('SMALL', 'MEDIUM', 'LARGE', 'CUSTOM');
-                END IF; 
-            END $$;
-        `);
-
-        await queryRunner.query(`
-            DO $$ BEGIN
-                IF NOT EXISTS (
-                    SELECT 1 FROM pg_type WHERE typname = 'event_type_enum'
-                ) THEN
-                    CREATE TYPE "event_type_enum" AS ENUM ('TOURNAMENT', 'MATCH', 'SCRIM', 'LAN', 'OTHER');
-                END IF; 
-            END $$;
-        `);
+        
 
         // Order/Payments
         await queryRunner.query(`
@@ -81,7 +53,7 @@ export class CreateOfferingEnums1756223908953 implements MigrationInterface {
                 IF NOT EXISTS (
                     SELECT 1 FROM pg_type WHERE typname = 'payment_provider_enum'
                 ) THEN
-                    CREATE TYPE "payment_provider_enum" AS ENUM ('STRIPE', 'PAYPAL', 'MANUAL');
+                    CREATE TYPE "payment_provider_enum" AS ENUM ('STRIPE', 'PAYPAL', 'RAZORPAY', 'MANUAL');
                 END IF; 
             END $$;
         `);
@@ -148,9 +120,6 @@ export class CreateOfferingEnums1756223908953 implements MigrationInterface {
         await queryRunner.query(`DROP TYPE IF EXISTS "payment_method_enum";`);
         await queryRunner.query(`DROP TYPE IF EXISTS "payment_provider_enum";`);
         await queryRunner.query(`DROP TYPE IF EXISTS "order_status_enum";`);
-        await queryRunner.query(`DROP TYPE IF EXISTS "event_type_enum";`);
-        await queryRunner.query(`DROP TYPE IF EXISTS "size_preset_enum";`);
-        await queryRunner.query(`DROP TYPE IF EXISTS "time_mode_enum";`);
         await queryRunner.query(`DROP TYPE IF EXISTS "offering_category_enum";`);
         await queryRunner.query(`DROP TYPE IF EXISTS "offering_status_enum";`);
         await queryRunner.query(`DROP TYPE IF EXISTS "offering_type_enum";`);

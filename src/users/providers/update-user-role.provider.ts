@@ -42,7 +42,7 @@ export class UpdateUserRoleProvider {
 
 
     async updateOAuthUserRole(patchUserRoleDto: PathcUserRoleDto, userSub: ActiveUserData) {
-        const { password, userType } = patchUserRoleDto;
+        const { password, user_type } = patchUserRoleDto;
 
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
@@ -58,12 +58,12 @@ export class UpdateUserRoleProvider {
             let tokens = undefined;
 
             // Only update userType if null
-            if (user.userType === null) {
-                user.userType = userType;
+            if (user.user_type === null) {
+                user.user_type = user_type;
 
-                if (userType === UserType.CREATOR) {
+                if (user_type === UserType.CREATOR) {
                     await this.creatorProfileService.createProfileForUser(user, queryRunner);
-                } else if (userType === UserType.BRAND) {
+                } else if (user_type === UserType.BRAND) {
                     await this.brandProfileService.createProfileForUser(user, queryRunner);
                 }
 
@@ -83,7 +83,7 @@ export class UpdateUserRoleProvider {
             return {
                 user: {
                     id: user.id,
-                    userType: user.userType,
+                    user_type: user.user_type,
                 },
                 accessToken: tokens?.accessToken,
                 refreshToken: tokens?.refreshToken,

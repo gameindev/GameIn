@@ -14,7 +14,7 @@ export class UserSearchDto {
     @ApiPropertyOptional({ enum: ['CREATOR', 'BRAND'], description: 'User type to search (CREATOR or BRAND)' })
     @IsOptional()
     @IsEnum(['CREATOR', 'BRAND'])
-    userType?: 'CREATOR' | 'BRAND';
+    user_type?: 'CREATOR' | 'BRAND';
 
     @ApiPropertyOptional({ description: 'Country filter' })
     @IsOptional()   

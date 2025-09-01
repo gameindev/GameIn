@@ -61,7 +61,7 @@ export class CreateUserDto {
     })
     @IsEnum(UserType)
     @IsNotEmpty()
-    userType: UserType;
+    user_type: UserType;
 
     @ApiProperty({
         description: 'The date of birth of the user in DD-MM-YYYY format',
@@ -73,7 +73,7 @@ export class CreateUserDto {
     @Matches(/^\d{2}-\d{2}-\d{4}$/, {
         message: 'Date must be in DD-MM-YYYY format',
     })
-    dateOfBirth: string;
+    date_of_birth: string;
 
     // @ApiPropertyOptional({
     //     type: () => CreateCreatorProfileDto,
@@ -99,17 +99,9 @@ export class CreateUserDto {
     })
     @IsBoolean()
     @IsOptional()
-    isActive?: boolean;
+    is_active?: boolean;
 
-    @ApiPropertyOptional({
-        description: 'If the user is verified or not',
-        type: Boolean,
-        example: false,
-        default: false,
-    })
-    @IsBoolean()
-    @IsOptional()
-    isVerified?: boolean;
+      
 
 
 

@@ -6,5 +6,5 @@ export interface ActiveUserData {
     // Email of the user
     email: string;
     // Type of the user
-    userType: UserType;
+    user_type: UserType;
 }

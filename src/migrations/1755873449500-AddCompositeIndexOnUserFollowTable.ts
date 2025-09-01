@@ -5,7 +5,7 @@ export class AddCompositeIndexOnUserFollowTable1755873449500 implements Migratio
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
-            CREATE INDEX "IDX_follower_following" ON "user_follow" ("followerId", "followingId");
+            CREATE INDEX "IDX_follower_following" ON "user_follow" ("follower_id", "following_id");
         `);
     }
 

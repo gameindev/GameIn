@@ -21,7 +21,12 @@ import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
 export class UserFollowController {
     constructor(private readonly followService: UserFollowService) { }
 
-
+    /**
+     * 
+     * @param user 
+     * @param dto 
+     * @returns 
+     */
     @ApiOperation({
         summary: 'Follow a user by ID',
     })
@@ -36,12 +41,19 @@ export class UserFollowController {
         @ActiveUser() user: ActiveUserData,
         @Body() dto: FollowDto,
     ) {
-        if (dto.followingId == user.sub) {
+        if (dto.following_id == user.sub) {
             throw new BadRequestException('Self following is not allowed!');
         }
         return this.followService.follow(user.sub, dto);
     }
 
+
+    /**
+     * 
+     * @param user 
+     * @param following_id 
+     * @returns 
+     */
     @ApiOperation({
         summary: 'Unfollow a user by ID',
     })
@@ -58,6 +70,10 @@ export class UserFollowController {
         return this.followService.unfollow(user.sub, followingId);
     }
 
+
+    /**
+     * 
+     */
     @ApiOperation({
         summary: 'Get a list of users followed by a user',
     })
@@ -71,12 +87,17 @@ export class UserFollowController {
     })
     @ApiBearerAuth()
     @Get(':id/followers')
+    @UseInterceptors(ClassSerializerInterceptor)
     async getFollowers(
         @Param('id', ParseIntPipe) userId: number
     ) {
         return this.followService.getFollowers(userId);
     }
 
+
+    /**
+     * 
+     */
     @ApiOperation({
         summary: 'Get a list of users following a user',
     })
@@ -90,7 +111,7 @@ export class UserFollowController {
     })
     @Get(':id/following')
     @ApiBearerAuth()
-
+    @UseInterceptors(ClassSerializerInterceptor)
     async getFollowing(
         @Param('id', ParseIntPipe) userId: number
     ) {

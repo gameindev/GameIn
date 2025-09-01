@@ -29,5 +29,5 @@ export class PatchBrandProfileDto extends PartialType(CreateBrandProfileDto) {
     })
     @IsInt()
     @IsNotEmpty()
-    userId: number;
+    user_id: number;
 }

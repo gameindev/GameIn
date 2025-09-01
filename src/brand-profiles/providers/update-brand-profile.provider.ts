@@ -20,7 +20,7 @@ export class UpdateBrandProfileProvider {
 
         try {
             brandProfile = await this.brandProfilesRepository.findOneBy({
-                user: { id: patchBrandProfileDto.userId, }
+                user: { id: patchBrandProfileDto.user_id, }
             });
         } catch (error) {
             throw new InternalServerErrorException('Error while trying to find brand profile.');

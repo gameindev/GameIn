@@ -13,7 +13,7 @@ export class PathcUserRoleDto {
     })
     @IsEnum(UserType)
     @IsNotEmpty()
-    userType: UserType;
+    user_type: UserType;
 
 
     @ApiProperty({

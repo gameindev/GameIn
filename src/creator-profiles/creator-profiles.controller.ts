@@ -38,12 +38,12 @@ export class CreatorProfilesController {
         description: 'User profile updated successfully based on the query',
     })
     @ApiBody({
-        schema: {
+        schema: {   
             type: 'object',
             properties: {
-                userId: { type: 'number', example: 1 }, // <-- Add userId property to PatchCreatorProfileDto clas
-                firstName: { type: 'string', example: 'John' },
-                lastName: { type: 'string', example: 'Doe' },
+                user_id: { type: 'number', example: 1 }, // <-- Add userId property to PatchCreatorProfileDto class
+                first_name: { type: 'string', example: 'John' },
+                last_name: { type: 'string', example: 'Doe' },
                 gender: { type: 'string', example: 'male' },
                 country: { type: 'string', example: 'India' },
                 contact: { type: 'string', example: '+91-9876543210' },
@@ -80,20 +80,20 @@ export class CreatorProfilesController {
         schema: {
             type: 'object',
             properties: {
-                profileImageFile: { type: 'string', format: 'binary' }
+                profile_image: { type: 'string', format: 'binary' }
             }
         }
     })
     @ApiBearerAuth()
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileFieldsInterceptor([
-        { name: 'profileImageFile', maxCount: 1 }
+        { name: 'profile_image', maxCount: 1 }
     ]))
     updateProfilePic(
         @Param('id') profileId: number,
         @UploadedFiles() profileImageFile: Express.Multer.File[],
     ) {
-        const file = profileImageFile['profileImageFile'][0];
+        const file = profileImageFile['profile_image'][0];
         const result = this.creatorProfilesService.updateCreatorProfilePic(profileId, file);
         console.log("Result", result)
         return result;
@@ -116,20 +116,20 @@ export class CreatorProfilesController {
         schema: {
             type: 'object',
             properties: {
-                coverImageFile: { type:'string', format: 'binary' }
+                cover_image: { type:'string', format: 'binary' }
             }
         }
     })
     @ApiBearerAuth()
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileFieldsInterceptor([
-        { name: 'coverImageFile', maxCount: 1 }
+        { name: 'cover_image', maxCount: 1 }
     ]))
     updateCoverPic(
         @Param('id') profileId: number,
         @UploadedFiles() coverImageFile: Express.Multer.File[],
     ) {
-        const file = coverImageFile['coverImageFile'][0];
+        const file = coverImageFile['cover_image'][0];
         return this.creatorProfilesService.updateCreatorCoverPic(profileId, file);
     }
    

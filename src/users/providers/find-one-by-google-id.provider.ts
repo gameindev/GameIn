@@ -15,6 +15,6 @@ export class FindOneByGoogleIdProvider {
     
 
     public async findOneByGoogleId(googleId: string): Promise<User> {
-        return await this.userRepository.findOneBy({googleId});
+        return await this.userRepository.findOneBy({google_id: googleId});
     }
 }

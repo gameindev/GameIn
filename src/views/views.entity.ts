@@ -6,17 +6,17 @@ export class ProfileView {
   id: number;
 
   @Column({ nullable: true })
-  viewerId: number;
+  viewer_id: number;
 
   @Column({ nullable: true, length: 64 })
-  ipAddress: string;
+  ip_address: string;
 
   @Column()
-  profileType: 'creator' | 'brand';
+  profile_type: 'creator' | 'brand';
 
-  @Column()
-  profileId: number;
+  @Column({nullable: false})
+  profile_id: number;
 
   @CreateDateColumn()
-  viewedAt: Date;
+  viewed_at: Date;
 }

@@ -39,10 +39,14 @@ import { ProfileView } from "./views/views.entity";
 import { UserFollowModule } from './user-follow/user-follow.module';
 import { UserFollow } from "./user-follow/user-follow.entity";
 import { EmailsModule } from './emails/emails.module';
+import { OfferingsModule } from './offerings/offerings.module';
 import sesConfig from "./emails/config/ses.config";
 import smtpConfig from "./emails/config/smtp.config";
 import discordConfig from "./social-integration/platforms/discord/discord.config";
 import xConfig from "./social-integration/platforms/x/x.config";
+import { Offering } from "./offerings/offerings.entity";
+import { OfferingOffers } from "./offerings/offering-offers/offering-offers.entity";
+import { OfferingPrice } from "./offerings/offering-price/offering-price.entity";
 dotenvFlow.config();
 
 const ENV = process.env.NODE_ENV;
@@ -77,7 +81,10 @@ const ENV = process.env.NODE_ENV;
                         PreferredGames,
                         SocialIntegration,
                         ProfileView,
-                        UserFollow
+                        UserFollow,
+                        Offering,
+                        OfferingOffers,
+                        OfferingPrice
                     ],
                     // synchronize: configService.get('database.synchronize')
                     synchronize: false
@@ -99,6 +106,7 @@ const ENV = process.env.NODE_ENV;
         ViewsModule,
         UserFollowModule,
         EmailsModule,
+        OfferingsModule,
     ],
     controllers: [AppController],
     providers: [

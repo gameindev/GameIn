@@ -1,24 +1,33 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString, IsObject, IsInt, IsNotEmpty } from 'class-validator';
+import { IsNumber, IsOptional, IsString, IsObject, IsInt, IsNotEmpty, MaxLength } from 'class-validator';
 
 export class PatchPreferredGamesDto {
 
-    @ApiProperty({ required: false })
+    @ApiProperty({ 
+        description: 'ID of the current preffered game',
+        required: false
+     })
     @IsInt()
     @IsOptional()
     id?: number;
 
-    @ApiProperty()
+    @ApiProperty({
+        description: 'Game URL of the current game',
+    })
     @IsString()
+    @MaxLength(100)
     @IsNotEmpty()
-    gameUrl: string;
+    game_url: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        description: 'Sorting order in which sequence the games should appear',
+        example: 1
+    })
     @IsInt()
-    sortOrder: number;
+    sort_order: number;
 
     @ApiProperty({ type: Object, required: false })
     @IsObject()
     @IsOptional()
-    metaData?: Record<string, any>;
+    meta_data?: Record<string, any>;
 }

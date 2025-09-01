@@ -30,10 +30,10 @@ export class UpdateCreatorProfilePicProvider {
         }
 
         if (profileImageFile) {
-            if (creatorProfile.profileImage) {
+            if (creatorProfile.profile_image) {
                 // Step 1: Unlink FK
-                const oldUpload = creatorProfile.profileImage;
-                creatorProfile.profileImage = null;
+                const oldUpload = creatorProfile.profile_image;
+                creatorProfile.profile_image = null;
                 await this.creatorProfileRepository.save(creatorProfile);
 
                 // Step 2: Delete old upload safely
@@ -41,7 +41,7 @@ export class UpdateCreatorProfilePicProvider {
             }
 
             // Step 3: Upload new file
-            creatorProfile.profileImage = await this.uploadService.uploadNew(profileImageFile);
+            creatorProfile.profile_image = await this.uploadService.uploadNew(profileImageFile);
         }
 
         try {

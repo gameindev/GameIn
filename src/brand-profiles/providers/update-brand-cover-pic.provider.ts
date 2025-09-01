@@ -31,10 +31,10 @@ export class UpdateBrandCoverPicProvider {
         }
 
         if (coverImageFile) {
-            if (brandProfile.coverImage) {
+            if (brandProfile.cover_image) {
                 // Step 1: Unlink FK
-                const oldUpload = brandProfile.coverImage;
-                brandProfile.coverImage = null;
+                const oldUpload = brandProfile.cover_image;
+                brandProfile.cover_image = null;
                 await this.brandProfileRepository.save(brandProfile);
 
                 // Step 2: Delete old upload safely
@@ -42,7 +42,7 @@ export class UpdateBrandCoverPicProvider {
             }
 
             // Step 3: Upload new file
-            brandProfile.coverImage = await this.uploadService.uploadNew(coverImageFile);
+            brandProfile.cover_image = await this.uploadService.uploadNew(coverImageFile);
         }
 
         try {

@@ -12,10 +12,10 @@ export class CreatorProfile {
     id: number;
 
     @Index()
-    @OneToOne(() => User, user => user.creatorProfile, {
+    @OneToOne(() => User, user => user.creator_profile, {
         onDelete: 'CASCADE',
     }) 
-    @JoinColumn()
+    @JoinColumn({ name: 'user_id' })
     user: User
 
     @Column({
@@ -23,14 +23,14 @@ export class CreatorProfile {
         length: 30,
         nullable: true,
     })
-    firstName: string;
+    first_name: string;
 
     @Column({
         type: 'varchar',
         length: 30,
         nullable: true,
     })
-    lastName: string;
+    last_name: string;
 
     @Column({
         type: 'varchar',
@@ -41,13 +41,13 @@ export class CreatorProfile {
 
 
     @OneToOne(() => UploadEntity, { nullable: true, eager: true, cascade: true })
-    @JoinColumn()
-    profileImage: UploadEntity;
+    @JoinColumn({ name: 'profile_image_id' })
+    profile_image: UploadEntity;
 
 
     @OneToOne(() => UploadEntity, { nullable: true, eager: true, cascade: true })
-    @JoinColumn()
-    coverImage: UploadEntity;
+    @JoinColumn({ name: 'cover_image_id' })
+    cover_image: UploadEntity;
 
     @Column({
         type: 'varchar',
@@ -92,11 +92,11 @@ export class CreatorProfile {
 
 
     @CreateDateColumn()
-    createdAt: Date;
+    created_at: Date;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updated_at: Date;
 
     @DeleteDateColumn()
-    deletedAt: Date;
+    deleted_at: Date;   
 }

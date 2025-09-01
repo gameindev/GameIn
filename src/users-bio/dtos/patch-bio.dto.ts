@@ -12,13 +12,13 @@ export class PatchBioDto extends PartialType(CreateBioDto) {
     @ApiProperty({ description: 'User ID', type: Number, example: 1, required: true })
     @IsInt()
     @IsNotEmpty()
-    userId: number;
+    user_id: number;
 
     @ApiProperty({ type: [PatchPreferredGamesDto], required: false })
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => PatchPreferredGamesDto)
-    preferredGames?: PatchPreferredGamesDto[];   
+    preferred_games?: PatchPreferredGamesDto[];     
 
 
 }

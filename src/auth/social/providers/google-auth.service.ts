@@ -61,15 +61,15 @@ export class GoogleAuthService implements OnModuleInit {
             // If not create the user in our database and generate token
             const newUser = await this.userService.createGoogleUser({
                 email: email,
-                googleId: googleId,
+                google_id: googleId,
                 given_name: given_name
             });
 
 
-            return this.generateTokensProvider.generateTokens(newUser);
+            return this.generateTokensProvider.generateTokens(newUser[0]);
         } catch (error) {
             // throw UnauthorizedException if the user is not found
-            throw new UnauthorizedException(error); 
+            throw new UnauthorizedException('Google authentication failed');
         }
 
     }

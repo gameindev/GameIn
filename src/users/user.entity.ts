@@ -45,7 +45,7 @@ export class User {
         nullable: true,
     })
     @Exclude()
-    googleId?: string;
+    google_id?: string;
 
     @Column({
         type: "enum",
@@ -53,25 +53,25 @@ export class User {
         default: null,
         nullable: true,
     })
-    userType?: UserType;
+    user_type?: UserType;
 
     @Column({
         type: 'date',
         nullable: true,
     })
-    dateOfBirth?: string;
+    date_of_birth?: string;
 
     @OneToOne(() => CreatorProfile, creatorProfile => creatorProfile.user, {
         cascade: true,
         nullable: true,
     })
-    creatorProfile: CreatorProfile;
+    creator_profile: CreatorProfile;
 
     @OneToOne(() => BrandProfile, brandProfile => brandProfile.user, {
         cascade: true,
         nullable: true,
     })
-    brandProfile: BrandProfile;
+    brand_profile: BrandProfile;
     
     // faqs: UserFaq[];
 
@@ -79,19 +79,19 @@ export class User {
         default: true,
         nullable: true,
     })
-    isActive?: boolean;
+    is_active?: boolean;
 
     @Column({
         default: false,
         nullable: true,
     })
-    isVerified?: boolean;
+    is_verified?: boolean;
 
     @Column({
         default: true,
         nullable: true,
     })
-    isFirst?: boolean;
+    is_first?: boolean;
 
     @Column({
         default: null,
@@ -104,23 +104,23 @@ export class User {
         eager: true,
         nullable: true,
     })
-    userBio: UserBio;
+    user_bio: UserBio;
 
     @OneToMany(() => SocialIntegration, socialIntegration => socialIntegration.user, {
         cascade: true,
         eager: true,
     })
-    socialIntegrations: SocialIntegration[];
+    social_integrations: SocialIntegration[];
     
     // ratingReceived: UserRating[];
     // ratingGiven: UserRating[];
 
     @CreateDateColumn()
-    createdAt: Date;
+    created_at: Date;
     
     @UpdateDateColumn()
-    updatedAt: Date;
+    updated_at: Date;   
     
     @DeleteDateColumn()
-    deletedAt: Date;
+    deleted_at: Date;
 }

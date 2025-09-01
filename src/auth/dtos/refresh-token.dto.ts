@@ -7,9 +7,9 @@ export class RefreshTokenDto {
     @ApiProperty({
         description: 'Refresh Token',
         type: String,
-        example: 'refreshToken',
+        example: 'refresh_token',
     })
     @IsNotEmpty()
     @IsString()
-    refreshToken: string;
+    refresh_token: string;
 }

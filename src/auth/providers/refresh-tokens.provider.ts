@@ -33,7 +33,7 @@ export class RefreshTokensProvider {
         try {
             // Verify the refresh token using JWT Service
             const { sub } = await this.jwtService.verifyAsync<Pick<ActiveUserData, 'sub'>>(
-                refreshTokenDto.refreshToken,
+                refreshTokenDto.refresh_token,
                 {
                     secret: this.jwtConfiguration.secret,
                     audience: this.jwtConfiguration.audience,

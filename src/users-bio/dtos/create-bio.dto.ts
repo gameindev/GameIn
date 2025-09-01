@@ -20,7 +20,7 @@ export class CreateBioDto {
      })
     @IsOptional()
     @IsString()
-    videoBioUrl: string;
+    video_bio_url: string;
 
     
 }

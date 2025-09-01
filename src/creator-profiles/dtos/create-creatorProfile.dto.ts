@@ -16,13 +16,13 @@ export class CreateCreatorProfileDto {
     @IsOptional()
     @IsString() 
     @MaxLength(30)
-    firstName?: string;
+    first_name?: string;
 
     @ApiPropertyOptional({ example: 'Doe', maxLength: 30 })
     @IsOptional()
     @IsString()
     @MaxLength(30)
-    lastName?: string;
+    last_name?: string;
 
     @ApiPropertyOptional({ example: 'male', maxLength: 10 })
     @IsOptional()

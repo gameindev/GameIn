@@ -34,10 +34,10 @@ export class ViewsController {
         const userId = req.user?.id; // from auth middleware
         const ip = req.ip;
         return this.viewsService.addUniqueView({
-            profileId: id,
-            profileType: type,
-            viewerId: userId,
-            ipAddress: ip,
+            profile_id: id,
+            profile_type: type,
+            viewer_id: userId,
+            ip_address: ip,
         });
     }
 }

@@ -7,6 +7,13 @@ export enum SocialPlatform {
     YOUTUBE = "YOUTUBE",
     TIKTOK = "TIKTOK",
     DISCORD = "DISCORD",
+    KICK = 'KICK',
+    FACEBOOK = 'FACEBOOK',
+    SNAPCHAT = 'SNAPCHAT',
+    PINTEREST = 'PINTEREST',
+    LINKEDIN = 'LINKEDIN',
+    THREADS = 'THREADS',
+    OTHER = 'OTHER' 
 }
 
 export type ConnectionState = 'ADD' | 'CONNECT' | 'CONNECTED';

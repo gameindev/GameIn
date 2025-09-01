@@ -26,12 +26,12 @@ export class UserTypeGuard implements CanActivate {
         }
 
         // If the user is an ADMIN, they have full access
-        if (user.userType === UserType.ADMIN) {
+        if (user.user_type === UserType.ADMIN) {
             return true;
         }
 
         // Check if the user's type is among the required types
-        const hasRequiredType = requiredUserTypes.some(type => user.userType === type);
+        const hasRequiredType = requiredUserTypes.some(type => user.user_type === type);
 
         if (!hasRequiredType) {
             return false; // User does not have the required user type
@@ -39,7 +39,7 @@ export class UserTypeGuard implements CanActivate {
 
         // For non-ADMIN users, check if the requested resource ID matches the user's ID
         // This assumes the resource ID is passed as a parameter named 'id' or 'userId'
-        const resourceId = request.params.id || request.params.userId;
+        const resourceId = request.params.id || request.params.user_id;
 
         if (resourceId && String(resourceId) !== String(user.sub)) {
             return false; // User is trying to access a resource that doesn't belong to them

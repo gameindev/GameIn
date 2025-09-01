@@ -1,5 +1,5 @@
 import { UserBio } from "src/users-bio/user-bio.entity";
-import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class PreferredGames {
@@ -7,28 +7,31 @@ export class PreferredGames {
     id: number;
 
     @Index()
-    @ManyToOne(() => UserBio, userBio => userBio.preferredGames, {
+    @ManyToOne(() => UserBio, userBio => userBio.preferred_games, {
         onDelete: 'CASCADE'
     })
-    @JoinColumn()
-    userBio: UserBio;
+    @JoinColumn({ name: 'user_bio_id' })
+    user_bio: UserBio;
 
     @Column({
         type: 'text',
         nullable: true,
+        length:100
     })
-    gameUrl: string;
+    game_url: string;
 
     @Column({ type: 'int', default: 0 })
-    sortOrder: number;
+    sort_order: number;
 
     @Column({ type: 'jsonb', nullable: true })
-    metadata: Record<string, any>;
+    meta_data: Record<string, any>;
 
     @CreateDateColumn()
-    createdAt: Date;
+    created_at: Date;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updated_at: Date;
 
+    @DeleteDateColumn()
+    deleted_at: Date;
 }
