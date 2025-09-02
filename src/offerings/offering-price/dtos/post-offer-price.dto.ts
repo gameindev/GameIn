@@ -1,9 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEnum, IsInt, IsOptional, IsString, MaxLength } from "class-validator";
 import { PaymentProvider } from "src/offerings/enums/payment-provider.enum";
+import { Unique } from "typeorm";
 
 
-
+@Unique('UQ_price_offering_id', ['offering_id'])
 export class CreateOfferingPriceDto{
     
     @ApiProperty({

@@ -18,7 +18,8 @@ export class CreateOfferingOffersTable1756372678359 implements MigrationInterfac
                 size varchar(30),
                 sub_type varchar(30),
                 
-            
+    
+                CONSTRAINT "UQ_offering_offer_type" UNIQUE ("offering_id", "offer_type"),
                 CONSTRAINT "FK_86cr6e08503b30aa1jki8ed0613" FOREIGN KEY ("offering_id") REFERENCES "offerings"(id) ON DELETE CASCADE
             );
         `);

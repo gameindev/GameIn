@@ -19,7 +19,7 @@ export class UpdateBrandProfilePicProvider {
         try {
             brandProfile = await this.brandProfileRepository.findOne({
                 where: { id: profileId },
-                relations: ['profileImage'],
+                relations: ['profile_image'],
             });
         } catch (error) {
             throw new InternalServerErrorException('Error while trying to find brand profile.');

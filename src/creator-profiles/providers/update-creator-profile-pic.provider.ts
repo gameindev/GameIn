@@ -18,7 +18,7 @@ export class UpdateCreatorProfilePicProvider {
         try {
             creatorProfile = await this.creatorProfileRepository.findOne({
                 where: { id: profileId },
-                relations: ['profileImage'],
+                relations: ['profile_image'],
             });
 
         } catch (error) {

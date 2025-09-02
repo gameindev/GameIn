@@ -13,8 +13,9 @@ export class CreateOfferingOfferDto {
         description: 'Parent offering id',
         example: 1
     })
+    @IsOptional()
     @IsInt()
-    offering_id: number;
+    offering_id?: number;
 
     @ApiProperty({
         description: 'Type of Offer for current Offering',

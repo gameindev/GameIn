@@ -21,7 +21,7 @@ export class UserFollowService {
         const follower = await this.userRepo.findOne({ where: { id: followerId } });
         const following = await this.userRepo.findOne({ 
             where: { id: dto.following_id },
-            relations: ['creatorProfile', 'brandProfile']
+            relations: ['creator_profile', 'brand_profile']
         });
 
 
@@ -61,7 +61,7 @@ export class UserFollowService {
 
         const unFollowingUser = await this.userRepo.findOne({ 
             where: { id: followingId },
-            relations: ['creatorProfile', 'brandProfile']
+            relations: ['creator_profile', 'brand_profile']
         });
 
         if (!unFollowingUser) throw new NotFoundException('User not found');

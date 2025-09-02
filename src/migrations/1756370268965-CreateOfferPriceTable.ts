@@ -18,7 +18,7 @@ export class CreateOfferPriceTable1756370268965 implements MigrationInterface {
                 "updated_at" timestamp DEFAULT now() NOT NULL,
                 "deleted_at" timestamp,
                 
-                CONSTRAINT "UQ_861c3er508503b30aa145e0245" UNIQUE ("offering_id"),
+                CONSTRAINT "UQ_price_offering_id" UNIQUE ("offering_id"),
                 CONSTRAINT "FK_861cr6e08503b30aa145ed06713" FOREIGN KEY ("offering_id") REFERENCES "offerings"(id) ON DELETE CASCADE
             );
         `);    

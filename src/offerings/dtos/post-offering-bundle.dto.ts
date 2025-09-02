@@ -20,9 +20,8 @@ export class CreateOfferingBundleDto {
     @Type(() => CreateOfferingOfferDto)
     offers!: CreateOfferingOfferDto[];     // media/offers
 
-    @ApiProperty({ type: [CreateOfferingPriceDto], required: false })
+    @ApiProperty({ type: CreateOfferingPriceDto, required: false })
     @IsOptional()
-    @ValidateNested({ each: true })
     @Type(() => CreateOfferingPriceDto)
-    prices: CreateOfferingPriceDto;     
+    price: CreateOfferingPriceDto;     
 }

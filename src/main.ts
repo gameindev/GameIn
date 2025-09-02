@@ -2,16 +2,16 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { ValidationPipe } from "@nestjs/common";
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { DataResponseInterceptor } from "./common/interceptors/data-response/data-response.interceptor";
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
 async function bootstrap() {
     // ✅ USE NestExpressApplication here
     const app = await NestFactory.create<NestExpressApplication>(AppModule, {
         logger: ['log', 'error', 'warn'],
-    });
+    });  
 
     app.useGlobalPipes(
         new ValidationPipe({
@@ -33,6 +33,19 @@ async function bootstrap() {
         .addServer(process.env.HOST ?? 'http://localhost:3000/')
         .setVersion(process.env.API_VERSION ?? "1.0")
         .addBearerAuth()
+        .addOAuth2({
+            type: "oauth2",
+            flows: {
+                authorizationCode: {
+                    authorizationUrl: `https://accounts.google.com/o/oauth2/v2/auth`,
+                    tokenUrl: "https://oauth2.googleapis.com/token",
+                    scopes: {
+                        profile: "Access profile information",
+                        email: "Access email information"
+                    }
+                }
+            }
+        })
         .build();
 
     const document = SwaggerModule.createDocument(app, config);

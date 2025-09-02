@@ -6,7 +6,7 @@ import { AuthType } from 'src/auth/enums/auth-type.enum';
 import { PatchBioDto } from './dtos/patch-bio.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
-@Controller('users-bio.controller')
+@Controller('users-bio')
 export class UsersBioController {
 
     constructor(

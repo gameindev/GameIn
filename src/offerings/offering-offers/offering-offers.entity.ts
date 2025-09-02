@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
 import { Offering } from "../offerings.entity";
 import { OfferingCategory } from "../enums/offering-category.enum";
 import { SocialPlatform } from "src/social-integration/enums/social-platform.enums";
@@ -8,6 +8,7 @@ import { SizePreset } from "../enums/size-preset.enum";
 
 @Entity({ name: 'offering_offers' })
 @Index('IDX_offerings_offers', ['offering_id', 'offer_type'])
+@Unique('UQ_offering_offer_type', ['offering_id', 'offer_type'])
 export class OfferingOffers {
     @PrimaryGeneratedColumn('increment', { type: 'int' })
     id: Number;
