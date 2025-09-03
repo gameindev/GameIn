@@ -1,6 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn, DeleteDateColumn, Unique, Index, JoinColumn } from 'typeorm';
 import { User } from '../users/user.entity';
 
+
+/**
+ * UserFollow entity.
+ */
 @Entity('user_follow')
 @Unique(['follower', 'following'])
 @Index('IDX_follower_following', ['follower', 'following'])

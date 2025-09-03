@@ -99,7 +99,7 @@ export class CreatorProfilesController {
         return result;
     }
 
-
+ 
     /**
      * Updates a creator cover picture on the application by profile ID.
      * @returns

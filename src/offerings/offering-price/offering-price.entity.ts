@@ -3,7 +3,9 @@ import { Column, CreateDateColumn, DeleteDateColumn, Entity, Index, JoinColumn, 
 import { Offering } from "../offerings.entity";
 import { PaymentProvider } from "../enums/payment-provider.enum";
 
-
+/**
+ * OfferingPrice entity.
+ */
 @Entity({ name: 'offering_price' })
 @Index('IDX_offering_price_offer', ['offering_id'])
 export class OfferingPrice {

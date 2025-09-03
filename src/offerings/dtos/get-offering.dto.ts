@@ -35,12 +35,12 @@ export class FindOfferingsQueryDto {
     @ApiPropertyOptional({
         description: 'Relations to include (comma-separated or repeated)',
         isArray: true,
-        enum: ['user', 'offers', 'price', 'prices'],
-        example: ['user', 'offers', 'price'],
+        enum: ['user', 'offering_offers', 'offering_price'],
+        example: ['user', 'offering_offers', 'offering_price'],
     })
     @IsOptional()
     @IsArray()
-    @IsIn(['user', 'offers', 'price', 'prices'], { each: true })
+    @IsIn(['user', 'offering_offers', 'offering_price'], { each: true })
     @Transform(({ value }) =>
         Array.isArray(value)
             ? value
@@ -48,7 +48,7 @@ export class FindOfferingsQueryDto {
                 ? value.split(',').map((v) => v.trim()).filter(Boolean)
                 : undefined,
     )
-    relations?: Array<'user' | 'offers' | 'price' | 'prices'>;
+    relations?: Array<'user' | 'offering_offers' | 'offering_price'>;
 }
 
 export class PaginationMetaDto {

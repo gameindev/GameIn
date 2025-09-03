@@ -47,6 +47,10 @@ import xConfig from "./social-integration/platforms/x/x.config";
 import { Offering } from "./offerings/offerings.entity";
 import { OfferingOffers } from "./offerings/offering-offers/offering-offers.entity";
 import { OfferingPrice } from "./offerings/offering-price/offering-price.entity";
+import { TeamsModule } from './teams/teams.module';
+import { Team } from "./teams/teams.entity";
+import { TeamMembers } from "./teams/team-members/team-members.entity";
+import { TeamLinks } from "./teams/team-links/team-links.entity";
 dotenvFlow.config();
 
 const ENV = process.env.NODE_ENV;
@@ -84,7 +88,10 @@ const ENV = process.env.NODE_ENV;
                         UserFollow,
                         Offering,
                         OfferingOffers,
-                        OfferingPrice
+                        OfferingPrice,
+                        Team,
+                        TeamMembers,
+                        TeamLinks
                     ],
                     // synchronize: configService.get('database.synchronize')
                     synchronize: false
@@ -107,6 +114,7 @@ const ENV = process.env.NODE_ENV;
         UserFollowModule,
         EmailsModule,
         OfferingsModule,
+        TeamsModule,
     ],
     controllers: [AppController],
     providers: [

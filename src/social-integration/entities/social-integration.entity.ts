@@ -2,6 +2,10 @@ import { Column, CreateDateColumn, DeleteDateColumn, Entity, Index, JoinColumn, 
 import { SocialPlatform } from "../enums/social-platform.enums";
 import { User } from "src/users/user.entity";
 
+
+/**
+ * SocialMediaIntegration entity.
+ */
 @Entity()
 export class SocialIntegration {
     @PrimaryGeneratedColumn()

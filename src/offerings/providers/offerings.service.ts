@@ -1,6 +1,6 @@
 import { OfferingBaseService } from './offering.base.service';
 import { Offering } from './../offerings.entity';
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import { OfferingOffersService } from '../offering-offers/providers/offering-offers.service';
 import { OfferingPriceService } from '../offering-price/providers/offering-price.service';
@@ -117,58 +117,70 @@ export class OfferingsService {
                 ? params.relations
                 : ['user']; // sensible default
 
-
             const relationsToJoin = requested.filter(r => allowedRelations.has(r));
-            console.log(relationsToJoin)
 
-            // // ---- query builder ----
-            // const qb = this.repo.createQueryBuilder('off');
+            // ---- query builder ----
+            const qb = this.repo.createQueryBuilder('off');
 
-            // // Join requested relations
-            // for (const rel of relationsToJoin) {
-            //     qb.leftJoinAndSelect(`off.${rel}`, rel);
-            // }
+            // Join requested relations
+            for (const rel of relationsToJoin) {
+                qb.leftJoinAndSelect(`off.${rel}`, rel);
+            }
 
-            // // ---- optional filter: user_id ----
-            // if (typeof params.user_id === 'number' && Number.isFinite(params.user_id)) {
-            //     const hasUserIdProperty = entityMeta.columns.some(c => c.propertyName === 'userId');
-            //     if (hasUserIdProperty) {
-            //         // Use property path, not DB column name
-            //         qb.andWhere('off.userId = :uid', { uid: params.user_id });
-            //     } else {
-            //         // Fall back to joining the user relation and filter by user.id
-            //         const hasUserRelation = allowedRelations.has('user');
-            //         if (hasUserRelation && !relationsToJoin.includes('user')) {
-            //             qb.leftJoin('off.user', 'user');
-            //         }
-            //         if (hasUserRelation) {
-            //             qb.andWhere('user.id = :uid', { uid: params.user_id });
-            //         } // else: no way to filter by user; silently ignore to avoid crashing
-            //     }
-            // }
+            // ---- optional filter: user_id ----
+            if (typeof params.user_id === 'number' && Number.isFinite(params.user_id)) {
+                // Since the user relation is eager and always loaded, we can filter directly
+                qb.andWhere('off.user.id = :uid', { uid: params.user_id });
+            }
 
-            // // ---- ordering ----
-            // const hasCreatedAt = entityMeta.columns.some(
-            //     c => c.propertyName === 'createdAt' || c.databaseName === 'created_at',
-            // );
-            // qb.orderBy(hasCreatedAt ? 'off.createdAt' : 'off.id', 'DESC');
+            // ---- ordering ----
+            // Use created_at column name since that's what's defined in the entity
+            qb.orderBy('off.created_at', 'DESC');
 
-            // // ---- run + paginate ----
-            // const [data, total] = await qb.skip(skip).take(limit).getManyAndCount();
+            // ---- run + paginate ----
+            const [data, total] = await qb.skip(skip).take(limit).getManyAndCount();
 
-            // return {
-            //     data,
-            //     meta: {
-            //         total,
-            //         page,
-            //         limit,
-            //         pages: Math.ceil(total / limit),
-            //     },
-            // };
+            return {
+                data,
+                meta: {
+                    total,
+                    page,
+                    limit,
+                    pages: Math.ceil(total / limit),
+                },
+            };
         } catch (err: any) {
-            // Optional: log the underlying error for debugging
-            // console.error('findAll error:', err);
+            // Log the underlying error for debugging
+            console.error('findAll error:', err);
             throw new InternalServerErrorException('Failed to fetch offerings.');
+        }
+    }
+
+
+    async findOneById(
+        id: number,
+        relations?: Array<'user' | 'offering_offers' | 'offering_price' | 'logo'>,
+    ) {
+        try {
+            // Validate relations against entity metadata to avoid invalid joins
+            const allowed = new Set(
+                this.repo.metadata.relations.map((r) => r.propertyName),
+            );
+            const safeRelations = (relations ?? []).filter((r) => allowed.has(r));
+
+            const offering = await this.repo.findOne({
+                where: { id },
+                relations: safeRelations,
+            });
+
+            if (!offering) {
+                throw new NotFoundException(`Offering with ID ${id} not found`);
+            }
+
+            return offering;
+        } catch (err) {
+            if (err instanceof NotFoundException) throw err;
+            throw new InternalServerErrorException('Failed to fetch offering');
         }
     }
 }

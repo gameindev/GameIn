@@ -14,6 +14,9 @@ import { UserFollow } from './user-follow/user-follow.entity';
 import { Offering } from './offerings/offerings.entity';
 import { OfferingOffers } from './offerings/offering-offers/offering-offers.entity';
 import { OfferingPrice } from './offerings/offering-price/offering-price.entity';
+import { Team } from './teams/teams.entity';
+import { TeamMembers } from './teams/team-members/team-members.entity';
+import { TeamLinks } from './teams/team-links/team-links.entity';
 
 
 // This loads your .env files just like in your main app
@@ -40,7 +43,10 @@ export const dataSourceOptions: DataSourceOptions = {
         UserFollow,
         Offering,
         OfferingOffers,
-        OfferingPrice
+        OfferingPrice,
+        Team,
+        TeamMembers,
+        TeamLinks
     ],
     // This tells TypeORM where to find and create migration files
     migrations: [__dirname + '/migrations/**/*{.ts,.js}'],

@@ -8,7 +8,9 @@ import { UploadEntity } from "src/uploads/upload.entity";
 import { User } from "src/users/user.entity";
 
 
-
+/**
+ * Offerings entity.
+ */
 @Entity({ name: 'offerings' })
 @Check(`"org_funds" >= 0`)
 export class Offering {
@@ -16,7 +18,7 @@ export class Offering {
     id: number;
 
     @Index('idx_offering_user_id')
-    @ManyToOne(() => User, { nullable: true, eager: true, cascade: ['insert', 'update'],  onDelete: 'SET NULL', })
+    @ManyToOne(() => User, { nullable: true, eager: false, cascade: ['insert', 'update'],  onDelete: 'SET NULL', })
     @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
     user: User;
 

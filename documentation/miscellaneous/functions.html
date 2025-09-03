@@ -114,6 +114,12 @@
                         <li>
                             <a href="#bootstrap" title="src/main.ts" ><b>bootstrap</b>&nbsp;&nbsp;&nbsp;(src/.../main.ts)</a>
                         </li>
+                        <li>
+                            <a href="#generateToken" title="src/users/utils/common-utilities.ts" ><b>generateToken</b>&nbsp;&nbsp;&nbsp;(src/.../common-utilities.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#populateUserRelations" title="src/users/utils/populate-user-relations.ts" ><b>populateUserRelations</b>&nbsp;&nbsp;&nbsp;(src/.../populate-user-relations.ts)</a>
+                        </li>
                     </ul>
                 </td>
             </tr>
@@ -143,11 +149,133 @@
 
 
 
+        </tbody>
+    </table>
+</section>    <h3>src/users/utils/common-utilities.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Bootstrap the application.</p>
-</div>
+                    <a name="generateToken"></a>
+                    <span class="name">
+                        <span ><b>generateToken</b></span>
+                        <a href="#generateToken"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>generateToken()</code>
+                </td>
+            </tr>
 
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/users/utils/populate-user-relations.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="populateUserRelations"></a>
+                    <span class="name">
+                        <span ><b>populateUserRelations</b></span>
+                        <a href="#populateUserRelations"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>populateUserRelations(__namedParameters: {users: <a href="../interfaces/PopulateOptions.html" target="_self">PopulateOptions</a>, requestedRelations, creatorProfileRepo, brandProfileRepo})</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>users</td>
+                                            <td>
+                                                            <code><a href="../interfaces/PopulateOptions.html" target="_self" >PopulateOptions</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>requestedRelations</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>creatorProfileRepo</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>brandProfileRepo</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/User.html" target="_self" >Promise&lt;User[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
                 </td>
             </tr>
         </tbody>

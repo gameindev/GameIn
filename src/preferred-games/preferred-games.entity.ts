@@ -1,6 +1,10 @@
 import { UserBio } from "src/users-bio/user-bio.entity";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
+
+/**
+ * PreferredGames entity.
+ */
 @Entity()
 export class PreferredGames {
     @PrimaryGeneratedColumn()

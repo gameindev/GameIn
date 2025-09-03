@@ -6,6 +6,9 @@ import { TimeMode } from "../enums/time-mode.enum";
 import { SizePreset } from "../enums/size-preset.enum";
 
 
+/**
+ * OfferingOffers entity.
+ */
 @Entity({ name: 'offering_offers' })
 @Index('IDX_offerings_offers', ['offering_id', 'offer_type'])
 @Unique('UQ_offering_offer_type', ['offering_id', 'offer_type'])

@@ -1,0 +1,899 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>gamein-backend documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">gamein-backend documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >OfferingsService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/offerings/providers/offerings.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createOffering" >createOffering</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createOfferingBundle" >createOfferingBundle</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findAll" >findAll</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findOneById" >findOneById</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(dataSource: DataSource, offeringBaseService: <a href="../injectables/OfferingBaseService.html" target="_self">OfferingBaseService</a>, offeringOffersService: <a href="../injectables/OfferingOffersService.html" target="_self">OfferingOffersService</a>, priceService: <a href="../injectables/OfferingPriceService.html" target="_self">OfferingPriceService</a>, userService: <a href="../injectables/UsersService.html" target="_self">UsersService</a>, repo: Repository<Offering>, offeringOffersRepo: Repository<OfferingOffers>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/offerings/providers/offerings.service.ts:19</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>dataSource</td>
+                                                  
+                                                        <td>
+                                                                    <code>DataSource</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>offeringBaseService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/OfferingBaseService.html" target="_self" >OfferingBaseService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>offeringOffersService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/OfferingOffersService.html" target="_self" >OfferingOffersService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>priceService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/OfferingPriceService.html" target="_self" >OfferingPriceService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>userService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/UsersService.html" target="_self" >UsersService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>repo</td>
+                                                  
+                                                        <td>
+                                                                    <code>Repository&lt;Offering&gt;</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>offeringOffersRepo</td>
+                                                  
+                                                        <td>
+                                                                    <code>Repository&lt;OfferingOffers&gt;</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createOffering"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createOffering</b></span>
+                        <a href="#createOffering"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createOffering(offerinDto: <a href="../classes/CreateOfferingDto.html" target="_self">CreateOfferingDto</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, manager?: EntityManager)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="72"
+                                    class="link-to-prism">src/offerings/providers/offerings.service.ts:72</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>offerinDto</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateOfferingDto.html" target="_self" >CreateOfferingDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>manager</td>
+                                            <td>
+                                                        <code>EntityManager</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createOfferingBundle"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createOfferingBundle</b></span>
+                        <a href="#createOfferingBundle"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createOfferingBundle(dto: <a href="../classes/CreateOfferingBundleDto.html" target="_self">CreateOfferingBundleDto</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="36"
+                                    class="link-to-prism">src/offerings/providers/offerings.service.ts:36</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateOfferingBundleDto.html" target="_self" >CreateOfferingBundleDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findAll"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findAll</b></span>
+                        <a href="#findAll"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findAll(params: <a href="../undefineds/FindOfferingsParams.html" target="_self">FindOfferingsParams</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="104"
+                                    class="link-to-prism">src/offerings/providers/offerings.service.ts:104</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>params</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#FindOfferingsParams" target="_self" >FindOfferingsParams</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>{}</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findOneById"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findOneById</b></span>
+                        <a href="#findOneById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findOneById(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, relations?: Array<"user" | "offering_offers" | "offering_price" | "logo">)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="160"
+                                    class="link-to-prism">src/offerings/providers/offerings.service.ts:160</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>relations</td>
+                                            <td>
+                                                        <code>Array&lt;&quot;user&quot; | &quot;offering_offers&quot; | &quot;offering_price&quot; | &quot;logo&quot;&gt;</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { OfferingBaseService } from &#x27;./offering.base.service&#x27;;
+import { Offering } from &#x27;./../offerings.entity&#x27;;
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from &#x27;@nestjs/common&#x27;;
+import { DataSource, EntityManager, Repository } from &#x27;typeorm&#x27;;
+import { OfferingOffersService } from &#x27;../offering-offers/providers/offering-offers.service&#x27;;
+import { OfferingPriceService } from &#x27;../offering-price/providers/offering-price.service&#x27;;
+import { CreateOfferingBundleDto } from &#x27;../dtos/post-offering-bundle.dto&#x27;;
+import { CreateOfferingDto } from &#x27;../dtos/post-offering.dto&#x27;;
+import { UsersService } from &#x27;src/users/providers/users.service&#x27;;
+import { ActiveUserData } from &#x27;src/auth/interfaces/active-user-data.interface&#x27;;
+import { UserType } from &#x27;src/users/enums/user-type.enums&#x27;;
+import { InjectRepository } from &#x27;@nestjs/typeorm&#x27;;
+import { OfferingOffers } from &#x27;../offering-offers/offering-offers.entity&#x27;;
+import { FindOfferingsParams } from &#x27;../enums/offering-type.enum&#x27;;
+
+
+
+@Injectable()
+export class OfferingsService {
+
+    constructor(
+        private readonly dataSource: DataSource,
+        private readonly offeringBaseService: OfferingBaseService,
+        private readonly offeringOffersService: OfferingOffersService,
+        private readonly priceService: OfferingPriceService,
+        private readonly userService: UsersService,
+
+        @InjectRepository(Offering)
+        private readonly repo: Repository&lt;Offering&gt;,
+
+        @InjectRepository(OfferingOffers)
+        private readonly offeringOffersRepo: Repository&lt;OfferingOffers&gt;
+    ) { }
+
+
+    async createOfferingBundle(dto: CreateOfferingBundleDto, user: ActiveUserData) {
+        return this.dataSource.transaction(async (manager) &#x3D;&gt; {
+            // 1) Create base offering
+            const offering &#x3D; await this.createOffering(dto.offering, user, manager);
+            if (!offering) {
+                throw new InternalServerErrorException(&#x27;Failed to create base offering&#x27;);
+            }
+
+            // 2) Offers (optional)
+            let offers &#x3D; [];
+            if (dto.offers?.length) {
+                const offersPayload &#x3D; dto.offers.map(o &#x3D;&gt; ({
+                    ...o,
+                    offering_id: Number(offering.id),
+                }));
+                offers &#x3D; await this.offeringOffersService.bulkCreate(offersPayload, manager);
+            }
+
+            // 3) Price (optional; single)
+            let prices &#x3D; null;
+            if (dto.price) {
+                const pricePayload &#x3D; {
+                    ...dto.price,
+                    offering_id: Number(offering.id),
+                };
+                prices &#x3D; await this.priceService.create(pricePayload, manager);
+            }
+
+            // 4) Return composed result
+            return { offering, offers, prices };
+        });
+    }
+
+
+
+
+    async createOffering(offerinDto: CreateOfferingDto, user: ActiveUserData, manager?: EntityManager) {
+        let currentUser;
+        try {
+            currentUser &#x3D; await this.userService.getUserById(user.sub);
+        } catch (error) {
+            throw new InternalServerErrorException(&#x27;Error while trying to find User.&#x27;);
+        }
+
+        if (!currentUser) {
+            throw new BadRequestException(&#x27;User not found!&#x27;);
+        }
+        if (currentUser.user_type !&#x3D;&#x3D; UserType.CREATOR) {
+            throw new BadRequestException(&#x27;User is not a CREATOR&#x27;);
+        }
+
+        const repo &#x3D; manager ? manager.getRepository(Offering) : this.repo;
+        const offering &#x3D; repo.create({
+            ...offerinDto,
+            user: currentUser,
+        });
+
+        try {
+            const savedOffering &#x3D; await repo.save(offering);
+            const { user, ...offeringWithoutUser } &#x3D; savedOffering;
+            return { ...offeringWithoutUser, user_id: user.id };
+        } catch (error) {
+            throw new InternalServerErrorException(&#x27;Error while trying to create an Offering.&#x27;);
+        }
+    }
+
+
+
+    async findAll(params: FindOfferingsParams &#x3D; {}) {
+        try {
+            // ---- defaults + validation ----
+            const page &#x3D; Number.isInteger(params.page) &amp;&amp; params.page! &gt; 0 ? params.page! : 1;
+            const limitRaw &#x3D; Number.isInteger(params.limit) &amp;&amp; params.limit! &gt; 0 ? params.limit! : 20;
+            const limit &#x3D; Math.min(limitRaw, 100);
+            const skip &#x3D; (page - 1) * limit;
+
+            const entityMeta &#x3D; this.repo.metadata;
+
+            // Allowed relations &#x3D; actual relation property names from metadata
+            const allowedRelations &#x3D; new Set(entityMeta.relations.map(r &#x3D;&gt; r.propertyName));
+            const requested &#x3D; Array.isArray(params.relations) &amp;&amp; params.relations.length
+                ? params.relations
+                : [&#x27;user&#x27;]; // sensible default
+
+            const relationsToJoin &#x3D; requested.filter(r &#x3D;&gt; allowedRelations.has(r));
+
+            // ---- query builder ----
+            const qb &#x3D; this.repo.createQueryBuilder(&#x27;off&#x27;);
+
+            // Join requested relations
+            for (const rel of relationsToJoin) {
+                qb.leftJoinAndSelect(&#x60;off.${rel}&#x60;, rel);
+            }
+
+            // ---- optional filter: user_id ----
+            if (typeof params.user_id &#x3D;&#x3D;&#x3D; &#x27;number&#x27; &amp;&amp; Number.isFinite(params.user_id)) {
+                // Since the user relation is eager and always loaded, we can filter directly
+                qb.andWhere(&#x27;off.user.id &#x3D; :uid&#x27;, { uid: params.user_id });
+            }
+
+            // ---- ordering ----
+            // Use created_at column name since that&#x27;s what&#x27;s defined in the entity
+            qb.orderBy(&#x27;off.created_at&#x27;, &#x27;DESC&#x27;);
+
+            // ---- run + paginate ----
+            const [data, total] &#x3D; await qb.skip(skip).take(limit).getManyAndCount();
+
+            return {
+                data,
+                meta: {
+                    total,
+                    page,
+                    limit,
+                    pages: Math.ceil(total / limit),
+                },
+            };
+        } catch (err: any) {
+            // Log the underlying error for debugging
+            console.error(&#x27;findAll error:&#x27;, err);
+            throw new InternalServerErrorException(&#x27;Failed to fetch offerings.&#x27;);
+        }
+    }
+
+
+    async findOneById(
+        id: number,
+        relations?: Array&lt;&#x27;user&#x27; | &#x27;offering_offers&#x27; | &#x27;offering_price&#x27; | &#x27;logo&#x27;&gt;,
+    ) {
+        try {
+            // Validate relations against entity metadata to avoid invalid joins
+            const allowed &#x3D; new Set(
+                this.repo.metadata.relations.map((r) &#x3D;&gt; r.propertyName),
+            );
+            const safeRelations &#x3D; (relations ?? []).filter((r) &#x3D;&gt; allowed.has(r));
+
+            const offering &#x3D; await this.repo.findOne({
+                where: { id },
+                relations: safeRelations,
+            });
+
+            if (!offering) {
+                throw new NotFoundException(&#x60;Offering with ID ${id} not found&#x60;);
+            }
+
+            return offering;
+        } catch (err) {
+            if (err instanceof NotFoundException) throw err;
+            throw new InternalServerErrorException(&#x27;Failed to fetch offering&#x27;);
+        }
+    }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'OfferingsService-1.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

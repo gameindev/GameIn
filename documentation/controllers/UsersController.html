@@ -144,15 +144,44 @@
                                     <span class="modifier"></span>
                                     <span class="modifier"></span>
                                     <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                <a href="#assignUserTypeToOAuthUser" >assignUserTypeToOAuthUser</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                <a href="#checkUserByIdentifier" >checkUserByIdentifier</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
                                 <a href="#createUser" >createUser</a>
                             </li>
                             <li>
                                     <span class="modifier"></span>
                                     <span class="modifier"></span>
                                     <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
                                 <a href="#deleteUser" >deleteUser</a>
                             </li>
                             <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
                                     <span class="modifier"></span>
                                     <span class="modifier"></span>
                                     <span class="modifier"></span>
@@ -165,9 +194,28 @@
                                     <span class="modifier"></span>
                                     <span class="modifier"></span>
                                     <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
                                 <a href="#getUsers" >getUsers</a>
                             </li>
                             <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                <a href="#softDeleteUser" >softDeleteUser</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
                                     <span class="modifier"></span>
                                     <span class="modifier"></span>
                                     <span class="modifier"></span>
@@ -194,8 +242,189 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="assignUserTypeToOAuthUser"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                        <span ><b>assignUserTypeToOAuthUser</b></span>
+                        <a href="#assignUserTypeToOAuthUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>assignUserTypeToOAuthUser(patchUserRoleDto: <a href="../classes/PathcUserRoleDto.html" target="_self">PathcUserRoleDto</a>, userSub: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@ApiBearerAuth()<br />@ApiTags(&#x27;Auth&#x27;)<br />@ApiOperation({summary: &#x27;Assigns a role to an OAuth user&#x27;})<br />@ApiResponse({status: 200, description: &#x27;Role assigned successfully&#x27;})<br />@Patch(&#x27;/assign-role&#x27;)<br />@UseInterceptors(ClassSerializerInterceptor)<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="269"
+                                    class="link-to-prism">src/users/users.controller.ts:269</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Assigns a role to an OAuth user</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>patchUserRoleDto</td>
+                                            <td>
+                                                            <code><a href="../classes/PathcUserRoleDto.html" target="_self" >PathcUserRoleDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>userSub</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="checkUserByIdentifier"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                        <span ><b>checkUserByIdentifier</b></span>
+                        <a href="#checkUserByIdentifier"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>checkUserByIdentifier(identifier: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@ApiOperation({summary: &#x27;Check a registered user on the application by identifier.&#x27;})<br />@ApiQuery({name: &#x27;identifier&#x27;, type: String, description: &#x27;The identifier of the user to fetch&#x27;, required: true})<br />@ApiResponse({status: 200, description: &#x27;Return true or false based on the query&#x27;})<br />@Get(&#x27;/by-identifier&#x27;)<br />@Auth(AuthType.None)<br />@UseInterceptors(ClassSerializerInterceptor)<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="140"
+                                    class="link-to-prism">src/users/users.controller.ts:140</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Fetches a registered user on the application by ID.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>identifier</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>User fetched successfully based on the query</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="createUser"></a>
                     <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
                             <span class="modifier"></span>
                             <span class="modifier"></span>
                             <span class="modifier"></span>
@@ -215,20 +444,22 @@
                 <td class="col-md-4">
                     <b>Decorators : </b>
                     <br />
-                    <code>@Post()<br />@ApiOperation({summary: &#x27;Creates a new user on the application.&#x27;})<br />@ApiResponse({status: 201, description: &#x27;User created successfully based on the query&#x27;})<br /></code>
+                    <code>@Post()<br />@ApiOperation({summary: &#x27;Creates a new user on the application.&#x27;})<br />@ApiResponse({status: 201, description: &#x27;User created successfully based on the query&#x27;})<br />@Auth(AuthType.None)<br />@UseInterceptors(ClassSerializerInterceptor)<br /></code>
                 </td>
             </tr>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="87"
-                                    class="link-to-prism">src/users/users.controller.ts:87</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="220"
+                                    class="link-to-prism">src/users/users.controller.ts:220</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>Creates a new user on the application.</p>
+</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -239,6 +470,7 @@
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
+                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -253,16 +485,21 @@
                                             </td>
 
 
+                                            <td>
+                                                    <p>The user details that you want the API to return</p>
+
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
                         </div>
                             <div class="io-description">
-                                
+                                <p>User created successfully based on the query</p>
+
                             </div>
                 </td>
             </tr>
@@ -274,6 +511,10 @@
                 <td class="col-md-4">
                     <a name="deleteUser"></a>
                     <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
                             <span class="modifier"></span>
                             <span class="modifier"></span>
                             <span class="modifier"></span>
@@ -293,20 +534,22 @@
                 <td class="col-md-4">
                     <b>Decorators : </b>
                     <br />
-                    <code>@Delete(&#x27;/:id&#x27;)<br />@ApiOperation({summary: &#x27;Deletes a registered user on the application by ID.&#x27;})<br />@ApiResponse({status: 200, description: &#x27;User deleted successfully based on the query&#x27;})<br /></code>
+                    <code>@Delete(&#x27;/:id&#x27;)<br />@UseInterceptors(ClassSerializerInterceptor)<br />@ApiOperation({summary: &#x27;Deletes a registered user on the application by ID.&#x27;})<br />@ApiResponse({status: 200, description: &#x27;User deleted successfully based on the query&#x27;})<br />@ApiBearerAuth()<br />@UseGuards(UserTypeGuard)<br />@UserTypes(UserType.ADMIN)<br /></code>
                 </td>
             </tr>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="118"
-                                    class="link-to-prism">src/users/users.controller.ts:118</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="319"
+                                    class="link-to-prism">src/users/users.controller.ts:319</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>Permanently deletes a registered user on the application.</p>
+</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -317,6 +560,7 @@
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
+                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -331,16 +575,21 @@
                                             </td>
 
 
+                                            <td>
+                                                    <p>The ID of the user that you want the API to return</p>
+
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
                         </div>
                             <div class="io-description">
-                                
+                                <p>Return a success message</p>
+
                             </div>
                 </td>
             </tr>
@@ -356,6 +605,11 @@
                             <span class="modifier"></span>
                             <span class="modifier"></span>
                             <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
                         <span ><b>getUserById</b></span>
                         <a href="#getUserById"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -364,7 +618,7 @@
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>getUserById(getUserParamDto: <a href="../classes/GetUsersParamDto.html" target="_self">GetUsersParamDto</a>)</code>
+                    <code>getUserById(getUserParamDto: <a href="../classes/GetUsersParamDto.html" target="_self">GetUsersParamDto</a>, populate?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
                 </td>
             </tr>
 
@@ -372,14 +626,27 @@
                 <td class="col-md-4">
                     <b>Decorators : </b>
                     <br />
-                    <code>@ApiOperation({summary: &#x27;Fetches a registered user on the application by ID.&#x27;})<br />@ApiParam({name: &#x27;id&#x27;, type: Number, description: &#x27;The ID of the user that you want the API to return&#x27;, required: true})<br />@ApiResponse({status: 200, description: &#x27;User fetched successfully based on the query&#x27;})<br />@Get(&#x27;/:id&#x27;)<br /></code>
+                    <code>@ApiOperation({summary: &#x27;Fetches a registered user on the application by ID.&#x27;, description: 
+      Returns user data by ID. You can optionally include related entities using the &#x60;populate&#x60; query param.
+      
+      ### Populate Options:
+      - &#x60;creator_profile&#x60;: Include Creator Profile (for users with userType: CREATOR)
+      - &#x60;brand_profile&#x60;: Include Brand Profile (if applicable)
+      - &#x60;ratings_given&#x60;: Ratings this user has given
+      - &#x60;ratings_received&#x60;: Ratings this user has received
+      - &#x60;user_faqs&#x60;: FAQs associated with the user
+      - &#x60;*&#x60;: Include all supported relations
+      
+      Use comma-separated values to load multiple relations.
+        })<br />@ApiParam({name: &#x27;id&#x27;, type: Number, description: &#x27;The ID of the user to fetch&#x27;, required: true})<br />@ApiQuery({name: &#x27;populate&#x27;, required: false, type: String, description: Optional. Comma-separated list of valid relation keys.
+      Only valid relations on the User entity will be included. Invalid values will be ignored., example: &#x27;creator_profile,ratings_received&#x27;})<br />@ApiResponse({status: 200, description: &#x27;User fetched successfully based on the query.&#x27;})<br />@ApiBearerAuth()<br />@UseGuards(UserTypeGuard)<br />@UserTypes(UserType.ADMIN, UserType.CREATOR, UserType.BRAND, UserType.COMMUNITY)<br />@UseInterceptors(ClassSerializerInterceptor)<br />@Get(&#x27;/:id&#x27;)<br /></code>
                 </td>
             </tr>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="68"
-                                    class="link-to-prism">src/users/users.controller.ts:68</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="195"
+                                    class="link-to-prism">src/users/users.controller.ts:195</a></div>
                         </td>
                     </tr>
 
@@ -418,11 +685,25 @@
 
                                             </td>
                                         </tr>
+                                        <tr>
+                                                <td>populate</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
                         </div>
                             <div class="io-description">
@@ -444,6 +725,11 @@
                             <span class="modifier"></span>
                             <span class="modifier"></span>
                             <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
                         <span ><b>getUsers</b></span>
                         <a href="#getUsers"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -452,7 +738,7 @@
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>getUsers(limit: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, page: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                    <code>getUsers(limit: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, page: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, populate?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
                 </td>
             </tr>
 
@@ -460,20 +746,32 @@
                 <td class="col-md-4">
                     <b>Decorators : </b>
                     <br />
-                    <code>@Get()<br />@ApiOperation({summary: &#x27;Fetches a list of registered users on the application.&#x27;})<br />@ApiQuery({name: &#x27;limit&#x27;, type: String, description: &#x27;The upper limit of pages you want the pagination to return&#x27;, required: false})<br />@ApiQuery({name: &#x27;page&#x27;, type: String, description: &#x27;The position of the page number that you want the API to return&#x27;, required: false})<br />@ApiResponse({status: 200, description: &#x27;Users fetched successfully based on the query&#x27;})<br /></code>
+                    <code>@Get()<br />@ApiOperation({summary: &#x27;Fetches a list of registered users on the application.&#x27;, description: 
+    Returns paginated users. Use the &#x27;populate&#x27; query param to load related entities.
+
+    - Use &#x60;populate&#x3D;creator_profile&#x60;, &#x60;brand_profile&#x60;, etc. to include specific relations
+    - Use &#x60;populate&#x3D;*&#x60; to include all supported relations dynamically
+  })<br />@ApiQuery({name: &#x27;limit&#x27;, type: Number, description: &#x27;The number of users per page (pagination limit)&#x27;, required: false, example: 10})<br />@ApiQuery({name: &#x27;page&#x27;, type: Number, description: &#x27;The page number to fetch&#x27;, required: false, example: 1})<br />@ApiQuery({name: &#x27;populate&#x27;, type: String, required: false, description: Comma-separated list of relations to include.
+Options depend on valid relations in User entity, e.g.:
+  - creator_profile
+  - brand_profile
+
+Use &#x27;*&#x27; to load all supported relations., example: &#x27;creator_profile,ratings_given&#x27;})<br />@ApiResponse({status: 200, description: &#x27;Users fetched successfully based on the query&#x27;})<br />@ApiBearerAuth()<br />@UseGuards(UserTypeGuard)<br />@UserTypes(UserType.ADMIN)<br />@UseInterceptors(ClassSerializerInterceptor)<br /></code>
                 </td>
             </tr>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="42"
-                                    class="link-to-prism">src/users/users.controller.ts:42</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="89"
+                                    class="link-to-prism">src/users/users.controller.ts:89</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>Fetches a list of registered users on the application.</p>
+</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -511,15 +809,118 @@
 
 
                                         </tr>
+                                        <tr>
+                                                <td>populate</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
                         </div>
                             <div class="io-description">
+                                <p>Users with pagination and optional relations</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="softDeleteUser"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                        <span ><b>softDeleteUser</b></span>
+                        <a href="#softDeleteUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>softDeleteUser(getUserParamDto: <a href="../classes/GetUsersParamDto.html" target="_self">GetUsersParamDto</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Delete(&#x27;/:id/soft-delete&#x27;)<br />@ApiOperation({summary: &#x27;Soft Deletes a registered user on the application by ID.&#x27;})<br />@ApiResponse({status: 200, description: &#x27;User soft deleted successfully based on the query&#x27;})<br />@ApiBearerAuth()<br />@UseGuards(UserTypeGuard)<br />@UserTypes(UserType.ADMIN, UserType.CREATOR, UserType.BRAND, UserType.COMMUNITY)<br />@UseInterceptors(ClassSerializerInterceptor)<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="295"
+                                    class="link-to-prism">src/users/users.controller.ts:295</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Soft deletes a registered user on the application.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
                                 
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>getUserParamDto</td>
+                                            <td>
+                                                            <code><a href="../classes/GetUsersParamDto.html" target="_self" >GetUsersParamDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The ID of the user that you want the API to return</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>Return a success message</p>
+
                             </div>
                 </td>
             </tr>
@@ -534,6 +935,10 @@
                             <span class="modifier"></span>
                             <span class="modifier"></span>
                             <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
                         <span ><b>updateUser</b></span>
                         <a href="#updateUser"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -542,7 +947,7 @@
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>updateUser(patchUserDto: <a href="../classes/PatchUserDto.html" target="_self">PatchUserDto</a>)</code>
+                    <code>updateUser(patchUserDto: <a href="../classes/PatchUserDto.html" target="_self">PatchUserDto</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
                 </td>
             </tr>
 
@@ -550,20 +955,22 @@
                 <td class="col-md-4">
                     <b>Decorators : </b>
                     <br />
-                    <code>@Patch(&#x27;/:id&#x27;)<br />@ApiOperation({summary: &#x27;Updates a registered user on the application by ID.&#x27;})<br />@ApiResponse({status: 200, description: &#x27;User updated successfully based on the query&#x27;})<br /></code>
+                    <code>@Patch()<br />@ApiOperation({summary: &#x27;Updates a registered user on the application by ID.&#x27;})<br />@ApiResponse({status: 200, description: &#x27;User updated successfully based on the query&#x27;})<br />@ApiBearerAuth()<br />@UseGuards(UserTypeGuard)<br />@UserTypes(UserType.ADMIN, UserType.CREATOR, UserType.BRAND, UserType.COMMUNITY)<br />@UseInterceptors(ClassSerializerInterceptor)<br /></code>
                 </td>
             </tr>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="105"
-                                    class="link-to-prism">src/users/users.controller.ts:105</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="243"
+                                    class="link-to-prism">src/users/users.controller.ts:243</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>Updates a registered user on the application.</p>
+</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -574,6 +981,7 @@
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
+                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -588,16 +996,35 @@
                                             </td>
 
 
+                                            <td>
+                                                    <p>The user details that you want the API to return</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
                         </div>
                             <div class="io-description">
-                                
+                                <p>User updated successfully based on the query</p>
+
                             </div>
                 </td>
             </tr>
@@ -608,11 +1035,22 @@
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">/* eslint-disable */
-import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from &quot;@nestjs/common&quot;;
-import { ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from &quot;@nestjs/swagger&quot;;
+import { Body, ClassSerializerInterceptor, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards, UseInterceptors } from &quot;@nestjs/common&quot;;
+import { UserTypeGuard } from &quot;src/auth/guards/user-type.guard&quot;;
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from &quot;@nestjs/swagger&quot;;
 import { GetUsersParamDto } from &quot;./dtos/get-user-param.dto&quot;;
 import { CreateUserDto } from &quot;./dtos/post-create-user.dto&quot;;
 import { PatchUserDto } from &quot;./dtos/patch-user.dto&quot;;
+import { UsersService } from &quot;./providers/users.service&quot;;
+import { AccessTokenGuard } from &quot;src/auth/guards/access-token/access-token.guard&quot;;
+import { Auth } from &quot;src/auth/decorators/auth.decorator&quot;;
+import { AuthType } from &quot;src/auth/enums/auth-type.enum&quot;;
+import { ActiveUser } from &quot;src/auth/decorators/active-user.decorator&quot;;
+import { ActiveUserData } from &quot;src/auth/interfaces/active-user-data.interface&quot;;
+import { PathcUserRoleDto } from &quot;./dtos/patch-user-role.dto&quot;;
+import { UserTypes } from &quot;src/auth/decorators/user-types.decorator&quot;;
+import { UserType } from &quot;./enums/user-type.enums&quot;;
+
 
 
 
@@ -622,64 +1060,189 @@ import { PatchUserDto } from &quot;./dtos/patch-user.dto&quot;;
 * Users controller.
 */
 export class UsersController {
+
+    constructor(
+        /**
+         * Injecting Users service.
+         */
+        private readonly usersService: UsersService,
+    ) {
+
+    }
+
+
+    /**
+     * Fetches a list of registered users on the application.
+     * @query limit The number of users per page
+     * @query page The page number to fetch
+     * @query populate Optional relations to include (creatorProfile, brandProfile, etc.)
+     * @returns Users with pagination and optional relations
+     */
     @Get()
     @ApiOperation({
-        summary: &#x27;Fetches a list of registered users on the application.&#x27;
+        summary: &#x27;Fetches a list of registered users on the application.&#x27;,
+        description: &#x60;
+    Returns paginated users. Use the &#x27;populate&#x27; query param to load related entities.
+
+    - Use \&#x60;populate&#x3D;creator_profile\&#x60;, \&#x60;brand_profile\&#x60;, etc. to include specific relations
+    - Use \&#x60;populate&#x3D;*\&#x60; to include all supported relations dynamically
+  &#x60;,
     })
     @ApiQuery({
         name: &#x27;limit&#x27;,
-        type: String,
-        description: &#x27;The upper limit of pages you want the pagination to return&#x27;,
+        type: Number,
+        description: &#x27;The number of users per page (pagination limit)&#x27;,
         required: false,
+        example: 10,
     })
     @ApiQuery({
         name: &#x27;page&#x27;,
-        type: String,
-        description: &#x27;The position of the page number that you want the API to return&#x27;,
+        type: Number,
+        description: &#x27;The page number to fetch&#x27;,
         required: false,
+        example: 1,
+    })
+    @ApiQuery({
+        name: &#x27;populate&#x27;,
+        type: String,
+        required: false,
+        description: &#x60;Comma-separated list of relations to include.
+Options depend on valid relations in User entity, e.g.:
+  - creator_profile
+  - brand_profile
+
+Use &#x27;*&#x27; to load all supported relations.&#x60;,
+        example: &#x27;creator_profile,ratings_given&#x27;,
     })
     @ApiResponse({
         status: 200,
         description: &#x27;Users fetched successfully based on the query&#x27;,
     })
-    /**
-     * Fetches a list of registered users on the application.
-     * @query limit The upper limit of pages you want the pagination to return
-     * @query page The position of the page number that you want the API to return
-     * @returns Users fetched successfully based on the query
-     */
+    @ApiBearerAuth()
+    @UseGuards(UserTypeGuard)
+    @UserTypes(UserType.ADMIN)
+    @UseInterceptors(ClassSerializerInterceptor)
     getUsers(
         @Query(&#x27;limit&#x27;, new DefaultValuePipe(10), ParseIntPipe) limit: number,
         @Query(&#x27;page&#x27;, new DefaultValuePipe(1), ParseIntPipe) page: number,
+        @Query(&#x27;populate&#x27;) populate?: string,
     ) {
-        return &quot;This is Get users endpoint&quot;;
+        return this.usersService.getAllUsers(limit, page, populate);
     }
 
-     /**
-     * Fetches a registered user on the application by ID.
-     * @param getUserParamDto The ID of the user that you want the API to return
-     * @returns User fetched successfully based on the query
-     */
+
+    /**
+    * Fetches a registered user on the application by ID.
+    * @param email The ID of the user that you want the API to return
+    * @returns User fetched successfully based on the query
+    */  
+    // @UseGuards(AccessTokenGuard)
+    // @Get(&#x27;/by-email&#x27;)
+    // @UseGuards(UserTypeGuard)
+    // @UserTypes(UserType.ADMIN, UserType.CREATOR, UserType.BRAND, UserType.COMMUNITY)
+    // @UseInterceptors(ClassSerializerInterceptor)
+    // getUserByEmail(
+    //     @Query(&#x27;email&#x27;) email: string,
+    // ) {
+    //     return this.usersService.findUserOneByEmail(email);
+    // }
+
+
+
+
+    /**
+    * Fetches a registered user on the application by ID.
+    * @param email The ID of the user that you want the API to return
+    * @returns User fetched successfully based on the query
+    */
     @ApiOperation({
-        summary: &#x27;Fetches a registered user on the application by ID.&#x27;
+        summary: &#x27;Check a registered user on the application by identifier.&#x27;,
     })
-    @ApiParam({
-        name: &#x27;id&#x27;,
-        type: Number,
-        description: &#x27;The ID of the user that you want the API to return&#x27;,
+    @ApiQuery({
+        name: &#x27;identifier&#x27;,
+        type: String,
+        description: &#x27;The identifier of the user to fetch&#x27;,
         required: true,
     })
     @ApiResponse({
         status: 200,
-        description: &#x27;User fetched successfully based on the query&#x27;,
-    })   
-    @Get(&quot;/:id&quot;)
-    getUserById(@Param() getUserParamDto: GetUsersParamDto) {
-        return &quot;This is Get users By Id endpoint&quot;;
+        description: &#x27;Return true or false based on the query&#x27;,
+    })
+
+    // @UseGuards(AccessTokenGuard)
+    @Get(&#x27;/by-identifier&#x27;)
+    @Auth(AuthType.None)
+    @UseInterceptors(ClassSerializerInterceptor)
+    checkUserByIdentifier(
+        @Query(&#x27;identifier&#x27;) identifier: string,
+    ) {
+        return this.usersService.checkOneByIdentifier(identifier);
     }
 
 
 
+
+
+
+    /**
+    * Fetches a registered user on the application by ID.
+    * @param getUserParamDto The ID of the user that you want the API to return
+    * @returns User fetched successfully based on the query
+    */
+    @ApiOperation({
+        summary: &#x27;Fetches a registered user on the application by ID.&#x27;,
+        description: &#x60;
+      Returns user data by ID. You can optionally include related entities using the \&#x60;populate\&#x60; query param.
+      
+      ### Populate Options:
+      - \&#x60;creator_profile\&#x60;: Include Creator Profile (for users with userType: CREATOR)
+      - \&#x60;brand_profile\&#x60;: Include Brand Profile (if applicable)
+      - \&#x60;ratings_given\&#x60;: Ratings this user has given
+      - \&#x60;ratings_received\&#x60;: Ratings this user has received
+      - \&#x60;user_faqs\&#x60;: FAQs associated with the user
+      - \&#x60;*\&#x60;: Include all supported relations
+      
+      Use comma-separated values to load multiple relations.
+        &#x60;,
+    })
+    @ApiParam({
+        name: &#x27;id&#x27;,
+        type: Number,
+        description: &#x27;The ID of the user to fetch&#x27;,
+        required: true,
+    })
+    @ApiQuery({
+        name: &#x27;populate&#x27;,
+        required: false,
+        type: String,
+        description: &#x60;Optional. Comma-separated list of valid relation keys.
+      Only valid relations on the User entity will be included. Invalid values will be ignored.&#x60;,
+        example: &#x27;creator_profile,ratings_received&#x27;,
+    })
+    @ApiResponse({
+        status: 200,
+        description: &#x27;User fetched successfully based on the query.&#x27;,
+    })
+    @ApiBearerAuth()
+    @UseGuards(UserTypeGuard)
+    @UserTypes(UserType.ADMIN, UserType.CREATOR, UserType.BRAND, UserType.COMMUNITY)
+    @UseInterceptors(ClassSerializerInterceptor)
+    @Get(&quot;/:id&quot;)
+    getUserById(
+        @Param() getUserParamDto: GetUsersParamDto,
+        @Query(&#x27;populate&#x27;) populate?: string,
+    ) {
+        return this.usersService.getUserById(getUserParamDto.id, populate);
+    }
+
+
+
+
+    /**
+     * Creates a new user on the application.
+     * @param createUserDto The user details that you want the API to return
+     * @returns User created successfully based on the query
+     */
     @Post()
     @ApiOperation({
         summary: &#x27;Creates a new user on the application.&#x27;
@@ -688,17 +1251,20 @@ export class UsersController {
         status: 201,
         description: &#x27;User created successfully based on the query&#x27;,
     })
-    /**
-     * Creates a new user on the application.
-     * @param createUserDto The user details that you want the API to return
-     * @returns User created successfully based on the query
-     */
+    @Auth(AuthType.None)
+    @UseInterceptors(ClassSerializerInterceptor)
     createUser(@Body() createUserDto: CreateUserDto) {
-        return &quot;This is Create users endpoint&quot;;
+        return this.usersService.createUser(createUserDto);
     }
 
 
-    @Patch(&quot;/:id&quot;)
+
+    /**
+     * Updates a registered user on the application.
+     * @param patchUserDto The user details that you want the API to return
+     * @returns User updated successfully based on the query
+     */
+    @Patch()
     @ApiOperation({
         summary: &#x27;Updates a registered user on the application by ID.&#x27;
     })
@@ -706,17 +1272,76 @@ export class UsersController {
         status: 200,
         description: &#x27;User updated successfully based on the query&#x27;,
     })
-    /**
-     * Updates a registered user on the application.
-     * @param patchUserDto The user details that you want the API to return
-     * @returns User updated successfully based on the query
-     */
-    updateUser(@Body() patchUserDto: PatchUserDto) {
-        return &quot;This is Update users endpoint&quot;;
+    @ApiBearerAuth()
+    @UseGuards(UserTypeGuard)
+    @UserTypes(UserType.ADMIN, UserType.CREATOR, UserType.BRAND, UserType.COMMUNITY)
+    @UseInterceptors(ClassSerializerInterceptor)
+    updateUser(
+        @Body() patchUserDto: PatchUserDto,
+        @ActiveUser() user: ActiveUserData
+    ) {
+        return this.usersService.updateUser(patchUserDto, user);
     }
 
 
+
+
+    /**
+     * Assigns a role to an OAuth user
+     * @param patchUserRoleDto 
+     * @returns 
+     */
+    @ApiBearerAuth()
+    @ApiTags(&#x27;Auth&#x27;)
+    @ApiOperation({
+        summary: &#x27;Assigns a role to an OAuth user&#x27;
+    })
+    @ApiResponse({
+        status: 200,
+        description: &#x27;Role assigned successfully&#x27;
+    })
+    @Patch(&#x27;/assign-role&#x27;)
+    @UseInterceptors(ClassSerializerInterceptor)
+    assignUserTypeToOAuthUser(
+        @Body() patchUserRoleDto: PathcUserRoleDto,
+        @ActiveUser() userSub: ActiveUserData
+    ) {
+        return this.usersService.updateOAuthUserRole(patchUserRoleDto, userSub);
+    }
+
+
+
+    /**
+     * Soft deletes a registered user on the application.
+     * @param getUserParamDto The ID of the user that you want the API to return
+     * @returns Return a success message
+     */
+    @Delete(&quot;/:id/soft-delete&quot;)
+    @ApiOperation({
+        summary: &#x27;Soft Deletes a registered user on the application by ID.&#x27;
+    })
+    @ApiResponse({
+        status: 200,
+        description: &#x27;User soft deleted successfully based on the query&#x27;,
+    })
+    @ApiBearerAuth()
+    @UseGuards(UserTypeGuard)
+    @UserTypes(UserType.ADMIN, UserType.CREATOR, UserType.BRAND, UserType.COMMUNITY)
+    @UseInterceptors(ClassSerializerInterceptor)
+    softDeleteUser(@Param() getUserParamDto: GetUsersParamDto) {
+        return this.usersService.softDeleteUser(getUserParamDto.id);
+    }
+
+
+
+
+    /**
+     * Permanently deletes a registered user on the application.
+     * @param getUserParamDto The ID of the user that you want the API to return
+     * @returns Return a success message
+     */
     @Delete(&quot;/:id&quot;)
+    @UseInterceptors(ClassSerializerInterceptor)
     @ApiOperation({
         summary: &#x27;Deletes a registered user on the application by ID.&#x27;
     })
@@ -724,9 +1349,15 @@ export class UsersController {
         status: 200,
         description: &#x27;User deleted successfully based on the query&#x27;,
     })
+    @ApiBearerAuth()
+    @UseGuards(UserTypeGuard)
+    @UserTypes(UserType.ADMIN)
     deleteUser(@Param() getUserParamDto: GetUsersParamDto) {
-        return &quot;This is Delete users endpoint&quot;;
+        return this.usersService.deleteUser(getUserParamDto.id);
     }
+
+
+
 }
 </code></pre>
     </div>
