@@ -14,7 +14,7 @@ export class AlterEnumSocialPlatform1756711325352 implements MigrationInterface 
                 'INSTAGRAM',
                 'X',
                 'YOUTUBE',
-                'KICK'
+                'KICK',
                 'TIKTOK',
                 'DISCORD',
                 'FACEBOOK',
