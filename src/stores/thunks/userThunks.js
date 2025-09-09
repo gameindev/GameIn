@@ -9,7 +9,7 @@ export const refreshUser = createAsyncThunk(
       const {
         data: { data: refreshedUserData },
       } = await api.get(
-        `/users/${userId}?populate=creatorProfile,brandProfile,userBio`
+        `/users/${userId}?populate=creator_profile,brand_profile,user_bio`
       );
       console.log(refreshedUserData);
 

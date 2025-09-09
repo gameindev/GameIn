@@ -3,11 +3,11 @@ import { useSelector } from "react-redux";
 import routePaths from "../endpoints";
 
 const RoleGuard = ({ allowedRoles }) => {
-  const userType = useSelector((state) => state.user?.profile?.user?.userType);
+  const user_type = useSelector((state) => state.user?.profile?.user?.user_type);
 
-  console.log(userType);
+  console.log(user_type);
 
-  return allowedRoles.includes(userType) ? (
+  return allowedRoles.includes(user_type) ? (
     <Outlet />
   ) : (
     <Navigate to={routePaths.WELCOMEPAGE} replace />

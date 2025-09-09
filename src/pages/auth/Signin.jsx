@@ -68,19 +68,19 @@ export default function Signin() {
       );
 
       const userId = data?.user?.id;
-      const userType = data?.user?.userType?.toUpperCase();
+      const user_type = data?.user?.user_type?.toUpperCase();
 
-      if (!userId || !userType) {
+      if (!userId || !user_type) {
         showNotification("Login Error", "User information incomplete", "red");
         navigate(routePaths.WELCOMEPAGE);
         return;
       }
 
       const profileType =
-        userType === "BRAND"
-          ? "brandProfile"
-          : userType === "CREATOR"
-          ? "creatorProfile"
+        user_type === "BRAND"
+          ? "brand_profile"
+          : user_type === "CREATOR"
+          ? "creator_profile"
           : "";
 
       const { data: fullUserData } = await get(

@@ -22,21 +22,21 @@ const GoogleLoginBtn = () => {
     try {
       const { data } = await post(API_PATHS.AUTH.GOOGLE_OAUTH, { token: response?.credential });
 
-      const isProfileIncomplete = !data.user?.userType;
-      console.log(data.user?.userType)
+      const isProfileIncomplete = !data.user?.user_type;
+      console.log(data.user?.user_type)
       if (isProfileIncomplete) {
         setShowCompleteProfile(true)
         setAuthTokens({ accessToken: data.accessToken, refreshToken: data.refreshToken, user: data.user });
       } else {
         dispatch(setAuth({ accessToken: data.accessToken, refreshToken: data.refreshToken, user: data.user }));
         const userId = data?.user?.id;
-        const userType = data?.user?.userType?.toUpperCase();
+        const user_type = data?.user?.user_type?.toUpperCase();
 
         const profileType =
-          userType === "BRAND"
-            ? "brandProfile"
-            : userType === "CREATOR"
-              ? "creatorProfile"
+          user_type === "BRAND"
+            ? "creator_profile"
+            : user_type === "CREATOR"
+              ? "creator_profile"
               : "";
 
         const { data: fullUserData } = await get(
@@ -55,14 +55,14 @@ const GoogleLoginBtn = () => {
   const handleProfileCompleted = async ({ user }) => {
     dispatch(setAuth({ accessToken: user.accessToken, refreshToken: user.refreshToken, user: user.user }));
     const userId = user?.user?.id;
-    const userType = user?.user?.userType?.toUpperCase();
+    const user_type = user?.user?.user_type?.toUpperCase();
     console.log(user)
 
     const profileType =
-      userType === "BRAND"
-        ? "brandProfile"
-        : userType === "CREATOR"
-          ? "creatorProfile"
+      user_type === "BRAND"
+        ? "brand_profile"
+        : user_type === "CREATOR"
+          ? "creator_profile"
           : "";
 
       const headers = {

@@ -7,10 +7,9 @@ export const createUser = async (formData, post) => {
     username: formData.username,
     email: formData.email,
     password: formData.password,
-    userType: formData.role?.toUpperCase() || "USER",
-    dateOfBirth: formatDate(formData.dob),
-    isActive: true,
-    isVerified: false,
+    user_type: formData.role?.toUpperCase() || "USER",
+    date_of_birth: formatDate(formData.dob),
+    is_active: true,
   };
 
   const headers = {
@@ -26,13 +25,13 @@ export const createUser = async (formData, post) => {
   }
 };
 
-export const getUserProfile = async (get, userId, userType, accessToken) => {
+export const getUserProfile = async (get, userId, user_type, accessToken) => {
   const profileMap = {
     BRAND: "brandProfile",
     CREATOR: "creatorProfile",
     COMMUNITY: "communityProfile",
   };
-  const profileType = profileMap[userType?.toUpperCase()] || "";
+  const profileType = profileMap[user_type?.toUpperCase()] || "";
 
   const getAuthHeaders = (accessToken) => ({
     "Content-Type": "application/json",
@@ -55,7 +54,7 @@ export const getFollowerStats = (user) => {
     COMMUNITY: "communityProfile",
   };
 
-  const profileKey = profileMap[user.userType?.toUpperCase()];
+  const profileKey = profileMap[user.user_type?.toUpperCase()];
   const profile = user[profileKey] || {};
 
   const totalFollowers = profile.followers || 0;

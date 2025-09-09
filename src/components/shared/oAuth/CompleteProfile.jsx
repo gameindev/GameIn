@@ -17,7 +17,7 @@ import useApi from "../../../hooks/useApi";
 import { API_PATHS } from "../../../services/endpoints";
 
 const defaultValues = {
-  userType: "",
+  user_type: "",
   password: "",
 };
 
@@ -62,7 +62,7 @@ export default function CompleteProfile({ opened, onComplete, accessToken }) {
           </Title>
           <Stack>
             <FormField
-              name="userType"
+              name="user_type"
               control={control}
               Component={Select}
               componentProps={{

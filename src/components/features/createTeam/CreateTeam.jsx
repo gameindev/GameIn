@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import {
   Paper,
-  Title,
-  Group,
   Container,
-  Progress,
   Stack,
   Flex,
   Text,
+  Box,
 } from "@mantine/core";
 import { Settings } from "lucide-react";
 import GeneralInfo from "./GeneralInfo";
@@ -18,6 +16,7 @@ import Payments from "./Payments";
 import FinalReview from "./FinalReview";
 import { theme } from "../../../styles/theme/customTheme";
 import SectionHeader from "./../../shared/ui/SectionHeader";
+import HexContainer from "../../shared/ui/HexContainer";
 
 const FORM_STEPS = [
   {
@@ -64,6 +63,62 @@ const FORM_STEPS = [
   },
 ];
 
+const stepColors = [
+  "#b472f2",
+  "#728df2",
+  "#72a3f2",
+  "#72c3f2",
+  "#72f2c3",
+  "#72f2a3",
+];
+
+const StepCalculator = ({ currentStep, steps }) => {
+  return (
+    <Box
+      ta="center"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "0.5em",
+        flex: 1,
+      }}
+    >
+      {steps.map((_, stepIndex) => (
+        <React.Fragment key={stepIndex}>
+          <HexContainer
+            size={30}
+            background={
+              stepIndex <= currentStep
+                ? stepColors[stepIndex]
+                : theme.colors.inputBgColor[0]
+            }
+          >
+            <Text size="xs" fw={900} c={"#3C4044"}>
+              {stepIndex + 1}
+            </Text>
+          </HexContainer>
+
+          {stepIndex < steps.length - 1 && (
+            <Box
+              style={{
+                height: 2,
+                flex: 1,
+                backgroundColor:
+                  stepIndex < currentStep
+                    ? stepColors[stepIndex + 1]
+                    : theme.colors.inputBgColor[0],
+                borderRadius: 2,
+                transition: "background-color 0.3s ease",
+              }}
+            />
+          )}
+        </React.Fragment>
+      ))}
+    </Box>
+  );
+};
+
 export default function CreateTeam() {
   const [stepIndex, setStepIndex] = useState(0);
   const totalSteps = FORM_STEPS.length;
@@ -88,7 +143,7 @@ export default function CreateTeam() {
       </div>
       <Container size="lg">
         <Paper radius="sm" bg={"transparent"} my={"5em"} mx={"xl"}>
-          {showProgressBar && (
+          {/* {showProgressBar && (
             <Group grow gap={3} mb={40}>
               {FORM_STEPS.map((_, index) => (
                 <Progress
@@ -100,7 +155,10 @@ export default function CreateTeam() {
                 />
               ))}
             </Group>
-          )}
+          )} */}
+          <Flex flex={3} gap="sm" align="center" my="lg">
+            <StepCalculator currentStep={stepIndex} steps={FORM_STEPS} />
+          </Flex>
           <Stack spacing="xl">
             <Stack>
               <StepComponent

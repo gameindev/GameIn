@@ -10,11 +10,12 @@ import {
   ActionWrapper,
   UserAvatar,
 } from "./styles";
-import { Button } from "@mantine/core";
+import { ActionIcon, Button, Text } from "@mantine/core";
 import LevelBadge from "./LevelBadge";
 import { useSelector } from "react-redux";
 import { currentUser } from "../../stores/selectors";
 import useProfileMediaUrls from "../../utils/helpers/useProfileMediaUrl";
+import { Link } from "react-router";
 
 const UserProfileBanner = () => {
   const { user } = useSelector(currentUser);
@@ -23,14 +24,14 @@ const UserProfileBanner = () => {
   const { avatarUrl, coverImageUrl } = useProfileMediaUrls();
   if (!user) return null;
 
-  const { userType, creatorProfile, brandProfile } = user;
+  const { user_type, creator_profile, brand_profile } = user;
 
-  const profile = userType === "CREATOR" ? creatorProfile : brandProfile;
-  
+  const profile = user_type === "CREATOR" ? creator_profile : brand_profile;
+
   const stats = {
     views: profile?.views || "0",
     followers: profile?.followers || "0",
-    joinedOn: new Date(user.createdAt).toLocaleDateString("en-US", {
+    joinedOn: new Date(user.created_at).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
@@ -42,7 +43,7 @@ const UserProfileBanner = () => {
       <CoverBanner coverImage={coverImageUrl} controls />
       <UserInformation>
         <UserAvatar>
-          <AvatarSection avatar={avatarUrl} radius={0.35}  size="180" controls />
+          <AvatarSection avatar={avatarUrl} radius={0.35} size="180" controls />
         </UserAvatar>
         <ProfileWrapper>
           <div className="personal_info">
@@ -52,10 +53,17 @@ const UserProfileBanner = () => {
           <LevelBadge level={profile?.rank || 1} />
           <SponsorshipSection sponsors={user?.sponsors || []} />
           <ActionWrapper>
+            <div className="interaction">
+              <Link to={`/inbox`}>
+                <ActionIcon size="lg" color="inputBgColor" variant="filled">
+                  <Text size="xs">Inbox</Text>
+                </ActionIcon>
+              </Link>
+            </div>
             <div className="actions">
-              <Button variant="secondary" size="xs">
+              {/* <Button variant="secondary" size="xs">
                 Follow
-              </Button>
+              </Button> */}
               <Button variant="primary" size="xs">
                 Sponsor
               </Button>

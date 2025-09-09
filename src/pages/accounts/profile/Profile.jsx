@@ -29,8 +29,12 @@ export default function Profile() {
   //   gamesUrl: games,
   // } = useSelector((state) => state.bio);
 
-  const userBio = (user && user.userBio) || {};
-  const { bio: bioFromUser, videoBioUrl, preferredGames = [] } = userBio;
+  const user_bio = (user && user.user_bio) || {};
+  const {
+    bio: bioFromUser,
+    video_bio_url: videoBioUrl,
+    preferred_games: preferredGames = [],
+  } = user_bio;
 
   return (
     <Grid gutter={20}>
@@ -57,11 +61,11 @@ export default function Profile() {
                 <Flex gap="md">
                   {preferredGames.slice(0, 4).map((game, idx) => (
                     <Flex key={idx} align="center" gap={8}>
-                      <Link target="_blank" to={game?.gameUrl}>
+                      <Link target="_blank" to={game?.game_url}>
                         <Image
                           w={32}
                           h={32}
-                          src={game?.metadata?.favicon}
+                          src={game?.meta_data?.favicon}
                           alt={game?.metadata?.title || "favicon"}
                           width={32}
                           height={32}

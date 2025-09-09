@@ -42,12 +42,12 @@ export default function EditBio() {
 
   const fetchedGames = useMemo(() => {
     return (
-      user?.userBio?.preferredGames?.map((game) => ({
-        url: game?.gameUrl,
+      user?.user_bio?.preferred_games?.map((game) => ({
+        url: game?.game_url,
         metadata: game?.metadata || {},
       })) || []
     );
-  }, [user?.userBio?.preferredGames]);
+  }, [user?.user_bio?.preferred_games]);
 
   const gameUrls = reduxGames?.length ? reduxGames : fetchedGames;
 
@@ -58,28 +58,31 @@ export default function EditBio() {
   }, [reduxGames, fetchedGames, dispatch, globalBio]);
 
   useEffect(() => {
-    reset({
-      bio: globalBio.bio || user?.userBio?.bio || "",
-      introVideoUrl:
-        globalBio.introVideoUrl || user?.userBio?.videoBioUrl || "",
-      introVideoFile: globalBio.introVideoFile || null,
-      gamesUrl: gameUrls || [],
-    });
-  }, [globalBio, user, reset, gameUrls]);
+    if (user) {
+      reset({
+        bio: globalBio.bio || user?.user_bio?.bio || "",
+        introVideoUrl:
+          globalBio.introVideoUrl || user?.user_bio?.video_bio_url || "",
+        introVideoFile: globalBio.introVideoFile || null,
+        gamesUrl: gameUrls || [],
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, reset]);
 
   const onSubmit = async (data) => {
     try {
       const payload = {
         bio: data.bio,
-        videoBioUrl: data.introVideoUrl,
-        userId: user.id,
-        preferredGames: gameUrls.map((game, index) => ({
-          gameUrl: game.url,
-          sortOrder: index,
+        video_bio_url: data.introVideoUrl,
+        user_id: user.id,
+        preferred_games: gameUrls.map((game, index) => ({
+          game_url: game.url,
+          sort_order: index,
         })),
       };
 
-      await patch("/users-bio.controller", payload);
+      await patch("/users-bio", payload);
 
       dispatch(
         setBio({

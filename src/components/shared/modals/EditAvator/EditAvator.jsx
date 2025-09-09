@@ -23,11 +23,13 @@ export default function EditImage({ type = "avatar", close }) {
   const { patch, loading } = useApi();
   const { user } = useSelector(currentUser);
 
-  const userType = user?.userType?.toLowerCase();
-  const profile = user?.[`${userType}Profile`];
+  const user_type = user?.user_type?.toLowerCase();
+  const profile = user?.[`${user_type}_profile`];
   const profileId = profile?.id;
   const currentPath =
-    type === "avatar" ? profile?.profileImage?.path : profile?.coverImage?.path;
+    type === "avatar"
+      ? profile?.profile_image?.path
+      : profile?.cover_image?.path;
 
   const [image, setImage] = useState({
     preview: currentPath
@@ -91,11 +93,11 @@ export default function EditImage({ type = "avatar", close }) {
 
     const formData = new FormData();
     formData.append(
-      type === "avatar" ? "profileImageFile" : "coverImageFile",
+      type === "avatar" ? "profile_image" : "cover_image",
       image.file
     );
 
-    const endpoint = `/${userType}-profiles/${profileId}/${
+    const endpoint = `/${user_type}-profiles/${profileId}/${
       type === "avatar" ? "profile-pic" : "cover-pic"
     }`;
 

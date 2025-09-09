@@ -40,9 +40,9 @@ export const ProfileWrapper = styled.div`
   align-items: flex-end;
   gap: 1.5em;
 
-  /* .personal_info {
-    flex-grow: 1;
-  } */
+  .personal_info {
+    width: 80%;
+  }
 `;
 
 export const UserSection = styled.div`
@@ -120,6 +120,8 @@ export const BadgeSection = styled.div`
 export const SponsorShip = styled.div`
   display: flex;
   align-items: end;
+  width: 100%;
+  height: 100%;
   gap: 2.5em;
   font-size: 0.875em;
   color: #a0aec0;
@@ -144,7 +146,7 @@ export const SponsorShip = styled.div`
 
 export const ActionWrapper = styled.div`
   display: flex;
-  flex-direction: column;
+  align-items: flex-start;
   gap: 0.5em;
 
   .actions {

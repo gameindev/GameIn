@@ -74,7 +74,7 @@ export const stepThreeSchema = Yup.object().shape({
 });
 
 export const OAuthProfile = Yup.object().shape({
-    userType: Yup.string()
+    user_type: Yup.string()
         .oneOf([USERTYPES.CREATOR, USERTYPES.BRAND, USERTYPES.COMMUNITY], "Please select a valid role")
         .required("Please choose your role"),
     password: Yup.string()

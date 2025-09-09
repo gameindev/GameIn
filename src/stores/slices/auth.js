@@ -5,7 +5,7 @@ const initialState = {
   refreshToken: localStorage.getItem("refreshToken") || null,
   user: {
     id: null,
-    userType: null,
+    user_type: null,
   },
 };
 
@@ -18,13 +18,13 @@ const authSlice = createSlice({
       state.refreshToken = action.payload.refreshToken;
       state.user = {
         id: action.payload.user.id,
-        userType: action.payload.user.userType ?? null,
+        user_type: action.payload.user.user_type ?? null,
       };
     },
     logoutUser: (state) => {
       state.accessToken = null;
       state.refreshToken = null;
-      state.user = { id: null, userType: null };
+      state.user = { id: null, user_type: null };
     },
   },
 });

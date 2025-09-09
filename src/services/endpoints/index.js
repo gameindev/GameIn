@@ -25,8 +25,8 @@ export const API_PATHS = {
     DETAILS: (id) => `/products/${id}`,
     CREATE: "/products/create",
   },
-  SEARCH: ({ keyword, userType, country, page = 1, limit = 20 }) =>
-    `/search/users?keyword=${keyword}${userType && `&userType=${userType}`}${
+  SEARCH: ({ keyword, user_type, country, page = 1, limit = 20 }) =>
+    `/search/users?keyword=${keyword}${user_type && `&user_type=${user_type}`}${
       country && `&country=${country}`
     }&page=${page}&limit=${limit}`,
 };
