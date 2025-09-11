@@ -1,6 +1,7 @@
 
 
 export enum OfferingStatus{
+    DRAFT = 'DRAFT',
     OFFERED = 'OFFERED',
     PENDING = 'PENDING',
     ACCEPTED = 'ACCEPTED',
