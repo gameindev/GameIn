@@ -20,13 +20,20 @@ export const API_PATHS = {
     GET_FOLLOWERS: (id) => `/users/${id}/followers`,
     GET_FOLLOWING: (id) => `/users/${id}/following`,
   },
+  OFFERINGS: {
+    LIST: "/offerings",
+    DETAILS: (id) => `/offerings/${id}`,
+    CREATE: "/offerings",
+    UPDATE: (id) => `/offerings/${id}`,
+    DELETE: (id) => `/offerings/${id}`,
+  },
   PRODUCTS: {
     LIST: "/products",
     DETAILS: (id) => `/products/${id}`,
     CREATE: "/products/create",
   },
-  SEARCH: ({ keyword, user_type, country, page = 1, limit = 20 }) =>
-    `/search/users?keyword=${keyword}${user_type && `&user_type=${user_type}`}${
+  SEARCH: ({ keyword, userType, country, page = 1, limit = 20 }) =>
+    `/search/users?keyword=${keyword}${userType && `&user_type=${userType}`}${
       country && `&country=${country}`
     }&page=${page}&limit=${limit}`,
 };

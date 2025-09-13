@@ -4,10 +4,10 @@ import {
   NumberInput,
   TextInput,
   Textarea,
-  Stack,
-  Text,
   Checkbox,
   Flex,
+  Stack,
+  Text,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { Link } from "react-router";
@@ -17,22 +17,19 @@ import { InlineFields, OfferingOpportunities } from "./style";
 
 const FORM_CONFIG = {
   platforms: [
-    { value: "youtube", label: "YouTube" },
     { value: "twitch", label: "Twitch" },
+    { value: "instagram", label: "Instagram" },
+    { value: "x", label: "X (Twitter)" },
+    { value: "youtube", label: "YouTube" },
+    { value: "tiktok", label: "TikTok" },
+    { value: "discord", label: "Discord" },
     { value: "kick", label: "Kick" },
     { value: "facebook", label: "Facebook" },
-    { value: "instagram", label: "Instagram" },
-    { value: "twitter", label: "X (Twitter)" },
-  ],
-  timeModes: [
-    { value: "live", label: "Live" },
-    { value: "pre-recorded", label: "Pre-recorded" },
-    { value: "shoutout", label: "Shout out" },
-  ],
-  logoSizes: [
-    { value: "small", label: "Small" },
-    { value: "medium", label: "Medium" },
-    { value: "large", label: "Large" },
+    { value: "snapchat", label: "Snapchat" },
+    { value: "pinterest", label: "Pinterest" },
+    { value: "linkedin", label: "LinkedIn" },
+    { value: "threads", label: "Threads" },
+    { value: "others", label: "Others" },
   ],
   durations: [
     { value: "15s", label: "15s" },
@@ -42,15 +39,20 @@ const FORM_CONFIG = {
     { value: "custom", label: "Custom" },
   ],
   postTypes: [
-    { value: "story", label: "Story" },
-    { value: "post", label: "Post" },
-    { value: "reel", label: "Reel" },
-    { value: "tweet", label: "Tweet" },
+    { value: "clothing", label: "Clothing" },
+    { value: "accessories", label: "Accessories" },
+    { value: "gamingGear", label: "Gaming Gear" },
+    { value: "inGameItems", label: "In-Game Items" },
+    { value: "beautyWellness", label: "Beauty & Wellness" },
+    { value: "collectibles", label: "Collectibles" },
+    { value: "digitalProducts", label: "Digital Products" },
+    { value: "custom", label: "Custom" },
   ],
   paymentTypes: [
     { value: "stripe", label: "Stripe" },
     { value: "paypal", label: "PayPal" },
-    { value: "crypto", label: "Crypto" },
+    { value: "razorpay", label: "RazorPay" },
+    { value: "manual", label: "Manual" },
   ],
   eventTypes: [
     { value: "tournament", label: "Tournament" },
@@ -64,66 +66,151 @@ const FORM_CONFIG = {
   ],
 };
 
+const TIME_MODE_CONFIG = {
+  streaming: [
+    { value: "timespan", label: "Time span" },
+    { value: "starttoend", label: "Start to End" },
+    { value: "perhour", label: "Per Hour" },
+    { value: "eventtrigger", label: "Event Trigger" },
+    { value: "fixedfrequency", label: "Fixed Frequency" },
+  ],
+  videoCommercial: [
+    { value: "shoutout", label: "Shoutout" },
+    { value: "adsegment", label: "Ad Segment" },
+    { value: "productreview", label: "Product Review" },
+    { value: "visualOverlay", label: "Visual Overlay" },
+    { value: "sponsored", label: "Sponser Intro/Outro" },
+    { value: "custom", label: "custom" },
+  ],
+  socialMedia: [
+    { value: "timespan", label: "Time span" },
+    { value: "introonly", label: "Intro Only" },
+    { value: "outroonly", label: "Outro Only" },
+    { value: "flashmention", label: "Flash Mention" },
+    { value: "pinnedoverlay", label: "Pinned Overlay" },
+    { value: "hashtagonly", label: "Hashtag Only" },
+    { value: "custom", label: "custom" },
+  ],
+  merchProducts: [
+    { value: "timespan", label: "Time span" },
+    { value: "introonly", label: "Intro Only" },
+    { value: "outroonly", label: "Outro Only" },
+    { value: "singleappr", label: "Single Appearance" },
+    { value: "highlightmom", label: "Highlight Moment" },
+    { value: "pinnedpost", label: "Pinned Post/Tag" },
+    { value: "custom", label: "custom" },
+  ],
+  default: [
+    { value: "live", label: "Live" },
+    { value: "pre-recorded", label: "Pre-recorded" },
+    { value: "shoutout", label: "Shout out" },
+  ],
+};
+
+const LOGO_SIZES_CONFIG = {
+  streaming: [
+    { value: "100px", label: "100px" },
+    { value: "150px", label: "150px" },
+    { value: "200px", label: "200px" },
+    { value: "250px", label: "250px" },
+    { value: "300px", label: "300px" },
+    { value: "fullwidth", label: "Full Width" },
+    { value: "custom", label: "Custom" },
+  ],
+  videoCommercial: [
+    { value: "small", label: "Small" },
+    { value: "medium", label: "Medium" },
+    { value: "wide", label: "Wide" },
+    { value: "fullscreen", label: "Full Screen" },
+    { value: "custom", label: "Custom" },
+  ],
+  socialMedia: [
+    { value: "portrait", label: "Portrait" },
+    { value: "square", label: "Square" },
+    { value: "landscape", label: "Landscape" },
+    { value: "smallbadge", label: "Small Badge" },
+    { value: "fulltakeover", label: "FullScreen Takeover" },
+    { value: "custom", label: "Custom" },
+  ],
+  merchProducts: [],
+  default: [
+    { value: "small", label: "Small" },
+    { value: "medium", label: "Medium" },
+    { value: "large", label: "Large" },
+  ],
+};
+
+const SelectField = (name, label, data, extra = {}) => ({
+  name,
+  Component: Select,
+  inline: true,
+  required: extra.required || false,
+  componentProps: {
+    data,
+    label,
+    placeholder: `Select ${label.toLowerCase()}`,
+    rightSection: <ChevronDown size="1em" />,
+    style: { width: "7.5rem" },
+    ...extra,
+  },
+});
+
+const TextField = (name, label, extra = {}) => {
+  const hasValue = extra.value !== undefined;
+  return {
+    name,
+    Component: TextInput,
+    inline: true,
+    required: extra.required || false,
+    componentProps: {
+      label,
+      style: { width: "7.5rem" },
+      placeholder: hasValue ? undefined : `Enter ${label.toLowerCase()}`,
+      ...(hasValue ? { defaultValue: extra.value } : {}),
+      ...extra,
+    },
+  };
+};
+
+const DateField = (name, label, extra = {}) => ({
+  name,
+  Component: DateInput,
+  inline: true,
+  required: extra.required || false,
+  componentProps: {
+    label,
+    placeholder: label,
+    valueFormat: "DD/MM/YYYY",
+    clearable: true,
+    style: { width: "7.5rem" },
+  },
+});
+
+// Field configs generator
 const getFieldConfigs = (mode, type) => {
   const BASE_FIELDS = [
-    {
-      name: "platform",
-      Component: Select,
-      inline: true,
-      componentProps: {
-        data: FORM_CONFIG.platforms,
-        label: "Platform",
-        placeholder: "Select platform",
-        rightSection: <ChevronDown size="1em" />,
-        style: { width: "7.5rem" },
-      },
-    },
-    {
-      name: "timeMode",
-      Component: Select,
-      inline: true,
-      componentProps: {
-        data: FORM_CONFIG.timeModes,
-        label: "Time Mode",
-        placeholder: "Select Time Mode",
-        rightSection: <ChevronDown size="1em" />,
-        style: { width: "7.5rem" },
-      },
-    },
+    SelectField("platform", "Platform", FORM_CONFIG.platforms),
+    SelectField(
+      "timeMode",
+      "Time Mode",
+      TIME_MODE_CONFIG[type] || TIME_MODE_CONFIG.default
+    ),
     ...(mode === "edit" && type !== "videoCommercial"
-      ? [
-          {
-            name: "schedule",
-            Component: TextInput,
-            inline: true,
-            componentProps: {
-              label: "Schedule",
-              placeholder: "Mon - Fri",
-              style: { width: "7.5rem" },
-            },
-          },
-        ]
+      ? [TextField("schedule", "Schedule", { placeholder: "Mon - Fri" })]
       : []),
-    {
-      name: "size",
-      Component: Select,
-      inline: true,
-      componentProps: {
-        data: FORM_CONFIG.logoSizes,
-        label: "Logo Size",
-        placeholder: "Select logo size",
-        rightSection: <ChevronDown size="1em" />,
-        style: { width: "7.5rem" },
-      },
-    },
+    SelectField(
+      "size",
+      "Logo Size",
+      LOGO_SIZES_CONFIG[type] || LOGO_SIZES_CONFIG.default
+    ),
   ];
 
-  return {
+  const CONFIGS = {
     streaming: BASE_FIELDS,
-    videoCommercial: [
-      ...BASE_FIELDS,
-      ...(mode === "edit"
+    videoCommercial:
+      mode === "edit"
         ? [
+            ...BASE_FIELDS,
             {
               name: "repetitionDuration",
               wrapperFields: [
@@ -134,9 +221,7 @@ const getFieldConfigs = (mode, type) => {
                     placeholder: "00",
                     min: 0,
                     hideControls: true,
-                    styles: {
-                      input: { width: "3rem", textAlign: "center" },
-                    },
+                    styles: { input: { width: "3rem", textAlign: "center" } },
                   },
                 },
                 {
@@ -145,24 +230,22 @@ const getFieldConfigs = (mode, type) => {
                   componentProps: {
                     data: FORM_CONFIG.durations,
                     placeholder: "sec",
-                    styles: {
-                      input: { width: "4rem", textAlign: "center" },
-                    },
+                    styles: { input: { width: "4rem", textAlign: "center" } },
                   },
                 },
               ],
               wrapper: (children) => (
                 <Flex
-                  justify={"space-between"}
-                  align={"center"}
+                  justify="space-between"
+                  align="center"
                   spacing={4}
                   key="videoCommercial.repetitionDuration"
                 >
                   <Text>Repetition / Duration</Text>
                   <InlineFields>
-                    <Flex spacing={4} align="center" direction="row">
+                    <Flex spacing={4} align="center">
                       {children[0]}
-                      <Text component="span" size="sm" fw={600} c="dimmed">
+                      <Text size="sm" fw={600} c="dimmed">
                         ×
                       </Text>
                       {children[1]}
@@ -173,18 +256,8 @@ const getFieldConfigs = (mode, type) => {
             },
           ]
         : [
-            {
-              name: "duration",
-              Component: Select,
-              inline: true,
-              componentProps: {
-                data: FORM_CONFIG.durations,
-                label: "Duration",
-                placeholder: "Select duration",
-                rightSection: <ChevronDown size="1em" />,
-                style: { width: "7.5rem" },
-              },
-            },
+            ...BASE_FIELDS,
+            SelectField("duration", "Duration", FORM_CONFIG.durations),
             {
               name: "repetation",
               Component: NumberInput,
@@ -196,63 +269,20 @@ const getFieldConfigs = (mode, type) => {
                 style: { width: "7.5rem" },
               },
             },
-          ]),
-    ],
+          ],
     socialMedia: BASE_FIELDS,
     merchProducts: [
       ...BASE_FIELDS.slice(0, 2),
-      {
-        name: "types",
-        Component: Select,
-        inline: true,
-        componentProps: {
-          data: FORM_CONFIG.postTypes,
-          label: "Type",
-          placeholder: "Select type of post",
-          rightSection: <ChevronDown size="1em" />,
-          style: { width: "7.5rem" },
-        },
-      },
+      SelectField("types", "Type", FORM_CONFIG.postTypes),
     ],
     dateTitle: [
-      {
-        name: "startDate",
-        Component: DateInput,
-        inline: true,
-        componentProps: {
-          label: "Start Date",
-          placeholder: "Start date",
-          valueFormat: "DD/MM/YYYY",
-          clearable: true,
-          style: { width: "7.5rem" },
-        },
-      },
-      {
-        name: "endDate",
-        Component: DateInput,
-        inline: true,
-        componentProps: {
-          label: "End Date",
-          placeholder: "End date",
-          valueFormat: "DD/MM/YYYY",
-          clearable: true,
-          style: { width: "7.5rem" },
-        },
-      },
-      {
-        name: "title",
-        Component: TextInput,
-        inline: false,
-        componentProps: {
-          label: "Title",
-          placeholder: "Enter title",
-          style: { width: "100%" },
-        },
-      },
+      DateField("startDate", "Start Date", { required: true }),
+      DateField("endDate", "End Date", { required: true }),
+      TextField("title", "Title", { required: true, style: { width: "100%" } }),
       {
         name: "description",
         Component: Textarea,
-        inline: false,
+        required: true,
         componentProps: {
           label: "Description",
           placeholder: "Enter description",
@@ -264,7 +294,6 @@ const getFieldConfigs = (mode, type) => {
       {
         name: "title",
         Component: Textarea,
-        inline: false,
         componentProps: {
           label: "Title",
           placeholder: "Enter title",
@@ -274,7 +303,6 @@ const getFieldConfigs = (mode, type) => {
       {
         name: "description",
         Component: Textarea,
-        inline: false,
         componentProps: {
           label: "Description",
           placeholder: "Enter description",
@@ -283,129 +311,29 @@ const getFieldConfigs = (mode, type) => {
       },
     ],
     editInfos: [
-      {
-        name: "streamingPlatform",
-        Component: TextInput,
-        inline: true,
-        componentProps: {
-          label: "Streaming Platform",
-          style: { width: "7.5rem" },
-        },
-      },
-      {
-        name: "eventType",
-        Component: Select,
-        inline: true,
-        componentProps: {
-          data: FORM_CONFIG.eventTypes,
-          label: "Event Type",
-          placeholder: "Select type of post",
-          rightSection: <ChevronDown size="1em" />,
-          style: { width: "7.5rem" },
-        },
-      },
-      {
-        name: "eventStartDate",
-        Component: DateInput,
-        inline: true,
-        componentProps: {
-          label: "Event Starting",
-          placeholder: "Start date",
-          valueFormat: "DD/MM/YYYY",
-          clearable: true,
-          style: { width: "7.5rem" },
-        },
-      },
-      {
-        name: "eventEndDate",
-        Component: DateInput,
-        inline: true,
-        componentProps: {
-          label: "Event Ending",
-          placeholder: "End date",
-          valueFormat: "DD/MM/YYYY",
-          clearable: true,
-          style: { width: "7.5rem" },
-        },
-      },
-      {
-        name: "chooseGame",
-        Component: Select,
-        inline: true,
-        componentProps: {
-          data: FORM_CONFIG.chooseGame,
-          label: "Choose Game",
-          placeholder: "Select type of post",
-          rightSection: <ChevronDown size="1em" />,
-          style: { width: "7.5rem" },
-        },
-      },
-      {
-        name: "estimatedViewCount",
-        Component: TextInput,
-        inline: true,
-        componentProps: {
-          label: "Estimated View Count",
-          placeholder: "Enter title",
-          style: { width: "7.5rem" },
-        },
-      },
+      TextField("streamingPlatform", "Streaming Platform"),
+      SelectField("eventType", "Event Type", FORM_CONFIG.eventTypes),
+      DateField("eventStartDate", "Event Starting"),
+      DateField("eventEndDate", "Event Ending"),
+      SelectField("chooseGame", "Choose Game", FORM_CONFIG.chooseGame),
+      TextField("estimatedViewCount", "Estimated View Count"),
     ],
     price: [
-      {
-        name: "choosePrice",
-        Component: TextInput,
-        inline: true,
-        componentProps: {
-          label: "Choose your price",
-          placeholder: "Enter your price",
-          type: "number",
-          rightSection: (
-            <span style={{ color: "#888", fontSize: 14 }}>USD</span>
-          ),
-          style: { width: "7.5rem" },
-        },
-      },
-      {
-        name: "gameinFee",
-        Component: TextInput,
-        inline: true,
-        componentProps: {
-          label: "+ 5% gamein fee",
-          disabled: true,
-          value: "75.00",
-          rightSection: (
-            <span style={{ color: "#888", fontSize: 14 }}>USD</span>
-          ),
-          style: { width: "7.5rem" },
-        },
-      },
-      {
-        name: "gameinTax",
-        Component: TextInput,
-        inline: true,
-        componentProps: {
-          label: "+ 15.3% tax = total",
-          disabled: true,
-          value: "1.815,98",
-          rightSection: (
-            <span style={{ color: "#888", fontSize: 14 }}>USD</span>
-          ),
-          style: { width: "7.5rem" },
-        },
-      },
-      {
-        name: "paymentType",
-        Component: Select,
-        inline: true,
-        componentProps: {
-          data: FORM_CONFIG.paymentTypes,
-          label: "Payment method",
-          placeholder: "Select method",
-          rightSection: <ChevronDown size="1em" />,
-          style: { width: "7.5rem" },
-        },
-      },
+      TextField("choosePrice", "Choose your price", {
+        type: "number",
+        rightSection: <span style={{ color: "#888", fontSize: 14 }}>USD</span>,
+      }),
+      TextField("+gameinFee", "+ 5% gamein fee", {
+        disabled: true,
+        value: "75.00",
+        rightSection: <span style={{ color: "#888", fontSize: 14 }}>USD</span>,
+      }),
+      TextField("+gameinTax", "+ 15.3% tax = total", {
+        disabled: true,
+        value: "1.815,98",
+        rightSection: <span style={{ color: "#888", fontSize: 14 }}>USD</span>,
+      }),
+      SelectField("paymentType", "Payment method", FORM_CONFIG.paymentTypes),
     ],
     terms: [
       {
@@ -420,18 +348,10 @@ const getFieldConfigs = (mode, type) => {
               community simplified
             </Text>
             <Text>
-              We have implemented a minimum of terms to be agreed on, which
-              includes the license, a damage limitation clause and a 50%
-              performance bonus ciplinary
+              We have implemented a minimum of terms to be agreed on...
             </Text>
             <Link to="/terms-of-use" style={{ textDecoration: "none" }}>
-              <Text
-                size="sm"
-                align="center"
-                fw={600}
-                c="white"
-                style={{ cursor: "pointer" }}
-              >
+              <Text size="sm" align="center" fw={600} c="white">
                 read more
               </Text>
             </Link>
@@ -441,56 +361,56 @@ const getFieldConfigs = (mode, type) => {
       },
     ],
   };
+
+  return CONFIGS[type] || [];
 };
 
 export default function OpportunityFormFields({ control, type, mode }) {
-  const fields = getFieldConfigs(mode, type)[type] || [];
-
-  const renderWrappedFields = ({ wrapper, wrapperFields }) => {
-    const children = wrapperFields.map((child) => (
-      <FormField
-        key={child.name}
-        name={child.name.includes(".") ? child.name : `${type}.${child.name}`}
-        control={control}
-        Component={child.Component}
-        inline={true}
-        componentProps={child.componentProps}
-      />
-    ));
-    return wrapper(children);
-  };
+  const fields = getFieldConfigs(mode, type);
 
   return (
     <OfferingOpportunities>
-      {fields.map((fieldConfig) => {
-        const {
+      {fields.map(
+        ({
           name,
           Component,
           componentProps,
           wrapper,
           wrapperFields,
           inline,
-        } = fieldConfig;
+          required,
+        }) => {
+          if (wrapper && wrapperFields) {
+            const children = wrapperFields.map((child) => (
+              <FormField
+                key={child.name}
+                name={child.name}
+                control={control}
+                Component={child.Component}
+                inline
+                required={child.required || false}
+                componentProps={child.componentProps}
+              />
+            ));
+            return wrapper(children);
+          }
 
-        if (wrapper && wrapperFields) {
-          return renderWrappedFields({ wrapper, wrapperFields });
+          const fieldName = name.includes(".") ? name : `${type}.${name}`;
+          const field = (
+            <FormField
+              key={fieldName}
+              name={fieldName}
+              control={control}
+              Component={Component}
+              inline={inline}
+              required={required || false}
+              componentProps={componentProps}
+            />
+          );
+
+          return wrapper ? wrapper([field]) : field;
         }
-
-        const fieldName = name.includes(".") ? name : `${type}.${name}`;
-
-        const field = (
-          <FormField
-            key={fieldName}
-            name={fieldName}
-            control={control}
-            Component={Component}
-            inline={inline}
-            componentProps={componentProps}
-          />
-        );
-
-        return wrapper ? wrapper([field]) : field;
-      })}
+      )}
     </OfferingOpportunities>
   );
 }

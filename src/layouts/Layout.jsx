@@ -25,7 +25,7 @@ const Layout = () => {
       if (!user?.id) return;
 
       try {
-        const userData = await getUserProfile(get, user.id, user.userType);
+        const userData = await getUserProfile(get, user.id, user.user_type);
         dispatch(setUser({ user: userData }));
 
         // const followingRes = await get(`/users/${user.id}/following`);

@@ -218,12 +218,16 @@ export default function SponsorshipsOffers() {
           Type
         </Box>
         <EmptySeparator />
-        <Box flex={2.8}>
+        <Box flex={2}>
           <Flex justify={"space-between"} align="center">
             <Text>Offered</Text>
             <Text>Pending</Text>
             <Text>Accepted</Text>
           </Flex>
+        </Box>
+        <EmptySeparator />
+        <Box flex={0.75} ta={"center"}>
+          Expiring
         </Box>
         <EmptySeparator />
         <Box flex={0.75} ta={"center"}>
@@ -274,7 +278,7 @@ export default function SponsorshipsOffers() {
               </Box>
               <Separator />
 
-              <Flex flex={3} gap={"sm"} align="center">
+              <Flex flex={2} gap={"sm"} align="center">
                 <StepCalculator currentStep={statusStep[sponsorship.status]} />
                 {sponsorship.edited ? (
                   <Settings size={14} color={theme.colors.yellow[0]} />
@@ -282,6 +286,17 @@ export default function SponsorshipsOffers() {
                   <Check size={14} color={theme.colors.primary[0]} />
                 )}
               </Flex>
+              <Separator />
+
+              <Box flex={0.75} ta={"center"}>
+                <Text
+                  fz={theme.fontSizes.sm}
+                  fw={700}
+                  c={theme.colors.primary[0]}
+                >
+                  {getTimeRemaining(sponsorship.details.expectedStart)}
+                </Text>
+              </Box>
               <Separator />
 
               <Box flex={0.75} ta={"center"}>

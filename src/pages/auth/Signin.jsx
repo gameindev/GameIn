@@ -86,7 +86,6 @@ export default function Signin() {
       const { data: fullUserData } = await get(
         `/users/${userId}${profileType ? `?populate=${profileType}` : ""}`
       );
-      console.log("signin data", fullUserData);
 
       dispatch(setUser({ user: fullUserData }));
       showNotification(

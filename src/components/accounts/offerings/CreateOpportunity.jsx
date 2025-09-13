@@ -11,6 +11,8 @@ import streamingLogo from "../../../assets/accounts/offerings/streaming-logo.png
 import commercialBreak from "../../../assets/accounts/offerings/commercial-break.png";
 import socialMediaPost from "../../../assets/accounts/offerings/social-media-post.png";
 import merchProducts from "../../../assets/accounts/offerings/merch-products.png";
+import useApi from "./../../../hooks/useApi";
+import { API_PATHS } from "../../../services/endpoints";
 
 const defaultValues = {
   streaming: { enabled: false, platform: "", timeMode: "", size: "" },
@@ -28,8 +30,8 @@ const defaultValues = {
   price: {
     choosePrice: "",
     gameinFee: "75.00",
-    gameinTax: "1.815,98",
-    paymentType: "",
+    gameinTax: "215.00",
+    paymentType: "PAYPAL",
   },
   terms: { acknowledgement: false },
   sponsorEdit: false,
@@ -37,11 +39,97 @@ const defaultValues = {
 
 export default function CreateOpportunity() {
   const navigate = useNavigate();
+  const { post, loading, error } = useApi();
 
-  const { control, handleSubmit } = useFormHandler({
+  const { control, handleSubmit, reset } = useFormHandler({
     defaultValues,
     onSubmit: async (data) => {
-      console.log("Form Submitted", data);
+      const payload = {
+        offering: {
+          type: "INDIVIDUAL",
+          status: "OFFERED",
+          ...(data.dateTitle.title && { title: data.dateTitle.title }),
+          ...(data.dateTitle.description && {
+            description: data.dateTitle.description,
+          }),
+          ...(data.dateTitle.startDate && {
+            start_date: data.dateTitle.startDate,
+          }),
+          ...(data.dateTitle.endDate && { end_date: data.dateTitle.endDate }),
+          ...(data.terms.acknowledgement && {
+            is_terms_signed: data.terms.acknowledgement,
+          }),
+          ...(data.sponsorEdit !== undefined && { can_edit: data.sponsorEdit }),
+        },
+        offers: [
+          data.streaming.enabled && {
+            offer_type: "LOGO_STREAM",
+            ...(data.streaming.platform && {
+              platform: data.streaming.platform.toUpperCase(),
+            }),
+            ...(data.streaming.timeMode && {
+              time_mode: data.streaming.timeMode,
+            }),
+            ...(data.streaming.size && { size: data.streaming.size }),
+          },
+          data.videoCommercial.enabled && {
+            offer_type: "VIDEO_COMMERCIAL",
+            ...(data.videoCommercial.platform && {
+              platform: data.videoCommercial.platform.toUpperCase(),
+            }),
+            ...(data.videoCommercial.timeMode && {
+              time_mode: data.videoCommercial.timeMode,
+            }),
+            ...(data.videoCommercial.duration && {
+              duration: data.videoCommercial.duration,
+            }),
+            ...(data.videoCommercial.repetation && {
+              repetition: data.videoCommercial.repetation,
+            }),
+            ...(data.videoCommercial.size && {
+              size: data.videoCommercial.size,
+            }),
+          },
+          data.socialMedia.enabled && {
+            offer_type: "SOCIAL_POST",
+            ...(data.socialMedia.platform && {
+              platform: data.socialMedia.platform.toUpperCase(),
+            }),
+            ...(data.socialMedia.timeMode && {
+              time_mode: data.socialMedia.timeMode,
+            }),
+            ...(data.socialMedia.size && { size: data.socialMedia.size }),
+          },
+          data.merchProducts.enabled && {
+            offer_type: "MERCH_PRODUCTS",
+            ...(data.merchProducts.platform && {
+              platform: data.merchProducts.platform.toUpperCase(),
+            }),
+            ...(data.merchProducts.timeMode && {
+              time_mode: data.merchProducts.timeMode,
+            }),
+            ...(data.merchProducts.types && {
+              sub_type: data.merchProducts.types,
+            }),
+          },
+        ].filter(Boolean),
+        price: {
+          ...(data.price.choosePrice && { price: data.price.choosePrice }),
+          ...(data.price.gameinFee && { platform_fee: data.price.gameinFee }),
+          ...(data.price.gameinTax && { tax: data.price.gameinTax }),
+          ...(data.price.paymentType && {
+            payment_provider: data.price.paymentType.toUpperCase(),
+          }),
+        },
+      };
+      console.log("Payload to API", payload);
+      try {
+        const responseData = await post(API_PATHS.OFFERINGS.CREATE, payload);
+        reset("");
+        console.log("Response from API", responseData);
+      } catch (err) {
+        console.error("API error", err);
+      }
     },
   });
 

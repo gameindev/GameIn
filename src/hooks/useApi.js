@@ -1,22 +1,29 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import api from "../services/axios/";
+import qs from "qs";
 
 const useApi = ({
   url = null,
   method = "GET",
   payload = null,
   headers = {},
+  params = {},
   autoFetch = false,
 } = {}) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Store initial config for potential refetch
-  const initialConfigRef = useRef({ url, method, payload, headers });
+  const initialConfigRef = useRef({ url, method, payload, headers, params });
 
   const callApi = useCallback(
-    async ({ url, method = "GET", payload = null, headers = {} }) => {
+    async ({
+      url,
+      method = "GET",
+      payload = null,
+      headers = {},
+      params = {},
+    }) => {
       if (!url) return Promise.reject("URL is required");
 
       setLoading(true);
@@ -27,7 +34,11 @@ const useApi = ({
           url,
           method,
           ...(payload && { data: payload }),
-          ...(headers && { headers: headers }),
+          ...(headers && { headers }),
+          ...(params && {
+            params,
+            paramsSerializer: (p) => qs.stringify(p, { arrayFormat: "repeat" }),
+          }),
         });
         setData(response.data);
         return response.data;
@@ -42,23 +53,22 @@ const useApi = ({
     []
   );
 
-  // Auto-fetch on mount if enabled
   useEffect(() => {
     if (autoFetch && url) {
       callApi(initialConfigRef.current);
     }
   }, [autoFetch, url, callApi]);
 
-  // Create request method wrapper
   const createMethod =
     (methodType) =>
-    (url, payload = {}, headers = {}) => {
+    (url, payload = {}, headers = {}, params = {}) => {
       const isPayloadMethod = ["POST", "PUT", "PATCH"].includes(methodType);
       return callApi({
         url,
         method: methodType,
         ...(isPayloadMethod && { payload }),
         ...(headers && { headers }),
+        ...(params && { params }),
       });
     };
 

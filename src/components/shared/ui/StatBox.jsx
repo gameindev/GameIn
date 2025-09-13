@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Center, Text, Flex, Collapse, ActionIcon } from "@mantine/core";
+import { Box, Center, Text, Flex, Collapse, ActionIcon, Button } from "@mantine/core";
 import { theme } from "../../../styles/theme/customTheme";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
@@ -9,6 +9,7 @@ export default function StatBox({
   background,
   children,
   accordion = false,
+  actionCTA = false,
   defaultOpen = true,
 }) {
   const [opened, setOpened] = useState(defaultOpen);
@@ -49,6 +50,12 @@ export default function StatBox({
         </Collapse>
       ) : (
         <Box mt="sm">{children}</Box>
+      )}
+
+      {actionCTA && (
+        <Button mt="md" fullWidth radius="md" variant="primary">
+          Sponsor
+        </Button>
       )}
     </Box>
   );

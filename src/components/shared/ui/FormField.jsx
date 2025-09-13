@@ -7,6 +7,8 @@ import { Text } from "@mantine/core";
 function FormFieldComponent({
   name,
   control,
+  rules,
+  required = false,
   Component,
   componentProps = {},
   inline = false,
@@ -16,6 +18,12 @@ function FormFieldComponent({
     <Controller
       name={name}
       control={control}
+      rules={
+        rules ||
+        (required
+          ? { required: `${componentProps.label || name} is required` }
+          : undefined)
+      }
       render={({ field, fieldState: { error } }) => {
         if (render) {
           return render({ field, error });

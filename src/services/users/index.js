@@ -27,9 +27,9 @@ export const createUser = async (formData, post) => {
 
 export const getUserProfile = async (get, userId, user_type, accessToken) => {
   const profileMap = {
-    BRAND: "brandProfile",
-    CREATOR: "creatorProfile",
-    COMMUNITY: "communityProfile",
+    CREATOR: "creator_profile",
+    BRAND: "brand_profile",
+    COMMUNITY: "community_profile",
   };
   const profileType = profileMap[user_type?.toUpperCase()] || "";
 
@@ -49,9 +49,9 @@ export const getFollowerStats = (user) => {
   if (!user) return { totalFollowers: 0, socials: [] };
 
   const profileMap = {
-    CREATOR: "creatorProfile",
-    BRAND: "brandProfile",
-    COMMUNITY: "communityProfile",
+    CREATOR: "creator_profile",
+    BRAND: "brand_profile",
+    COMMUNITY: "community_profile",
   };
 
   const profileKey = profileMap[user.user_type?.toUpperCase()];
