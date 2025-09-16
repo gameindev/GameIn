@@ -1,44 +1,30 @@
 import React from "react";
 import { Box, Button, Flex, Grid, Group, Text } from "@mantine/core";
 import { useNavigate } from "react-router";
-import { useFormHandler } from "./../../../hooks/useFormHandler";
+import { useFormHandler } from "../../../hooks/useFormHandler";
 import OpportunitySection from "./OpportunitySection";
 import OpportunityFormFields from "./OpportunityFormFields";
 import StatBox from "../../shared/ui/StatBox";
 import SwitchButton from "../../shared/ui/Switch";
 import FormField from "../../shared/ui/FormField";
-import useApi from "./../../../hooks/useApi";
-import streamingLogo from "../../../assets/accounts/offerings/streaming-logo.png";
-import commercialBreak from "../../../assets/accounts/offerings/commercial-break.png";
-import socialMediaPost from "../../../assets/accounts/offerings/social-media-post.png";
-import merchProducts from "../../../assets/accounts/offerings/merch-products.png";
+import useApi from "../../../hooks/useApi";
 import { API_PATHS } from "../../../services/endpoints";
 import { showNotification } from "../../../utils/helpers";
 import { buildOfferingPayload } from "../../../config/mappers/offeringMappers";
+import {
+  defaultValues,
+  sections,
+} from "../../../config/formConfigs/opportunityConfig";
 
-// static form defaults stay here
-const defaultValues = {
-  streaming: { enabled: false, platform: "", timeMode: "", size: "" },
-  videoCommercial: {
-    enabled: false,
-    platform: "",
-    timeMode: "",
-    size: "",
-    duration: "",
-    repetation: "",
-  },
-  socialMedia: { enabled: false, platform: "", timeMode: "", size: "" },
-  merchProducts: { enabled: false, platform: "", timeMode: "", types: "" },
-  dateTitle: { startDate: null, endDate: null, title: "", description: "" },
-  price: {
-    choosePrice: "",
-    gameinFee: "00.00",
-    gameinTax: "00.00",
-    paymentType: "PAYPAL",
-  },
-  terms: { acknowledgement: false },
-  sponsorEdit: false,
-};
+function Section({ title, children, ...props }) {
+  return (
+    <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+      <StatBox title={title} {...props}>
+        <Box p="2.5rem">{children}</Box>
+      </StatBox>
+    </Grid.Col>
+  );
+}
 
 export default function CreateOpportunity() {
   const navigate = useNavigate();
@@ -47,7 +33,6 @@ export default function CreateOpportunity() {
   const { control, handleSubmit, reset, setValue } = useFormHandler({
     defaultValues,
     onSubmit: async (data) => {
-
       const payload = buildOfferingPayload(data);
       console.log("Payload to API", payload);
 
@@ -74,40 +59,6 @@ export default function CreateOpportunity() {
       }
     },
   });
-
-  // your section configs for UI
-  const sections = [
-    {
-      number: "01",
-      title: "STREAMING LOGO PLACEMENT",
-      description: "You are offering to place a brand logo in your live stream",
-      type: "streaming",
-      image: streamingLogo,
-    },
-    {
-      number: "02",
-      title: "VIDEO: COMMERCIAL BREAK",
-      description: "You are offering to generate product ads in your videos",
-      type: "videoCommercial",
-      image: commercialBreak,
-    },
-    {
-      number: "03",
-      title: "SOCIAL MEDIA POSTING",
-      description:
-        "You are offering to place branded posts in your social media accounts",
-      type: "socialMedia",
-      image: socialMediaPost,
-    },
-    {
-      number: "04",
-      title: "MERCH, CLOTHING, PRODUCTS",
-      description:
-        "You are offering to place advertisings in your social media accounts",
-      type: "merchProducts",
-      image: merchProducts,
-    },
-  ];
 
   return (
     <Box component="form" onSubmit={handleSubmit}>
@@ -138,43 +89,30 @@ export default function CreateOpportunity() {
       {/* Dates, Price, Terms */}
       <Group py="3.75rem">
         <Grid gutter={20}>
-          <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-            <StatBox title="Set Date & Title">
-              <Box p="2.5rem">
-                <OpportunityFormFields
-                  control={control}
-                  type="dateTitle"
-                  setValue={setValue}
-                />
-              </Box>
-            </StatBox>
-          </Grid.Col>
+          <Section title="Set Date & Title">
+            <OpportunityFormFields
+              control={control}
+              type="dateTitle"
+              setValue={setValue}
+            />
+          </Section>
 
-          <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-            <StatBox title="Set your price">
-              <Box p="2.5rem">
-                <OpportunityFormFields
-                  control={control}
-                  type="price"
-                  setValue={setValue}
-                />
-              </Box>
-            </StatBox>
-          </Grid.Col>
+          <Section title="Set your price">
+            <OpportunityFormFields
+              control={control}
+              type="price"
+              setValue={setValue}
+            />
+          </Section>
 
-          <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-            <StatBox title="Terms of use" background="rgba(105, 179, 231, 0.2)">
-              <Box p="2.5rem">
-                <OpportunityFormFields control={control} type="terms" />
-              </Box>
-            </StatBox>
-          </Grid.Col>
+          <Section title="Terms of use" background="rgba(105, 179, 231, 0.2)">
+            <OpportunityFormFields control={control} type="terms" />
+          </Section>
         </Grid>
       </Group>
 
       <Box w="100%" h={1} style={{ borderBottom: "1px dashed #50565a" }} />
 
-      {/* Footer buttons */}
       <Group py="3.75rem" align="center" justify="center">
         <Flex gap={32}>
           <Button

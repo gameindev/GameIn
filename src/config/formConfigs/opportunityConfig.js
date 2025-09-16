@@ -1,3 +1,74 @@
+import streamingLogo from "../../assets/accounts/offerings/streaming-logo.png";
+import commercialBreak from "../../assets/accounts/offerings/commercial-break.png";
+import socialMediaPost from "../../assets/accounts/offerings/social-media-post.png";
+import merchProducts from "../../assets/accounts/offerings/merch-products.png";
+
+export const sections = [
+  {
+    number: "01",
+    title: "STREAMING LOGO PLACEMENT",
+    description: "You are offering to place a brand logo in your live stream",
+    type: "streaming",
+    image: streamingLogo,
+  },
+  {
+    number: "02",
+    title: "VIDEO: COMMERCIAL BREAK",
+    description: "You are offering to generate product ads in your videos",
+    type: "videoCommercial",
+    image: commercialBreak,
+  },
+  {
+    number: "03",
+    title: "SOCIAL MEDIA POSTING",
+    description:
+      "You are offering to place branded posts in your social media accounts",
+    type: "socialMedia",
+    image: socialMediaPost,
+  },
+  {
+    number: "04",
+    title: "MERCH, CLOTHING, PRODUCTS",
+    description:
+      "You are offering to place advertisings in your social media accounts",
+    type: "merchProducts",
+    image: merchProducts,
+  },
+];
+
+const createDefaults = (overrides = {}) => ({
+  streaming: { enabled: false, platform: "", timeMode: "", size: "" },
+  videoCommercial: {
+    enabled: false,
+    platform: "",
+    timeMode: "",
+    size: "",
+    duration: "",
+    repetation: "",
+  },
+  socialMedia: { enabled: false, platform: "", timeMode: "", size: "" },
+  merchProducts: { enabled: false, platform: "", timeMode: "", types: "" },
+  dateTitle: { startDate: null, endDate: null, title: "", description: "" },
+  price: {
+    choosePrice: "",
+    gameinFee: "00.00",
+    gameinTax: "00.00",
+    paymentType: "PAYPAL",
+  },
+  terms: { acknowledgement: false },
+  sponsorEdit: false,
+  ...overrides,
+});
+
+export const defaultValues = createDefaults();
+
+export const editDefaultValues = createDefaults({
+  sponsorEdit: true,
+  note: `Dear creator XYZ,
+  We like your content and want to support this tournament! We are looking for a permanent Logo Placement throughout the tournament and a Commercial Break after every game, therefore we can skip all social media posts or merch. We uploaded all the data for you to download here: https://www.googledrive... We are looking forward to work with you!,`,
+  uploadLogo: null,
+});
+
 export const FORM_CONFIG = {
   platforms: [
     { value: "twitch", label: "Twitch" },

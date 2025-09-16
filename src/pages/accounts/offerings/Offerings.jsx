@@ -5,7 +5,7 @@ import IconButton from "../../../components/shared/ui/IconButton";
 import StatBox from "../../../components/shared/ui/StatBox";
 import useApi from "../../../hooks/useApi";
 import { API_PATHS } from "../../../services/endpoints";
-import { CheckCheckIcon } from "lucide-react";
+import { CheckIcon } from "lucide-react";
 import { theme } from "../../../styles/theme/customTheme";
 import { useSelector } from "react-redux";
 import { currentUser } from "../../../stores/selectors";
@@ -86,7 +86,7 @@ export default function Offerings() {
                 <List
                   size="xs"
                   spacing="xs"
-                  icon={<CheckCheckIcon size={14} color="green" />}
+                  icon={<CheckIcon size={14} color={theme.colors.primary[0]} />}
                 >
                   {offers.map((o) => (
                     <List.Item key={o.id}>
