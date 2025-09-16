@@ -84,8 +84,8 @@ function UploadLogoField({ control, uploadedLogo }) {
 
 export default function EditOpportunity() {
   const navigate = useNavigate();
-  const { control, handleSubmit, watch } = useFormHandler({
-    editDefaultValues,
+  const { control, handleSubmit, watch, setValue } = useFormHandler({
+    defaultValues: editDefaultValues,
     onSubmit: (data) => console.log("Form Submitted", data),
   });
   const uploadedLogo = watch("uploadLogo");
@@ -132,7 +132,11 @@ export default function EditOpportunity() {
         </Section>
 
         <Section title="Set your price">
-          <OpportunityFormFields control={control} type="price" />
+          <OpportunityFormFields
+            control={control}
+            type="price"
+            setValue={setValue}
+          />
         </Section>
 
         <Section title="Leave a note">
@@ -147,6 +151,12 @@ export default function EditOpportunity() {
               maxRows: 10,
             }}
           />
+          <Flex gap={20} align="center" mt="lg">
+            <ActionIcon size="lg" color="inputBgColor" variant="filled">
+              <Text size="xs">Inbox</Text>
+            </ActionIcon>
+            <Text>Get in touch with creator</Text>
+          </Flex>
         </Section>
 
         <UploadLogoField control={control} uploadedLogo={uploadedLogo} />
