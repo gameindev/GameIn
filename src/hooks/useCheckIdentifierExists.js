@@ -2,18 +2,23 @@ import useApi from "./useApi";
 import { API_PATHS } from "../services/endpoints";
 
 const useCheckIdentifierExists = () => {
-    const { get } = useApi();
+  const { get } = useApi();
 
-    const checkExists = async ({ email, username }) => {
-        if (!email && !username) return false;
+  const checkExists = async ({ email, username }) => {
+    if (!email && !username) return false;
 
-        const params = new URLSearchParams();
-        if (email) params.append("identifier", email);
-        if (username) params.append("identifier", username);
+    const params = new URLSearchParams();
+    if (email) params.append("identifier", email);
+    if (username) params.append("identifier", username);
 
     try {
-      const { data } = await get(`${API_PATHS.USERS.BY_IDENTIFIER}?${params}`);
-      if(!data){ return false;}
+      const { data } = await get({
+        url: API_PATHS.USERS.BY_IDENTIFIER,
+        params,
+      });
+      if (!data) {
+        return false;
+      }
       return true;
     } catch (err) {
       console.error("Identifier check failed:", err);
@@ -21,7 +26,7 @@ const useCheckIdentifierExists = () => {
     }
   };
 
-    return { checkExists };
+  return { checkExists };
 };
 
 export default useCheckIdentifierExists;

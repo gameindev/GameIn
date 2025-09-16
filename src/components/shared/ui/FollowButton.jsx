@@ -29,7 +29,10 @@ export default function FollowButton({
         await del(API_PATHS.FOLLOW.UNFOLLOW_USER(targetUserId));
         dispatch(removeFollowedUserId(targetUserId));
       } else {
-        await post(API_PATHS.FOLLOW.FOLLOW_USER, { following_id: targetUserId });
+        await post({
+          url: API_PATHS.FOLLOW.FOLLOW_USER,
+          payload: { following_id: targetUserId },
+        });
         dispatch(addFollowedUserId(targetUserId));
       }
 

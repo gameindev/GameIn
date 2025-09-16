@@ -7,7 +7,7 @@ import SponsorshipsOffers from "../../../components/accounts/sponsorships/Sponso
 export default function Sponsorships() {
   return (
     <Grid gutter={20}>
-      <Grid.Col span={{ base: 12 }}>
+      <Grid.Col span={{ base: 12 }} style={{ minHeight: "auto" }}>
         <StatBox
           title={"Ongoing Sponsorships"}
           action={<IconButton />}
@@ -17,7 +17,7 @@ export default function Sponsorships() {
           <OngoingSponsorships />
         </StatBox>
       </Grid.Col>
-      <Grid.Col span={{ base: 12 }}>
+      <Grid.Col span={{ base: 12 }} style={{ minHeight: "auto" }}>
         <StatBox
           title={"Offers"}
           action={<IconButton />}

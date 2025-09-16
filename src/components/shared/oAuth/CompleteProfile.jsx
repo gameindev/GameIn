@@ -36,11 +36,11 @@ export default function CompleteProfile({ opened, onComplete, accessToken }) {
       Authorization: `Bearer ${accessToken}`,
     };
     try {
-      const { data } = await patch(
-        API_PATHS.AUTH.SELECT_ROLE,
-        formData,
-        headers
-      );
+      const { data } = await patch({
+        url: API_PATHS.AUTH.SELECT_ROLE,
+        payload: formData,
+        headers,
+      });
       onComplete(data);
     } catch (error) {
       return Promise.reject("Complete profile error:", error);

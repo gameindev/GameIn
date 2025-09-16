@@ -14,7 +14,10 @@ export const loginWithProvider = async (provider, token, post) => {
       throw new Error(`Unsupported provider: ${provider}`);
   }
 
-  const { data } = await post(endpoint, { token });
+  const { data } = await post({
+    url: endpoint,
+    payload: { token },
+  });
 
   return {
     accessToken: data.accessToken,

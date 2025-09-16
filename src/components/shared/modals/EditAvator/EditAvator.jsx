@@ -102,8 +102,10 @@ export default function EditImage({ type = "avatar", close }) {
     }`;
 
     try {
-      await patch(endpoint, formData, {
-        "Content-Type": "multipart/form-data",
+      await patch({
+        url: endpoint,
+        payload: formData,
+        headers: { "Content-Type": "multipart/form-data" },
       });
       dispatch(refreshUser());
       close();

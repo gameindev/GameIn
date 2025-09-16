@@ -13,6 +13,7 @@ export const API_PATHS = {
     PROFILE: "/users/profile",
     UPDATE: (id) => `/users/${id}`,
     LIST: "/users",
+    BIO: "/users-bio",
   },
   FOLLOW: {
     FOLLOW_USER: `/users/follow`,
@@ -32,8 +33,11 @@ export const API_PATHS = {
     DETAILS: (id) => `/products/${id}`,
     CREATE: "/products/create",
   },
-  SEARCH: ({ keyword, userType, country, page = 1, limit = 20 }) =>
-    `/search/users?keyword=${keyword}${userType && `&user_type=${userType}`}${
-      country && `&country=${country}`
-    }&page=${page}&limit=${limit}`,
+  SEARCH: {
+    SEARCH_USERS: "/search/users",
+  },
+  // SEARCH: ({ keyword, userType, country, page = 1, limit = 20 }) =>
+  //   `/search/users?keyword=${keyword}${userType && `&user_type=${userType}`}${
+  //     country && `&country=${country}`
+  //   }&page=${page}&limit=${limit}`,
 };

@@ -7,13 +7,16 @@ import OpportunityFormFields from "./OpportunityFormFields";
 import StatBox from "../../shared/ui/StatBox";
 import SwitchButton from "../../shared/ui/Switch";
 import FormField from "../../shared/ui/FormField";
+import useApi from "./../../../hooks/useApi";
 import streamingLogo from "../../../assets/accounts/offerings/streaming-logo.png";
 import commercialBreak from "../../../assets/accounts/offerings/commercial-break.png";
 import socialMediaPost from "../../../assets/accounts/offerings/social-media-post.png";
 import merchProducts from "../../../assets/accounts/offerings/merch-products.png";
-import useApi from "./../../../hooks/useApi";
 import { API_PATHS } from "../../../services/endpoints";
+import { showNotification } from "../../../utils/helpers";
+import { buildOfferingPayload } from "../../../config/mappers/offeringMappers";
 
+// static form defaults stay here
 const defaultValues = {
   streaming: { enabled: false, platform: "", timeMode: "", size: "" },
   videoCommercial: {
@@ -29,8 +32,8 @@ const defaultValues = {
   dateTitle: { startDate: null, endDate: null, title: "", description: "" },
   price: {
     choosePrice: "",
-    gameinFee: "75.00",
-    gameinTax: "215.00",
+    gameinFee: "00.00",
+    gameinTax: "00.00",
     paymentType: "PAYPAL",
   },
   terms: { acknowledgement: false },
@@ -39,100 +42,40 @@ const defaultValues = {
 
 export default function CreateOpportunity() {
   const navigate = useNavigate();
-  const { post, loading, error } = useApi();
+  const { post, loading } = useApi();
 
-  const { control, handleSubmit, reset } = useFormHandler({
+  const { control, handleSubmit, reset, setValue } = useFormHandler({
     defaultValues,
     onSubmit: async (data) => {
-      const payload = {
-        offering: {
-          type: "INDIVIDUAL",
-          status: "OFFERED",
-          ...(data.dateTitle.title && { title: data.dateTitle.title }),
-          ...(data.dateTitle.description && {
-            description: data.dateTitle.description,
-          }),
-          ...(data.dateTitle.startDate && {
-            start_date: data.dateTitle.startDate,
-          }),
-          ...(data.dateTitle.endDate && { end_date: data.dateTitle.endDate }),
-          ...(data.terms.acknowledgement && {
-            is_terms_signed: data.terms.acknowledgement,
-          }),
-          ...(data.sponsorEdit !== undefined && { can_edit: data.sponsorEdit }),
-        },
-        offers: [
-          data.streaming.enabled && {
-            offer_type: "LOGO_STREAM",
-            ...(data.streaming.platform && {
-              platform: data.streaming.platform.toUpperCase(),
-            }),
-            ...(data.streaming.timeMode && {
-              time_mode: data.streaming.timeMode,
-            }),
-            ...(data.streaming.size && { size: data.streaming.size }),
-          },
-          data.videoCommercial.enabled && {
-            offer_type: "VIDEO_COMMERCIAL",
-            ...(data.videoCommercial.platform && {
-              platform: data.videoCommercial.platform.toUpperCase(),
-            }),
-            ...(data.videoCommercial.timeMode && {
-              time_mode: data.videoCommercial.timeMode,
-            }),
-            ...(data.videoCommercial.duration && {
-              duration: data.videoCommercial.duration,
-            }),
-            ...(data.videoCommercial.repetation && {
-              repetition: data.videoCommercial.repetation,
-            }),
-            ...(data.videoCommercial.size && {
-              size: data.videoCommercial.size,
-            }),
-          },
-          data.socialMedia.enabled && {
-            offer_type: "SOCIAL_POST",
-            ...(data.socialMedia.platform && {
-              platform: data.socialMedia.platform.toUpperCase(),
-            }),
-            ...(data.socialMedia.timeMode && {
-              time_mode: data.socialMedia.timeMode,
-            }),
-            ...(data.socialMedia.size && { size: data.socialMedia.size }),
-          },
-          data.merchProducts.enabled && {
-            offer_type: "MERCH_PRODUCTS",
-            ...(data.merchProducts.platform && {
-              platform: data.merchProducts.platform.toUpperCase(),
-            }),
-            ...(data.merchProducts.timeMode && {
-              time_mode: data.merchProducts.timeMode,
-            }),
-            ...(data.merchProducts.types && {
-              sub_type: data.merchProducts.types,
-            }),
-          },
-        ].filter(Boolean),
-        price: {
-          ...(data.price.choosePrice && { price: data.price.choosePrice }),
-          ...(data.price.gameinFee && { platform_fee: data.price.gameinFee }),
-          ...(data.price.gameinTax && { tax: data.price.gameinTax }),
-          ...(data.price.paymentType && {
-            payment_provider: data.price.paymentType.toUpperCase(),
-          }),
-        },
-      };
+
+      const payload = buildOfferingPayload(data);
       console.log("Payload to API", payload);
+
       try {
-        const responseData = await post(API_PATHS.OFFERINGS.CREATE, payload);
-        reset("");
-        console.log("Response from API", responseData);
+        const res = await post({ url: API_PATHS.OFFERINGS.CREATE, payload });
+        const title = res?.data?.offering?.title || "Offering";
+
+        reset();
+        showNotification(
+          "Offering Created",
+          `${title} has been created successfully.`,
+          "green"
+        );
+        console.log("Response from API", res);
+
+        navigate(-1);
       } catch (err) {
         console.error("API error", err);
+        showNotification(
+          "Error",
+          `Something went wrong while creating the offering. ${err}`,
+          "red"
+        );
       }
     },
   });
 
+  // your section configs for UI
   const sections = [
     {
       number: "01",
@@ -181,23 +124,28 @@ export default function CreateOpportunity() {
             title={title}
             description={description}
             type={type}
+            mediaPreview={image}
             control={control}
             statTitle={`${number} ${title}`}
             formContent={
               <OpportunityFormFields control={control} type={type} />
             }
-            mediaPreview={image}
           />
           <Box w="100%" h={1} style={{ borderBottom: "1px dashed #50565a" }} />
         </React.Fragment>
       ))}
 
+      {/* Dates, Price, Terms */}
       <Group py="3.75rem">
         <Grid gutter={20}>
           <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
             <StatBox title="Set Date & Title">
               <Box p="2.5rem">
-                <OpportunityFormFields control={control} type="dateTitle" />
+                <OpportunityFormFields
+                  control={control}
+                  type="dateTitle"
+                  setValue={setValue}
+                />
               </Box>
             </StatBox>
           </Grid.Col>
@@ -205,7 +153,11 @@ export default function CreateOpportunity() {
           <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
             <StatBox title="Set your price">
               <Box p="2.5rem">
-                <OpportunityFormFields control={control} type="price" />
+                <OpportunityFormFields
+                  control={control}
+                  type="price"
+                  setValue={setValue}
+                />
               </Box>
             </StatBox>
           </Grid.Col>
@@ -222,17 +174,20 @@ export default function CreateOpportunity() {
 
       <Box w="100%" h={1} style={{ borderBottom: "1px dashed #50565a" }} />
 
-      <Group py={"3.75rem"} align={"center"} justify={"center"}>
+      {/* Footer buttons */}
+      <Group py="3.75rem" align="center" justify="center">
         <Flex gap={32}>
           <Button
             width="11.875rem"
             variant="inputBgColor"
             onClick={() => navigate(-1)}
+            disabled={loading}
           >
             Back
           </Button>
-          <Flex w={"25%"} ta={"right"}>
-            <Text>Can sponsor edit you offer</Text>
+
+          <Flex w="25%" ta="right">
+            <Text>Can sponsor edit your offer</Text>
             <FormField
               name="sponsorEdit"
               control={control}
@@ -240,7 +195,14 @@ export default function CreateOpportunity() {
               componentProps={{ label: "" }}
             />
           </Flex>
-          <Button width="11.875rem" variant="primary" type="submit">
+
+          <Button
+            width="11.875rem"
+            variant="primary"
+            type="submit"
+            loading={loading}
+            disabled={loading}
+          >
             Save
           </Button>
         </Flex>

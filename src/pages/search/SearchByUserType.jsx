@@ -229,7 +229,7 @@ export default function SearchByUserType() {
     const { search_input, country } = formData;
     const currentQuery = {
       keyword: search_input?.trim() || "",
-      userType: userType?.toUpperCase(),
+      user_type: userType?.toUpperCase(),
       country: country || "",
     };
     if (
@@ -240,16 +240,27 @@ export default function SearchByUserType() {
       return;
     }
     try {
-      const { data } = await get(API_PATHS.SEARCH(currentQuery));
+      const { data } = await get({
+        url: API_PATHS.SEARCH.SEARCH_USERS,
+        params: {
+          ...currentQuery,
+          page: 1,
+          limit: 20,
+        },
+      });
       setSearchData(data);
 
       if (user?.id) {
-        const followingRes = await get(API_PATHS.FOLLOW.GET_FOLLOWING(user.id));
+        const followingRes = await get({
+          url: API_PATHS.FOLLOW.GET_FOLLOWING(user.id),
+        });
         const followingList = followingRes?.data || [];
         dispatch(setFollowing(followingList));
         dispatch(setFollowedUserIds(followingList.map((u) => u.id)));
 
-        const followersRes = await get(API_PATHS.FOLLOW.GET_FOLLOWERS(user.id));
+        const followersRes = await get({
+          url: API_PATHS.FOLLOW.GET_FOLLOWERS(user.id),
+        });
         dispatch(setFollowers(followersRes?.data || []));
       }
       lastQueryRef.current = currentQuery;

@@ -19,16 +19,35 @@ const GoogleLoginBtn = () => {
   const { post, get } = useApi();
 
   const handleSuccess = async (response) => {
-    try {
-      const { data } = await post(API_PATHS.AUTH.GOOGLE_OAUTH, { token: response?.credential });
+    console.log(response);
 
+    try {
+      // const { datas } = await post(API_PATHS.AUTH.GOOGLE_OAUTH, {
+      //   token: response?.credential,
+      // });
+      // console.log(datas, 'asfdsdfsdf');
+
+      const { data } = await post({
+        url: API_PATHS.AUTH.GOOGLE_OAUTH,
+        payload: { token: response?.credential },
+      });
       const isProfileIncomplete = !data.user?.user_type;
-      console.log(data.user?.user_type)
+      console.log(data.user?.user_type);
       if (isProfileIncomplete) {
-        setShowCompleteProfile(true)
-        setAuthTokens({ accessToken: data.accessToken, refreshToken: data.refreshToken, user: data.user });
+        setShowCompleteProfile(true);
+        setAuthTokens({
+          accessToken: data.accessToken,
+          refreshToken: data.refreshToken,
+          user: data.user,
+        });
       } else {
-        dispatch(setAuth({ accessToken: data.accessToken, refreshToken: data.refreshToken, user: data.user }));
+        dispatch(
+          setAuth({
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+            user: data.user,
+          })
+        );
         const userId = data?.user?.id;
         const user_type = data?.user?.user_type?.toUpperCase();
 
@@ -36,42 +55,56 @@ const GoogleLoginBtn = () => {
           user_type === "BRAND"
             ? "creator_profile"
             : user_type === "CREATOR"
-              ? "creator_profile"
-              : "";
+            ? "creator_profile"
+            : "";
 
-        const { data: fullUserData } = await get(
-          `/users/${userId}${profileType ? `?populate=${profileType}` : ""}`
-        );
+        const { data: fullUserData } = await get({
+          url: `/users/${userId}`,
+          params: profileType ? { populate: profileType } : {},
+        });
         console.log(fullUserData);
-      console.log("data", fullUserData);
+        console.log("data", fullUserData);
         dispatch(setUser({ user: fullUserData }));
       }
-
     } catch (err) {
-      showNotification("Login Error", `{${err?.message || "Something went wrong with Google login"} }`, "red");
+      showNotification(
+        "Login Error",
+        `{${err?.message || "Something went wrong with Google login"} }`,
+        "red"
+      );
     }
   };
 
   const handleProfileCompleted = async ({ user }) => {
-    dispatch(setAuth({ accessToken: user.accessToken, refreshToken: user.refreshToken, user: user.user }));
+    dispatch(
+      setAuth({
+        accessToken: user.accessToken,
+        refreshToken: user.refreshToken,
+        user: user.user,
+      })
+    );
     const userId = user?.user?.id;
     const user_type = user?.user?.user_type?.toUpperCase();
-    console.log(user)
+    console.log(user);
 
     const profileType =
       user_type === "BRAND"
         ? "brand_profile"
         : user_type === "CREATOR"
-          ? "creator_profile"
-          : "";
+        ? "creator_profile"
+        : "";
 
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.accessToken}`,
-      };
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${user.accessToken}`,
+    };
 
-    const { data: fullUserData } = await get(`/users/${userId}${profileType ? `?populate=${profileType}` : ""}`, headers);
-      
+    const { data: fullUserData } = await get({
+      url: `/users/${userId}`,
+      headers,
+      params: profileType ? { populate: profileType } : {},
+    });
+
     dispatch(setUser({ user: fullUserData }));
     setShowCompleteProfile(false);
     showNotification("Login Successful", `Welcome back, ${user.username}`);
@@ -82,9 +115,10 @@ const GoogleLoginBtn = () => {
     <>
       <GoogleLogin
         onSuccess={handleSuccess}
-        onError={() =>
-          showNotification("Login Error", "Google sign-in failed", "red")
-        }
+        onError={(error) => {
+          console.error("Google Login Error:", error);
+          showNotification("Login Error", "Google sign-in failed", "red");
+        }}
       />
       <CompleteProfile
         opened={showCompleteProfile}

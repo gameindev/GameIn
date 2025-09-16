@@ -1,208 +1,42 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
-  Select,
-  NumberInput,
-  TextInput,
-  Textarea,
-  Checkbox,
   Flex,
   Stack,
   Text,
+  NumberInput,
+  Textarea,
+  Checkbox,
 } from "@mantine/core";
-import { DateInput } from "@mantine/dates";
 import { Link } from "react-router";
-import { ChevronDown } from "lucide-react";
+import { useWatch } from "react-hook-form";
 import FormField from "../../shared/ui/FormField";
 import { InlineFields, OfferingOpportunities } from "./style";
 
-const FORM_CONFIG = {
-  platforms: [
-    { value: "twitch", label: "Twitch" },
-    { value: "instagram", label: "Instagram" },
-    { value: "x", label: "X (Twitter)" },
-    { value: "youtube", label: "YouTube" },
-    { value: "tiktok", label: "TikTok" },
-    { value: "discord", label: "Discord" },
-    { value: "kick", label: "Kick" },
-    { value: "facebook", label: "Facebook" },
-    { value: "snapchat", label: "Snapchat" },
-    { value: "pinterest", label: "Pinterest" },
-    { value: "linkedin", label: "LinkedIn" },
-    { value: "threads", label: "Threads" },
-    { value: "others", label: "Others" },
-  ],
-  durations: [
-    { value: "15s", label: "15s" },
-    { value: "30s", label: "30s" },
-    { value: "60s", label: "60s" },
-    { value: "90s", label: "90s" },
-    { value: "custom", label: "Custom" },
-  ],
-  postTypes: [
-    { value: "clothing", label: "Clothing" },
-    { value: "accessories", label: "Accessories" },
-    { value: "gamingGear", label: "Gaming Gear" },
-    { value: "inGameItems", label: "In-Game Items" },
-    { value: "beautyWellness", label: "Beauty & Wellness" },
-    { value: "collectibles", label: "Collectibles" },
-    { value: "digitalProducts", label: "Digital Products" },
-    { value: "custom", label: "Custom" },
-  ],
-  paymentTypes: [
-    { value: "stripe", label: "Stripe" },
-    { value: "paypal", label: "PayPal" },
-    { value: "razorpay", label: "RazorPay" },
-    { value: "manual", label: "Manual" },
-  ],
-  eventTypes: [
-    { value: "tournament", label: "Tournament" },
-    { value: "league", label: "League" },
-    { value: "event", label: "Event" },
-  ],
-  chooseGame: [
-    { value: "game1", label: "Game 1" },
-    { value: "game2", label: "Game 2" },
-    { value: "game3", label: "Game 3" },
-  ],
-};
+import {
+  SelectField,
+  TextField,
+  DateField,
+  calculatePriceBreakdown,
+} from "./../../../utils/helpers/formHelper";
+import {
+  FORM_CONFIG,
+  TIME_MODE_CONFIG,
+  LOGO_SIZES_CONFIG,
+} from "./../../../config/formConfigs/opportunityConfig";
 
-const TIME_MODE_CONFIG = {
-  streaming: [
-    { value: "timespan", label: "Time span" },
-    { value: "starttoend", label: "Start to End" },
-    { value: "perhour", label: "Per Hour" },
-    { value: "eventtrigger", label: "Event Trigger" },
-    { value: "fixedfrequency", label: "Fixed Frequency" },
-  ],
-  videoCommercial: [
-    { value: "shoutout", label: "Shoutout" },
-    { value: "adsegment", label: "Ad Segment" },
-    { value: "productreview", label: "Product Review" },
-    { value: "visualOverlay", label: "Visual Overlay" },
-    { value: "sponsored", label: "Sponser Intro/Outro" },
-    { value: "custom", label: "custom" },
-  ],
-  socialMedia: [
-    { value: "timespan", label: "Time span" },
-    { value: "introonly", label: "Intro Only" },
-    { value: "outroonly", label: "Outro Only" },
-    { value: "flashmention", label: "Flash Mention" },
-    { value: "pinnedoverlay", label: "Pinned Overlay" },
-    { value: "hashtagonly", label: "Hashtag Only" },
-    { value: "custom", label: "custom" },
-  ],
-  merchProducts: [
-    { value: "timespan", label: "Time span" },
-    { value: "introonly", label: "Intro Only" },
-    { value: "outroonly", label: "Outro Only" },
-    { value: "singleappr", label: "Single Appearance" },
-    { value: "highlightmom", label: "Highlight Moment" },
-    { value: "pinnedpost", label: "Pinned Post/Tag" },
-    { value: "custom", label: "custom" },
-  ],
-  default: [
-    { value: "live", label: "Live" },
-    { value: "pre-recorded", label: "Pre-recorded" },
-    { value: "shoutout", label: "Shout out" },
-  ],
-};
-
-const LOGO_SIZES_CONFIG = {
-  streaming: [
-    { value: "100px", label: "100px" },
-    { value: "150px", label: "150px" },
-    { value: "200px", label: "200px" },
-    { value: "250px", label: "250px" },
-    { value: "300px", label: "300px" },
-    { value: "fullwidth", label: "Full Width" },
-    { value: "custom", label: "Custom" },
-  ],
-  videoCommercial: [
-    { value: "small", label: "Small" },
-    { value: "medium", label: "Medium" },
-    { value: "wide", label: "Wide" },
-    { value: "fullscreen", label: "Full Screen" },
-    { value: "custom", label: "Custom" },
-  ],
-  socialMedia: [
-    { value: "portrait", label: "Portrait" },
-    { value: "square", label: "Square" },
-    { value: "landscape", label: "Landscape" },
-    { value: "smallbadge", label: "Small Badge" },
-    { value: "fulltakeover", label: "FullScreen Takeover" },
-    { value: "custom", label: "Custom" },
-  ],
-  merchProducts: [],
-  default: [
-    { value: "small", label: "Small" },
-    { value: "medium", label: "Medium" },
-    { value: "large", label: "Large" },
-  ],
-};
-
-const SelectField = (name, label, data, extra = {}) => ({
-  name,
-  Component: Select,
-  inline: true,
-  required: extra.required || false,
-  componentProps: {
-    data,
-    label,
-    placeholder: `Select ${label.toLowerCase()}`,
-    rightSection: <ChevronDown size="1em" />,
-    style: { width: "7.5rem" },
-    ...extra,
-  },
-});
-
-const TextField = (name, label, extra = {}) => {
-  const hasValue = extra.value !== undefined;
-  return {
-    name,
-    Component: TextInput,
-    inline: true,
-    required: extra.required || false,
-    componentProps: {
-      label,
-      style: { width: "7.5rem" },
-      placeholder: hasValue ? undefined : `Enter ${label.toLowerCase()}`,
-      ...(hasValue ? { defaultValue: extra.value } : {}),
-      ...extra,
-    },
-  };
-};
-
-const DateField = (name, label, extra = {}) => ({
-  name,
-  Component: DateInput,
-  inline: true,
-  required: extra.required || false,
-  componentProps: {
-    label,
-    placeholder: label,
-    valueFormat: "DD/MM/YYYY",
-    clearable: true,
-    style: { width: "7.5rem" },
-  },
-});
-
-// Field configs generator
+// Generate field configs
 const getFieldConfigs = (mode, type) => {
   const BASE_FIELDS = [
-    SelectField("platform", "Platform", FORM_CONFIG.platforms),
-    SelectField(
-      "timeMode",
-      "Time Mode",
-      TIME_MODE_CONFIG[type] || TIME_MODE_CONFIG.default
-    ),
+    SelectField("platform", "Platform", { data: FORM_CONFIG.platforms }),
+    SelectField("timeMode", "Time Mode", {
+      data: TIME_MODE_CONFIG[type] || TIME_MODE_CONFIG.default,
+    }),
     ...(mode === "edit" && type !== "videoCommercial"
       ? [TextField("schedule", "Schedule", { placeholder: "Mon - Fri" })]
       : []),
-    SelectField(
-      "size",
-      "Logo Size",
-      LOGO_SIZES_CONFIG[type] || LOGO_SIZES_CONFIG.default
-    ),
+    SelectField("size", "Logo Size", {
+      data: LOGO_SIZES_CONFIG[type] || LOGO_SIZES_CONFIG.default,
+    }),
   ];
 
   const CONFIGS = {
@@ -226,12 +60,11 @@ const getFieldConfigs = (mode, type) => {
                 },
                 {
                   name: "videoCommercial.duration",
-                  Component: Select,
-                  componentProps: {
+                  Component: SelectField("duration", "Duration", {
                     data: FORM_CONFIG.durations,
                     placeholder: "sec",
                     styles: { input: { width: "4rem", textAlign: "center" } },
-                  },
+                  }).Component,
                 },
               ],
               wrapper: (children) => (
@@ -257,23 +90,19 @@ const getFieldConfigs = (mode, type) => {
           ]
         : [
             ...BASE_FIELDS,
-            SelectField("duration", "Duration", FORM_CONFIG.durations),
-            {
-              name: "repetation",
-              Component: NumberInput,
-              inline: true,
-              componentProps: {
-                label: "Repetation",
-                placeholder: "Enter number of times",
-                min: 0,
-                style: { width: "7.5rem" },
-              },
-            },
+            SelectField("duration", "Duration", {
+              data: FORM_CONFIG.durations,
+            }),
+            TextField("repetation", "Repetition", {
+              type: "number",
+              min: 0,
+              style: { width: "7.5rem" },
+            }),
           ],
     socialMedia: BASE_FIELDS,
     merchProducts: [
       ...BASE_FIELDS.slice(0, 2),
-      SelectField("types", "Type", FORM_CONFIG.postTypes),
+      SelectField("types", "Type", { data: FORM_CONFIG.postTypes }),
     ],
     dateTitle: [
       DateField("startDate", "Start Date", { required: true }),
@@ -290,57 +119,31 @@ const getFieldConfigs = (mode, type) => {
         },
       },
     ],
-    pricePoolTitle: [
-      {
-        name: "title",
-        Component: Textarea,
-        componentProps: {
-          label: "Title",
-          placeholder: "Enter title",
-          style: { width: "100%" },
-        },
-      },
-      {
-        name: "description",
-        Component: Textarea,
-        componentProps: {
-          label: "Description",
-          placeholder: "Enter description",
-          style: { width: "100%" },
-        },
-      },
-    ],
-    editInfos: [
-      TextField("streamingPlatform", "Streaming Platform"),
-      SelectField("eventType", "Event Type", FORM_CONFIG.eventTypes),
-      DateField("eventStartDate", "Event Starting"),
-      DateField("eventEndDate", "Event Ending"),
-      SelectField("chooseGame", "Choose Game", FORM_CONFIG.chooseGame),
-      TextField("estimatedViewCount", "Estimated View Count"),
-    ],
     price: [
       TextField("choosePrice", "Choose your price", {
         type: "number",
         rightSection: <span style={{ color: "#888", fontSize: 14 }}>USD</span>,
       }),
-      TextField("+gameinFee", "+ 5% gamein fee", {
+      TextField("gameinFee", "+ 5% gamein fee", {
         disabled: true,
-        value: "75.00",
+        value: "0.00",
         rightSection: <span style={{ color: "#888", fontSize: 14 }}>USD</span>,
       }),
-      TextField("+gameinTax", "+ 15.3% tax = total", {
+      TextField("gameinTax", "+ 15.3% tax = total", {
         disabled: true,
-        value: "1.815,98",
+        value: "0.00",
         rightSection: <span style={{ color: "#888", fontSize: 14 }}>USD</span>,
       }),
-      SelectField("paymentType", "Payment method", FORM_CONFIG.paymentTypes),
+      SelectField("paymentType", "Payment method", {
+        data: FORM_CONFIG.paymentTypes,
+      }),
     ],
     terms: [
       {
         name: "acknowledgement",
         Component: Checkbox,
         componentProps: {
-          label: "check if you have read and understood the terms of use",
+          label: "Check if you have read and understood the terms of use",
         },
         wrapper: (children) => (
           <Stack key="terms-ack">
@@ -365,8 +168,21 @@ const getFieldConfigs = (mode, type) => {
   return CONFIGS[type] || [];
 };
 
-export default function OpportunityFormFields({ control, type, mode }) {
+export default function OpportunityFormFields({
+  control,
+  type,
+  mode,
+  setValue,
+}) {
   const fields = getFieldConfigs(mode, type);
+  const price = useWatch({ control, name: `${type}.choosePrice` });
+
+  useEffect(() => {
+    if (!price) return;
+    const { fee, total } = calculatePriceBreakdown(price);
+    setValue(`${type}.gameinFee`, fee);
+    setValue(`${type}.gameinTax`, total);
+  }, [price, setValue, type]);
 
   return (
     <OfferingOpportunities>
@@ -382,15 +198,7 @@ export default function OpportunityFormFields({ control, type, mode }) {
         }) => {
           if (wrapper && wrapperFields) {
             const children = wrapperFields.map((child) => (
-              <FormField
-                key={child.name}
-                name={child.name}
-                control={control}
-                Component={child.Component}
-                inline
-                required={child.required || false}
-                componentProps={child.componentProps}
-              />
+              <FormField key={child.name} {...child} control={control} inline />
             ));
             return wrapper(children);
           }
@@ -403,7 +211,7 @@ export default function OpportunityFormFields({ control, type, mode }) {
               control={control}
               Component={Component}
               inline={inline}
-              required={required || false}
+              required={required}
               componentProps={componentProps}
             />
           );

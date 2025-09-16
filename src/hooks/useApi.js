@@ -59,10 +59,27 @@ const useApi = ({
     }
   }, [autoFetch, url, callApi]);
 
+  // const createMethod =
+  //   (methodType) =>
+  //   (url, payload = {}, headers = {}, params = {}) => {
+  //     const isPayloadMethod = ["POST", "PUT", "PATCH"].includes(methodType);
+  //     console.log(url, payload, headers, params);
+
+  //     return callApi({
+  //       url,
+  //       method: methodType,
+  //       ...(isPayloadMethod && { payload }),
+  //       ...(headers && { headers }),
+  //       ...(params && { params }),
+  //     });
+  //   };
+
   const createMethod =
     (methodType) =>
-    (url, payload = {}, headers = {}, params = {}) => {
+    (config = {}) => {
+      const { url, payload = {}, headers = {}, params = {} } = config;
       const isPayloadMethod = ["POST", "PUT", "PATCH"].includes(methodType);
+
       return callApi({
         url,
         method: methodType,

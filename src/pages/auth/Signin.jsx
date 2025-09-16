@@ -56,7 +56,10 @@ export default function Signin() {
 
   const handleLogin = async (formData) => {
     try {
-      const { data } = await post(API_PATHS.AUTH.LOGIN, formData);
+      const { data } = await post({
+        url: API_PATHS.AUTH.LOGIN,
+        payload: formData,
+      });
       console.log(data);
 
       dispatch(
@@ -83,9 +86,10 @@ export default function Signin() {
           ? "creator_profile"
           : "";
 
-      const { data: fullUserData } = await get(
-        `/users/${userId}${profileType ? `?populate=${profileType}` : ""}`
-      );
+      const { data: fullUserData } = await get({
+        url: `/users/${userId}`,
+        params: profileType ? { populate: profileType } : {},
+      });
 
       dispatch(setUser({ user: fullUserData }));
       showNotification(

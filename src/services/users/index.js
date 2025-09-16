@@ -18,7 +18,11 @@ export const createUser = async (formData, post) => {
   };
 
   try {
-    const { data } = await post(API_PATHS.USERS.CREATE, apiBody, headers);
+    const { data } = await post({
+      url: API_PATHS.USERS.CREATE,
+      payload: apiBody,
+      headers,
+    });
     return { userData: data, error: null };
   } catch (err) {
     return { userData: null, error: err?.message || "Something went wrong" };
@@ -38,10 +42,11 @@ export const getUserProfile = async (get, userId, user_type, accessToken) => {
     Authorization: `Bearer ${accessToken}`,
   });
 
-  const { data } = await get(
-    `/users/${userId}${profileType ? `?populate=${profileType}` : ""}`,
-    getAuthHeaders(accessToken)
-  );
+  const { data } = await get({
+    url: `/users/${userId}`,
+    params: profileType ? { populate: profileType } : {},
+    headers: getAuthHeaders(accessToken),
+  });
   return data;
 };
 

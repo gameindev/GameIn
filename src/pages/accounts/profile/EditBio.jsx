@@ -20,6 +20,7 @@ import { useNavigate } from "react-router";
 import useApi from "../../../hooks/useApi";
 import { currentUser } from "../../../stores/selectors";
 import { refreshUser } from "../../../stores/thunks/userThunks";
+import { API_PATHS } from "../../../services/endpoints";
 
 export default function EditBio() {
   const { control, handleSubmit, setValue, reset } = useForm({
@@ -82,7 +83,10 @@ export default function EditBio() {
         })),
       };
 
-      await patch("/users-bio", payload);
+      await patch({
+        url: API_PATHS.USERS.BIO,
+        payload,
+      });
 
       dispatch(
         setBio({

@@ -19,14 +19,16 @@ export default function Offerings() {
   useEffect(() => {
     const fetchOfferings = async () => {
       try {
-        const data = await get(
-          `${API_PATHS.OFFERINGS.LIST}?page=1&limit=20&user_id=${user.id}&relations=user&relations=offering_offers&relations=offering_price`
-        );
-
+        const data = await get({
+          url: API_PATHS.OFFERINGS.LIST,
+          params: {
+            page: 1,
+            limit: 20,
+            user_id: user.id,
+            relations: ["user", "offering_offers", "offering_price"],
+          },
+        });
         const myOfferings = data?.data?.data || [];
-        // const myOfferings = allOfferings.filter(
-        //   (offering) => offering.user?.id === user?.id
-        // );
         console.log("Offerings Data:", data?.data?.data);
         setOfferings(myOfferings || []);
       } catch (error) {
