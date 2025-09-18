@@ -1,22 +1,28 @@
-import { useSelector } from "react-redux";
-import { currentUser } from "../../stores/selectors";
+import { USERTYPES } from "../enum";
 
-const getImageUrl = (path) => (path ? `${import.meta.env.VITE_ASSET_URL}/${path}` : null);
+const getImageUrl = (path) =>
+  path ? `${import.meta.env.VITE_ASSET_URL}/${path}` : null;
 
-export default function useProfileMediaUrls() {
-  const profile = useSelector(currentUser);
-  const user_type = profile?.user?.user_type;
+export default function profileMediaUrls(userProfile) {
+  if (!userProfile) {
+    return {
+      avatarUrl: "/images/default-avatar.png",
+      coverImageUrl: "/images/default-cover.png",
+    };
+  }
 
-  const creator_profile = profile?.user?.creator_profile;
-  const brand_profile = profile?.user?.brand_profile;
+  const { user_type, creator_profile, brand_profile, community_profile } =
+    userProfile;
 
-  const profile_type = user_type === "CREATOR" ? creator_profile : brand_profile;
+  let profile =
+    user_type === USERTYPES.CREATOR
+      ? creator_profile
+      : user_type === USERTYPES.BRAND
+      ? brand_profile
+      : community_profile;
 
-  const avatarUrl = getImageUrl(profile_type?.profile_image?.path);
-  const coverImageUrl = getImageUrl(profile_type?.cover_image?.path);
+  const avatarUrl = getImageUrl(profile?.profile_image?.path);
+  const coverImageUrl = getImageUrl(profile?.cover_image?.path);
 
-  return {
-    avatarUrl,
-    coverImageUrl,
-  };
+  return { avatarUrl, coverImageUrl };
 }

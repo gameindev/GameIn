@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useOutletContext } from "react-router";
 import StatBox from "./../../../components/shared/ui/StatBox";
 import {
   Text,
@@ -13,23 +13,18 @@ import {
 } from "@mantine/core";
 import routePaths from "./../../../routes/endpoints";
 import IconButton from "../../../components/shared/ui/IconButton";
-import { useSelector } from "react-redux";
 import { VideoPreview } from "./../../../components/accounts/profile/editBio/VideoPreview";
 import { theme } from "../../../styles/theme/customTheme";
-import { currentUser } from "../../../stores/selectors";
 
 export default function Profile() {
   const navigate = useNavigate();
-  const { user } = useSelector(currentUser);
 
-  // const {
-  //   bio,
-  //   introVideoUrl,
-  //   introVideoFile,
-  //   gamesUrl: games,
-  // } = useSelector((state) => state.bio);
+  const { userProfile, isSelf } = useOutletContext();
+  console.log(userProfile, isSelf);
 
-  const user_bio = (user && user.user_bio) || {};
+  if (!userProfile) return <Text>Loading profile...</Text>;
+
+  const user_bio = userProfile.user_bio || {};
   const {
     bio: bioFromUser,
     video_bio_url: videoBioUrl,
@@ -41,18 +36,20 @@ export default function Profile() {
       {/* Bio Section */}
       <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
         <StatBox
-          title={"Profile Bio"}
+          title="Profile Bio"
           action={
-            <IconButton
-              onClick={() => navigate(routePaths.ACCOUNTS.PROFILE.BIO)}
-            />
+            isSelf && (
+              <IconButton
+                onClick={() => navigate(routePaths.ACCOUNTS.PROFILE.BIO)}
+              />
+            )
           }
         >
           <Box p={20}>
             <Stack spacing="md">
               <VideoPreview videoUrl={videoBioUrl} videoFile={null} />
 
-              <Text>{bioFromUser || "No bio added"}</Text>
+              <Text>{bioFromUser || "No bio added yet."}</Text>
 
               <Flex wrap="wrap" gap="md" align="center" justify="space-between">
                 <Text fw={600} tt="uppercase" fz={theme.fontSizes.sm}>
@@ -66,7 +63,7 @@ export default function Profile() {
                           w={32}
                           h={32}
                           src={game?.meta_data?.favicon}
-                          alt={game?.metadata?.title || "favicon"}
+                          alt={game?.meta_data?.title || "favicon"}
                           width={32}
                           height={32}
                         />
@@ -74,8 +71,9 @@ export default function Profile() {
                     </Flex>
                   ))}
 
+                  {/* Fill empty slots with placeholders */}
                   {Array.from({
-                    length: 4 - preferredGames.slice(0, 4).length,
+                    length: Math.max(0, 4 - preferredGames.length),
                   }).map((_, idx) => (
                     <Skeleton
                       animate={false}
@@ -94,7 +92,7 @@ export default function Profile() {
 
       {/* Social Media Stats */}
       <Grid.Col span={{ base: 12, md: 6, lg: 8 }}>
-        <StatBox title={"Social Media Stats"} action={<IconButton />}>
+        <StatBox title="Social Media Stats" action={<IconButton />}>
           <Text>Coming soon...</Text>
         </StatBox>
       </Grid.Col>
@@ -102,11 +100,13 @@ export default function Profile() {
       {/* FAQ Section */}
       <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
         <StatBox
-          title={"FAQ"}
+          title="FAQ"
           action={
-            <IconButton
-              onClick={() => navigate(routePaths.ACCOUNTS.PROFILE.FAQ)}
-            />
+            isSelf && (
+              <IconButton
+                onClick={() => navigate(routePaths.ACCOUNTS.PROFILE.FAQ)}
+              />
+            )
           }
         />
       </Grid.Col>
@@ -114,7 +114,7 @@ export default function Profile() {
       {/* Welcome Section */}
       <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
         <StatBox
-          title={"Welcome to Game-In"}
+          title="Welcome to Game-In"
           background={rgba(theme.colors.secondary[0], 0.5)}
           action={<IconButton />}
         >
@@ -125,15 +125,19 @@ export default function Profile() {
       {/* Sponsorship / Team Creation */}
       <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
         <StatBox
-          title={"Sponsorships"}
+          title="Sponsorships"
           background={rgba(theme.colors.primary[0], 0.3)}
           action={<IconButton />}
         >
-          <div className="create_team">
-            <Link to={routePaths.ACCOUNTS.PROFILE.CREATE_TEAM}>
-              <Button>Create Team</Button>
-            </Link>
-          </div>
+          {isSelf ? (
+            <div className="create_team">
+              <Link to={routePaths.ACCOUNTS.PROFILE.CREATE_TEAM}>
+                <Button>Create Team</Button>
+              </Link>
+            </div>
+          ) : (
+            <Text>No team management available</Text>
+          )}
         </StatBox>
       </Grid.Col>
     </Grid>

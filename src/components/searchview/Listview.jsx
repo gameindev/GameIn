@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import { currentUser } from "../../stores/selectors";
 import FollowButton from "../shared/ui/FollowButton";
 import { getFollowerStats } from "../../services/users";
+import { Link } from "react-router";
 
 const ListviewStyles = styled.div`
   display: flex;
@@ -86,14 +87,16 @@ export default function Listview({ SocialInfo }) {
   return filteredSearchData?.map((userItem) => {
     const { id, username, dateOfBirth, isVerified } = userItem;
     const { totalFollowers } = getFollowerStats(userItem);
-    
+
     return (
       <ListviewStyles key={id}>
         <AvatarSection className="avatar" avatar={creator} size="7em" />
         <div className="list_content">
-          <Text c="white" size="xl">
-            {username}
-          </Text>
+          <Link to={`/profile/${id}`}>
+            <Text c="white" size="xl">
+              {username}
+            </Text>
+          </Link>
           <Group>
             {userType.toUpperCase() === USERTYPES.CREATOR && (
               <Text size="sm">{calculateAge(dateOfBirth)}</Text>

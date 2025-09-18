@@ -29,25 +29,64 @@ export const createUser = async (formData, post) => {
   }
 };
 
-export const getUserProfile = async (get, userId, user_type, accessToken) => {
-  const profileMap = {
-    CREATOR: "creator_profile",
-    BRAND: "brand_profile",
-    COMMUNITY: "community_profile",
-  };
-  const profileType = profileMap[user_type?.toUpperCase()] || "";
+// export const getUserProfile = async (get, userId, user_type, accessToken) => {
+//   const profileMap = {
+//     CREATOR: "creator_profile",
+//     BRAND: "brand_profile",
+//     COMMUNITY: "community_profile",
+//   };
+//   const profileType = profileMap[user_type?.toUpperCase()] || "";
+
+//   const getAuthHeaders = (accessToken) => ({
+//     "Content-Type": "application/json",
+//     Authorization: `Bearer ${accessToken}`,
+//   });
+
+//   const { data } = await get({
+//     url: `/users/${userId}`,
+//     params: profileType ? { populate: profileType } : {},
+//     headers: getAuthHeaders(accessToken),
+//   });
+
+//   return data;
+// };
+
+export const getUserProfile = async (get, userId, accessToken, userType) => {
+  let resolvedUserType = userType;
 
   const getAuthHeaders = (accessToken) => ({
     "Content-Type": "application/json",
     Authorization: `Bearer ${accessToken}`,
   });
 
-  const { data } = await get({
+  if (!resolvedUserType) {
+    try {
+      const { data: userData } = await get({
+        url: `/users/${userId}`,
+        headers: getAuthHeaders(accessToken),
+      });
+
+      resolvedUserType = userData?.user_type || "COMMUNITY";
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      throw new Error("Failed to fetch user data");
+    }
+  }
+
+  const profileMap = {
+    CREATOR: "creator_profile",
+    BRAND: "brand_profile",
+    COMMUNITY: "community_profile",
+  };
+  const profileType = profileMap[resolvedUserType?.toUpperCase()] || "";
+
+  const { data: profileData } = await get({
     url: `/users/${userId}`,
     params: profileType ? { populate: profileType } : {},
     headers: getAuthHeaders(accessToken),
   });
-  return data;
+
+  return profileData;
 };
 
 export const getFollowerStats = (user) => {

@@ -12,9 +12,11 @@ const routePaths = {
       BIO: "/profile/bio",
       FAQ: "/profile/faq",
       CREATE_TEAM: "/profile/create-team",
+      VIEW: "/profile/:id",
     },
     SPONSORSHIPS: {
       ROOT: "/sponsorships",
+      VIEW: "/sponsorships/:id",
     },
     OFFERINGS: {
       ROOT: "/offerings",
@@ -30,6 +32,7 @@ const routePaths = {
     },
     INBOX: {
       ROOT: "/inbox",
+      VIEW: "/inbox/:id",
     },
   },
   SETTINGS: {
@@ -43,6 +46,13 @@ const routePaths = {
     ABOUT: "/footer/about",
     INFO: "/footer/info",
     TERMS: "/footer/terms",
+  },
+
+  helpers: {
+    profile: (id) => `/profile/${id}`,
+    sponsorship: (id) => `/sponsorships/${id}`,
+    inbox: (id) => `/inbox/${id}`,
+    profileTab: (id, tab) => `/profile/${id}/${tab}`,
   },
 };
 

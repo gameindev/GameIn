@@ -28,18 +28,29 @@ const { DASHBOARD, PROFILE, SPONSORSHIPS, OFFERINGS, STATS, NEWSFEED, INBOX } =
   routePaths.ACCOUNTS;
 
 const accountsdRoutes = [
+  // Dashboard
   { path: DASHBOARD.ROOT, element: <Dashboard /> },
+
+  // Profile
   { path: PROFILE.ROOT, element: <Profile /> },
+  { path: PROFILE.VIEW, element: <Profile /> },
   { path: PROFILE.BIO, element: <EditBio /> },
   { path: PROFILE.FAQ, element: <Faq /> },
+
+  // Sponsorships
   { path: SPONSORSHIPS.ROOT, element: <SponsorShips /> },
+  { path: SPONSORSHIPS.VIEW, element: <SponsorShips /> },
+
+  // Offerings
   { path: OFFERINGS.ROOT, element: <Offerings /> },
   { path: OFFERINGS.CREATE_OFFERING, element: <CreateOpportunity /> },
   { path: OFFERINGS.EDIT_OFFERING, element: <EditOpportunity /> },
   { path: OFFERINGS.EDIT_PRICEPOOLEVENT, element: <EditPricePoolEvent /> },
+
+  // Others
   { path: STATS.ROOT, element: <Stats /> },
   { path: NEWSFEED.ROOT, element: <NewsFeed /> },
   { path: INBOX.ROOT, element: <Inbox /> },
+  { path: INBOX.VIEW, element: <Inbox /> },
 ];
-
 export default accountsdRoutes;

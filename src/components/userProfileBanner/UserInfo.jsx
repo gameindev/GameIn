@@ -4,7 +4,7 @@ import Verifed from "../svg-icons/Verifed";
 import { UserSection } from "./styles";
 
 const UserInfo = ({ user }) => {
-  const age = calculateAge(user?.dateOfBirth);
+  const age = calculateAge(user?.date_of_birth);
 
   return (
     <UserSection>
@@ -13,7 +13,7 @@ const UserInfo = ({ user }) => {
           <div className="profile_name">{user.username}</div>
           <div className="profile_info">
             <div className="nationality">{user.nationality || "IND"}</div>
-            {user.userType === "CREATOR" && (
+            {user.user_type === "CREATOR" && (
               <>
                 <div className="age">{age || "N/A"}</div>
                 <div className="gender_info"></div>
