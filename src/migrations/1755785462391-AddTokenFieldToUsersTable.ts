@@ -4,11 +4,11 @@ export class AddTokenFieldToUsersTable1755785462391 implements MigrationInterfac
     name = 'AddTokenFieldToUsersTable1755785462391'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`ALTER TABLE "user" ADD "token" character varying DEFAULT NULL`);
+        await queryRunner.query(`ALTER TABLE "users" ADD "token" character varying DEFAULT NULL`);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "token"`);
+        await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "token"`);
     }
 
 }

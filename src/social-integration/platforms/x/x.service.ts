@@ -156,7 +156,7 @@ export class XService implements SocialIntegrationServiceInterface {
     async refreshTokenIfNeeded(integrationId: number): Promise<{ access_token: string; refresh_token?: string }> {
         const integration = await this.integrationRepo.findOne({
             where: { id: integrationId },
-            relations: ['user']
+            relations: ['users']
         });
 
         if (!integration) {

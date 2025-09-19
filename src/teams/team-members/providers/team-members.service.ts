@@ -43,7 +43,7 @@ export class TeamMembersService {
         // Find existing mappings to avoid unique constraint errors
         const existing = await repo.find({
             where: { team: { id: teamId }, user: { id: In(userIds) } },
-            relations: ['team', 'user'],
+            relations: ['team', 'users'],
             select: { id: true, user: { id: true } as any }, // minimal selection
         });
  
@@ -79,7 +79,7 @@ export class TeamMembersService {
 
         let existing = await repo.findOne({
             where: { team: { id: teamId }, user: { id: adminUserId } },
-            relations: ['team', 'user'],
+            relations: ['team', 'users'],
         });
 
         if (existing) {
@@ -117,7 +117,7 @@ export class TeamMembersService {
         const repo = this.getRepo(manager);
         const member = await repo.findOne({
             where: { team: { id: teamId }, user: { id: memberUserId } },
-            relations: ['team', 'user'],
+            relations: ['team', 'users'],
         });
         if (!member) throw new NotFoundException('Member not found');
 
@@ -141,7 +141,7 @@ export class TeamMembersService {
         const repo = this.getRepo(manager);
         const member = await repo.findOne({
             where: { team: { id: teamId }, user: { id: memberUserId } },
-            relations: ['team', 'user'],
+            relations: ['team', 'users'],
         });
         if (!member) return;
 
@@ -159,7 +159,7 @@ export class TeamMembersService {
         const repo = this.getRepo(manager);
         const member = await repo.findOne({
             where: { team: { id: teamId }, user: { id: memberUserId } },
-            relations: ['team', 'user'],
+            relations: ['team', 'users'],
         });
         if (!member) throw new NotFoundException('Member not found');
 
@@ -177,7 +177,7 @@ export class TeamMembersService {
         const repo = this.getRepo(manager);
         return repo.find({
             where: { team: { id: teamId } },
-            relations: ['user'],
+            relations: ['users'],
             order: { role: 'ASC', created_at: 'ASC' as any },
         });
     }

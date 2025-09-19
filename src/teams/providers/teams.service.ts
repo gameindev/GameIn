@@ -372,7 +372,7 @@ export class TeamsService {
                 role: TeamMemberRole.ADMIN,
                 status: TeamMemberStatus.ACTIVE,
             },
-            relations: ['team', 'user'],
+            relations: ['team', 'users'],
         });
 
         if (!asAdmin) {

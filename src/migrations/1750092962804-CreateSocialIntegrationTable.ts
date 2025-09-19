@@ -15,7 +15,7 @@ export class CreateSocialIntegrationTable1750092962804 implements MigrationInter
                 updated_at TIMESTAMP DEFAULT now(),
                 deleted_at TIMESTAMP,
                 
-                CONSTRAINT FK_user_social_integration FOREIGN KEY ("user_id") REFERENCES "user"(id) ON DELETE CASCADE ON UPDATE CASCADE
+                CONSTRAINT FK_user_social_integration FOREIGN KEY ("user_id") REFERENCES "users"(id) ON DELETE CASCADE ON UPDATE CASCADE
             );
 
             CREATE INDEX IDX_user_social_integration ON social_integration ("user_id");

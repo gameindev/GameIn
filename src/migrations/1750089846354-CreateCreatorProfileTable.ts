@@ -24,7 +24,7 @@ export class CreateCreatorProfileTable1750089846354 implements MigrationInterfac
                 CONSTRAINT "REL_861c4ae08503b30aa145ed0351" UNIQUE ("user_id"),
                 CONSTRAINT "UQ_5b8f9f6b1ce612c784b67079083" UNIQUE ("profile_image_id"),
                 CONSTRAINT "UQ_fa52bed05de548cff422d107a79" UNIQUE ("cover_image_id"),
-                CONSTRAINT "FK_861c4ae08503b30aa145ed03513" FOREIGN KEY ("user_id") REFERENCES "user"(id) ON DELETE CASCADE,
+                CONSTRAINT "FK_861c4ae08503b30aa145ed03513" FOREIGN KEY ("user_id") REFERENCES "users"(id) ON DELETE CASCADE,
                 CONSTRAINT "FK_5b8f9f6b1ce612c784b67079083" FOREIGN KEY ("profile_image_id") REFERENCES "upload_entity"(id),
                 CONSTRAINT "FK_fa52bed05de548cff422d107a79" FOREIGN KEY ("cover_image_id") REFERENCES "upload_entity"(id)
             );

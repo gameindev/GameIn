@@ -12,7 +12,7 @@ export class CreateProfileViewTable1751045070851 implements MigrationInterface {
                 "profile_type" VARCHAR(10) NOT NULL, -- 'creator' or 'brand'
                 "profile_id" INTEGER NOT NULL,
                 "viewed_at" TIMESTAMP DEFAULT now(),
-                CONSTRAINT fk_viewer FOREIGN KEY ("viewer_id") REFERENCES "user"(id) ON DELETE SET NULL
+                CONSTRAINT fk_viewer FOREIGN KEY ("viewer_id") REFERENCES "users"(id) ON DELETE SET NULL
             );
             CREATE INDEX "IDX_profile_unique_view" ON "profile_views" ("viewer_id", "profile_type", "profile_id");
             CREATE INDEX "IDX_profile_viewer_id" ON "profile_views" ("viewer_id");

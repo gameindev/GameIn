@@ -15,7 +15,7 @@ export class AddAdjustmentTrackingToOffering1758242745522 implements MigrationIn
             ALTER TABLE "offerings"
             ADD CONSTRAINT "fk_offerings_last_adjusted_by"
             FOREIGN KEY ("last_adjusted_by")
-            REFERENCES "user"("id")
+            REFERENCES "users"("id")
             ON DELETE SET NULL
             ON UPDATE CASCADE;
         `);

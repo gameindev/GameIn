@@ -13,14 +13,14 @@ export class InitialMigration1749634198503 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE "user_bio" ("id" SERIAL NOT NULL, "bio" text, "videoBioUrl" text, "userId" integer, CONSTRAINT "REL_bf15b8a3924b67ee83496255b4" UNIQUE ("userId"), CONSTRAINT "PK_45b9aab90519ed3864cedf01fa8" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE INDEX "IDX_bf15b8a3924b67ee83496255b4" ON "user_bio" ("userId") `);
         await queryRunner.query(`CREATE TYPE "public"."user_usertype_enum" AS ENUM('ADMIN', 'CREATOR', 'BRAND', 'COMMUNITY')`);
-        await queryRunner.query(`CREATE TABLE "user" ("id" SERIAL NOT NULL, "username" character varying(30) NOT NULL, "email" character varying(96) NOT NULL, "password" character varying(96), "googleId" text, "userType" "public"."user_usertype_enum", "dateOfBirth" date, "isActive" boolean DEFAULT true, "isVerified" boolean DEFAULT false, "isFirst" boolean DEFAULT true, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, CONSTRAINT "UQ_78a916df40e02a9deb1c4b75edb" UNIQUE ("username"), CONSTRAINT "UQ_e12875dfb3b1d92d7d7c5377e22" UNIQUE ("email"), CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`ALTER TABLE "creator_profile" ADD CONSTRAINT "FK_861c4ae08503b30aa145ed03513" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`CREATE TABLE "users" ("id" SERIAL NOT NULL, "username" character varying(30) NOT NULL, "email" character varying(96) NOT NULL, "password" character varying(96), "googleId" text, "userType" "public"."user_usertype_enum", "dateOfBirth" date, "isActive" boolean DEFAULT true, "isVerified" boolean DEFAULT false, "isFirst" boolean DEFAULT true, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, CONSTRAINT "UQ_78a916df40e02a9deb1c4b75edb" UNIQUE ("username"), CONSTRAINT "UQ_e12875dfb3b1d92d7d7c5377e22" UNIQUE ("email"), CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`ALTER TABLE "creator_profile" ADD CONSTRAINT "FK_861c4ae08503b30aa145ed03513" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "creator_profile" ADD CONSTRAINT "FK_5b8f9f6b1ce612c784b67079083" FOREIGN KEY ("profileImageId") REFERENCES "upload_entity"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "creator_profile" ADD CONSTRAINT "FK_fa52bed05de548cff422d107a79" FOREIGN KEY ("coverImageId") REFERENCES "upload_entity"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "brand_profile" ADD CONSTRAINT "FK_3c5e458fc824b91dac08295b393" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "brand_profile" ADD CONSTRAINT "FK_3c5e458fc824b91dac08295b393" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "brand_profile" ADD CONSTRAINT "FK_24398546860a568346e3dd04a8e" FOREIGN KEY ("profileImageId") REFERENCES "upload_entity"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "brand_profile" ADD CONSTRAINT "FK_ec9a002ef8cb11144a49be7631b" FOREIGN KEY ("coverImageId") REFERENCES "upload_entity"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "user_bio" ADD CONSTRAINT "FK_bf15b8a3924b67ee83496255b42" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
+        await queryRunner.query(`ALTER TABLE "user_bio" ADD CONSTRAINT "FK_bf15b8a3924b67ee83496255b42" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
@@ -31,7 +31,7 @@ export class InitialMigration1749634198503 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "creator_profile" DROP CONSTRAINT "FK_fa52bed05de548cff422d107a79"`);
         await queryRunner.query(`ALTER TABLE "creator_profile" DROP CONSTRAINT "FK_5b8f9f6b1ce612c784b67079083"`);
         await queryRunner.query(`ALTER TABLE "creator_profile" DROP CONSTRAINT "FK_861c4ae08503b30aa145ed03513"`);
-        await queryRunner.query(`DROP TABLE "user"`);
+        await queryRunner.query(`DROP TABLE "users"`);
         await queryRunner.query(`DROP TYPE "public"."user_usertype_enum"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_bf15b8a3924b67ee83496255b4"`);
         await queryRunner.query(`DROP TABLE "user_bio"`);

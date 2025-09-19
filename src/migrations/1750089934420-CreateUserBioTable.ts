@@ -12,7 +12,7 @@ export class CreateUserBioTable1750089934420 implements MigrationInterface {
                 "updated_at" timestamp DEFAULT now() NOT NULL,
                 "deleted_at" timestamp,
                 CONSTRAINT "REL_bf15b8a3924b67ee83496255b4" UNIQUE ("user_id"), 
-                CONSTRAINT "FK_bf15b8a3924b67ee83496255b42" FOREIGN KEY ("user_id") REFERENCES "user"(id) ON UPDATE CASCADE ON DELETE CASCADE
+                CONSTRAINT "FK_bf15b8a3924b67ee83496255b42" FOREIGN KEY ("user_id") REFERENCES "users"(id) ON UPDATE CASCADE ON DELETE CASCADE
             );
         `);
     }

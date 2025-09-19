@@ -15,19 +15,19 @@ export class UserSearchService {
     async searchUsers(dto: UserSearchDto) {
         const { keyword, user_type, country, page, limit } = dto;
 
-        let query = this.userRepository.createQueryBuilder('user')
-            .leftJoinAndSelect('user.creator_profile', 'creator')
-            .leftJoinAndSelect('user.brand_profile', 'brand')
-            .where('user.is_active = true');
+        let query = this.userRepository.createQueryBuilder('users')
+            .leftJoinAndSelect('users.creator_profile', 'creator')
+            .leftJoinAndSelect('users.brand_profile', 'brand')
+            .where('users.is_active = true');
 
         if (user_type) {
-            query = query.andWhere('user.user_type = :user_type', { user_type: user_type });
+            query = query.andWhere('users.user_type = :user_type', { user_type: user_type });
         }
 
         if (keyword) {
             query = query.andWhere(new Brackets(qb => {
-                qb.where('user.username ILIKE :keyword', { keyword: `%${keyword}%` })
-                    .orWhere('user.email ILIKE :keyword', { keyword: `%${keyword}%` })
+                qb.where('users.username ILIKE :keyword', { keyword: `%${keyword}%` })
+                    .orWhere('users.email ILIKE :keyword', { keyword: `%${keyword}%` })
                     .orWhere('creator.first_name ILIKE :keyword', { keyword: `%${keyword}%` })
                     .orWhere('creator.last_name ILIKE :keyword', { keyword: `%${keyword}%` })
                     .orWhere('brand.brand_name ILIKE :keyword', { keyword: `%${keyword}%` })

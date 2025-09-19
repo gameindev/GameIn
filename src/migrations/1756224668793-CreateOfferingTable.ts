@@ -32,7 +32,7 @@ export class CreateOfferingTable1756224668793 implements MigrationInterface {
                 "deleted_at" timestamp,
 
                 CONSTRAINT "UQ_5b8f9f6b1ce612c784g67079083" UNIQUE ("upload_logo_id"),
-                CONSTRAINT "FK_861c4ae08503b30aa145ed06713" FOREIGN KEY ("user_id") REFERENCES "user"(id) ON DELETE CASCADE,
+                CONSTRAINT "FK_861c4ae08503b30aa145ed06713" FOREIGN KEY ("user_id") REFERENCES "users"(id) ON DELETE CASCADE,
                 CONSTRAINT "FK_5b8f9f6b1ce612c784b67079673" FOREIGN KEY ("upload_logo_id") REFERENCES "upload_entity"(id)
             );
         `);

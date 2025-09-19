@@ -11,7 +11,7 @@ import { SocialIntegration } from "src/social-integration/entities/social-integr
 /**
  * User entity.
  */
-@Entity()
+@Entity('users')
 export class User {
     @PrimaryGeneratedColumn()
     id: number;

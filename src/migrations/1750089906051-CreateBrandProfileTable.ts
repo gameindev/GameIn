@@ -22,7 +22,7 @@ export class CreateBrandProfileTable1750089906051 implements MigrationInterface 
                 CONSTRAINT "REL_3c5e458fc824b91dac08295b39" UNIQUE ("user_id"),
                 CONSTRAINT "UQ_24398546860a568346e3dd04a8e" UNIQUE ("profile_image_id"),
                 CONSTRAINT "UQ_ec9a002ef8cb11144a49be7631b" UNIQUE ("cover_image_id"),
-                CONSTRAINT "FK_3c5e458fc824b91dac08295b393" FOREIGN KEY ("user_id") REFERENCES "user"(id) ON DELETE CASCADE,
+                CONSTRAINT "FK_3c5e458fc824b91dac08295b393" FOREIGN KEY ("user_id") REFERENCES "users"(id) ON DELETE CASCADE,
                 CONSTRAINT "FK_24398546860a568346e3dd04a8e" FOREIGN KEY ("profile_image_id") REFERENCES "upload_entity"(id),
                 CONSTRAINT "FK_ec9a002ef8cb11144a49be7631b" FOREIGN KEY ("cover_image_id") REFERENCES "upload_entity"(id)
             );

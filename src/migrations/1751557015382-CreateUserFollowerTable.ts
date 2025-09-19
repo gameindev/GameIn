@@ -14,8 +14,8 @@ export class CreateUserFollowerTable1751557015382 implements MigrationInterface 
                 "deleted_at" timestamp,
                 
                 CONSTRAINT "UQ_follower_following" UNIQUE ("follower_id", "following_id"),
-                CONSTRAINT "FK_follower_user" FOREIGN KEY ("follower_id") REFERENCES "user"(id) ON DELETE CASCADE,
-                CONSTRAINT "FK_following_user" FOREIGN KEY ("following_id") REFERENCES "user"(id) ON DELETE CASCADE
+                CONSTRAINT "FK_follower_user" FOREIGN KEY ("follower_id") REFERENCES "users"(id) ON DELETE CASCADE,
+                CONSTRAINT "FK_following_user" FOREIGN KEY ("following_id") REFERENCES "users"(id) ON DELETE CASCADE
             );
 
             CREATE INDEX "IDX_follower_id" ON "user_follow" ("follower_id");

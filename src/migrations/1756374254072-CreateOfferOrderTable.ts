@@ -26,7 +26,7 @@ export class CreateOfferOrderTable1756374254072 implements MigrationInterface {
 
             
                 CONSTRAINT "REL_861ejhd65m84yu678oiu89e543" UNIQUE ("order_id"),
-                CONSTRAINT "FK_861c4ae08b30aa14wrt45dby679" FOREIGN KEY ("user_id") REFERENCES "user"(id) ON DELETE CASCADE,
+                CONSTRAINT "FK_861c4ae08b30aa14wrt45dby679" FOREIGN KEY ("user_id") REFERENCES "users"(id) ON DELETE CASCADE,
                 CONSTRAINT "FK_861cr6e0890r430aa145ed06713" FOREIGN KEY ("offering_id") REFERENCES "offerings"(id) ON DELETE CASCADE
             );
        `);

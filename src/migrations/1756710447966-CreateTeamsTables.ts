@@ -69,7 +69,7 @@ export class CreateTeamsTables1756710447966 implements MigrationInterface {
         await queryRunner.query(`
             ALTER TABLE "teams"
             ADD CONSTRAINT "fk_teams_admin_user"
-            FOREIGN KEY ("admin_user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE
+            FOREIGN KEY ("admin_user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE
         `);
         await queryRunner.query(`
             ALTER TABLE "teams"
@@ -89,12 +89,12 @@ export class CreateTeamsTables1756710447966 implements MigrationInterface {
         await queryRunner.query(`
             ALTER TABLE "team_members"
             ADD CONSTRAINT "fk_team_members_user"
-            FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE
+            FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE
         `);
         await queryRunner.query(`
             ALTER TABLE "team_members"
             ADD CONSTRAINT "fk_team_members_added_by"
-            FOREIGN KEY ("added_by_user_id") REFERENCES "user"("id") ON DELETE SET NULL ON UPDATE CASCADE
+            FOREIGN KEY ("added_by_user_id") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE
         `);
         await queryRunner.query(`
             ALTER TABLE "team_links"

@@ -115,7 +115,7 @@ export class OfferingsService {
             const allowedRelations = new Set(entityMeta.relations.map(r => r.propertyName));
             const requested = Array.isArray(params.relations) && params.relations.length
                 ? params.relations
-                : ['user']; // sensible default
+                : ['users']; // sensible default
 
             const relationsToJoin = requested.filter(r => allowedRelations.has(r));
 
@@ -170,7 +170,7 @@ export class OfferingsService {
 
     async findOneById(
         id: number,
-        relations?: Array<'user' | 'offering_offers' | 'offering_price' | 'logo'>,
+        relations?: Array<'users' | 'offering_offers' | 'offering_price' | 'logo'>,
     ) {
         try {
             // Validate relations against entity metadata to avoid invalid joins

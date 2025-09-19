@@ -69,7 +69,7 @@ export class CreateAdjustmentProvider {
 
     // ✅ Separated private method: fetch offering or throw
     private async findExistingOffering(id: number): Promise<Offering> {
-        const offering = await this.repo.findOne({ where: { id }, relations: ['user'] });
+        const offering = await this.repo.findOne({ where: { id }, relations: ['users'] });
         if (!offering) throw new NotFoundException(`Offering with ID ${id} not found`);
         return offering;
     }

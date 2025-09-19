@@ -83,7 +83,7 @@ export class OfferingsController {
         description: 'Relations to include (comma-separated or repeated). Allowed: user, offering_offers, offering_price',
         isArray: true,
         type: String,
-        example: ['user', 'offering_offers', 'offering_price'],
+        example: ['users', 'offering_offers', 'offering_price'],
     })
     @ApiOkResponse({ description: 'Offering fetched successfully', type: Offering })
     // @Auth(AuthType.None)
