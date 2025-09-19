@@ -52,7 +52,7 @@ async function bootstrap() {
     SwaggerModule.setup("api/docs", app, document);
 
     app.enableCors({
-        origin: ["https://gameindev.github.io", "http://localhost:5173", "http://localhost:5174"],
+        origin: ["https://gameindev.github.io", "http://localhost:5173", "http://localhost:5174", "https://grvroy.com/"],
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
         credentials: true,
     });
