@@ -65,7 +65,7 @@ const ENV = process.env.NODE_ENV;
         }),
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
-
+            
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => {
                 return {

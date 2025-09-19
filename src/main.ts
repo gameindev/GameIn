@@ -60,7 +60,7 @@ async function bootstrap() {
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
         credentials: true,
     });
-    
+
 
     // ✅ Serve static assets
     app.useStaticAssets(join(process.cwd(), 'media/uploads'), {
