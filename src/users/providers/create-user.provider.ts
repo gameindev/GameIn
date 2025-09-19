@@ -1,4 +1,4 @@
-import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { CreateUserDto } from '../dtos/post-create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { DataSource, Repository } from 'typeorm';
@@ -14,6 +14,8 @@ import { EmailsService } from 'src/emails/emails.service';
 
 @Injectable()
 export class CreateUserProvider {
+    private readonly logger = new Logger(CreateUserProvider.name);
+
 
     constructor(
         /**
@@ -55,61 +57,88 @@ export class CreateUserProvider {
     public async createUser(createUserDto: CreateUserDto): Promise<Partial<User>> {
         const { password, ...rest } = createUserDto;
         const queryRunner = this.dataSource.createQueryRunner()
-        await queryRunner.connect();
-
-        const hashedPassword = await this.hashingProvider.hashPassword(password);
-
-        await queryRunner.startTransaction()
-
-        const newUser = queryRunner.manager.create(User, {
-            ...rest,
-            token: generateToken(),
-            password: hashedPassword,
-        })
-
-        // Send a verification email
-        // const email = this.emailService.sendTemplate('verify-account', {
-        //     username: newUser.username,
-        //     verifyUrl: 'http://localhost:3000?token='+newUser.token,
-        // }, {
-        //     subject: 'GameIn Account Verification',
-        //     to: newUser.email,
-        // });
 
         try {
-            console.log('before')
+            await queryRunner.connect();
+            await queryRunner.startTransaction()
+            const hashedPassword = await this.hashingProvider.hashPassword(password);
+
+            const newUser = queryRunner.manager.create(User, {
+                ...rest,
+                token: generateToken(),
+                password: hashedPassword,
+            })
+
+            // Send a verification email
+            // const email = this.emailService.sendTemplate('verify-account', {
+            //     username: newUser.username,
+            //     verifyUrl: 'http://localhost:3000?token='+newUser.token,
+            // }, {
+            //     subject: 'GameIn Account Verification',
+            //     to: newUser.email,
+            // });
+
 
             const savedUser = await queryRunner.manager.save(User, newUser);
-            console.log('after')
+
             if (savedUser.user_type === UserType.CREATOR) {
                 await this.creatorProfileService.createProfileForUser(savedUser, queryRunner);
             } else if (savedUser.user_type === UserType.BRAND) {
                 await this.brandProfileService.createProfileForUser(savedUser, queryRunner);
             }
 
-            await queryRunner.commitTransaction();
-
-            return savedUser;
-        } catch (error) {
-            console.log(error)
-            await queryRunner.rollbackTransaction();
-            if (error.code === '23505') {
-                const detail = error.detail;
-
-                if (detail.includes('username')) {
-                    throw new BadRequestException('Username is already taken');
-                } else if (detail.includes('email')) {
-                    throw new BadRequestException('Email is already registered');
-                }
-
-                // fallback
-                throw new BadRequestException('User already exists');
+            if (queryRunner.isTransactionActive) {
+                await queryRunner.commitTransaction();
             }
 
-            throw new InternalServerErrorException('Failed to create user');
+            // never return sensitive fields
+            const { password: _, ...safe } = savedUser;
+            return safe;
+        } catch (error) {
+            if (queryRunner.isTransactionActive) {
+                try {
+                    await queryRunner.rollbackTransaction();
+                } catch (rbErr) {
+                    this.logger.warn(`Rollback failed: ${(rbErr as any)?.message}`);
+                }
+            }
+
+            this.logger.error('CreateUser failed', {
+                code: error?.code,
+                message: error?.message,
+                detail: error?.detail,
+                constraint: error?.constraint,
+                column: error?.column,
+                stack: error?.stack,
+            });
+
+            // friendly mapping
+            switch (error?.code) {
+                case '23505': { // unique_violation
+                    const d = (error?.detail || '').toLowerCase();
+                    if (d.includes('username')) throw new BadRequestException('Username is already taken');
+                    if (d.includes('email')) throw new BadRequestException('Email is already registered');
+                    throw new BadRequestException('User already exists');
+                }
+                case '23502': // not_null_violation
+                    throw new BadRequestException(`Missing required field: ${error?.column ?? 'unknown'}`);
+                case '22P02': // invalid_text_representation (often enum)
+                    throw new BadRequestException(error?.detail ?? 'Invalid value provided');
+                case '22001': // string_data_right_truncation
+                    throw new BadRequestException(`Value too long for: ${error?.column ?? 'unknown'}`);
+                case '23503': // foreign_key_violation
+                    throw new BadRequestException(`Related entity missing: ${error?.detail ?? ''}`);
+                default:
+                    throw new InternalServerErrorException(error?.detail ?? error?.message ?? 'Failed to create user');
+            }
         } finally {
-            await queryRunner.release();
+            try {
+                await queryRunner.release();
+            } catch (relErr) {
+                this.logger.warn(`Release failed: ${(relErr as any)?.message}`);
+            }
         }
+
     }
 
     /**

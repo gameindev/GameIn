@@ -17,7 +17,7 @@ import { OfferingPrice } from './offerings/offering-price/offering-price.entity'
 import { Team } from './teams/teams.entity';
 import { TeamMembers } from './teams/team-members/team-members.entity';
 import { TeamLinks } from './teams/team-links/team-links.entity';
-
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 // This loads your .env files just like in your main app
 dotenvFlow.config();
@@ -30,6 +30,8 @@ export const dataSourceOptions: DataSourceOptions = {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     schema: "public",
+    logging: ['error', 'query', 'warn'],
+    namingStrategy: new SnakeNamingStrategy(),
     // You MUST list all your entities here for the CLI to find them
     entities: [
         User,
