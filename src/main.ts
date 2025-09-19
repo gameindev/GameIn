@@ -32,7 +32,7 @@ async function bootstrap() {
         .setTermsOfService(process.env.HOST ? `${process.env.HOST}/terms-of-service` : 'http://localhost:3000/terms-of-service')
         .addServer(process.env.HOST ?? 'http://localhost:3000/')
         // .addServer(process.env.STAGING_HOST ?? 'https://staging-api.gamein.com')
-        .addServer(process.env.PROD_HOST ?? 'https://grvroy.com/nest/api')
+        .addServer(process.env.PROD_HOST ?? 'https://grvroy.com/nest/')
         .setVersion(process.env.API_VERSION ?? "1.0")
         .addBearerAuth()
         .addOAuth2({
