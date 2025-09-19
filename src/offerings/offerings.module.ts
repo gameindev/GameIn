@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { OfferingsController } from './offerings.controller';
 import { OfferingsService } from './providers/offerings.service';
 import { OfferingOffersModule } from './offering-offers/offering-offers.module';
@@ -11,15 +11,27 @@ import { OfferingOffers } from './offering-offers/offering-offers.entity';
 import { OfferingPrice } from './offering-price/offering-price.entity';
 import { OfferingBaseService } from './providers/offering.base.service';
 import { UsersModule } from 'src/users/users.module';
+import { OfferingsScheduler } from './scheduler/offerings.scheduler';
+import { CreateAdjustmentProvider } from './providers/create-adjustment.provider';
+import { UploadsModule } from 'src/uploads/uploads.module';
 
 @Module({
     controllers: [OfferingsController],
-    providers: [OfferingsService, OfferingOffersService, OfferingPriceService, OfferingBaseService],
+    providers: [
+        OfferingsService, 
+        OfferingOffersService, 
+        OfferingPriceService, 
+        OfferingBaseService, 
+        OfferingsScheduler,
+        CreateAdjustmentProvider
+    ],
     imports: [
         TypeOrmModule.forFeature([Offering, OfferingOffers, OfferingPrice]),
-        OfferingOffersModule,
+        forwardRef(() => OfferingOffersModule),
         UsersModule,
-        OfferingPriceModule],
+        forwardRef(() => OfferingPriceModule),
+        UploadsModule
+    ],
     exports: [OfferingsService, OfferingBaseService],
 })
 export class OfferingsModule { }

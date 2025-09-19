@@ -1,9 +1,10 @@
-import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
 import { Offering } from "../offerings.entity";
 import { OfferingCategory } from "../enums/offering-category.enum";
 import { SocialPlatform } from "src/social-integration/enums/social-platform.enums";
 import { TimeMode } from "../enums/time-mode.enum";
 import { SizePreset } from "../enums/size-preset.enum";
+import { User } from "src/users/user.entity";
 
 
 /**
@@ -11,7 +12,7 @@ import { SizePreset } from "../enums/size-preset.enum";
  */
 @Entity({ name: 'offering_offers' })
 @Index('IDX_offerings_offers', ['offering_id', 'offer_type'])
-@Unique('UQ_offering_offer_type', ['offering_id', 'offer_type'])
+// @Unique('UQ_offering_offer_type', ['offering_id', 'offer_type'])
 export class OfferingOffers {
     @PrimaryGeneratedColumn('increment', { type: 'int' })
     id: Number;
@@ -68,5 +69,16 @@ export class OfferingOffers {
     /** Optional subtype (e.g., merchandise: t-shirt, cap) */
     @Column({ type: 'varchar', length: 30, name: 'sub_type', nullable: true })
     sub_type?: string;
-   
+
+    @Column({ default: 1 })
+    version: number;
+
+    @Column({ type: 'int', name: 'updated_by_user_id', nullable: true })
+    updated_by_user_id?: number;
+
+    @CreateDateColumn()
+    created_at: Date;
+
+    @UpdateDateColumn()
+    updated_at: Date;
 }

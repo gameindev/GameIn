@@ -1,18 +1,29 @@
-import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { CreateOfferingOfferDto } from '../dtos/post-offering-offer.dto';
 import { OfferingOffers } from '../offering-offers.entity';
+import { Offering } from 'src/offerings/offerings.entity';
+import { OfferingStatus } from 'src/offerings/enums/offering-status.enum';
+import { OfferingsService } from 'src/offerings/providers/offerings.service';
+import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
+import { isEqual } from 'lodash';
+import { UsersService } from 'src/users/providers/users.service';
+
 
 @Injectable()
 export class OfferingOffersService {
     constructor(
         @InjectRepository(OfferingOffers)
         private readonly repo: Repository<OfferingOffers>,
+
+        @Inject(forwardRef(() => OfferingsService))
+        private readonly offeringsService: OfferingsService,
+        private readonly usersService: UsersService,
     ) { }
 
-    async create(dto: CreateOfferingOfferDto, manager?: EntityManager): Promise<OfferingOffers> {
-        if (!dto.offering_id || !dto.offer_type) {
+    async create(offering_id: number, dto: CreateOfferingOfferDto, manager?: EntityManager): Promise<OfferingOffers> {
+        if (!offering_id || !dto.offer_type) {
             throw new BadRequestException('offering_id and offer_type are required');
         }
 
@@ -20,7 +31,7 @@ export class OfferingOffersService {
 
         const existing = await repository.findOne({
             where: {
-                offering_id: Number(dto.offering_id),
+                offering_id: offering_id,
                 offer_type: dto.offer_type,
             },
         });
@@ -31,7 +42,7 @@ export class OfferingOffersService {
 
         const entity = repository.create({
             ...dto,
-            offering_id: Number(dto.offering_id),
+            offering_id
         });
 
         try {
@@ -45,12 +56,12 @@ export class OfferingOffersService {
         }
     }
 
-    async bulkCreate(dtos: CreateOfferingOfferDto[], manager?: EntityManager): Promise<OfferingOffers[]> {
+    async bulkCreate(offering_id: number, dtos: CreateOfferingOfferDto[], manager?: EntityManager): Promise<OfferingOffers[]> {
         if (!dtos?.length) return [];
 
         const processed = dtos.map(d => ({
             ...d,
-            offering_id: Number(d.offering_id),
+            offering_id,
         }));
 
         // 1) Detect duplicates inside the payload itself
@@ -98,4 +109,81 @@ export class OfferingOffersService {
             throw err;
         }
     }
+
+
+    async adjustOffers(offering: Offering, offers: Partial<OfferingOffers>[], user?: ActiveUserData) {
+        if (
+            !offering ||
+            offering.adjustment_count >= 8 ||
+            offering.status === OfferingStatus.ACCEPTED
+        ) {
+            throw new BadRequestException('Adjustment not allowed');
+        }
+
+        const getUser = await this.usersService.getUserById(user?.sub);
+
+        await Promise.all(offers.map(async offer => {
+            if (!offer.offering_id || !offer.offer_type) {
+                throw new BadRequestException('Each offer must include offering_id and offer_type');
+            }
+
+            // Check if the current offertype and offering id is exists
+            const existing = await this.repo.findOne({
+                where: {
+                    offering_id: offer.offering_id,
+                    offer_type: offer.offer_type,
+                },
+                order: {
+                    version: 'DESC',
+                    created_at: 'DESC',
+                }
+            })
+
+
+            // do check all the columns if there is any changes from request data
+            const fieldsToCheck = ['time_mode', 'schedule', 'repetition', 'duration', 'size', 'sub_type'];
+            const isChanged = fieldsToCheck.some(key => {
+                const existingValue = existing?.[key];
+                const newValue = offer[key];
+                return !isEqual(existingValue, newValue);
+            });
+
+
+
+            if (existing) {
+
+                if (isChanged) {
+                    // Update the existing offer
+                    await this.repo.save({
+                        ...existing,
+                        ...offer,
+                        id: undefined,
+                        version: existing.version + 1,
+                        updated_by_user_id: user?.sub,
+                    });
+                }
+            } else {
+                // create a new offer
+                await this.repo.save({
+                    ...offer,
+                    version: 1,
+                    offering_id: offer.offering_id,
+                    offer_type: offer.offer_type,
+                    updated_by_user_id: user?.sub,
+                })
+            }
+
+
+        }))
+
+        // Update offering stats
+        offering.adjustment_count++;
+        offering.last_adjusted_at = new Date();
+        offering.last_adjusted_by = getUser;
+        await this.offeringsService.saveOne(offering);
+
+        return offers;
+    }
+
+
 }

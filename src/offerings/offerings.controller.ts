@@ -1,9 +1,9 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, getSchemaPath } from '@nestjs/swagger';
+import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiExtraModels, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, getSchemaPath } from '@nestjs/swagger';
 import { OfferingsService } from './providers/offerings.service';
 import { CreateOfferingDto } from './dtos/post-offering.dto';
 import { CreateOfferingBundleDto } from './dtos/post-offering-bundle.dto';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { UserTypeGuard } from 'src/auth/guards/user-type.guard';
 import { UserTypes } from 'src/auth/decorators/user-types.decorator';
 import { UserType } from 'src/users/enums/user-type.enums';
@@ -13,6 +13,12 @@ import { Auth } from 'src/auth/decorators/auth.decorator';
 import { AuthType } from 'src/auth/enums/auth-type.enum';
 import { FindOfferingsQueryDto } from './dtos/get-offering.dto';
 import { Offering } from './offerings.entity';
+import { OfferingOffersService } from './offering-offers/providers/offering-offers.service';
+import { OfferingPriceService } from './offering-price/providers/offering-price.service';
+import { PatchOfferingBundleDto } from './dtos/patch-offering-bundle.dto';
+import { PatchOfferingDto } from './dtos/patch-offering.dto';
+import { PatchOfferingOfferDto } from './offering-offers/dtos/patch-offering-offer.dto';
+import { OfferingCategory } from './enums/offering-category.enum';
 
 @Controller('offerings')
 @ApiBearerAuth()
@@ -23,6 +29,8 @@ export class OfferingsController {
          * Injecting Offering Service.
          */
         private readonly offeringService: OfferingsService,
+        private readonly offeringOffersService: OfferingOffersService,
+        private readonly offeringPriceService: OfferingPriceService
     ) { }
 
     @ApiOperation({
@@ -78,32 +86,107 @@ export class OfferingsController {
         example: ['user', 'offering_offers', 'offering_price'],
     })
     @ApiOkResponse({ description: 'Offering fetched successfully', type: Offering })
-    @Auth(AuthType.None)
+    // @Auth(AuthType.None)
     getOfferingById(
         @Param('id', ParseIntPipe) id: number,
         @Query() query: FindOfferingsQueryDto,
     ) {
         return this.offeringService.findOneById(id, query.relations as any);
     }
- 
 
-    @Patch('/:id')
-    updateOfferings() {
 
+
+
+
+    @ApiOperation({
+        summary: 'Adjust an offering',
+        description: 'Adjusts the offers parameters and logo based on the provided bundle DTOs.',
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Offering adjusted successfully',
+    })
+    @Patch(':id/adjust')
+    @UseInterceptors(FileInterceptor('logo'))
+    @ApiOperation({ summary: 'Adjust an offering' })
+    @ApiConsumes('multipart/form-data')
+    @ApiExtraModels(PatchOfferingBundleDto, PatchOfferingDto, PatchOfferingOfferDto)
+    @ApiResponse({ status: 200, description: 'Offering adjusted successfully' })    
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                offering: {
+                    type: 'string',
+                    example: JSON.stringify({
+                        id: 1,
+                        notes: 'Example notes',
+                        offers: [
+                            {
+                                offering_id: 1,
+                                offer_type: OfferingCategory.LOGO_STREAM,
+                                repetition: '2',
+                                duration: '20s',
+                                size: 'PORTRAIT',
+                            },
+                        ],
+                    }),
+                },
+                logo: { type: 'string', format: 'binary' },
+            },
+            required: ['offering'],
+        },
+    })
+    async adjustOffer(
+        @UploadedFile() logo: Express.Multer.File,
+        @Body('offering') offeringRaw: string,
+        @ActiveUser() user: ActiveUserData,
+    ) {
+        let parsed: PatchOfferingDto;
+
+        try {
+            parsed = JSON.parse(offeringRaw);
+        } catch {
+            throw new BadRequestException('Invalid JSON in offering');
+        }
+
+        // Manual transformation and validation
+        const dto = new PatchOfferingBundleDto();
+        dto.offering = parsed;
+
+        if (!dto.offering.id) {
+            throw new BadRequestException('Offering ID is required');
+        }
+
+
+        return this.offeringService.createAdjustment(dto, logo, user);
+        
     }
 
 
 
-    @Delete('/:id/soft-delete')
-    softDeleteOffering() {
+    // @Patch(':id/price')
+    // async adjustPrice(
+    //     @Param('id', ParseIntPipe) id: number,
+    //     @Body() dto: CreateOfferingPriceDto
+    // ) {
+    //     return this.offeringPriceService.updatePrice(id, dto);
+    // }
 
-    }
+
+
+    // @Delete('/:id/soft-delete')
+    // softDeleteOffering() {
+
+    // }
 
 
 
-    @Delete('/:id')
-    deleteOffering() {
+    // @Delete('/:id')
+    // deleteOffering() {
 
-    }
+    // }
 }
+
+
 

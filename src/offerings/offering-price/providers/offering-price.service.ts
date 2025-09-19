@@ -1,29 +1,34 @@
-import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OfferingPrice } from '../offering-price.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { CreateOfferingPriceDto } from '../dtos/post-offer-price.dto';
+import { Offering } from 'src/offerings/offerings.entity';
+import { OfferingStatus } from 'src/offerings/enums/offering-status.enum';
+import { OfferingsService } from 'src/offerings/providers/offerings.service';
 
 @Injectable()
 export class OfferingPriceService {
     constructor(
         @InjectRepository(OfferingPrice)
         private readonly repo: Repository<OfferingPrice>,
+
+        @Inject(forwardRef(() => OfferingsService))
+        private readonly offeringsService: OfferingsService,
     ) { }
 
-    async create(dto: CreateOfferingPriceDto, manager?: EntityManager): Promise<OfferingPrice> {
-        if (!dto?.offering_id) {
+    async create(offering_id: number, dto: CreateOfferingPriceDto, manager?: EntityManager): Promise<OfferingPrice> {
+        if (!offering_id) {
             throw new BadRequestException('offering_id is required');
         }
 
         const repository = manager ? manager.getRepository(OfferingPrice) : this.repo;
 
         // Normalize types
-        const offering_id = Number(dto.offering_id);
         if (Number.isNaN(offering_id)) {
             throw new BadRequestException('offering_id must be a number');
         }
-         
+
 
         const entity = repository.create({ ...dto, offering_id });
 
@@ -36,5 +41,31 @@ export class OfferingPriceService {
             }
             throw err;
         }
+    }
+
+
+
+    async updatePrice(offeringId: number, dto: CreateOfferingPriceDto) {
+        const offering = await this.offeringsService.findOne(offeringId);
+        if (!offering || offering.adjustment_count >= 8 || offering.status === OfferingStatus.ACCEPTED) {
+            throw new BadRequestException('Price adjustment not allowed');
+        }
+
+
+        let price = await this.repo.findOne({ where: { offering: { id: offeringId } } });
+        if (price) {
+            Object.assign(price, dto);
+        } else {
+            price = this.repo.create({ ...dto, offering });
+        }
+        await this.repo.save(price);
+
+
+        offering.adjustment_count++;
+        offering.last_adjusted_at = new Date();
+        await this.offeringsService.saveOne(offering);
+
+
+        return price;
     }
 }

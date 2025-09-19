@@ -111,6 +111,8 @@ export class User {
         eager: true,
     })
     social_integrations: SocialIntegration[];
+
+    
     
     // ratingReceived: UserRating[];
     // ratingGiven: UserRating[];

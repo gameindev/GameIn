@@ -4,16 +4,16 @@ import { PaymentProvider } from "src/offerings/enums/payment-provider.enum";
 import { Unique } from "typeorm";
 
 
-@Unique('UQ_price_offering_id', ['offering_id'])
+// @Unique('UQ_price_offering_id', ['offering_id'])
 export class CreateOfferingPriceDto{
     
-    @ApiProperty({
-        description: 'Parent offering id',
-        type: Number,
-        example: 2
-    })
-    @IsInt()
-    offering_id: number;
+    // @ApiProperty({
+    //     description: 'Parent offering id',
+    //     type: Number,
+    //     example: 2
+    // })
+    // @IsInt()
+    // offering_id: number;
 
     @ApiProperty({
         description: 'Actual Price of the Offering',

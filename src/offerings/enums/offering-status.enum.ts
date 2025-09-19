@@ -6,5 +6,6 @@ export enum OfferingStatus{
     PENDING = 'PENDING',
     ACCEPTED = 'ACCEPTED',
     COMPLETED = 'COMPLETED',
-    DISMISSED = 'DISMISSED'
+    DISMISSED = 'DISMISSED',
+    EXPIRED = 'EXPIRED'
 }

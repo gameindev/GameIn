@@ -32,7 +32,7 @@ export class AlterEnumOfferingStatus1757573199862 implements MigrationInterface 
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         // Rollback: recreate the old enum
-        await queryRunner.query(`CREATE TYPE "offering_status_enum_old" AS ENUM ('DRAFT', 'OFFERED', 'PENDING', 'ACCEPTED', 'COMPLETED', 'DISMISSED')`);
+        await queryRunner.query(`CREATE TYPE "offering_status_enum_old" AS ENUM ('DRAFT', 'OFFERED', 'PENDING', 'ACCEPTED', 'COMPLETED', 'DISMISSED', 'EXPIRED')`);
 
         await queryRunner.query(`
             ALTER TABLE "offerings"

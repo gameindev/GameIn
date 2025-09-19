@@ -9,13 +9,13 @@ import { SocialPlatform } from "src/social-integration/enums/social-platform.enu
 
 export class CreateOfferingOfferDto {
 
-    @ApiProperty({
-        description: 'Parent offering id',
-        example: 1
-    })
-    @IsOptional()
-    @IsInt()
-    offering_id?: number;
+    // @ApiProperty({
+    //     description: 'Parent offering id',
+    //     example: 1
+    // })
+    // @IsOptional()
+    // @IsInt()
+    // offering_id?: number;
 
     @ApiProperty({
         description: 'Type of Offer for current Offering',
@@ -95,5 +95,15 @@ export class CreateOfferingOfferDto {
     @IsString()
     @MaxLength(30)
     sub_type?: string;
+
+
+    @ApiPropertyOptional({
+        description: 'Version of the Offering Offer',
+        type: Number,
+        example: 1
+    })
+    @IsOptional()
+    @IsInt()
+    version?: number;
 
 }

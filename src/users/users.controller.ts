@@ -188,7 +188,7 @@ Use '*' to load all supported relations.`,
         description: 'User fetched successfully based on the query.',
     })
     @ApiBearerAuth()
-    @UseGuards(UserTypeGuard)
+    // @UseGuards(UserTypeGuard)
     @UserTypes(UserType.ADMIN, UserType.CREATOR, UserType.BRAND, UserType.COMMUNITY)
     @UseInterceptors(ClassSerializerInterceptor)
     @Get("/:id")

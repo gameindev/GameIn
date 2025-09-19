@@ -18,7 +18,7 @@ export class Offering {
     id: number;
 
     @Index('idx_offering_user_id')
-    @ManyToOne(() => User, { nullable: true, eager: false, cascade: ['insert', 'update'],  onDelete: 'SET NULL', })
+    @ManyToOne(() => User, { nullable: true, eager: false, cascade: ['insert', 'update'], onDelete: 'SET NULL', })
     @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
     user: User;
 
@@ -84,7 +84,7 @@ export class Offering {
     can_edit: boolean;
 
     @OneToOne(() => UploadEntity, { nullable: true, eager: true, cascade: true })
-    @JoinColumn({name: "upload_logo_id"})
+    @JoinColumn({ name: "upload_logo_id" })
     logo?: UploadEntity;
 
     @Index()
@@ -98,6 +98,16 @@ export class Offering {
 
     @Column({ type: 'jsonb', nullable: true })
     meta_data?: Record<string, any>;
+
+    @Column({ default: 0 })
+    adjustment_count: number;
+
+    @Column({ type: 'timestamp', nullable: true })
+    last_adjusted_at: Date;
+
+    @ManyToOne(() => User, { nullable: true, eager: false, cascade: ['insert', 'update'], onDelete: 'SET NULL', })
+    @JoinColumn({ name: 'last_adjusted_by', referencedColumnName: 'id' })
+    last_adjusted_by: User;
 
     @CreateDateColumn()
     created_at: Date;
