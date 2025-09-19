@@ -1,7 +1,6 @@
 import { Tabs } from "@mantine/core";
 import { useNavigate, useLocation } from "react-router";
 import { Tabsection } from "./styles";
-import routePaths from "../../routes/endpoints";
 
 export default function InfoTabs({ tabLists }) {
   const navigate = useNavigate();

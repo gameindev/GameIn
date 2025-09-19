@@ -10,10 +10,10 @@ import GameList from "./../../../components/accounts/profile/editBio/GameList";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { editBioSchema } from "./../../../utils/schemas/editBioSchema";
 import {
-  setBio,
-  removeGameUrl as removeGameFromRedux,
-  toggleFavorite,
-  moveGameUrl,
+    setBio,
+    removeGameUrl as removeGameFromRedux,
+    toggleFavorite,
+    moveGameUrl,
 } from "../../../stores/slices/bioSlice";
 import StatBox from "../../../components/shared/ui/StatBox";
 import { useNavigate } from "react-router";
@@ -23,151 +23,151 @@ import { refreshUser } from "../../../stores/thunks/userThunks";
 import { API_PATHS } from "../../../services/endpoints";
 
 export default function EditBio() {
-  const { control, handleSubmit, setValue, reset } = useForm({
-    resolver: yupResolver(editBioSchema),
-    defaultValues: {
-      introVideoUrl: "",
-      introVideoFile: null,
-      bio: "",
-      gamesUrl: [],
-    },
-  });
+    const { control, handleSubmit, setValue, reset } = useForm({
+        resolver: yupResolver(editBioSchema),
+        defaultValues: {
+            introVideoUrl: "",
+            introVideoFile: null,
+            bio: "",
+            gamesUrl: [],
+        },
+    });
 
-  const { user } = useSelector(currentUser);
-  const { patch } = useApi();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+    const { user } = useSelector(currentUser);
+    const { patch } = useApi();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-  const globalBio = useSelector((state) => state.bio);
-  const reduxGames = globalBio.gamesUrl;
+    const globalBio = useSelector((state) => state.bio);
+    const reduxGames = globalBio.gamesUrl;
 
-  const fetchedGames = useMemo(() => {
+    const fetchedGames = useMemo(() => {
+        return (
+            user?.user_bio?.preferred_games?.map((game) => ({
+                url: game?.game_url,
+                metadata: game?.metadata || {},
+            })) || []
+        );
+    }, [user?.user_bio?.preferred_games]);
+
+    const gameUrls = reduxGames?.length ? reduxGames : fetchedGames;
+
+    useEffect(() => {
+        if (!reduxGames.length && fetchedGames.length) {
+            dispatch(setBio({ ...globalBio, gamesUrl: fetchedGames }));
+        }
+    }, [reduxGames, fetchedGames, dispatch, globalBio]);
+
+    useEffect(() => {
+        if (user) {
+            reset({
+                bio: globalBio.bio || user?.user_bio?.bio || "",
+                introVideoUrl:
+                    globalBio.introVideoUrl || user?.user_bio?.video_bio_url || "",
+                introVideoFile: globalBio.introVideoFile || null,
+                gamesUrl: gameUrls || [],
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user, reset]);
+
+    const onSubmit = async (data) => {
+        try {
+            const payload = {
+                bio: data.bio,
+                video_bio_url: data.introVideoUrl,
+                user_id: user.id,
+                preferred_games: gameUrls.map((game, index) => ({
+                    game_url: game.url,
+                    sort_order: index,
+                })),
+            };
+
+            await patch({
+                url: API_PATHS.USERS.BIO,
+                payload,
+            });
+
+            dispatch(
+                setBio({
+                    bio: data.bio,
+                    introVideoUrl: data.introVideoUrl,
+                    introVideoFile: data.introVideoFile,
+                    gamesUrl: gameUrls,
+                })
+            );
+            dispatch(refreshUser());
+            alert("Profile Updated Successfully");
+            navigate("/profile");
+        } catch (err) {
+            alert("Failed to update bio");
+            console.error(err);
+        }
+    };
+
     return (
-      user?.user_bio?.preferred_games?.map((game) => ({
-        url: game?.game_url,
-        metadata: game?.metadata || {},
-      })) || []
-    );
-  }, [user?.user_bio?.preferred_games]);
-
-  const gameUrls = reduxGames?.length ? reduxGames : fetchedGames;
-
-  useEffect(() => {
-    if (!reduxGames.length && fetchedGames.length) {
-      dispatch(setBio({ ...globalBio, gamesUrl: fetchedGames }));
-    }
-  }, [reduxGames, fetchedGames, dispatch, globalBio]);
-
-  useEffect(() => {
-    if (user) {
-      reset({
-        bio: globalBio.bio || user?.user_bio?.bio || "",
-        introVideoUrl:
-          globalBio.introVideoUrl || user?.user_bio?.video_bio_url || "",
-        introVideoFile: globalBio.introVideoFile || null,
-        gamesUrl: gameUrls || [],
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, reset]);
-
-  const onSubmit = async (data) => {
-    try {
-      const payload = {
-        bio: data.bio,
-        video_bio_url: data.introVideoUrl,
-        user_id: user.id,
-        preferred_games: gameUrls.map((game, index) => ({
-          game_url: game.url,
-          sort_order: index,
-        })),
-      };
-
-      await patch({
-        url: API_PATHS.USERS.BIO,
-        payload,
-      });
-
-      dispatch(
-        setBio({
-          bio: data.bio,
-          introVideoUrl: data.introVideoUrl,
-          introVideoFile: data.introVideoFile,
-          gamesUrl: gameUrls,
-        })
-      );
-      dispatch(refreshUser());
-      alert("Profile Updated Successfully");
-      navigate("/profile");
-    } catch (err) {
-      alert("Failed to update bio");
-      console.error(err);
-    }
-  };
-
-  return (
-    <>
-      <Group pos={"relative"} justify="center">
-        <Button
-          pos={"absolute"}
-          left={0}
-          variant="darkGrey"
-          onClick={() => navigate(-1)}
-        >
-          Back
-        </Button>
-        <Text fz={35} align="center" mb={20}>
-          Edit Bio
-        </Text>
-      </Group>
-
-      <Grid gutter={20}>
-        <Grid.Col span={{ base: 12, md: 6, lg: 8 }}>
-          <Box
-            p="md"
-            bg={theme.colors.secondaryGrey[0]}
-            style={{ borderRadius: theme.radius.md }}
-          >
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <Stack p={20}>
-                {/* Video Input */}
-                <VideoInput control={control} setValue={setValue} />
-
-                {/* Bio input */}
-                <FormField
-                  name="bio"
-                  control={control}
-                  Component={Textarea}
-                  componentProps={{
-                    label: "Bio",
-                    placeholder: "Enter your Bio",
-                    resize: "vertical",
-                  }}
-                />
-
-                {/* Games Url input */}
-                <AddGameInput control={control} />
-
-                {/* Game lists */}
-                <GameList
-                  games={gameUrls}
-                  onDelete={(idx) => dispatch(removeGameFromRedux(idx))}
-                  onFavoriteToggle={(idx) => dispatch(toggleFavorite(idx))}
-                  onMove={(from, to) => dispatch(moveGameUrl({ from, to }))}
-                />
-
-                <Button type="submit" variant="primary" width="10em">
-                  Save
+        <>
+            <Group pos={"relative"} justify="center">
+                <Button
+                    pos={"absolute"}
+                    left={0}
+                    variant="darkGrey"
+                    onClick={() => navigate(-1)}
+                >
+                    Back
                 </Button>
-              </Stack>
-            </form>
-          </Box>
-        </Grid.Col>
+                <Text fz={35} align="center" mb={20}>
+                    Edit Bio
+                </Text>
+            </Group>
 
-        <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-          <StatBox title={"Preview"}></StatBox>
-        </Grid.Col>
-      </Grid>
-    </>
-  );
+            <Grid gutter={20}>
+                <Grid.Col span={{ base: 12, md: 6, lg: 8 }}>
+                    <Box
+                        p="md"
+                        bg={theme.colors.secondaryGrey[0]}
+                        style={{ borderRadius: theme.radius.md }}
+                    >
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                            <Stack p={20}>
+                                {/* Video Input */}
+                                <VideoInput control={control} setValue={setValue} />
+
+                                {/* Bio input */}
+                                <FormField
+                                    name="bio"
+                                    control={control}
+                                    Component={Textarea}
+                                    componentProps={{
+                                        label: "Bio",
+                                        placeholder: "Enter your Bio",
+                                        resize: "vertical",
+                                    }}
+                                />
+
+                                {/* Games Url input */}
+                                <AddGameInput control={control} />
+
+                                {/* Game lists */}
+                                <GameList
+                                    games={gameUrls}
+                                    onDelete={(idx) => dispatch(removeGameFromRedux(idx))}
+                                    onFavoriteToggle={(idx) => dispatch(toggleFavorite(idx))}
+                                    onMove={(from, to) => dispatch(moveGameUrl({ from, to }))}
+                                />
+
+                                <Button type="submit" variant="primary" width="10em">
+                                    Save
+                                </Button>
+                            </Stack>
+                        </form>
+                    </Box>
+                </Grid.Col>
+
+                <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+                    <StatBox title={"Preview"}></StatBox>
+                </Grid.Col>
+            </Grid>
+        </>
+    );
 }

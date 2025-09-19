@@ -9,13 +9,17 @@ import { CheckIcon } from "lucide-react";
 import { theme } from "../../../styles/theme/customTheme";
 import { useSelector } from "react-redux";
 import { currentUser } from "../../../stores/selectors";
+import { useParams } from "react-router";
 
-export default function Offerings() {
+export default function DisplayOfferings() {
     const { get } = useApi();
     const [offerings, setOfferings] = useState([]);
     const [loading, setLoading] = useState(true);
     const { user } = useSelector(currentUser);
 
+    const { id } = useParams();
+
+    
     useEffect(() => {
         const fetchOfferings = async () => {
             try {
@@ -24,7 +28,7 @@ export default function Offerings() {
                     params: {
                         page: 1,
                         limit: 20,
-                        user_id: user.id,
+                        user_id: id,
                         relations: ["user", "offering_offers", "offering_price"],
                     },
                 });
@@ -44,17 +48,7 @@ export default function Offerings() {
     if (loading) return <Text>Loading...</Text>;
 
     return (
-        <Grid gutter={20}>
-            <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-                <StatBox
-                    title="Sponsorships"
-                    background={`repeating-linear-gradient( 45deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05) 1px,
-              transparent 1px,
-              transparent 10px), rgba(92, 229, 176, 0.4)`}
-                >
-                    <SponsorshipOpportunityCard />
-                </StatBox>
-            </Grid.Col>
+        <Grid gutter={20}>            
 
             {offerings.map((offering, idx) => {
                 const price = offering.offering_price?.price || "0";

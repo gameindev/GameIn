@@ -5,48 +5,48 @@ import OngoingSponsorships from "../../../components/accounts/sponsorships/Ongoi
 import SponsorshipsOffers from "../../../components/accounts/sponsorships/SponsorshipsOffers";
 
 export default function Sponsorships() {
-  return (
-    <Grid gutter={20}>
-      <Grid.Col span={{ base: 12 }} style={{ minHeight: "auto" }}>
-        <StatBox
-          title={"Ongoing Sponsorships"}
-          action={<IconButton />}
-          accordion
-          defaultOpen={true}
-        >
-          <OngoingSponsorships />
-        </StatBox>
-      </Grid.Col>
-      <Grid.Col span={{ base: 12 }} style={{ minHeight: "auto" }}>
-        <StatBox
-          title={"Offers"}
-          action={<IconButton />}
-          accordion
-          defaultOpen={true}
-        >
-          <SponsorshipsOffers />
-        </StatBox>
-      </Grid.Col>
-      <Grid.Col span={{ base: 12 }}>
-        <StatBox>
-          <Text>Stat</Text>
-        </StatBox>
-      </Grid.Col>
-      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-        <StatBox>
-          <Text>Stat</Text>
-        </StatBox>
-      </Grid.Col>
-      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-        <StatBox>
-          <Text>Stat</Text>
-        </StatBox>
-      </Grid.Col>
-      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-        <StatBox>
-          <Text>Stat</Text>
-        </StatBox>
-      </Grid.Col>
-    </Grid>
-  );
+    return (
+        <Grid gutter={20}>
+            <Grid.Col span={{ base: 12 }} style={{ minHeight: "auto" }}>
+                <StatBox
+                    title={"Ongoing Sponsorships"}
+                    action={<IconButton />}
+                    accordion
+                    defaultOpen={true}
+                >
+                    <OngoingSponsorships />
+                </StatBox>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12 }} style={{ minHeight: "auto" }}>
+                <StatBox
+                    title={"Offers"}
+                    action={<IconButton />}
+                    accordion
+                    defaultOpen={true}
+                >
+                    <SponsorshipsOffers />
+                </StatBox>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12 }}>
+                <StatBox>
+                    <Text>Stat</Text>
+                </StatBox>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+                <StatBox>
+                    <Text>Stat</Text>
+                </StatBox>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+                <StatBox>
+                    <Text>Stat</Text>
+                </StatBox>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+                <StatBox>
+                    <Text>Stat</Text>
+                </StatBox>
+            </Grid.Col>
+        </Grid>
+    );
 }

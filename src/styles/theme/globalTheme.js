@@ -111,5 +111,8 @@ export const GlobalStyles = createGlobalStyle`
         height: 1.5em;
     }
     
+    .reactEasyCrop_Contain{
+        max-width: max-content !important;
+    }
 
 `;

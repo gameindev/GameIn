@@ -12,109 +12,109 @@ import { logoutUser } from "../stores/slices/auth";
 import useProfileMediaUrls from "../utils/helpers/useProfileMediaUrl";
 
 export default function Header() {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-  const user = useSelector(currentUser);
-  const isLoggedInUser = useSelector(isLoggedIn);
-  const { avatarUrl } = useProfileMediaUrls();
+    const user = useSelector(currentUser);
+    const isLoggedInUser = useSelector(isLoggedIn);
+    const { avatarUrl } = useProfileMediaUrls();
 
-  const handleLogout = async () => {
-    dispatch(logoutUser());
-    await persistor.purge();
-    navigate(routePaths.LOGIN);
-  };
+    const handleLogout = async () => {
+        dispatch(logoutUser());
+        await persistor.purge();
+        navigate(routePaths.LOGIN);
+    };
 
-  const navList = [
-    {
-      label: "GameIn",
-      path: routePaths.WELCOMEPAGE,
-    },
-    {
-      label: "About",
-      path: routePaths.WELCOMEPAGE,
-    },
-    {
-      label: "Info",
-      path: routePaths.WELCOMEPAGE,
-    },
-    {
-      label: "Guidelines",
-      path: routePaths.WELCOMEPAGE,
-    },
-  ];
+    const navList = [
+        {
+            label: "GameIn",
+            path: routePaths.WELCOMEPAGE,
+        },
+        {
+            label: "About",
+            path: routePaths.WELCOMEPAGE,
+        },
+        {
+            label: "Info",
+            path: routePaths.WELCOMEPAGE,
+        },
+        {
+            label: "Guidelines",
+            path: routePaths.WELCOMEPAGE,
+        },
+    ];
 
-  return (
-    <HeaderSection>
-      <Card className="headerCard" radius={0}>
-        <div className="container-fluid">
-          <div className="headerFlex">
-            <div className="logo">
-              <img src={GameInLogo} alt="GameIn Logo" />
-            </div>
+    return (
+        <HeaderSection>
+            <Card className="headerCard" radius={0}>
+                <div className="container-fluid">
+                    <div className="headerFlex">
+                        <div className="logo">
+                            <img src={GameInLogo} alt="GameIn Logo" />
+                        </div>
 
-            <nav>
-              {!isLoggedInUser ? (
-                <ul>
-                  {navList.map((item, index) => (
-                    <li key={index}>
-                      <Link to={item.path}>{item.label}</Link>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <Menu shadow="md" width={180} position="bottom-end">
-                  <Menu.Target>
-                    <UnstyledButton>
-                      <AvatarSection
-                        className="avatar-icon-small"
-                        size="55"
-                        avatar={avatarUrl || coverImage}
-                      />
-                    </UnstyledButton>
-                  </Menu.Target>
-                  <Menu.Dropdown>
-                    <Menu.Label style={{ fontSize: "1em" }}>
-                      Hello,{" "}
-                      {user?.user?.username?.charAt(0).toUpperCase() +
-                        user?.user?.username?.slice(1).toLowerCase()}
-                    </Menu.Label>
-                    <Menu.Item onClick={() => navigate("/profile")}>
-                      Profile
-                    </Menu.Item>
-                    <Menu.Item onClick={() => navigate("/dashboard")}>
-                      Dashboard
-                    </Menu.Item>
-                    <Menu.Divider />
-                    <Menu.Item color="red" onClick={handleLogout}>
-                      Logout
-                    </Menu.Item>
-                  </Menu.Dropdown>
-                </Menu>
-              )}
+                        <nav>
+                            {!isLoggedInUser ? (
+                                <ul>
+                                    {navList.map((item, index) => (
+                                        <li key={index}>
+                                            <Link to={item.path}>{item.label}</Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <Menu shadow="md" width={180} position="bottom-end">
+                                    <Menu.Target>
+                                        <UnstyledButton>
+                                            <AvatarSection
+                                                className="avatar-icon-small"
+                                                size="55"
+                                                avatar={avatarUrl || coverImage}
+                                            />
+                                        </UnstyledButton>
+                                    </Menu.Target>
+                                    <Menu.Dropdown>
+                                        <Menu.Label style={{ fontSize: "1em" }}>
+                                            Hello,{" "}
+                                            {user?.user?.username?.charAt(0).toUpperCase() +
+                                                user?.user?.username?.slice(1).toLowerCase()}
+                                        </Menu.Label>
+                                        <Menu.Item onClick={() => navigate("/profile")}>
+                                            Profile
+                                        </Menu.Item>
+                                        <Menu.Item onClick={() => navigate("/dashboard")}>
+                                            Dashboard
+                                        </Menu.Item>
+                                        <Menu.Divider />
+                                        <Menu.Item color="red" onClick={handleLogout}>
+                                            Logout
+                                        </Menu.Item>
+                                    </Menu.Dropdown>
+                                </Menu>
+                            )}
 
-              {!isLoggedInUser && (
-                <div className="access-btns">
-                  <Link to="/login">
-                    <Button
-                      variant="grey"
-                      size="sm"
-                      style={{ marginRight: "0.5em" }}
-                    >
-                      Sign in
-                    </Button>
-                  </Link>
-                  <Link to="/register">
-                    <Button variant="secondary" size="sm">
-                      Register
-                    </Button>
-                  </Link>
+                            {!isLoggedInUser && (
+                                <div className="access-btns">
+                                    <Link to="/login">
+                                        <Button
+                                            variant="grey"
+                                            size="sm"
+                                            style={{ marginRight: "0.5em" }}
+                                        >
+                                            Sign in
+                                        </Button>
+                                    </Link>
+                                    <Link to="/register">
+                                        <Button variant="secondary" size="sm">
+                                            Register
+                                        </Button>
+                                    </Link>
+                                </div>
+                            )}
+                        </nav>
+                    </div>
                 </div>
-              )}
-            </nav>
-          </div>
-        </div>
-      </Card>
-    </HeaderSection>
-  );
+            </Card>
+        </HeaderSection>
+    );
 }

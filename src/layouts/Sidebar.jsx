@@ -9,78 +9,78 @@ import AvatarSection from "./../components/shared/ui/AvatarSection";
 import routePaths from "../routes/endpoints";
 
 export default function Sidebar() {
-  const sidebarItems = [
-    {
-      icon: <Home size="1em" />,
-      label: "Account",
-      link: routePaths.ACCOUNTS.DASHBOARD.ROOT,
-    },
-    {
-      icon: <Newspaper size="1em" />,
-      label: "News Feed",
-      link: routePaths.ACCOUNTS.DASHBOARD.ROOT,
-    },
-    {
-      icon: <Star size="1em" />,
-      label: "Creators",
-      link: routePaths.SEARCH.replace(":userType", "creator"),
-    },
-    {
-      icon: <Flame size="1em" />,
-      label: "Brands",
-      link: routePaths.SEARCH.replace(":userType", "brand"),
-    },
-    {
-      icon: <Bolt size="1em" />,
-      label: "Settings",
-      link: routePaths.SETTINGS.ROOT,
-    },
-  ];
+    const sidebarItems = [
+        {
+            icon: <Home size="1em" />,
+            label: "Account",
+            link: routePaths.ACCOUNTS.DASHBOARD.ROOT,
+        },
+        {
+            icon: <Newspaper size="1em" />,
+            label: "News Feed",
+            link: routePaths.ACCOUNTS.DASHBOARD.ROOT,
+        },
+        {
+            icon: <Star size="1em" />,
+            label: "Creators",
+            link: routePaths.SEARCH.replace(":userType", "creator"),
+        },
+        {
+            icon: <Flame size="1em" />,
+            label: "Brands",
+            link: routePaths.SEARCH.replace(":userType", "brand"),
+        },
+        {
+            icon: <Bolt size="1em" />,
+            label: "Settings",
+            link: routePaths.SETTINGS.ROOT,
+        },
+    ];
 
-  return (
-    <SidebarStyles>
-      <div className="profile-icons">
-        <ul>
-          <li>
-            <Hexagon
-              className="profile-hexagon"
-              $mainRadius={10}
-              $roundingRadius={15}
-              size="3em"
-              $backgroundColor={theme.colors.inputBgColor[0]}
-              $rotated
-              $border="0.125emsolid #FFF"
-            >
-              <Plus size="1.25em" color={theme.colors.primary[0]} />
-            </Hexagon>
-          </li>
-          <li>
-            <AvatarSection size="50" avatar={coverImage} />
-          </li>
-          <li>
-            <AvatarSection size="50" avatar={coverImage} />
-          </li>
-          <li>
-            <AvatarSection size="50" avatar={coverImage} />
-          </li>
-          <li>
-            <AvatarSection size="50" avatar={coverImage} />
-          </li>
-        </ul>
-      </div>
-      <div className="profile-links">
-        <ul>
-          {sidebarItems.map((item, index) => (
-            <li key={index}>
-              <Link to={item.link}>
-                {item.icon}
-                <span>{item.label}</span>
-              </Link>
-              {index % 2 !== 0 && <div className="divider"></div>}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </SidebarStyles>
-  );
+    return (
+        <SidebarStyles>
+            <div className="profile-icons">
+                <ul>
+                    <li>
+                        <Hexagon
+                            className="profile-hexagon"
+                            $mainRadius={10}
+                            $roundingRadius={15}
+                            size="3em"
+                            $backgroundColor={theme.colors.inputBgColor[0]}
+                            $rotated
+                            $border="0.125emsolid #FFF"
+                        >
+                            <Plus size="1.25em" color={theme.colors.primary[0]} />
+                        </Hexagon>
+                    </li>
+                    <li>
+                        <AvatarSection size="50" avatar={coverImage} />
+                    </li>
+                    <li>
+                        <AvatarSection size="50" avatar={coverImage} />
+                    </li>
+                    <li>
+                        <AvatarSection size="50" avatar={coverImage} />
+                    </li>
+                    <li>
+                        <AvatarSection size="50" avatar={coverImage} />
+                    </li>
+                </ul>
+            </div>
+            <div className="profile-links">
+                <ul>
+                    {sidebarItems.map((item, index) => (
+                        <li key={index}>
+                            <Link to={item.link}>
+                                {item.icon}
+                                <span>{item.label}</span>
+                            </Link>
+                            {index % 2 !== 0 && <div className="divider"></div>}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </SidebarStyles>
+    );
 }
