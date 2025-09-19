@@ -77,8 +77,10 @@ export class CreateUserProvider {
         // });
 
         try {
-            const savedUser = await queryRunner.manager.save(User, newUser);
+            console.log('before')
 
+            const savedUser = await queryRunner.manager.save(User, newUser);
+            console.log('after')
             if (savedUser.user_type === UserType.CREATOR) {
                 await this.creatorProfileService.createProfileForUser(savedUser, queryRunner);
             } else if (savedUser.user_type === UserType.BRAND) {
@@ -89,6 +91,7 @@ export class CreateUserProvider {
 
             return savedUser;
         } catch (error) {
+            console.log(error)
             await queryRunner.rollbackTransaction();
             if (error.code === '23505') {
                 const detail = error.detail;

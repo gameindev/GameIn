@@ -25,14 +25,14 @@ async function bootstrap() {
     );
 
     app.setGlobalPrefix(process.env.API_PREFIX ?? "api");
-
+ 
     const config = new DocumentBuilder()
         .setTitle("GameIn Sponsorship API")
         .setDescription("API documentation for the GameIn platform")
         .setTermsOfService(process.env.HOST ? `${process.env.HOST}/terms-of-service` : 'http://localhost:3000/terms-of-service')
         .addServer(process.env.HOST ?? 'http://localhost:3000/')
         // .addServer(process.env.STAGING_HOST ?? 'https://staging-api.gamein.com')
-        .addServer(process.env.PROD_HOST ?? 'https://grvroy.com/nest/')
+        // .addServer(process.env.PROD_HOST ?? 'https://grvroy.com/nest/')
         .setVersion(process.env.API_VERSION ?? "1.0")
         .addBearerAuth()
         .addOAuth2({

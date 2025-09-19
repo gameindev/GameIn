@@ -114,6 +114,7 @@ export class User {
 
     
     
+    
     // ratingReceived: UserRating[];
     // ratingGiven: UserRating[];
 
