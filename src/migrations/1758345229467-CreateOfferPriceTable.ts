@@ -1,8 +1,6 @@
-import { Query } from '@nestjs/common';
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateOfferPriceTable1756370268965 implements MigrationInterface {
-    name = 'CreateOfferPriceTable1756370268965'
+export class CreateOfferPriceTable1758345229467 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -21,13 +19,16 @@ export class CreateOfferPriceTable1756370268965 implements MigrationInterface {
                 CONSTRAINT "UQ_price_offering_id" UNIQUE ("offering_id"),
                 CONSTRAINT "FK_861cr6e08503b30aa145ed06713" FOREIGN KEY ("offering_id") REFERENCES "offerings"(id) ON DELETE CASCADE
             );
-        `);    
+
+            CREATE INDEX "IDX_offering_price_offer" ON "offering_price" ("offering_id");
+        `);   
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
+            DROP INDEX "IDX_offering_price_offer";
             DROP TABLE IF EXISTS "offering_price";
-        `)
+        `);
     }
 
 }

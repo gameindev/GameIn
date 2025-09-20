@@ -1,19 +1,18 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class AddVersioningToOfferingOffers1758242787371 implements MigrationInterface {
-    name = 'AddVersioningToOfferingOffers1758242787371'
+export class AddColumnUpdateByUserToOfferingOffersTable1758345943317 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
             ALTER TABLE "offering_offers"
-            ADD COLUMN "version" INTEGER DEFAULT 1;
+            ADD COLUMN "updated_by_user_id" INTEGER;
         `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`
+         await queryRunner.query(`
             ALTER TABLE "offering_offers"
-            DROP COLUMN "version";
+            DROP COLUMN "updated_by_user_id";
         `);
     }
 

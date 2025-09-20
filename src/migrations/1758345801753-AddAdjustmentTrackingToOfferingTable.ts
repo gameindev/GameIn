@@ -1,10 +1,9 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class AddAdjustmentTrackingToOffering1758242745522 implements MigrationInterface {
-    name = 'AddAdjustmentTrackingToOffering1758242745522'
+export class AddAdjustmentTrackingToOfferingTable1758345801753 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`
+         await queryRunner.query(`
             ALTER TABLE "offerings"
             ADD COLUMN "adjustment_count" INTEGER DEFAULT 0 NOT NULL,
             ADD COLUMN "last_adjusted_at" TIMESTAMP,
@@ -22,7 +21,7 @@ export class AddAdjustmentTrackingToOffering1758242745522 implements MigrationIn
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`
+         await queryRunner.query(`
             ALTER TABLE "offerings"
             DROP CONSTRAINT "fk_offerings_last_adjusted_by";
         `);
@@ -34,4 +33,5 @@ export class AddAdjustmentTrackingToOffering1758242745522 implements MigrationIn
             DROP COLUMN "last_adjusted_by";
         `);
     }
+
 }

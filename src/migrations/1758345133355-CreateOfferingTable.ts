@@ -1,7 +1,6 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateOfferingTable1756224668793 implements MigrationInterface {
-    name = 'CreateOfferingTable1756224668793'
+export class CreateOfferingTable1758345133355 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -35,14 +34,16 @@ export class CreateOfferingTable1756224668793 implements MigrationInterface {
                 CONSTRAINT "FK_861c4ae08503b30aa145ed06713" FOREIGN KEY ("user_id") REFERENCES "users"(id) ON DELETE CASCADE,
                 CONSTRAINT "FK_5b8f9f6b1ce612c784b67079673" FOREIGN KEY ("upload_logo_id") REFERENCES "upload_entity"(id)
             );
+
+            CREATE INDEX "IDX_offering_user" ON "offerings" ("user_id"); 
         `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
+            DROP INDEX "IDX_offering_user";
             DROP TABLE IF EXISTS "offerings";
         `)
     }
 
 }
-

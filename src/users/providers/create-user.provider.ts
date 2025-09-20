@@ -78,7 +78,7 @@ export class CreateUserProvider {
             //     to: newUser.email,
             // });
 
-
+            console.log(newUser)
             const savedUser = await queryRunner.manager.save(User, newUser);
 
             if (savedUser.user_type === UserType.CREATOR) {

@@ -1,6 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateUserTable1750089444236 implements MigrationInterface {
+export class CreateUserTable1758344377089 implements MigrationInterface {
+
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
             CREATE TABLE IF NOT EXISTS "users" (
@@ -17,6 +18,7 @@ export class CreateUserTable1750089444236 implements MigrationInterface {
                 "deleted_at" timestamp,
                 "google_id" text,
                 "is_first" boolean DEFAULT true,
+                "token" character varying DEFAULT NULL,
                 CONSTRAINT "UQ_78a916df40e02a9deb1c4b75edb" UNIQUE (username),
                 CONSTRAINT "UQ_e12875dfb3b1d92d7d7c5377e22" UNIQUE (email),
                 CONSTRAINT "UQ_google_id" UNIQUE (google_id)
@@ -29,4 +31,5 @@ export class CreateUserTable1750089444236 implements MigrationInterface {
             DROP TABLE IF EXISTS "users";
         `);
     }
+
 }

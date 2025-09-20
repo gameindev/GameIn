@@ -43,6 +43,7 @@ export class User {
     @Column({
         type: 'text',
         nullable: true,
+        unique: true
     })
     @Exclude()
     google_id?: string;

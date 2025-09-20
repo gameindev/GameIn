@@ -1,10 +1,8 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateOfferingEnums1756223908953 implements MigrationInterface {
-    name = 'CreateOfferingEnums1756223908953'
+export class CreateEnumOfferingEnums1758302356697 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        // Offering Level
         await queryRunner.query(`
             DO $$ BEGIN
                 IF NOT EXISTS (
@@ -20,7 +18,7 @@ export class CreateOfferingEnums1756223908953 implements MigrationInterface {
                 IF NOT EXISTS (
                     SELECT 1 FROM pg_type WHERE typname = 'offering_status_enum'
                 ) THEN
-                    CREATE TYPE "offering_status_enum" AS ENUM ('OFFERED', 'PENDING', 'ACCEPTED', 'COMPLETED', 'DISMISSED');
+                    CREATE TYPE "offering_status_enum" AS ENUM ('DRAFT', 'OFFERED', 'PENDING', 'ACCEPTED', 'COMPLETED', 'DISMISSED');
                 END IF; 
             END $$;
         `);
@@ -35,9 +33,6 @@ export class CreateOfferingEnums1756223908953 implements MigrationInterface {
             END $$;
         `);
 
-        
-
-        // Order/Payments
         await queryRunner.query(`
             DO $$ BEGIN
                 IF NOT EXISTS (
@@ -109,10 +104,19 @@ export class CreateOfferingEnums1756223908953 implements MigrationInterface {
             END $$;
         `);
 
-
+        await queryRunner.query(`
+            DO $$ BEGIN
+                IF NOT EXISTS (
+                    SELECT 1 FROM pg_type WHERE typname = 'refund_status_enum'
+                ) THEN
+                    CREATE TYPE "refund_status_enum" AS ENUM ('SUCCEEDED','FAILED','CANCELED','PROCESSING');
+                END IF; 
+            END $$;    
+        `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`DROP TYPE IF EXISTS "refund_status_enum";`);
         await queryRunner.query(`DROP TYPE IF EXISTS "wallet_txn_type_enum";`);
         await queryRunner.query(`DROP TYPE IF EXISTS "payout_status_enum";`);
         await queryRunner.query(`DROP TYPE IF EXISTS "invoice_status_enum";`);

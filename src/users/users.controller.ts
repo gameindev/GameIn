@@ -219,7 +219,6 @@ Use '*' to load all supported relations.`,
     @Auth(AuthType.None)
     @UseInterceptors(ClassSerializerInterceptor)
     createUser(@Body() createUserDto: CreateUserDto) {
-        console.log(createUserDto)
         return this.usersService.createUser(createUserDto);
     }
 

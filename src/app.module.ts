@@ -1,3 +1,4 @@
+﻿import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 /* eslint-disable */
 
 import { Module } from "@nestjs/common";
@@ -93,9 +94,9 @@ const ENV = process.env.NODE_ENV;
                         TeamMembers,
                         TeamLinks
                     ],
-                    // synchronize: configService.get('database.synchronize')
-                    synchronize: false
-                }
+                    // synchronize: configService.get('database.synchronize')
+                    synchronize: false,
+                    namingStrategy: new SnakeNamingStrategy()}
             }
         }),
         ConfigModule.forFeature(jwtConfig),
@@ -135,3 +136,6 @@ const ENV = process.env.NODE_ENV;
     ]
 })
 export class AppModule { }
+
+
+

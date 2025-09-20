@@ -1,7 +1,6 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class AddDateColumnsToOfferingOffers1758245151404 implements MigrationInterface {
-    name = 'AddDateColumnsToOfferingOffers1758245151404'
+export class AddDateColumnsToOfferingOffersTable1758345893102 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`

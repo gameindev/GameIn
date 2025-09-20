@@ -1,6 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateBrandProfileTable1750089906051 implements MigrationInterface {
+export class CreateBrandProfileTable1758344766943 implements MigrationInterface {
+
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
             CREATE TABLE IF NOT EXISTS "brand_profile" (
@@ -34,4 +35,5 @@ export class CreateBrandProfileTable1750089906051 implements MigrationInterface 
             DROP TABLE IF EXISTS "brand_profile";
         `);
     }
+
 }

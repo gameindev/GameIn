@@ -1,7 +1,6 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreatePreferredGamesTable1750234357114 implements MigrationInterface {
-    name = 'CreatePreferredGamesTable1750234357114';
+export class CreatePreferredGamesTable1758344918509 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -10,7 +9,8 @@ export class CreatePreferredGamesTable1750234357114 implements MigrationInterfac
                 id SERIAL NOT NULL PRIMARY KEY,
                 "user_bio_id" integer NOT NULL,
                 "game_url" varchar(100) NOT NULL,
-                "sort_order" integer DEFAULT 0 NOT NULL,    
+                "sort_order" integer DEFAULT 0 NOT NULL, 
+                "meta_data" JSONB,
                 "created_at" timestamp DEFAULT now() NOT NULL,
                 "updated_at" timestamp DEFAULT now() NOT NULL,
                 "deleted_at" timestamp,
@@ -29,4 +29,5 @@ export class CreatePreferredGamesTable1750234357114 implements MigrationInterfac
             DROP TABLE IF EXISTS "preferred_games";
         `);
     }
+
 }

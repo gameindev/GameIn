@@ -1,10 +1,9 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateOfferingOffersTable1756372678359 implements MigrationInterface {
-    name = 'CreateOfferingOffersTable1756372678359'
+export class CreateOfferingOffersTable1758345439313 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`
+         await queryRunner.query(`
      
             CREATE TABLE IF NOT EXISTS "offering_offers" (
                 id SERIAL NOT NULL PRIMARY KEY,
@@ -21,11 +20,14 @@ export class CreateOfferingOffersTable1756372678359 implements MigrationInterfac
                 
                 CONSTRAINT "FK_86cr6e08503b30aa1jki8ed0613" FOREIGN KEY ("offering_id") REFERENCES "offerings"(id) ON DELETE CASCADE
             );
+
+            CREATE INDEX "IDX_offerings_offers" ON "offering_offers" ("offering_id", "offer_type");
         `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
+            DROP INDEX "IDX_offerings_offers";
             DROP TABLE IF EXISTS "offering_offers";
         `);
     }

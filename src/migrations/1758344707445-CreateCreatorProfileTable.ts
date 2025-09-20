@@ -1,6 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateCreatorProfileTable1750089846354 implements MigrationInterface {
+export class CreateCreatorProfileTable1758344707445 implements MigrationInterface {
+
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
             CREATE TABLE IF NOT EXISTS "creator_profile" (
@@ -36,4 +37,5 @@ export class CreateCreatorProfileTable1750089846354 implements MigrationInterfac
             DROP TABLE IF EXISTS "creator_profile";
         `);
     }
+
 }

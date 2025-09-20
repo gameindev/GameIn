@@ -1,4 +1,4 @@
-import 'reflect-metadata';
+﻿import 'reflect-metadata';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { config } from 'dotenv';
 import * as dotenvFlow from 'dotenv-flow';
@@ -31,7 +31,7 @@ export const dataSourceOptions: DataSourceOptions = {
     database: process.env.DB_NAME,
     schema: "public",
     logging: ['error', 'query', 'warn'],
-    namingStrategy: new SnakeNamingStrategy(),
+    logger: 'advanced-console',
     // You MUST list all your entities here for the CLI to find them
     entities: [
         User,
@@ -55,7 +55,9 @@ export const dataSourceOptions: DataSourceOptions = {
 
     // Set synchronize to false for migrations
     synchronize: false,
+    namingStrategy: new SnakeNamingStrategy(),
 };
 
 const dataSource = new DataSource(dataSourceOptions);
 export default dataSource;
+

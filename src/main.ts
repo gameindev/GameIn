@@ -1,19 +1,17 @@
 /* eslint-disable */
-import { HttpAdapterHost, NestFactory } from "@nestjs/core";
+import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { ValidationPipe } from "@nestjs/common";
 import { DataResponseInterceptor } from "./common/interceptors/data-response/data-response.interceptor";
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import { AllExceptionsFilter } from "./all-exception.filter";
 
 async function bootstrap() {
     // ✅ USE NestExpressApplication here
-    const app = await NestFactory.create<NestExpressApplication>(AppModule, { bufferLogs: true });
-    app.useLogger(['log', 'error', 'warn', 'debug', 'verbose']); // enable verbose logs
-    const httpAdapter = app.get(HttpAdapterHost);
-    app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
+    const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+        logger: ['log', 'error', 'warn'],
+    });  
 
     app.useGlobalPipes(
         new ValidationPipe({
@@ -60,7 +58,7 @@ async function bootstrap() {
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
         credentials: true,
     });
-
+    
 
     // ✅ Serve static assets
     app.useStaticAssets(join(process.cwd(), 'media/uploads'), {

@@ -1,6 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateEnums1750089383202 implements MigrationInterface {
+export class CreateEnumUserType1758301871796 implements MigrationInterface {
+    name = 'CreateEnumUserType1758301871796'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -12,20 +13,10 @@ export class CreateEnums1750089383202 implements MigrationInterface {
                 END IF;
             END $$;
         `);
-
-        await queryRunner.query(`
-            DO $$ BEGIN
-                IF NOT EXISTS (
-                    SELECT 1 FROM pg_type WHERE typname = 'upload_type_enum'
-                ) THEN
-                    CREATE TYPE "upload_type_enum" AS ENUM ('image', 'video');
-                END IF;
-            END $$;
-        `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TYPE IF EXISTS "upload_type_enum";`);
         await queryRunner.query(`DROP TYPE IF EXISTS "user_usertype_enum";`);
     }
+
 }

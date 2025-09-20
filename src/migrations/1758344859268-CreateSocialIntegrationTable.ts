@@ -1,8 +1,9 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateSocialIntegrationTable1750092962804 implements MigrationInterface {
+export class CreateSocialIntegrationTable1758344859268 implements MigrationInterface {
+
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`
+         await queryRunner.query(`
            
             CREATE TABLE social_integration (
                 id SERIAL NOT NULL PRIMARY KEY,
@@ -28,4 +29,5 @@ export class CreateSocialIntegrationTable1750092962804 implements MigrationInter
             DROP TABLE IF EXISTS social_integration;
         `);
     }
+
 }

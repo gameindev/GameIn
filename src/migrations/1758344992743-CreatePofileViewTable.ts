@@ -1,7 +1,6 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateProfileViewTable1751045070851 implements MigrationInterface {
-    name = 'CreateProfileViewTable1751045070851'
+export class CreatePofileViewTable1758344992743 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`

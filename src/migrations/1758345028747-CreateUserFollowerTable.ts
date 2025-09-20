@@ -1,10 +1,9 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateUserFollowerTable1751557015382 implements MigrationInterface {
-    name = 'CreateUserFollowerTable1751557015382'
+export class CreateUserFollowerTable1758345028747 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`
+         await queryRunner.query(`
 
             CREATE TABLE "user_follow" (
                 id SERIAL NOT NULL PRIMARY KEY,
@@ -20,11 +19,13 @@ export class CreateUserFollowerTable1751557015382 implements MigrationInterface 
 
             CREATE INDEX "IDX_follower_id" ON "user_follow" ("follower_id");
             CREATE INDEX "IDX_following_id" ON "user_follow" ("following_id");
+            CREATE INDEX "IDX_follower_following" ON "user_follow" ("follower_id", "following_id");
         `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
+            DROP INDEX "IDX_follower_following";
             DROP INDEX "IDX_following_id";
             DROP INDEX "IDX_follower_id";
             DROP TABLE "user_follow";

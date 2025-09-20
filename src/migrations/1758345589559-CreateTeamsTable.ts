@@ -1,7 +1,6 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateTeamsTables1756710447966 implements MigrationInterface {
-    name = 'CreateTeamsTables1756710447966'
+export class CreateTeamsTable1758345589559 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TYPE "team_member_role_enum" AS ENUM ('ADMIN','COACH','MEMBER')`);
