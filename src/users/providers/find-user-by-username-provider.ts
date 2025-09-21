@@ -20,7 +20,12 @@ export class FindOneByUsernameProvider {
         let user: User | undefined = undefined;
 
         try {
-            user = await this.userRepository.findOneBy({ username });
+            user = await this.userRepository.findOne({
+                where: {
+                    username,
+                },
+                relations: ['creator_profile', 'brand_profile', 'social_integrations', 'user_bio'],
+            });
         } catch (error) {
             throw new RequestTimeoutException(error, {
                 description: 'Could not fetch the user.',

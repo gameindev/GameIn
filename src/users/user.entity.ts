@@ -98,6 +98,7 @@ export class User {
         default: null,
         nullable: true
     })
+    @Exclude()
     token?: string;
 
     @OneToOne(() => UserBio, userBio => userBio.user, {
