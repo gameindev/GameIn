@@ -1,0 +1,1 @@
+import{k as l,j as o,O as p,a8 as c,l as n}from"./index-BdKYZ-eS.js";const x=({allowedRoles:a})=>{const e=l(u=>{var s,t,r;return(r=(t=(s=u.user)==null?void 0:s.profile)==null?void 0:t.user)==null?void 0:r.user_type});return console.log(e),a.includes(e)?o.jsx(p,{}):o.jsx(c,{to:n.WELCOMEPAGE,replace:!0})};export{x as default};

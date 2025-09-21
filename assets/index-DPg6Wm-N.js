@@ -1,1 +1,0 @@
-import{am as n}from"./index-KaOkpbgD.js";const r=(t,o,i="green")=>{n.show({title:t,message:o,color:i,position:"top-right"})},e=t=>{if(!t)return"";const[o,i,s]=t.split("-");return`${s}-${i}-${o}`};export{e as f,r as s};
