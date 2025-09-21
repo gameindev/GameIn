@@ -1,0 +1,1 @@
+import{k as e,j as s,a8 as a,l as r}from"./index-KaOkpbgD.js";import{i as o}from"./selectors-BfVctv7J.js";const c=({children:t})=>e(o)?s.jsx(a,{to:r.ACCOUNTS.DASHBOARD.ROOT,replace:!0}):t;export{c as default};
