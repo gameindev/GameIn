@@ -1,7 +1,7 @@
 import { Anchor, Button, Text } from "@mantine/core";
 import { useState } from "react";
 import styled from "styled-components";
-import { ChevronUp, ChevronDown } from "lucide-react";
+import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 
 const ReadMoreText = styled.div`
   a {
@@ -36,12 +36,12 @@ const ReadMore = ({ content, maxChars = 100, color }) => {
             {expanded ? (
               <>
                 Show less
-                <ChevronUp  size="1.125" />
+                <IconChevronUp  size="1.125" />
               </>
             ) : (
               <>
                 Read more
-                <ChevronDown size="1.125" />
+                <IconChevronDown size="1.125" />
               </>
             )}
           </Anchor>

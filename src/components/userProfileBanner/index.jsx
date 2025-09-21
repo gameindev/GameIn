@@ -16,6 +16,8 @@ import { Link } from "react-router";
 import ProfileMediaUrls from "./../../utils/helpers/useProfileMediaUrl";
 import { USERTYPES } from "../../utils/enum";
 import FollowButton from "../shared/ui/FollowButton";
+import IconButton from "../shared/ui/IconButton";
+import { IconMessage } from "@tabler/icons-react";
 
 const UserProfileBanner = ({ userProfile, isSelf }) => {
   if (!userProfile) return null;
@@ -74,7 +76,9 @@ const UserProfileBanner = ({ userProfile, isSelf }) => {
                 <div className="interaction">
                   <Link to={`/inbox`}>
                     <ActionIcon size="lg" color="inputBgColor" variant="filled">
-                      <Text size="xs">Inbox</Text>
+                      <Text size="xs">
+                        <IconButton Icon={IconMessage} hoverClass="hoverGrey" />
+                      </Text>
                     </ActionIcon>
                   </Link>
                 </div>

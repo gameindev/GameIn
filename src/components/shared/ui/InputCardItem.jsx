@@ -1,9 +1,9 @@
 import React from "react";
 import { Card, TextInput, Group, Box, em, Text } from "@mantine/core";
-import { Plus, X } from "lucide-react";
 import { theme } from "../../../styles/theme/customTheme";
 import styled from "styled-components";
-import FormField from "./FormField"; // Adjust path as needed
+import FormField from "./FormField";
+import { IconPlus, IconX } from "@tabler/icons-react";
 
 const CloseIcon = styled.div`
   display: flex;
@@ -82,9 +82,9 @@ const InputCardItem = ({
           onClick={() => onToggle(id)}
         >
           {added ? (
-            <X size={10} stroke="#EA7171" />
+            <IconX size={12} color="#EA7171" />
           ) : (
-            <Plus size={10} stroke={theme.colors.black[0]} />
+            <IconPlus size={12} color={theme.colors.black[0]} />
           )}
         </CloseIcon>
       </Group>

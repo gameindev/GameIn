@@ -11,7 +11,7 @@ export default function ReusableModal({ title, children }) {
         {typeof children === "function" ? children({ close }) : children}
       </Modal>
 
-      <IconButton onClick={open} />
+      <IconButton hoverClass="hoverYellow" onClick={open} />
     </>
   );
 }

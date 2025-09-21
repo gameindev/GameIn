@@ -174,6 +174,8 @@ export const theme = createTheme({
     yellow: Array(10).fill("#dbd162"),
     skyblue: Array(10).fill("#69B3E7"),
     accordionBg: Array(10).fill("#3B3F43"),
+    hoverGrey: Array(10).fill("#80848A"),
+    hoverRed: Array(10).fill("#EA7171"),
     textWhite: virtualColor({
       name: "textWhite",
       light: "black",

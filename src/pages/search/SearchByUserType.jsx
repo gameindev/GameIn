@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import SectionHeader from "../../components/shared/ui/SectionHeader";
-import { ChevronDown, Flame, Search, Star, X } from "lucide-react";
 import CreatorBanner from "../../assets/search/creator-search-cover.jpg";
 import BrandBanner from "../../assets/search/brand-search-cover.jpg";
 import CoverBanner from "../../components/shared/ui/CoverBanner";
@@ -23,15 +22,6 @@ import FormField from "../../components/shared/ui/FormField";
 import { useForm } from "react-hook-form";
 import Gridview from "../../components/searchview/Gridview";
 import { theme } from "../../styles/theme/customTheme";
-import {
-  Gamepad2,
-  Instagram,
-  Music2,
-  Twitch,
-  Twitter,
-  User,
-  Youtube,
-} from "lucide-react";
 import Tableview from "../../components/searchview/Tableview";
 import useApi from "../../hooks/useApi";
 import { API_PATHS } from "../../services/endpoints";
@@ -44,16 +34,28 @@ import {
 } from "../../stores/slices/followSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { currentUser } from "../../stores/selectors";
+import {
+  IconBrandInstagram,
+  IconBrandTwitch,
+  IconBrandTwitter,
+  IconBrandYoutube,
+  IconChevronDown,
+  IconDeviceGamepad,
+  IconFlame,
+  IconMusic,
+  IconSearch,
+  IconStar,
+} from "@tabler/icons-react";
 
 const userTypeData = {
   creator: {
     name: "CREATORS",
-    icon: <Star size="1.5em" />,
+    icon: <IconStar size="1.5em" />,
     coverImage: CreatorBanner,
   },
   brand: {
     name: "BRANDS",
-    icon: <Flame size="1.5em" />,
+    icon: <IconFlame size="1.5em" />,
     coverImage: BrandBanner,
   },
 };
@@ -78,7 +80,7 @@ const fields = [
     variant: "secondaryGrey",
     label: "",
     placeholder: "type here",
-    rightSection: <Search size="1em" />,
+    rightSection: <IconSearch size="1em" />,
     component: TextInput,
     componentType: "",
   },
@@ -87,7 +89,7 @@ const fields = [
     className: "input-wrapper",
     variant: "secondaryGrey",
     label: "",
-    rightSection: <ChevronDown size="1em" />,
+    rightSection: <IconChevronDown size="1em" />,
     component: NativeSelect,
     componentType: "",
     options: ["type(orga,teams)", "Angular", "Vue"],
@@ -97,7 +99,7 @@ const fields = [
     className: "input-wrapper",
     variant: "secondaryGrey",
     label: "",
-    rightSection: <ChevronDown size="1em" />,
+    rightSection: <IconChevronDown size="1em" />,
     component: NativeSelect,
     componentType: "",
     options: ["game", "Angular", "Vue"],
@@ -107,7 +109,7 @@ const fields = [
     className: "input-wrapper",
     variant: "secondaryGrey",
     label: "",
-    rightSection: <ChevronDown size="1em" />,
+    rightSection: <IconChevronDown size="1em" />,
     component: NativeSelect,
     componentType: "",
     options: ["country", "Angular", "Vue"],
@@ -117,7 +119,7 @@ const fields = [
     className: "input-wrapper",
     variant: "secondaryGrey",
     label: "",
-    rightSection: <ChevronDown size="1em" />,
+    rightSection: <IconChevronDown size="1em" />,
     component: NativeSelect,
     componentType: "",
     options: ["gamein partner", "Angular", "Vue"],
@@ -127,7 +129,7 @@ const fields = [
     className: "input-wrapper",
     variant: "secondaryGrey",
     label: "",
-    rightSection: <ChevronDown size="1em" />,
+    rightSection: <IconChevronDown size="1em" />,
     component: NativeSelect,
     componentType: "",
     options: ["followers", "Angular", "Vue"],
@@ -137,7 +139,7 @@ const fields = [
     className: "input-wrapper",
     variant: "secondaryGrey",
     label: "",
-    rightSection: <ChevronDown size="1em" />,
+    rightSection: <IconChevronDown size="1em" />,
     component: NativeSelect,
     componentType: "",
     options: ["level", "Angular", "Vue"],
@@ -147,7 +149,7 @@ const fields = [
     className: "input-wrapper",
     variant: "secondaryGrey",
     label: "",
-    rightSection: <ChevronDown size="1em" />,
+    rightSection: <IconChevronDown size="1em" />,
     component: NativeSelect,
     componentType: "",
     options: ["sort by", "Angular", "Vue"],
@@ -157,37 +159,37 @@ const fields = [
 const SocialInfo = [
   {
     text: "Twitch",
-    icon: <Twitch size={theme.spacing.xs} />,
+    icon: <IconBrandTwitch size={theme.spacing.xs} />,
     followers: "35K",
     color: "primary",
   },
   {
     text: "Instagram",
-    icon: <Instagram size={theme.spacing.xs} />,
+    icon: <IconBrandInstagram size={theme.spacing.xs} />,
     followers: "35K",
     color: "primary",
   },
   {
     text: "Twitter",
-    icon: <Twitter size={theme.spacing.xs} />,
+    icon: <IconBrandTwitter size={theme.spacing.xs} />,
     followers: "35K",
     color: "skyblue",
   },
   {
     text: "Youtube",
-    icon: <Youtube size={theme.spacing.xs} />,
+    icon: <IconBrandYoutube size={theme.spacing.xs} />,
     followers: "35K",
     color: "skyblue",
   },
   {
     text: "Tiktok",
-    icon: <Music2 size={theme.spacing.xs} />,
+    icon: <IconMusic size={theme.spacing.xs} />,
     followers: "35K",
     color: "secondary",
   },
   {
     text: "Discord",
-    icon: <Gamepad2 size={theme.spacing.xs} />,
+    icon: <IconDeviceGamepad size={theme.spacing.xs} />,
     followers: "35K",
     color: "secondary",
   },

@@ -9,16 +9,17 @@ import {
   ActionIcon,
   Group,
 } from "@mantine/core";
-import {
-  ChevronDown,
-  ChevronUp,
-  FilePen,
-  Save,
-  MessageSquare,
-  X,
-} from "lucide-react";
 import { theme } from "../../../styles/theme/customTheme";
 import HexContainer from "./../../shared/ui/HexContainer";
+import {
+  IconChevronDown,
+  IconChevronUp,
+  IconDeviceFloppy,
+  IconFile,
+  IconMessage,
+  IconX,
+} from "@tabler/icons-react";
+import IconButton from "../../shared/ui/IconButton";
 
 export default function SponsorshipCards() {
   const [openedRow, setOpenedRow] = useState(null);
@@ -114,10 +115,19 @@ export default function SponsorshipCards() {
   return (
     <Box>
       {/* Header */}
-      <Flex p="sm" tt={"uppercase"} fz={theme.fontSizes.xs} fw={500} align="center" gap="sm">  
+      <Flex
+        p="sm"
+        tt={"uppercase"}
+        fz={theme.fontSizes.xs}
+        fw={500}
+        align="center"
+        gap="sm"
+      >
         <Box flex={1}>Sponsor</Box>
         <EmptySeparator />
-        <Box flex={0.75} ta={"center"}>Type</Box>
+        <Box flex={0.75} ta={"center"}>
+          Type
+        </Box>
         <EmptySeparator />
         <Box flex={2.5}>Info</Box>
         <EmptySeparator />
@@ -129,7 +139,9 @@ export default function SponsorshipCards() {
           Time
         </Box>
         <EmptySeparator />
-        <Box flex={1.25} ta={"center"}>Interact</Box>
+        <Box flex={1.25} ta={"center"}>
+          Interact
+        </Box>
       </Flex>
 
       {/* Data Rows */}
@@ -200,27 +212,19 @@ export default function SponsorshipCards() {
 
               <Box flex={1.25}>
                 <Group gap="0.3em">
-                  <ActionIcon size="lg" color="inputBgColor" variant="filled">
-                    <Text size="xs">View</Text>
-                  </ActionIcon>
-                  <ActionIcon size="lg" color="inputBgColor" variant="filled">
-                    <Text size="xs">Interact</Text>
-                  </ActionIcon>
-                  <ActionIcon size="lg" color="inputBgColor" variant="filled">
-                    <Text size="xs">Inbox</Text>
-                  </ActionIcon>
-                  <ActionIcon size="lg" color="inputBgColor" variant="filled">
-                    <Text size="xs">Cancel</Text>
-                  </ActionIcon>
+                  <IconButton Icon={IconFile} />
+                  <IconButton Icon={IconDeviceFloppy} />
+                  <IconButton Icon={IconMessage} hoverClass="hoverGrey" />
+                  <IconButton Icon={IconX} hoverClass="hoverRed" />
                   <ActionIcon
                     variant="subtle"
                     onClick={() => toggleRow(index)}
                     aria-label="Toggle row"
                   >
                     {openedRow === index ? (
-                      <ChevronUp size={16} />
+                      <IconChevronUp size={20} stroke={1.5} />
                     ) : (
-                      <ChevronDown size={16} />
+                      <IconChevronDown size={20} stroke={1.5} />
                     )}
                   </ActionIcon>
                 </Group>

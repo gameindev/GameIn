@@ -40,6 +40,7 @@ export default function Profile() {
           action={
             isSelf && (
               <IconButton
+                hoverClass="hoverYellow"
                 onClick={() => navigate(routePaths.ACCOUNTS.PROFILE.BIO)}
               />
             )
@@ -92,7 +93,10 @@ export default function Profile() {
 
       {/* Social Media Stats */}
       <Grid.Col span={{ base: 12, md: 6, lg: 8 }}>
-        <StatBox title="Social Media Stats" action={<IconButton />}>
+        <StatBox
+          title="Social Media Stats"
+          action={<IconButton hoverClass="hoverYellow" />}
+        >
           <Text>Coming soon...</Text>
         </StatBox>
       </Grid.Col>
@@ -104,6 +108,7 @@ export default function Profile() {
           action={
             isSelf && (
               <IconButton
+                hoverClass="hoverYellow"
                 onClick={() => navigate(routePaths.ACCOUNTS.PROFILE.FAQ)}
               />
             )
@@ -116,7 +121,7 @@ export default function Profile() {
         <StatBox
           title="Welcome to Game-In"
           background={rgba(theme.colors.secondary[0], 0.5)}
-          action={<IconButton />}
+          action={<IconButton hoverClass="hoverYellow" />}
         >
           <Text>Stat</Text>
         </StatBox>
@@ -127,7 +132,7 @@ export default function Profile() {
         <StatBox
           title="Sponsorships"
           background={rgba(theme.colors.primary[0], 0.3)}
-          action={<IconButton />}
+          action={<IconButton hoverClass="hoverYellow" />}
         >
           {isSelf ? (
             <div className="create_team">

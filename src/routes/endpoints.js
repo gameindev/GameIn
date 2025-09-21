@@ -23,6 +23,7 @@ const routePaths = {
       CREATE_OFFERING: "/offerings/create-offering",
       EDIT_OFFERING: "/offerings/edit-offering",
       EDIT_PRICEPOOLEVENT: "/offerings/edit-pricepool-event",
+      VIEW: "/offerings/:id",
     },
     STATS: {
       ROOT: "/stats",
@@ -51,6 +52,7 @@ const routePaths = {
   helpers: {
     profile: (id) => `/profile/${id}`,
     sponsorship: (id) => `/sponsorships/${id}`,
+    offering: (id) => `/offerings/${id}`,
     inbox: (id) => `/inbox/${id}`,
     profileTab: (id, tab) => `/profile/${id}/${tab}`,
   },

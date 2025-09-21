@@ -2,8 +2,13 @@ import React, { useState } from "react";
 import { Box, Button, Group, em, Stack, Text } from "@mantine/core";
 import { theme } from "../../../styles/theme/customTheme";
 import { useFormStep } from "../../../hooks/useFormStep";
-import { Twitch, Instagram, Twitter, Youtube  } from "lucide-react";
 import InputCardItem from "./../../shared/ui/InputCardItem";
+import {
+  IconBrandInstagram,
+  IconBrandTwitch,
+  IconBrandTwitter,
+  IconBrandYoutube,
+} from "@tabler/icons-react";
 
 const defaultValues = {
   twitch: "",
@@ -19,37 +24,37 @@ const socialMediaList = [
     id: "twitch",
     label: "Twitch",
     placeholder: "https://www.twitch.com/insertname",
-    icon: <Twitch size={24} />,
+    icon: <IconBrandTwitch size={24} />,
   },
   {
     id: "instagram",
     label: "Instagram",
     placeholder: "https://www.instagram.com/...",
-    icon: <Instagram size={24} />,
+    icon: <IconBrandInstagram size={24} />,
   },
   {
     id: "twitter",
     label: "Twitter",
     placeholder: "https://www.twitter.com/...",
-    icon: <Twitter size={24} />,
+    icon: <IconBrandTwitter size={24} />,
   },
   {
     id: "youtube",
     label: "Youtube",
     placeholder: "https://www.youtube.com/username...",
-    icon: <Youtube size={24} />,
+    icon: <IconBrandYoutube size={24} />,
   },
   {
     id: "tiktok",
     label: "TikTok",
     placeholder: "https://www.tiktok.com/insertname",
-    icon: <Twitch size={24} />,
+    icon: <IconBrandTwitch size={24} />,
   },
   {
     id: "discord",
     label: "Discord",
     placeholder: "@username",
-    icon: <Twitch size={24} />,
+    icon: <IconBrandTwitch size={24} />,
   },
 ];
 

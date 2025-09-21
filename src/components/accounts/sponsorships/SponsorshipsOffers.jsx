@@ -12,12 +12,21 @@ import {
   Divider,
   rem,
 } from "@mantine/core";
-import { ChevronDown, ChevronUp } from "lucide-react";
 import { theme } from "../../../styles/theme/customTheme";
 import HexContainer from "./../../shared/ui/HexContainer";
-import { Check, Settings } from "lucide-react";
 import { useSelector } from "react-redux";
 import { currentUser } from "../../../stores/selectors";
+import {
+  IconCheck,
+  IconChevronDown,
+  IconChevronUp,
+  IconDeviceFloppy,
+  IconFile,
+  IconMessage,
+  IconSettings,
+  IconX,
+} from "@tabler/icons-react";
+import IconButton from "../../shared/ui/IconButton";
 
 const stepColors = ["#9D7FEF", "#69B3E7", "#5ce5b0"];
 const statusStep = { Offered: 0, Pending: 1, Accepted: 2 };
@@ -281,9 +290,17 @@ export default function SponsorshipsOffers() {
               <Flex flex={2} gap={"sm"} align="center">
                 <StepCalculator currentStep={statusStep[sponsorship.status]} />
                 {sponsorship.edited ? (
-                  <Settings size={14} color={theme.colors.yellow[0]} />
+                  <IconSettings
+                    stroke={1.5}
+                    size={14}
+                    color={theme.colors.yellow[0]}
+                  />
                 ) : (
-                  <Check size={14} color={theme.colors.primary[0]} />
+                  <IconCheck
+                    stroke={2}
+                    size={14}
+                    color={theme.colors.primary[0]}
+                  />
                 )}
               </Flex>
               <Separator />
@@ -313,40 +330,24 @@ export default function SponsorshipsOffers() {
               <Box flex={1.5}>
                 <Flex justify="space-between" align="center">
                   <Group gap="0.3em">
-                    <ActionIcon size="lg" color="inputBgColor" variant="filled">
-                      <Text size="xs">View</Text>
-                    </ActionIcon>
-                    <ActionIcon size="lg" color="inputBgColor" variant="filled">
-                      <Text size="xs">Interact</Text>
-                    </ActionIcon>
+                    <IconButton Icon={IconFile} />
+                    <IconButton Icon={IconDeviceFloppy} />
                     {openedRow !== index && (
                       <>
-                        {["Pending", "Offered"].includes(
-                          sponsorship.status
-                        ) && (
+                        {["Pending", "Offered"].includes(sponsorship.status) ? (
+                          <IconButton
+                            Icon={IconCheck}
+                            hoverClass="hoverGreen"
+                          />
+                        ) : (
                           <ActionIcon
                             size="lg"
-                            color="inputBgColor"
-                            variant="filled"
-                          >
-                            <Text size="xs">Accept</Text>
-                          </ActionIcon>
+                            color="transparent"
+                            variant="none"
+                          ></ActionIcon>
                         )}
-                        <ActionIcon
-                          size="lg"
-                          color="inputBgColor"
-                          variant="filled"
-                        >
-                          <Text size="xs">Inbox</Text>
-                        </ActionIcon>
-
-                        <ActionIcon
-                          size="lg"
-                          color="inputBgColor"
-                          variant="filled"
-                        >
-                          <Text size="xs">Cancel</Text>
-                        </ActionIcon>
+                        <IconButton Icon={IconMessage} hoverClass="hoverGrey" />
+                        <IconButton Icon={IconX} hoverClass="hoverRed" />
                       </>
                     )}
                   </Group>
@@ -356,9 +357,9 @@ export default function SponsorshipsOffers() {
                     aria-label="Toggle row"
                   >
                     {openedRow === index ? (
-                      <ChevronUp size={16} />
+                      <IconChevronUp size={20} stroke={1.5} />
                     ) : (
-                      <ChevronDown size={16} />
+                      <IconChevronDown size={20} stroke={1.5} />
                     )}
                   </ActionIcon>
                 </Flex>
@@ -436,9 +437,10 @@ export default function SponsorshipsOffers() {
                           borderRadius: theme.radius.md,
                         }}
                       >
-                        <Settings
+                        <IconSettings
+                          stroke={2}
                           size={32}
-                          stroke={theme.colors.secondaryGrey[0]}
+                          color={theme.colors.secondaryGrey[0]}
                         />
                         <Text
                           ta={"center"}
@@ -458,28 +460,22 @@ export default function SponsorshipsOffers() {
 
                       <Flex direction={"column"} gap={theme.gap.sm} mt="sm">
                         <Group>
-                          <Button
-                            color={theme.colors.inputBgColor[0]}
-                            size="xs"
-                          >
-                            Accept
-                          </Button>
+                          <IconButton
+                            Icon={IconCheck}
+                            hoverClass="hoverGreen"
+                          />
+                          <Text size="sm">Accept</Text>
                         </Group>
                         <Group>
-                          <Button
-                            color={theme.colors.inputBgColor[0]}
-                            size="xs"
-                          >
-                            Negotiate
-                          </Button>
+                          <IconButton
+                            Icon={IconMessage}
+                            hoverClass="hoverGrey"
+                          />
+                          <Text size="sm">Negotiate</Text>
                         </Group>
                         <Group>
-                          <Button
-                            color={theme.colors.inputBgColor[0]}
-                            size="xs"
-                          >
-                            Decline
-                          </Button>
+                          <IconButton Icon={IconX} hoverClass="hoverRed" />
+                          <Text size="sm">Decline</Text>
                         </Group>
                       </Flex>
                     </Box>

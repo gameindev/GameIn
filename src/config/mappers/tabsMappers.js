@@ -17,6 +17,7 @@ export const roleBasedTabs = {
       label: "SPONSORSHIPS",
       value: routePaths.helpers.sponsorship(id),
     },
+    { label: "OFFERINGS", value: routePaths.helpers.offering(id) },
     { label: "INBOX", value: routePaths.helpers.inbox(id) },
   ],
 
@@ -26,6 +27,7 @@ export const roleBasedTabs = {
       label: "SPONSORSHIPS",
       value: routePaths.helpers.sponsorship(id),
     },
+    { label: "OFFERINGS", value: routePaths.helpers.offering(id) },
     { label: "INBOX", value: routePaths.helpers.inbox(id) },
   ],
 

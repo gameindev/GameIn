@@ -2,10 +2,10 @@
 import { Radio, Stack, Button, Group, Text, Flex, Box } from "@mantine/core";
 import { useFormStep } from "../../../hooks/useFormStep";
 import { stepTwoSchema } from "./../../../utils/schemas/validationSchema";
-import { Star, Flame, SunDim } from "lucide-react";
 import { theme } from "../../../styles/theme/customTheme";
 import FormField from "../../shared/ui/FormField";
 import { USERTYPES } from "../../../utils/enum";
+import { IconFlame, IconStar, IconSunLow } from "@tabler/icons-react";
 
 // default values for the form
 const defaultValues = {
@@ -15,19 +15,19 @@ const defaultValues = {
 // form steps information
 const roles = [
   {
-    icon: Star,
+    icon: IconStar,
     label: "Creator",
     value: USERTYPES.CREATOR,
     description: "Create and share content with your audience.",
   },
   {
-    icon: Flame,
+    icon: IconFlame,
     label: "Brand",
     value: USERTYPES.BRAND,
     description: "Promote your products or services effectively.",
   },
   {
-    icon: SunDim,
+    icon: IconSunLow,
     label: "Community",
     value: USERTYPES.COMMUNITY,
     description: "Build and engage with your community.",
