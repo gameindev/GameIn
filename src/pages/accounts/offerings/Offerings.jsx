@@ -27,7 +27,7 @@ export default function Offerings() {
             page: 1,
             limit: 20,
             user_id: userProfile.id,
-            relations: ["user", "offering_offers", "offering_price"],
+            relations: ["users", "offering_offers", "offering_price"],
           },
         });
         setOfferings(data?.data?.data || []);
