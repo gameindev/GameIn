@@ -9,19 +9,17 @@ import {
     ActionIcon,
     Group,
 } from "@mantine/core";
-import {
-    ChevronDown,
-    ChevronUp,
-    FilePen,
-    Save,
-    MessageSquare,
-    X,
-} from "lucide-react";
 import { theme } from "../../../styles/theme/customTheme";
 import HexContainer from "./../../shared/ui/HexContainer";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFile, faFloppyDisk, faMessage } from "@fortawesome/free-regular-svg-icons";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import {
+  IconChevronDown,
+  IconChevronUp,
+  IconDeviceFloppy,
+  IconFile,
+  IconMessage,
+  IconX,
+} from "@tabler/icons-react";
+import IconButton from "../../shared/ui/IconButton";
 
 export default function SponsorshipCards() {
     const [openedRow, setOpenedRow] = useState(null);
@@ -114,26 +112,37 @@ export default function SponsorshipCards() {
         );
     };
 
-    return (
-        <Box>
-            {/* Header */}
-            <Flex p="sm" tt={"uppercase"} fz={theme.fontSizes.xs} fw={500} align="center" gap="sm">
-                <Box flex={1}>Sponsor</Box>
-                <EmptySeparator />
-                <Box flex={0.75} ta={"center"}>Type</Box>
-                <EmptySeparator />
-                <Box flex={2.5}>Info</Box>
-                <EmptySeparator />
-                <Box flex={0.5} ta={"right"}>
-                    Price (USD)
-                </Box>
-                <EmptySeparator />
-                <Box flex={0.75} ta={"center"}>
-                    Time
-                </Box>
-                <EmptySeparator />
-                <Box flex={1.25} ta={"center"}>Interact</Box>
-            </Flex>
+  return (
+    <Box>
+      {/* Header */}
+      <Flex
+        p="sm"
+        tt={"uppercase"}
+        fz={theme.fontSizes.xs}
+        fw={500}
+        align="center"
+        gap="sm"
+      >
+        <Box flex={1}>Sponsor</Box>
+        <EmptySeparator />
+        <Box flex={0.75} ta={"center"}>
+          Type
+        </Box>
+        <EmptySeparator />
+        <Box flex={2.5}>Info</Box>
+        <EmptySeparator />
+        <Box flex={0.5} ta={"right"}>
+          Price (USD)
+        </Box>
+        <EmptySeparator />
+        <Box flex={0.75} ta={"center"}>
+          Time
+        </Box>
+        <EmptySeparator />
+        <Box flex={1.25} ta={"center"}>
+          Interact
+        </Box>
+      </Flex>
 
             {/* Data Rows */}
             {sponsorshipData.map((sponsorship, index) => (
@@ -201,34 +210,26 @@ export default function SponsorshipCards() {
                             </Box>
                             <Separator />
 
-                            <Box flex={1.25}>
-                                <Group gap="0.3em">
-                                    <ActionIcon size="lg" color="inputBgColor" variant="filled">
-                                        <Text size="xs"><FontAwesomeIcon icon={faFile} /></Text>
-                                    </ActionIcon>
-                                    <ActionIcon size="lg" color="inputBgColor" variant="filled">
-                                        <Text size="xs"><FontAwesomeIcon icon={faFloppyDisk} /></Text>
-                                    </ActionIcon>
-                                    <ActionIcon size="lg" color="inputBgColor" variant="filled">
-                                        <Text size="xs"><FontAwesomeIcon icon={faMessage} /></Text>
-                                    </ActionIcon>
-                                    <ActionIcon size="lg" color="inputBgColor" variant="filled">
-                                        <Text size="xs"><FontAwesomeIcon icon={faXmark} /></Text>
-                                    </ActionIcon>
-                                    <ActionIcon
-                                        variant="subtle"
-                                        onClick={() => toggleRow(index)}
-                                        aria-label="Toggle row"
-                                    >
-                                        {openedRow === index ? (
-                                            <ChevronUp size={16} />
-                                        ) : (
-                                            <ChevronDown size={16} />
-                                        )}
-                                    </ActionIcon>
-                                </Group>
-                            </Box>
-                        </Flex>
+              <Box flex={1.25}>
+                <Group gap="0.3em">
+                  <IconButton Icon={IconFile} />
+                  <IconButton Icon={IconDeviceFloppy} />
+                  <IconButton Icon={IconMessage} hoverClass="hoverGrey" />
+                  <IconButton Icon={IconX} hoverClass="hoverRed" />
+                  <ActionIcon
+                    variant="subtle"
+                    onClick={() => toggleRow(index)}
+                    aria-label="Toggle row"
+                  >
+                    {openedRow === index ? (
+                      <IconChevronUp size={20} stroke={1.5} />
+                    ) : (
+                      <IconChevronDown size={20} stroke={1.5} />
+                    )}
+                  </ActionIcon>
+                </Group>
+              </Box>
+            </Flex>
 
                         <Collapse in={openedRow === index}>
                             <Box p="sm">

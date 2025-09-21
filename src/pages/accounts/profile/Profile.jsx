@@ -31,23 +31,24 @@ export default function Profile() {
         preferred_games: preferredGames = [],
     } = user_bio;
 
-    return (
-        <Grid gutter={20}>
-            {/* Bio Section */}
-            <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-                <StatBox
-                    title="Profile Bio"
-                    action={
-                        isSelf && (
-                            <IconButton
-                                onClick={() => navigate(routePaths.ACCOUNTS.PROFILE.BIO)}
-                            />
-                        )
-                    }
-                >
-                    <Box p={20}>
-                        <Stack spacing="md">
-                            <VideoPreview videoUrl={videoBioUrl} videoFile={null} />
+  return (
+    <Grid gutter={20}>
+      {/* Bio Section */}
+      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+        <StatBox
+          title="Profile Bio"
+          action={
+            isSelf && (
+              <IconButton
+                hoverClass="hoverYellow"
+                onClick={() => navigate(routePaths.ACCOUNTS.PROFILE.BIO)}
+              />
+            )
+          }
+        >
+          <Box p={20}>
+            <Stack spacing="md">
+              <VideoPreview videoUrl={videoBioUrl} videoFile={null} />
 
                             <Text>{bioFromUser || "No bio added yet."}</Text>
 
@@ -90,56 +91,60 @@ export default function Profile() {
                 </StatBox>
             </Grid.Col>
 
-            {/* Social Media Stats */}
-            <Grid.Col span={{ base: 12, md: 6, lg: 8 }}>
-                <StatBox title="Social Media Stats" action={<IconButton />}>
-                    <Text>Coming soon...</Text>
-                </StatBox>
-            </Grid.Col>
+      {/* Social Media Stats */}
+      <Grid.Col span={{ base: 12, md: 6, lg: 8 }}>
+        <StatBox
+          title="Social Media Stats"
+          action={<IconButton hoverClass="hoverYellow" />}
+        >
+          <Text>Coming soon...</Text>
+        </StatBox>
+      </Grid.Col>
 
-            {/* FAQ Section */}
-            <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-                <StatBox
-                    title="FAQ"
-                    action={
-                        isSelf && (
-                            <IconButton
-                                onClick={() => navigate(routePaths.ACCOUNTS.PROFILE.FAQ)}
-                            />
-                        )
-                    }
-                />
-            </Grid.Col>
+      {/* FAQ Section */}
+      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+        <StatBox
+          title="FAQ"
+          action={
+            isSelf && (
+              <IconButton
+                hoverClass="hoverYellow"
+                onClick={() => navigate(routePaths.ACCOUNTS.PROFILE.FAQ)}
+              />
+            )
+          }
+        />
+      </Grid.Col>
 
-            {/* Welcome Section */}
-            <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-                <StatBox
-                    title="Welcome to Game-In"
-                    background={rgba(theme.colors.secondary[0], 0.5)}
-                    action={<IconButton />}
-                >
-                    <Text>Stat</Text>
-                </StatBox>
-            </Grid.Col>
+      {/* Welcome Section */}
+      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+        <StatBox
+          title="Welcome to Game-In"
+          background={rgba(theme.colors.secondary[0], 0.5)}
+          action={<IconButton hoverClass="hoverYellow" />}
+        >
+          <Text>Stat</Text>
+        </StatBox>
+      </Grid.Col>
 
-            {/* Sponsorship / Team Creation */}
-            <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-                <StatBox
-                    title="Sponsorships"
-                    background={rgba(theme.colors.primary[0], 0.3)}
-                    action={<IconButton />}
-                >
-                    {isSelf ? (
-                        <div className="create_team">
-                            <Link to={routePaths.ACCOUNTS.PROFILE.CREATE_TEAM}>
-                                <Button>Create Team</Button>
-                            </Link>
-                        </div>
-                    ) : (
-                        <Text>No team management available</Text>
-                    )}
-                </StatBox>
-            </Grid.Col>
-        </Grid>
-    );
+      {/* Sponsorship / Team Creation */}
+      <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+        <StatBox
+          title="Sponsorships"
+          background={rgba(theme.colors.primary[0], 0.3)}
+          action={<IconButton hoverClass="hoverYellow" />}
+        >
+          {isSelf ? (
+            <div className="create_team">
+              <Link to={routePaths.ACCOUNTS.PROFILE.CREATE_TEAM}>
+                <Button>Create Team</Button>
+              </Link>
+            </div>
+          ) : (
+            <Text>No team management available</Text>
+          )}
+        </StatBox>
+      </Grid.Col>
+    </Grid>
+  );
 }

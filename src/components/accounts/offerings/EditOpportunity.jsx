@@ -20,6 +20,7 @@ import {
   editDefaultValues,
   sections,
 } from "./../../../config/formConfigs/opportunityConfig";
+import { IconMessage } from "@tabler/icons-react";
 
 function Section({ title, children, ...props }) {
   return (
@@ -153,7 +154,9 @@ export default function EditOpportunity() {
           />
           <Flex gap={20} align="center" mt="lg">
             <ActionIcon size="lg" color="inputBgColor" variant="filled">
-              <Text size="xs">Inbox</Text>
+              <Text size="xs">
+                <IconMessage size={16}/>
+              </Text>
             </ActionIcon>
             <Text>Get in touch with creator</Text>
           </Flex>

@@ -48,13 +48,29 @@ const routePaths = {
         INFO: "/footer/info",
         TERMS: "/footer/terms",
     },
-
+    OFFERINGS: {
+        ROOT: "/offerings",
+        CREATE_OFFERING: "/offerings/create-offering",
+        EDIT_OFFERING: "/offerings/edit-offering",
+        EDIT_PRICEPOOLEVENT: "/offerings/edit-pricepool-event",
+        VIEW: "/offerings/:id",
+    },
+    STATS: {
+        ROOT: "/stats",
+    },
+    NEWSFEED: {
+        ROOT: "/newsfeed",
+    },
+    INBOX: {
+        ROOT: "/inbox",
+        VIEW: "/inbox/:id",
+    },
     helpers: {
         profile: (id) => `/profile/${id}`,
         sponsorship: (id) => `/sponsorships/${id}`,
+        offering: (id) => `/offerings/${id}`,
         inbox: (id) => `/inbox/${id}`,
         profileTab: (id, tab) => `/profile/${id}/${tab}`,
-        listOfferings: (id) => `/profile/${id}/offerings`,
     },
 };
 

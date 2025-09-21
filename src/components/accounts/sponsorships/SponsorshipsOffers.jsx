@@ -12,15 +12,21 @@ import {
     Divider,
     rem,
 } from "@mantine/core";
-import { ChevronDown, ChevronUp } from "lucide-react";
 import { theme } from "../../../styles/theme/customTheme";
 import HexContainer from "./../../shared/ui/HexContainer";
-import { Check, Settings } from "lucide-react";
 import { useSelector } from "react-redux";
 import { currentUser } from "../../../stores/selectors";
-import { faFile, faFloppyDisk, faMessage } from "@fortawesome/free-regular-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
+import {
+  IconCheck,
+  IconChevronDown,
+  IconChevronUp,
+  IconDeviceFloppy,
+  IconFile,
+  IconMessage,
+  IconSettings,
+  IconX,
+} from "@tabler/icons-react";
+import IconButton from "../../shared/ui/IconButton";
 
 const stepColors = ["#9D7FEF", "#69B3E7", "#5ce5b0"];
 const statusStep = { Offered: 0, Pending: 1, Accepted: 2 };
@@ -281,15 +287,23 @@ export default function SponsorshipsOffers() {
                             </Box>
                             <Separator />
 
-                            <Flex flex={2} gap={"sm"} align="center">
-                                <StepCalculator currentStep={statusStep[sponsorship.status]} />
-                                {sponsorship.edited ? (
-                                    <Settings size={14} color={theme.colors.yellow[0]} />
-                                ) : (
-                                    <Check size={14} color={theme.colors.primary[0]} />
-                                )}
-                            </Flex>
-                            <Separator />
+              <Flex flex={2} gap={"sm"} align="center">
+                <StepCalculator currentStep={statusStep[sponsorship.status]} />
+                {sponsorship.edited ? (
+                  <IconSettings
+                    stroke={1.5}
+                    size={14}
+                    color={theme.colors.yellow[0]}
+                  />
+                ) : (
+                  <IconCheck
+                    stroke={2}
+                    size={14}
+                    color={theme.colors.primary[0]}
+                  />
+                )}
+              </Flex>
+              <Separator />
 
                             <Box flex={0.75} ta={"center"}>
                                 <Text
@@ -313,60 +327,44 @@ export default function SponsorshipsOffers() {
                             </Box>
                             <Separator />
 
-                            <Box flex={1.5}>
-                                <Flex justify="space-between" align="center">
-                                    <Group gap="0.3em">
-                                        <ActionIcon size="lg" color="inputBgColor" variant="filled">
-                                            <Text size="xs"><FontAwesomeIcon icon={faFile} /></Text>
-                                        </ActionIcon>
-                                        <ActionIcon size="lg" color="inputBgColor" variant="filled">
-                                            <Text size="xs"><FontAwesomeIcon icon={faFloppyDisk} /></Text>
-                                        </ActionIcon>
-                                        {openedRow !== index && (
-                                            <>
-                                                {["Pending", "Offered"].includes(
-                                                    sponsorship.status
-                                                ) && (
-                                                        <ActionIcon
-                                                            size="lg"
-                                                            color="inputBgColor"
-                                                            variant="filled"
-                                                        >
-                                                            <Text size="xs"><FontAwesomeIcon icon={faCheck} /></Text>
-                                                        </ActionIcon>
-                                                    )}
-                                                <ActionIcon
-                                                    size="lg"
-                                                    color="inputBgColor"
-                                                    variant="filled"
-                                                >
-                                                    <Text size="xs"><FontAwesomeIcon icon={faMessage} /></Text>
-                                                </ActionIcon>
-
-                                                <ActionIcon
-                                                    size="lg"
-                                                    color="inputBgColor"
-                                                    variant="filled"
-                                                >
-                                                    <Text size="xs"><FontAwesomeIcon icon={faXmark} /></Text>
-                                                </ActionIcon>
-                                            </>
-                                        )}
-                                    </Group>
-                                    <ActionIcon
-                                        variant="subtle"
-                                        onClick={() => toggleRow(index)}
-                                        aria-label="Toggle row"
-                                    >
-                                        {openedRow === index ? (
-                                            <ChevronUp size={16} />
-                                        ) : (
-                                            <ChevronDown size={16} />
-                                        )}
-                                    </ActionIcon>
-                                </Flex>
-                            </Box>
-                        </Flex>
+              <Box flex={1.5}>
+                <Flex justify="space-between" align="center">
+                  <Group gap="0.3em">
+                    <IconButton Icon={IconFile} />
+                    <IconButton Icon={IconDeviceFloppy} />
+                    {openedRow !== index && (
+                      <>
+                        {["Pending", "Offered"].includes(sponsorship.status) ? (
+                          <IconButton
+                            Icon={IconCheck}
+                            hoverClass="hoverGreen"
+                          />
+                        ) : (
+                          <ActionIcon
+                            size="lg"
+                            color="transparent"
+                            variant="none"
+                          ></ActionIcon>
+                        )}
+                        <IconButton Icon={IconMessage} hoverClass="hoverGrey" />
+                        <IconButton Icon={IconX} hoverClass="hoverRed" />
+                      </>
+                    )}
+                  </Group>
+                  <ActionIcon
+                    variant="subtle"
+                    onClick={() => toggleRow(index)}
+                    aria-label="Toggle row"
+                  >
+                    {openedRow === index ? (
+                      <IconChevronUp size={20} stroke={1.5} />
+                    ) : (
+                      <IconChevronDown size={20} stroke={1.5} />
+                    )}
+                  </ActionIcon>
+                </Flex>
+              </Box>
+            </Flex>
 
                         <Collapse in={openedRow === index}>
                             <Box py={rem(72)} px={rem(100)}>
@@ -379,120 +377,115 @@ export default function SponsorshipsOffers() {
                                             {sponsorship.details.description}
                                         </Text>
 
-                                        <Text size="2.5em" fw={700}>
-                                            {sponsorship.details.price}
-                                        </Text>
-                                        <Text size="sm" my={20}>
-                                            Expected Start:{" "}
-                                            <Text
-                                                span
-                                                fz={theme.fontSizes.xl}
-                                                c={theme.colors.primary[0]}
-                                                style={{ display: "block" }}
-                                            >
-                                                {formatDate(sponsorship.details.expectedStart)}
-                                            </Text>
-                                        </Text>
-                                        <Text size="sm" my={20}>
-                                            Time Remaining:{" "}
-                                            <Text
-                                                span
-                                                fz={theme.fontSizes.xl}
-                                                c={theme.colors.primary[0]}
-                                                style={{ display: "block" }}
-                                            >
-                                                {getTimeRemaining(sponsorship.details.expectedStart)}
-                                            </Text>
-                                        </Text>
-                                    </Box>
-                                    {/* Task list */}
-                                    <Box flex={2}>
-                                        {sponsorship?.details?.tasks?.map((task, i) => (
-                                            <React.Fragment key={i}>
-                                                <Flex gap={"md"}>
-                                                    <Text c={theme.colors.primary[0]} span>
-                                                        {String(i + 1).padStart(2, "0")}
-                                                    </Text>
-                                                    <Box key={i} mb="sm">
-                                                        <Text mb={"xs"} c={theme.colors.white[0]} fw={500}>
-                                                            {task.title}
-                                                        </Text>
-                                                        <Text size="sm">{task.desc}</Text>
-                                                    </Box>
-                                                </Flex>
-                                                <Divider my="md" />
-                                            </React.Fragment>
-                                        ))}
-                                    </Box>
-                                    {["Pending", "Offered"].includes(sponsorship.status) && (
-                                        <Box flex={1} radius="md">
-                                            <Flex
-                                                w={rem(100)}
-                                                h={rem(100)}
-                                                bg={theme.colors.yellow[0]}
-                                                color={theme.colors.black[0]}
-                                                align="center"
-                                                direction={"column"}
-                                                mb="sm"
-                                                p={"md"}
-                                                style={{
-                                                    borderRadius: theme.radius.md,
-                                                }}
-                                            >
-                                                <Settings
-                                                    size={32}
-                                                    stroke={theme.colors.secondaryGrey[0]}
-                                                />
-                                                <Text
-                                                    ta={"center"}
-                                                    fz={theme.fontSizes.sm}
-                                                    lh={1}
-                                                    c={theme.colors.secondaryGrey[0]}
-                                                    fw={700}
-                                                >
-                                                    Your offer had been edited
-                                                </Text>
-                                            </Flex>
+                    <Text size="2.5em" fw={700}>
+                      {sponsorship.details.price}
+                    </Text>
+                    <Text size="sm" my={20}>
+                      Expected Start:{" "}
+                      <Text
+                        span
+                        fz={theme.fontSizes.xl}
+                        c={theme.colors.primary[0]}
+                        style={{ display: "block" }}
+                      >
+                        {formatDate(sponsorship.details.expectedStart)}
+                      </Text>
+                    </Text>
+                    <Text size="sm" my={20}>
+                      Time Remaining:{" "}
+                      <Text
+                        span
+                        fz={theme.fontSizes.xl}
+                        c={theme.colors.primary[0]}
+                        style={{ display: "block" }}
+                      >
+                        {getTimeRemaining(sponsorship.details.expectedStart)}
+                      </Text>
+                    </Text>
+                  </Box>
+                  {/* Task list */}
+                  <Box flex={2}>
+                    {sponsorship?.details?.tasks?.map((task, i) => (
+                      <React.Fragment key={i}>
+                        <Flex gap={"md"}>
+                          <Text c={theme.colors.primary[0]} span>
+                            {String(i + 1).padStart(2, "0")}
+                          </Text>
+                          <Box key={i} mb="sm">
+                            <Text mb={"xs"} c={theme.colors.white[0]} fw={500}>
+                              {task.title}
+                            </Text>
+                            <Text size="sm">{task.desc}</Text>
+                          </Box>
+                        </Flex>
+                        <Divider my="md" />
+                      </React.Fragment>
+                    ))}
+                  </Box>
+                  {["Pending", "Offered"].includes(sponsorship.status) && (
+                    <Box flex={1} radius="md">
+                      <Flex
+                        w={rem(100)}
+                        h={rem(100)}
+                        bg={theme.colors.yellow[0]}
+                        color={theme.colors.black[0]}
+                        align="center"
+                        direction={"column"}
+                        mb="sm"
+                        p={"md"}
+                        style={{
+                          borderRadius: theme.radius.md,
+                        }}
+                      >
+                        <IconSettings
+                          stroke={2}
+                          size={32}
+                          color={theme.colors.secondaryGrey[0]}
+                        />
+                        <Text
+                          ta={"center"}
+                          fz={theme.fontSizes.sm}
+                          lh={1}
+                          c={theme.colors.secondaryGrey[0]}
+                          fw={700}
+                        >
+                          Your offer had been edited
+                        </Text>
+                      </Flex>
 
                                             <Text c={theme.colors.white[0]} size="sm" mt={4}>
                                                 Do you accept changes made by the sponsor to your
                                                 sponsorship agreement and activate the deal?
                                             </Text>
 
-                                            <Flex direction={"column"} gap={theme.gap.sm} mt="sm">
-                                                <Group>
-                                                    <Button
-                                                        color={theme.colors.inputBgColor[0]}
-                                                        size="xs"
-                                                    >
-                                                        Accept
-                                                    </Button>
-                                                </Group>
-                                                <Group>
-                                                    <Button
-                                                        color={theme.colors.inputBgColor[0]}
-                                                        size="xs"
-                                                    >
-                                                        Negotiate
-                                                    </Button>
-                                                </Group>
-                                                <Group>
-                                                    <Button
-                                                        color={theme.colors.inputBgColor[0]}
-                                                        size="xs"
-                                                    >
-                                                        Decline
-                                                    </Button>
-                                                </Group>
-                                            </Flex>
-                                        </Box>
-                                    )}
-                                </Flex>
-                            </Box>
-                        </Collapse>
+                      <Flex direction={"column"} gap={theme.gap.sm} mt="sm">
+                        <Group>
+                          <IconButton
+                            Icon={IconCheck}
+                            hoverClass="hoverGreen"
+                          />
+                          <Text size="sm">Accept</Text>
+                        </Group>
+                        <Group>
+                          <IconButton
+                            Icon={IconMessage}
+                            hoverClass="hoverGrey"
+                          />
+                          <Text size="sm">Negotiate</Text>
+                        </Group>
+                        <Group>
+                          <IconButton Icon={IconX} hoverClass="hoverRed" />
+                          <Text size="sm">Decline</Text>
+                        </Group>
+                      </Flex>
                     </Box>
-                </Paper>
-            ))}
-        </Box>
-    );
+                  )}
+                </Flex>
+              </Box>
+            </Collapse>
+          </Box>
+        </Paper>
+      ))}
+    </Box>
+  );
 }

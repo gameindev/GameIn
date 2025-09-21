@@ -16,23 +16,23 @@ import { Link } from "react-router";
 import ProfileMediaUrls from "./../../utils/helpers/useProfileMediaUrl";
 import { USERTYPES } from "../../utils/enum";
 import FollowButton from "../shared/ui/FollowButton";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMessage } from "@fortawesome/free-regular-svg-icons";
+import IconButton from "../shared/ui/IconButton";
+import { IconMessage } from "@tabler/icons-react";
 
 const UserProfileBanner = ({ userProfile, isSelf }) => {
     if (!userProfile) return null;
 
     const { avatarUrl, coverImageUrl } = ProfileMediaUrls(userProfile);
 
-    const { user_type, creator_profile, brand_profile, community_profile } =
-        userProfile;
-    
-    const profile =
-        user_type === USERTYPES.CREATOR
-            ? creator_profile
-            : user_type === USERTYPES.BRAND
-                ? brand_profile
-                : community_profile;
+  const { user_type, creator_profile, brand_profile, community_profile } =
+    userProfile;
+
+  const profile =
+    user_type === USERTYPES.CREATOR
+      ? creator_profile
+      : user_type === USERTYPES.BRAND
+      ? brand_profile
+      : community_profile;
 
     const stats = {
         views: profile?.views || "0",
@@ -64,40 +64,42 @@ const UserProfileBanner = ({ userProfile, isSelf }) => {
                     <LevelBadge level={profile?.rank || 1} />
                     <SponsorshipSection sponsors={userProfile?.sponsors || []} />
 
-                    <ActionWrapper>
-                        {isSelf ? (
-                            <div className="actions">
-                                <Button variant="secondary" size="xs">
-                                    Edit Profile
-                                </Button>
-                            </div>
-                        ) : (
-                            <>
-                                <div className="interaction">
-                                    <Link to={`/inbox`}>
-                                        <ActionIcon size="lg" color="inputBgColor" variant="filled">
-                                            <Text size="xs"><FontAwesomeIcon icon={faMessage} /></Text>
-                                        </ActionIcon>
-                                    </Link>
-                                </div>
-                                <div className="actions">
-                                    <FollowButton
-                                        targetUserId={userProfile.id}
-                                        onChange={(newStatus) =>
-                                            console.log("Followed:", newStatus)
-                                        }
-                                    />
-                                    <Button variant="primary" size="xs">
-                                        Sponsor
-                                    </Button>
-                                </div>
-                            </>
-                        )}
-                    </ActionWrapper>
-                </ProfileWrapper>
-            </UserInformation>
-        </BannerWrapper>
-    );
+          <ActionWrapper>
+            {isSelf ? (
+              <div className="actions">
+                <Button variant="secondary" size="xs">
+                  Edit Profile
+                </Button>
+              </div>
+            ) : (
+              <>
+                <div className="interaction">
+                  <Link to={`/inbox`}>
+                    <ActionIcon size="lg" color="inputBgColor" variant="filled">
+                      <Text size="xs">
+                        <IconButton Icon={IconMessage} hoverClass="hoverGrey" />
+                      </Text>
+                    </ActionIcon>
+                  </Link>
+                </div>
+                <div className="actions">
+                  <FollowButton
+                    targetUserId={userProfile.id}
+                    onChange={(newStatus) =>
+                      console.log("Followed:", newStatus)
+                    }
+                  />
+                  <Button variant="primary" size="xs">
+                    Sponsor
+                  </Button>
+                </div>
+              </>
+            )}
+          </ActionWrapper>
+        </ProfileWrapper>
+      </UserInformation>
+    </BannerWrapper>
+  );
 };
 
 export default UserProfileBanner;

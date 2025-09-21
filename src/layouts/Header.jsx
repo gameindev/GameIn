@@ -9,15 +9,15 @@ import routePaths from "../routes/endpoints";
 import coverImage from "../assets/creators/creator_image.jpg";
 import AvatarSection from "./../components/shared/ui/AvatarSection";
 import { logoutUser } from "../stores/slices/auth";
-import useProfileMediaUrls from "../utils/helpers/useProfileMediaUrl";
+import profileMediaUrls from "../utils/helpers/useProfileMediaUrl";
 
 export default function Header() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const user = useSelector(currentUser);
-    const isLoggedInUser = useSelector(isLoggedIn);
-    const { avatarUrl } = useProfileMediaUrls();
+  const user = useSelector(currentUser);
+  const isLoggedInUser = useSelector(isLoggedIn);
+  const { avatarUrl } = profileMediaUrls(user?.user || {});
 
     const handleLogout = async () => {
         dispatch(logoutUser());

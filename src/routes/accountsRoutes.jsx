@@ -47,7 +47,7 @@ const accountsdRoutes = [
   { path: OFFERINGS.CREATE_OFFERING, element: <CreateOpportunity /> },
   { path: OFFERINGS.EDIT_OFFERING, element: <EditOpportunity /> },
   { path: OFFERINGS.EDIT_PRICEPOOLEVENT, element: <EditPricePoolEvent /> },
-  { path: OFFERINGS.LIST_OFFERINGS, element: <DisplayOfferings /> },
+  { path: OFFERINGS.VIEW, element: <Offerings /> },
 
   // Others
   { path: STATS.ROOT, element: <Stats /> },

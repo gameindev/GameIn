@@ -6,7 +6,6 @@ import { Button, Group, RingProgress, Text } from "@mantine/core";
 import Verifed from "../svg-icons/Verifed";
 import Badge from "../svg-icons/Badge";
 import { useMediaQuery } from "@mantine/hooks";
-import { User } from "lucide-react";
 import BadgeLevels from "../svg-icons/LevelBadge";
 import { useContext, useMemo } from "react";
 import { SearchContext } from "../../context/SearchContext";
@@ -16,6 +15,7 @@ import { useSelector } from "react-redux";
 import { currentUser } from "../../stores/selectors";
 import FollowButton from "../shared/ui/FollowButton";
 import { getFollowerStats } from "../../services/users";
+import { IconUser } from "@tabler/icons-react";
 
 const GridStyles = styled.div`
   padding: 2em;
@@ -139,7 +139,7 @@ export default function Gridview({ SocialInfo }) {
                           FOLLOWERS
                         </Text>
                         <Text size={bigscreen ? "sm" : "xs"} ta="center">
-                          <User />
+                          <IconUser size={12} />
                         </Text>
                       </>
                     }
