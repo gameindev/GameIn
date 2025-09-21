@@ -100,7 +100,7 @@ Use '*' to load all supported relations.`,
     * Fetches a registered user on the application by ID.
     * @param email The ID of the user that you want the API to return
     * @returns User fetched successfully based on the query
-    */  
+    */
     // @UseGuards(AccessTokenGuard)
     // @Get('/by-email')
     // @UseGuards(UserTypeGuard)
@@ -142,6 +142,37 @@ Use '*' to load all supported relations.`,
         @Query('identifier') identifier: string,
     ) {
         return this.usersService.checkOneByIdentifier(identifier);
+    }
+
+
+
+
+    /**
+    * Fetches a registered user on the application by ID.
+    * @param email The ID of the user that you want the API to return
+    * @returns User fetched successfully based on the query
+    */
+    @ApiOperation({
+        summary: 'Fetches a registered user on the application by username.',
+    })
+    @ApiQuery({
+        name: 'username',
+        type: String,
+        description: 'The username of the user to fetch',
+        required: true,
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Return the user based on the query',
+    })
+
+    @Get('/username')
+    @ApiBearerAuth()
+    @UseInterceptors(ClassSerializerInterceptor)
+    getUserByUsername(
+        @Query('username') username: string,
+    ) {
+        return this.usersService.findUserByUsername(username);
     }
 
 

@@ -17,6 +17,7 @@ import { UpdateUserRoleProvider } from './providers/update-user-role.provider';
 import { UsersBioModule } from "src/users-bio/users-bio.module";
 import { CheckOneByIdentifierProvider } from './providers/check-one-by-identifier.provider';
 import { EmailsModule } from "src/emails/emails.module";
+import { FindOneByUsernameProvider } from "./providers/find-user-by-username-provider";
 
 
 /**
@@ -34,6 +35,7 @@ import { EmailsModule } from "src/emails/emails.module";
         CreateGoogleUserProvider,
         UpdateUserRoleProvider,
         CheckOneByIdentifierProvider,
+        FindOneByUsernameProvider,
     ],
     exports: [UsersService],
     imports: [

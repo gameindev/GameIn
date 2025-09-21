@@ -20,6 +20,7 @@ import { GoogleUser } from '../interfaces/google-user.intefrace';
 import { PathcUserRoleDto } from '../dtos/patch-user-role.dto';
 import { UpdateUserRoleProvider } from './update-user-role.provider';
 import { CheckOneByIdentifierProvider } from './check-one-by-identifier.provider';
+import { FindOneByUsernameProvider } from './find-user-by-username-provider';
 
 /**
  * Users service.
@@ -28,63 +29,34 @@ import { CheckOneByIdentifierProvider } from './check-one-by-identifier.provider
 export class UsersService {
     constructor(
         private readonly dataSource: DataSource,
-        /**
-         * Injecting User Repository.
-         */
+
         @InjectRepository(User)
         private userRepository: Repository<User>,
 
-        /**
-         * Injecting createUserProvider.
-         */
         @Inject(CreateUserProvider)
         private readonly createUserProvider: CreateUserProvider,
 
-        /**
-         * Injecting findOneUserByEmailProvider.
-         */
         @Inject(FindOneUserByEmailProvider)
         private readonly findOneUserByEmailProvider: FindOneUserByEmailProvider,
 
-        /**
-         * Injecting FindOneByIdentifierProvider.
-         */
         private readonly findOneUserByIdentifier: FindOneByIdentifierProvider,
-        /**
-         * Injecting UpdateUserProvider.
-         */
 
-        // @Inject(profileConfig.KEY)
-        // private readonly profileConfiguration: ConfigType<typeof profileConfig>,
-
-        /**
-         * Inject UpdateUserProvider.
-         */
         private readonly updateUserProvider: UpdateUserProvider,
 
-        /**
-         * Injecting FindOneByGoogleIdProvider.
-         */
         @Inject(FindOneByGoogleIdProvider)
         private readonly findOneByGoogleIdProvider: FindOneByGoogleIdProvider,
 
-        /**
-         * Injecting CreateGoogleUserProvider.
-         */
         @Inject(CreateGoogleUserProvider)
         private readonly createGoogleUserProvider: CreateGoogleUserProvider,
 
-        /**
-         * Injectting UpdateUserRoleProvider
-         */
         @Inject(UpdateUserRoleProvider)
         private readonly updateUserRoleProvider: UpdateUserRoleProvider,
 
-        /**
-         * Injectting UpdateUserRoleProvider
-         */
         @Inject(CheckOneByIdentifierProvider)
         private readonly checkOneByIdentifierProvider: CheckOneByIdentifierProvider,
+
+        @Inject(FindOneByUsernameProvider)
+        private readonly findUserByUsernameProvider: FindOneByUsernameProvider,
     ) { }
 
 
@@ -293,6 +265,12 @@ export class UsersService {
 
     public async checkOneByIdentifier(identifier: string) {
         return await this.checkOneByIdentifierProvider.checkOneByIdentifier(identifier);
+    }
+
+
+   
+    public async findUserByUsername(username: string) {
+        return await this.findUserByUsernameProvider.findUserByUsername(username);
     }
 
 
