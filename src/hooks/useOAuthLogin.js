@@ -25,8 +25,8 @@ const useOAuthLogin = () => {
         fullUserData = await getUserProfile(
           get,
           user.id,
-          user.user_type,
-          accessToken
+          accessToken,
+          user.user_type
         );
         dispatch(setUser({ user: fullUserData }));
       }
