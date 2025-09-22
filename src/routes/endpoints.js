@@ -12,18 +12,18 @@ const routePaths = {
       BIO: "/profile/bio",
       FAQ: "/profile/faq",
       CREATE_TEAM: "/profile/create-team",
-      VIEW: "/profile/:id",
+      VIEW: "/profile/:username",
     },
     SPONSORSHIPS: {
       ROOT: "/sponsorships",
-      VIEW: "/sponsorships/:id",
+      VIEW: "/sponsorships/:username",
     },
     OFFERINGS: {
       ROOT: "/offerings",
       CREATE_OFFERING: "/offerings/create-offering",
       EDIT_OFFERING: "/offerings/edit-offering",
       EDIT_PRICEPOOLEVENT: "/offerings/edit-pricepool-event",
-      VIEW: "/offerings/:id",
+      VIEW: "/offerings/:username",
     },
     STATS: {
       ROOT: "/stats",
@@ -33,7 +33,7 @@ const routePaths = {
     },
     INBOX: {
       ROOT: "/inbox",
-      VIEW: "/inbox/:id",
+      VIEW: "/inbox/:username",
     },
   },
   SETTINGS: {
@@ -50,11 +50,11 @@ const routePaths = {
   },
 
   helpers: {
-    profile: (id) => `/profile/${id}`,
-    sponsorship: (id) => `/sponsorships/${id}`,
-    offering: (id) => `/offerings/${id}`,
-    inbox: (id) => `/inbox/${id}`,
-    profileTab: (id, tab) => `/profile/${id}/${tab}`,
+    profile: (username) => `/profile/${username}`,
+    sponsorship: (username) => `/sponsorships/${username}`,
+    offering: (username) => `/offerings/${username}`,
+    inbox: (username) => `/inbox/${username}`,
+    profileTab: (username, tab) => `/profile/${username}/${tab}`,
   },
 };
 

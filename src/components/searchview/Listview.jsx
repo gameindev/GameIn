@@ -92,7 +92,7 @@ export default function Listview({ SocialInfo }) {
       <ListviewStyles key={id}>
         <AvatarSection className="avatar" avatar={creator} size="7em" />
         <div className="list_content">
-          <Link to={`/profile/${id}`} style={{ textDecoration: "none" }}>
+          <Link to={`/profile/${username}`} style={{ textDecoration: "none" }}>
             <Text c="white" size="xl">
               {username}
             </Text>
