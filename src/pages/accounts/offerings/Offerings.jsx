@@ -41,6 +41,7 @@ export default function Offerings() {
     fetchOfferings();
   }, [userProfile?.id]);
 
+    if (loading) return <Text>Loading...</Text>;
   if (loading) return <Text>Loading...</Text>;
 
   if (!loading && offerings.length === 0 && !isSelf) {
@@ -68,9 +69,9 @@ export default function Offerings() {
         </Grid.Col>
       )}
 
-      {offerings.map((offering, idx) => {
-        const price = offering.offering_price?.price || "0";
-        const offers = offering.offering_offers || [];
+            {offerings.map((offering, idx) => {
+                const price = offering.offering_price?.price || "0";
+                const offers = offering.offering_offers || [];
 
         return (
           <Grid.Col key={offering.id || idx} span={{ base: 12, md: 6, lg: 4 }}>

@@ -1,24 +1,24 @@
 import { useState } from "react";
 import {
-  Box,
-  Center,
-  Text,
-  Flex,
-  Collapse,
-  ActionIcon,
-  Button,
+    Box,
+    Center,
+    Text,
+    Flex,
+    Collapse,
+    ActionIcon,
+    Button,
 } from "@mantine/core";
 import { theme } from "../../../styles/theme/customTheme";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 
 export default function StatBox({
-  title,
-  action,
-  background,
-  children,
-  accordion = false,
-  actionCTA = false,
-  defaultOpen = true,
+    title,
+    action,
+    background,
+    children,
+    accordion = false,
+    actionCTA = false,
+    defaultOpen = true,
 }) {
   const [opened, setOpened] = useState(defaultOpen);
 

@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import routePaths from "./endpoints";
+import DisplayOfferings from "../pages/accounts/offerings/DisplayOfferings";
 
 // Lazy load brand-related components
 const Dashboard = lazy(() => import("../pages/accounts/Dashboard"));
