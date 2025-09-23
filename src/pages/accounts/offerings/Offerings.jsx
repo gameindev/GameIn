@@ -44,7 +44,7 @@ export default function Offerings() {
     if (loading) return <Text>Loading...</Text>;
   if (loading) return <Text>Loading...</Text>;
 
-  if (!loading && offerings.length === 0) {
+  if (!loading && offerings.length === 0 && !isSelf) {
     return (
       <Center mih={200}>
         <Text c="dimmed" fw={500} size="md">

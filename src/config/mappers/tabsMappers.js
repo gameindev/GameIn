@@ -11,28 +11,28 @@ export const roleBasedTabs = {
         { label: "INBOX", value: routePaths.ACCOUNTS.INBOX.ROOT },
     ],
 
-  otherCreator: (id) => [
-    { label: "PROFILE", value: routePaths.helpers.profile(id) },
+  otherCreator: (username) => [
+    { label: "PROFILE", value: routePaths.helpers.profile(username) },
     {
       label: "SPONSORSHIPS",
-      value: routePaths.helpers.sponsorship(id),
+      value: routePaths.helpers.sponsorship(username),
     },
-    { label: "OFFERINGS", value: routePaths.helpers.offering(id) },
-    { label: "INBOX", value: routePaths.helpers.inbox(id) },
+    { label: "OFFERINGS", value: routePaths.helpers.offering(username) },
+    { label: "INBOX", value: routePaths.helpers.inbox(username) },
   ],
 
-  otherBrand: (id) => [
-    { label: "PROFILE", value: routePaths.helpers.profile(id) },
+  otherBrand: (username) => [
+    { label: "PROFILE", value: routePaths.helpers.profile(username) },
     {
       label: "SPONSORSHIPS",
-      value: routePaths.helpers.sponsorship(id),
+      value: routePaths.helpers.sponsorship(username),
     },
-    { label: "OFFERINGS", value: routePaths.helpers.offering(id) },
-    { label: "INBOX", value: routePaths.helpers.inbox(id) },
+    { label: "OFFERINGS", value: routePaths.helpers.offering(username) },
+    { label: "INBOX", value: routePaths.helpers.inbox(username) },
   ],
 
-    otherCommunity: (id) => [
-        { label: "PROFILE", value: routePaths.helpers.profile(id) },
-        { label: "INBOX", value: routePaths.helpers.inbox(id) },
+    otherCommunity: (username) => [
+        { label: "PROFILE", value: routePaths.helpers.profile(username) },
+        { label: "INBOX", value: routePaths.helpers.inbox(username) },
     ],
 };

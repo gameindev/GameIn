@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { SidebarStyles } from "../styles/layouts";
 import { Hexagon } from "../components/shared/ui/HexagonDemo";
 import { theme } from "../styles/theme/customTheme";
@@ -16,6 +16,8 @@ import {
 } from "@tabler/icons-react";
 
 export default function Sidebar() {
+  const location = useLocation();
+
   const sidebarItems = [
     {
       icon: <IconHome size="1em" />,
@@ -25,7 +27,7 @@ export default function Sidebar() {
     {
       icon: <IconNews size="1em" />,
       label: "News Feed",
-      link: routePaths.ACCOUNTS.DASHBOARD.ROOT,
+      link: routePaths.ACCOUNTS.NEWSFEED.ROOT,
     },
     {
       icon: <IconStar size="1em" />,
@@ -44,6 +46,11 @@ export default function Sidebar() {
     },
   ];
 
+  const isActive = (itemPath, currentPath) => {
+    if (itemPath === "/") return currentPath === "/";
+    return currentPath === itemPath || currentPath.startsWith(itemPath + "/");
+  };
+
   return (
     <SidebarStyles>
       <div className="profile-icons">
@@ -56,36 +63,32 @@ export default function Sidebar() {
               size="3em"
               $backgroundColor={theme.colors.inputBgColor[0]}
               $rotated
-              $border="0.125emsolid #FFF"
+              $border="0.125em solid #FFF"
             >
               <IconPlus size="1.25em" color={theme.colors.primary[0]} />
             </Hexagon>
           </li>
-          <li>
-            <AvatarSection size="50" avatar={coverImage} />
-          </li>
-          <li>
-            <AvatarSection size="50" avatar={coverImage} />
-          </li>
-          <li>
-            <AvatarSection size="50" avatar={coverImage} />
-          </li>
-          <li>
-            <AvatarSection size="50" avatar={coverImage} />
-          </li>
+          {[...Array(4)].map((_, i) => (
+            <li key={i}>
+              <AvatarSection size="50" avatar={coverImage} />
+            </li>
+          ))}
         </ul>
       </div>
       <div className="profile-links">
         <ul>
-          {sidebarItems.map((item, index) => (
-            <li key={index}>
-              <Link to={item.link}>
-                {item.icon}
-                <span>{item.label}</span>
-              </Link>
-              {index % 2 !== 0 && <div className="divider"></div>}
-            </li>
-          ))}
+          {sidebarItems.map((item, index) => {
+            const active = isActive(item.link, location.pathname);
+            return (
+              <li key={index} className={active ? "active" : ""}>
+                <Link to={item.link}>
+                  {item.icon}
+                  <span>{item.label}</span>
+                </Link>
+                {index % 2 !== 0 && <div className="divider"></div>}
+              </li>
+            );
+          })}
         </ul>
       </div>
     </SidebarStyles>
