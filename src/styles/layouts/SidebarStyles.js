@@ -45,20 +45,57 @@ export const SidebarStyles = styled.aside`
         flex-direction: column;
         gap: 0.5em;
 
-        li>a{
-          display: flex;
-          align-items: center;
-          padding: 1em 1.5em;
-          gap: 0.75em;
-          border-radius: 0.313em;
-          text-decoration: none;
-          color: ${({ theme }) => theme.colors.text[0]};
-          text-transform: uppercase;
+        li{
+          .menu-accordion{
+            .mantine-Accordion-icon{
+              color: ${({ theme }) => theme.colors.text[0]};
+            }
 
-          &:hover{
-            background: ${({ theme }) => theme.colors.inputBgColor[0]};
-            color: ${({ theme }) => theme.colors.primary[0]};
-            transition: all 0.3s ease-in-out;
+            .mantine-Accordion-label{
+              color: ${({ theme }) => theme.colors.text[0]};
+              text-transform: uppercase;
+            }
+
+            & .mantine-Accordion-control:hover{
+              background: ${({ theme }) => theme.colors.inputBgColor[0]};
+              color: ${({ theme }) => theme.colors.primary[0]};
+              border-radius: 0.313em;
+              transition: all 0.3s ease-in-out;
+
+              .mantine-Accordion-icon{
+                color: ${({ theme }) => theme.colors.primary[0]};
+              }
+
+              .mantine-Accordion-label{
+                color: ${({ theme }) => theme.colors.primary[0]};
+              }
+            }
+
+            .mantine-Accordion-panel a{
+              display: flex;
+              align-items: center;
+              padding: 1em 1.5em;
+              gap: 0.75em;
+              border-radius: 0.313em;
+              text-decoration: none;
+              color: ${({ theme }) => theme.colors.text[0]};
+              text-transform: uppercase;
+              /* font-size: ${({ theme }) => theme.fontSizes.sm};; */
+
+              &:hover, &.active{
+                background: ${({ theme }) => theme.colors.inputBgColor[0]};
+                color: ${({ theme }) => theme.colors.primary[0]};
+                transition: all 0.3s ease-in-out;
+              }
+
+              .arrow{
+                display: inline-flex;
+                margin-left: auto;
+              }
+            }
+          }
+          a{
+            text-decoration: none;
           }
         }
 
