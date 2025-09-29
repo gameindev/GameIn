@@ -1,13 +1,13 @@
 import { Text } from "@mantine/core";
-import { Eye, UserRound } from "lucide-react";
 import { ProfileStats } from "./styles";
+import { IconEye, IconUser } from "@tabler/icons-react";
 
 const StatsSection = ({ stats }) => {
   return (
     <ProfileStats>
       <div className="profile_stats">
         <div className="stats_section">
-          <Eye size="0.75em" />
+          <IconEye size="0.75em" />
           <Text className="views" size="md" weight={500}>
             {stats.views}
           </Text>
@@ -16,7 +16,7 @@ const StatsSection = ({ stats }) => {
           </Text>
         </div>
         <div className="stats_section">
-          <UserRound size="0.75em" />
+          <IconUser size="0.75em" />
           <Text className="followers" size="md" weight={500}>
             {stats.followers || "0"}
           </Text>

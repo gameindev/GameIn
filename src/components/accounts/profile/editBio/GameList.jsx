@@ -1,7 +1,7 @@
 import React from "react";
 import { Group, Image, Box, Text, Button } from "@mantine/core";
-import { ArrowBigUp , ArrowBigDown } from "lucide-react";
 import { theme } from "../../../../styles/theme/customTheme";
+import { IconArrowBigDown, IconArrowBigUp } from "@tabler/icons-react";
 
 export default function GameList({
   games,
@@ -10,7 +10,7 @@ export default function GameList({
   onMove,
 }) {
   const favoriteCount = games.filter((g) => g.favorite).length;
-  
+
   return (
     <>
       {games?.map((game, index) => (
@@ -45,7 +45,7 @@ export default function GameList({
             disabled={index === 0}
             title="Move Up"
           >
-            <ArrowBigUp  size={16} />
+            <IconArrowBigUp stroke={2} size={16} />
           </Button>
 
           {/* Move Down */}
@@ -55,7 +55,7 @@ export default function GameList({
             disabled={index === games.length - 1}
             title="Move Down"
           >
-            <ArrowBigDown size={16} />
+            <IconArrowBigDown stroke={2} size={16} />
           </Button>
 
           {/* Delete */}

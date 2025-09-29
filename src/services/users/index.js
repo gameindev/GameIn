@@ -51,7 +51,17 @@ export const createUser = async (formData, post) => {
 //   return data;
 // };
 
-export const getUserProfile = async (get, userId, accessToken, userType) => {
+export const getUserProfile = async (
+  get,
+  identifier,
+  accessToken,
+  userType
+) => {
+  const isNumeric = /^\d+$/.test(identifier);
+  const url = isNumeric
+    ? `/users/${identifier}`
+    : `/users/username?username=${identifier}`;
+
   let resolvedUserType = userType;
 
   const getAuthHeaders = (accessToken) => ({
@@ -62,10 +72,9 @@ export const getUserProfile = async (get, userId, accessToken, userType) => {
   if (!resolvedUserType) {
     try {
       const { data: userData } = await get({
-        url: `/users/${userId}`,
+        url,
         headers: getAuthHeaders(accessToken),
       });
-
       resolvedUserType = userData?.user_type || "COMMUNITY";
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -78,10 +87,11 @@ export const getUserProfile = async (get, userId, accessToken, userType) => {
     BRAND: "brand_profile",
     COMMUNITY: "community_profile",
   };
+
   const profileType = profileMap[resolvedUserType?.toUpperCase()] || "";
 
   const { data: profileData } = await get({
-    url: `/users/${userId}`,
+    url,
     params: profileType ? { populate: profileType } : {},
     headers: getAuthHeaders(accessToken),
   });

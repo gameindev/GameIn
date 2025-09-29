@@ -9,24 +9,27 @@ import useApi from "../../hooks/useApi";
 import { getUserProfile } from "../../services/users";
 import { roleBasedTabs } from "../../config/mappers/tabsMappers";
 import { USERTYPES } from "../../utils/enum";
+import Preloader from "../../components/shared/ui/Preloader";
 
 export default function Accounts() {
-  const { id } = useParams();
+  const { username } = useParams();
   const { user } = useSelector(currentUser);
   const { get } = useApi();
 
   const [profileOwner, setProfileOwner] = useState(null);
 
-  const isSelf = !id || Number(user?.id) === Number(id);
+  const isSelf =
+    (!username && user) ||
+    user?.username?.toLowerCase() === username?.toLowerCase();
 
   useEffect(() => {
     window.scrollTo(0, 0);
 
-    if (!id || isSelf) return;
+    if (!username || username === user?.username) return;
 
     const fetchUserData = async () => {
       try {
-        const data = await getUserProfile(get, id);
+        const data = await getUserProfile(get, username);
         setProfileOwner(data);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -34,19 +37,23 @@ export default function Accounts() {
     };
 
     fetchUserData();
-  }, [id, isSelf]);
+  }, [username, user?.username]);
+
+  if (!isSelf && !profileOwner) return <Preloader />;
 
   let tabLists = roleBasedTabs.self;
 
   if (!isSelf && profileOwner?.user_type) {
-    if (profileOwner.user_type === USERTYPES.CREATOR) {
-      tabLists = roleBasedTabs.otherCreator(id);
-    }
-    if (profileOwner.user_type === USERTYPES.BRAND) {
-      tabLists = roleBasedTabs.otherBrand(id);
-    }
-    if (profileOwner.user_type === USERTYPES.COMMUNITY) {
-      tabLists = roleBasedTabs.otherCommunity(id);
+    switch (profileOwner.user_type) {
+      case USERTYPES.CREATOR:
+        tabLists = roleBasedTabs.otherCreator(username);
+        break;
+      case USERTYPES.BRAND:
+        tabLists = roleBasedTabs.otherBrand(username);
+        break;
+      case USERTYPES.COMMUNITY:
+        tabLists = roleBasedTabs.otherCommunity(username);
+        break;
     }
   }
 

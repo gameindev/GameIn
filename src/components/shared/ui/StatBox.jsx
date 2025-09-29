@@ -1,24 +1,24 @@
 import { useState } from "react";
 import {
-  Box,
-  Center,
-  Text,
-  Flex,
-  Collapse,
-  ActionIcon,
-  Button,
+    Box,
+    Center,
+    Text,
+    Flex,
+    Collapse,
+    ActionIcon,
+    Button,
 } from "@mantine/core";
 import { theme } from "../../../styles/theme/customTheme";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 
 export default function StatBox({
-  title,
-  action,
-  background,
-  children,
-  accordion = false,
-  actionCTA = false,
-  defaultOpen = true,
+    title,
+    action,
+    background,
+    children,
+    accordion = false,
+    actionCTA = false,
+    defaultOpen = true,
 }) {
   const [opened, setOpened] = useState(defaultOpen);
 
@@ -48,7 +48,7 @@ export default function StatBox({
                 aria-label="Toggle content"
                 color="white"
               >
-                {opened ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                {opened ? <IconChevronUp size={18} /> : <IconChevronDown size={18} />}
               </ActionIcon>
             )}
             {action && <div className="action_cta">{action}</div>}

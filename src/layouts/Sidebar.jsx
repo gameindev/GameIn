@@ -13,7 +13,8 @@ import {
   User,
 } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router";
+import React from "react";
+import { Link, useLocation } from "react-router";
 import { SidebarStyles } from "../styles/layouts";
 import { Hexagon } from "../components/shared/ui/HexagonDemo";
 import { theme } from "../styles/theme/customTheme";
@@ -21,35 +22,45 @@ import coverImage from "../assets/creators/creator_image.jpg";
 import AvatarSection from "./../components/shared/ui/AvatarSection";
 import routePaths from "../routes/endpoints";
 import { Accordion } from "@mantine/core";
+import {
+  IconFlame,
+  IconHome,
+  IconNews,
+  IconPlus,
+  IconSettings2,
+  IconStar,
+} from "@tabler/icons-react";
 
 export default function Sidebar() {
+  const location = useLocation();
+
   const sidebarItems = [
     {
-      icon: <Home size="1em" />,
+      icon: <IconHome size="1em" />,
       label: "Account",
       active: false,
       link: routePaths.ACCOUNTS.DASHBOARD.ROOT,
     },
     {
-      icon: <Newspaper size="1em" />,
+      icon: <IconNews size="1em" />,
       label: "News Feed",
       active: false,
       link: routePaths.ACCOUNTS.DASHBOARD.ROOT,
     },
     {
-      icon: <Star size="1em" />,
+      icon: <IconStar size="1em" />,
       label: "Creators",
       active: false,
       link: routePaths.SEARCH.replace(":userType", "creator"),
     },
     {
-      icon: <Flame size="1em" />,
+      icon: <IconFlame size="1em" />,
       label: "Brands",
       active: false,
       link: routePaths.SEARCH.replace(":userType", "brand"),
     },
     {
-      icon: <Bolt size="1em" />,
+      icon: <IconSettings2 size="1em" />,
       label: "Settings",
       active: false,
       link: '#',
@@ -96,7 +107,11 @@ export default function Sidebar() {
         index === key ? { ...item, active: true } : { ...item, active: false }
       )
     );
-  };
+  }
+  // const isActive = (itemPath, currentPath) => {
+  //   if (itemPath === "/") return currentPath === "/";
+  //   return currentPath === itemPath || currentPath.startsWith(itemPath + "/");
+  // };
 
   return (
     <SidebarStyles>
@@ -110,23 +125,16 @@ export default function Sidebar() {
               size="3em"
               $backgroundColor={theme.colors.inputBgColor[0]}
               $rotated
-              $border="0.125emsolid #FFF"
+              $border="0.125em solid #FFF"
             >
-              <Plus size="1.25em" color={theme.colors.primary[0]} />
+              <IconPlus size="1.25em" color={theme.colors.primary[0]} />
             </Hexagon>
           </li>
-          <li>
-            <AvatarSection size="50" avatar={coverImage} />
-          </li>
-          <li>
-            <AvatarSection size="50" avatar={coverImage} />
-          </li>
-          <li>
-            <AvatarSection size="50" avatar={coverImage} />
-          </li>
-          <li>
-            <AvatarSection size="50" avatar={coverImage} />
-          </li>
+          {[...Array(4)].map((_, i) => (
+            <li key={i}>
+              <AvatarSection size="50" avatar={coverImage} />
+            </li>
+          ))}
         </ul>
       </div>
       <div className="profile-links">
@@ -157,6 +165,18 @@ export default function Sidebar() {
               {index % 2 !== 0 && <div className="divider"></div>}
             </li>
           ))}
+          {/* {sidebarItems.map((item, index) => {
+            const active = isActive(item.link, location.pathname);
+            return (
+              <li key={index} className={active ? "active" : ""}>
+                <Link to={item.link}>
+                  {item.icon}
+                  <span>{item.label}</span>
+                </Link>
+                {index % 2 !== 0 && <div className="divider"></div>}
+              </li>
+            );
+          })} */}
         </ul>
       </div>
     </SidebarStyles>

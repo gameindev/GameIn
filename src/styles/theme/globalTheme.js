@@ -111,5 +111,38 @@ export const GlobalStyles = createGlobalStyle`
         height: 1.5em;
     }
     
+    .hoverGreen:hover{
+        background-color: ${({ theme }) => theme.colors.primary[0]} !important;
+    }
+
+    .hoverGreen:hover svg path {
+        color: ${({ theme }) => theme.colors.black[0]} !important;
+    }
+
+    .hoverGrey:hover{
+        background-color: ${({ theme }) =>
+          theme.colors.hoverGrey[0]} !important;
+    }
+
+    .hoverGrey:hover svg path {
+        color: ${({ theme }) => theme.colors.black[0]} !important;
+    }
+
+    .hoverRed:hover{
+        background-color: ${({ theme }) => theme.colors.hoverRed[0]} !important;
+    }
+
+    .hoverRed:hover svg path {
+        color: ${({ theme }) => theme.colors.inputBgColor[0]} !important;
+    }
+
+    .hoverYellow:hover{
+        background-color: ${({ theme }) => theme.colors.yellow[0]} !important;
+    }
+
+    .hoverYellow:hover img {
+        filter: brightness(0);
+    }
+
 
 `;

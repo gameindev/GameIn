@@ -13,8 +13,8 @@ import StepOne from "./stepOne";
 import StepTwo from "./stepTwo";
 import StepThree from "./stepThree";
 import Completed from "./Completed";
-import { UserRound } from "lucide-react";
 import { theme } from './../../../styles/theme/customTheme';
+import { IconUser } from "@tabler/icons-react";
 
 // form steps information
 const FORM_STEPS = [
@@ -74,7 +74,7 @@ export default function MultiStepForm() {
           <Stack spacing="xl">
             <Flex align="center" gap="xs" justify="start">
               <Text component="span" style={{ display: "inline-flex" }}>
-                <UserRound color={theme.colors.primary[0]} />
+                <IconUser color={theme.colors.primary[0]} />
               </Text>
               <Title order={2}>{title}</Title>
             </Flex>

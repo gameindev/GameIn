@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import routePaths from "./endpoints";
+import DisplayOfferings from "../pages/accounts/offerings/DisplayOfferings";
 
 // Lazy load brand-related components
 const Dashboard = lazy(() => import("../pages/accounts/Dashboard"));
@@ -46,6 +47,7 @@ const accountsdRoutes = [
   { path: OFFERINGS.CREATE_OFFERING, element: <CreateOpportunity /> },
   { path: OFFERINGS.EDIT_OFFERING, element: <EditOpportunity /> },
   { path: OFFERINGS.EDIT_PRICEPOOLEVENT, element: <EditPricePoolEvent /> },
+  { path: OFFERINGS.VIEW, element: <Offerings /> },
 
   // Others
   { path: STATS.ROOT, element: <Stats /> },

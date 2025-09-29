@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  Paper,
-  Container,
-  Stack,
-  Flex,
-  Text,
-  Box,
-} from "@mantine/core";
-import { Settings } from "lucide-react";
+import { Paper, Container, Stack, Flex, Text, Box } from "@mantine/core";
 import GeneralInfo from "./GeneralInfo";
 import AdminsTeams from "./AdminsTeams";
 import SocialMedia from "./SocialMedia";
@@ -17,6 +9,7 @@ import FinalReview from "./FinalReview";
 import { theme } from "../../../styles/theme/customTheme";
 import SectionHeader from "./../../shared/ui/SectionHeader";
 import HexContainer from "../../shared/ui/HexContainer";
+import { IconSettings } from "@tabler/icons-react";
 
 const FORM_STEPS = [
   {
@@ -139,7 +132,7 @@ export default function CreateTeam() {
   return (
     <>
       <div>
-        <SectionHeader icon={<Settings />} text={"CREATE TEAM"} />
+        <SectionHeader icon={<IconSettings />} text={"CREATE TEAM"} />
       </div>
       <Container size="lg">
         <Paper radius="sm" bg={"transparent"} my={"5em"} mx={"xl"}>

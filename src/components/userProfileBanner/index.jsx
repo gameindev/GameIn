@@ -4,11 +4,11 @@ import UserInfo from "./UserInfo";
 import StatsSection from "./StatsSection";
 import SponsorshipSection from "./SponsorshipSection";
 import {
-  BannerWrapper,
-  UserInformation,
-  ProfileWrapper,
-  ActionWrapper,
-  UserAvatar,
+    BannerWrapper,
+    UserInformation,
+    ProfileWrapper,
+    ActionWrapper,
+    UserAvatar,
 } from "./styles";
 import { ActionIcon, Button, Text } from "@mantine/core";
 import LevelBadge from "./LevelBadge";
@@ -16,11 +16,13 @@ import { Link } from "react-router";
 import ProfileMediaUrls from "./../../utils/helpers/useProfileMediaUrl";
 import { USERTYPES } from "../../utils/enum";
 import FollowButton from "../shared/ui/FollowButton";
+import IconButton from "../shared/ui/IconButton";
+import { IconMessage } from "@tabler/icons-react";
 
 const UserProfileBanner = ({ userProfile, isSelf }) => {
-  if (!userProfile) return null;
+    if (!userProfile) return null;
 
-  const { avatarUrl, coverImageUrl } = ProfileMediaUrls(userProfile);
+    const { avatarUrl, coverImageUrl } = ProfileMediaUrls(userProfile);
 
   const { user_type, creator_profile, brand_profile, community_profile } =
     userProfile;
@@ -32,35 +34,35 @@ const UserProfileBanner = ({ userProfile, isSelf }) => {
       ? brand_profile
       : community_profile;
 
-  const stats = {
-    views: profile?.views || "0",
-    followers: profile?.followers || "0",
-    joinedOn: new Date(userProfile.created_at).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    }),
-  };
+    const stats = {
+        views: profile?.views || "0",
+        followers: profile?.followers || "0",
+        joinedOn: new Date(userProfile.created_at).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+        }),
+    };
 
-  return (
-    <BannerWrapper>
-      <CoverBanner coverImage={coverImageUrl} controls={isSelf} />
-      <UserInformation>
-        <UserAvatar>
-          <AvatarSection
-            avatar={avatarUrl}
-            radius={0.35}
-            size="180"
-            controls={isSelf}
-          />
-        </UserAvatar>
-        <ProfileWrapper>
-          <div className="personal_info">
-            <UserInfo user={userProfile} />
-            <StatsSection stats={stats} />
-          </div>
-          <LevelBadge level={profile?.rank || 1} />
-          <SponsorshipSection sponsors={userProfile?.sponsors || []} />
+    return (
+        <BannerWrapper>
+            <CoverBanner coverImage={coverImageUrl} controls={isSelf} />
+            <UserInformation>
+                <UserAvatar>
+                    <AvatarSection
+                        avatar={avatarUrl}
+                        radius={0.35}
+                        size="180"
+                        controls={isSelf}
+                    />
+                </UserAvatar>
+                <ProfileWrapper>
+                    <div className="personal_info">
+                        <UserInfo user={userProfile} />
+                        <StatsSection stats={stats} />
+                    </div>
+                    <LevelBadge level={profile?.rank || 1} />
+                    <SponsorshipSection sponsors={userProfile?.sponsors || []} />
 
           <ActionWrapper>
             {isSelf ? (
@@ -74,7 +76,9 @@ const UserProfileBanner = ({ userProfile, isSelf }) => {
                 <div className="interaction">
                   <Link to={`/inbox`}>
                     <ActionIcon size="lg" color="inputBgColor" variant="filled">
-                      <Text size="xs">Inbox</Text>
+                      <Text size="xs">
+                        <IconButton Icon={IconMessage} hoverClass="hoverGrey" />
+                      </Text>
                     </ActionIcon>
                   </Link>
                 </div>

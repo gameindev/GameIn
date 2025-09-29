@@ -41,7 +41,12 @@ export default function Dashboard() {
         <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
           <StatBox
             title={"Ongoing Sponsorships"}
-            action={<IconButton onClick={() => navigate("/sponsorships")} />}
+            action={
+              <IconButton
+                hoverClass="hoverYellow"
+                onClick={() => navigate("/sponsorships")}
+              />
+            }
           ></StatBox>
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>

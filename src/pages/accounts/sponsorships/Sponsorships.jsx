@@ -10,7 +10,7 @@ export default function Sponsorships() {
       <Grid.Col span={{ base: 12 }} style={{ minHeight: "auto" }}>
         <StatBox
           title={"Ongoing Sponsorships"}
-          action={<IconButton />}
+          action={<IconButton hoverClass="hoverYellow" />}
           accordion
           defaultOpen={true}
         >
@@ -20,7 +20,7 @@ export default function Sponsorships() {
       <Grid.Col span={{ base: 12 }} style={{ minHeight: "auto" }}>
         <StatBox
           title={"Offers"}
-          action={<IconButton />}
+          action={<IconButton hoverClass="hoverYellow" />}
           accordion
           defaultOpen={true}
         >

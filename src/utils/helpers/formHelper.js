@@ -1,7 +1,7 @@
 import React from "react";
 import { Select, TextInput } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
-import { ChevronDown } from "lucide-react";
+import { IconChevronDown } from "@tabler/icons-react";
 
 export const DEFAULT_FIELD_WIDTH = "7.5rem";
 
@@ -22,7 +22,7 @@ export const createField =
   });
 
 export const SelectField = createField(Select, {
-  rightSection: React.createElement(ChevronDown, { size: "1em" }),
+  rightSection: React.createElement(IconChevronDown, { size: "1em" }),
 });
 
 export const TextField = createField(TextInput);

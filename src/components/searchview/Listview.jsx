@@ -6,7 +6,6 @@ import { Button, Group, RingProgress, Text } from "@mantine/core";
 import Verifed from "../svg-icons/Verifed";
 import Badge from "../svg-icons/Badge";
 import BadgeLevels from "../svg-icons/LevelBadge";
-import { Search, User } from "lucide-react";
 import { useMediaQuery } from "@mantine/hooks";
 import { useContext, useMemo } from "react";
 import { SearchContext } from "../../context/SearchContext";
@@ -17,6 +16,7 @@ import { currentUser } from "../../stores/selectors";
 import FollowButton from "../shared/ui/FollowButton";
 import { getFollowerStats } from "../../services/users";
 import { Link } from "react-router";
+import { IconUser } from "@tabler/icons-react";
 
 const ListviewStyles = styled.div`
   display: flex;
@@ -92,7 +92,7 @@ export default function Listview({ SocialInfo }) {
       <ListviewStyles key={id}>
         <AvatarSection className="avatar" avatar={creator} size="7em" />
         <div className="list_content">
-          <Link to={`/profile/${id}`}>
+          <Link to={`/profile/${username}`} style={{ textDecoration: "none" }}>
             <Text c="white" size="xl">
               {username}
             </Text>
@@ -131,7 +131,7 @@ export default function Listview({ SocialInfo }) {
                   FOLLOWERS
                 </Text>
                 <Text size={bigscreen ? "sm" : "xs"} ta="center">
-                  <User />
+                  <IconUser size={12} />
                 </Text>
               </>
             }
