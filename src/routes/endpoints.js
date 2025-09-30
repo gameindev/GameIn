@@ -37,10 +37,11 @@ const routePaths = {
     },
   },
   SETTINGS: {
-    ROOT: "/settings",
     ACCOUNT: "/settings/account",
-    CONTACT: "/settings/contact",
+    INTEGRATIONS: "/settings/intergrations",
+    NOTIFICATIONS: "/settings/notifications",
     PRIVACY: "/settings/privacy",
+    PAYMENTS: "/settings/payments",
   },
   FOOTER: {
     ROOT: "/footer",
