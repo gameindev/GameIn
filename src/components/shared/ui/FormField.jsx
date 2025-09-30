@@ -3,6 +3,7 @@
 import React, { memo } from "react";
 import { Controller } from "react-hook-form";
 import { Text } from "@mantine/core";
+import { useFormDisabled } from "../../../context/FormDisableContext";
 
 function FormFieldComponent({
   name,
@@ -14,6 +15,7 @@ function FormFieldComponent({
   inline = false,
   render,
 }) {
+  const isDisabled = useFormDisabled();
   return (
     <Controller
       name={name}
@@ -26,13 +28,18 @@ function FormFieldComponent({
       }
       render={({ field, fieldState: { error } }) => {
         if (render) {
-          return render({ field, error });
+          return render({ field, error, disabled: isDisabled });
         }
 
         const element = (
           <Component
             {...field}
             {...componentProps}
+            disabled={
+              componentProps.disabled !== undefined
+                ? componentProps.disabled
+                : isDisabled
+            }
             label={!inline ? componentProps.label : undefined}
             error={error?.message}
             value={field.value}

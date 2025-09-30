@@ -23,6 +23,7 @@ import {
   TIME_MODE_CONFIG,
   LOGO_SIZES_CONFIG,
 } from "./../../../config/formConfigs/opportunityConfig";
+import { useFormDisabled } from "../../../context/FormDisableContext";
 
 // Generate field configs
 const getFieldConfigs = (mode, type) => {
@@ -173,7 +174,9 @@ export default function OpportunityFormFields({
   type,
   mode,
   setValue,
+  overrideDisabledFields = [],
 }) {
+  const isDisabled = useFormDisabled();
   const fields = getFieldConfigs(mode, type);
   const price = useWatch({ control, name: `${type}.choosePrice` });
 
@@ -183,6 +186,14 @@ export default function OpportunityFormFields({
     setValue(`${type}.gameinFee`, fee);
     setValue(`${type}.gameinTax`, total);
   }, [price, setValue, type]);
+
+  const getDisabled = (fieldName) => {
+    if (mode !== "edit") return false;
+    if (!isDisabled && overrideDisabledFields.includes(fieldName)) {
+      return false;
+    }
+    return true;
+  };
 
   return (
     <OfferingOpportunities>
@@ -198,7 +209,16 @@ export default function OpportunityFormFields({
         }) => {
           if (wrapper && wrapperFields) {
             const children = wrapperFields.map((child) => (
-              <FormField key={child.name} {...child} control={control} inline />
+              <FormField
+                key={child.name}
+                {...child}
+                control={control}
+                componentProps={{
+                  ...child.componentProps,
+                  disabled: getDisabled(child.name),
+                }}
+                inline
+              />
             ));
             return wrapper(children);
           }
@@ -212,7 +232,10 @@ export default function OpportunityFormFields({
               Component={Component}
               inline={inline}
               required={required}
-              componentProps={componentProps}
+              componentProps={{
+                ...componentProps,
+                disabled: getDisabled(fieldName),
+              }}
             />
           );
 

@@ -26,7 +26,9 @@ export default function FollowButton({
     setLoading(true);
     try {
       if (isFollowing) {
-        await del(API_PATHS.FOLLOW.UNFOLLOW_USER(targetUserId));
+        await del({
+          url: API_PATHS.FOLLOW.UNFOLLOW_USER(targetUserId),
+        });
         dispatch(removeFollowedUserId(targetUserId));
       } else {
         await post({

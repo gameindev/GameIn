@@ -36,7 +36,7 @@ export const sections = [
   },
 ];
 
-const createDefaults = (overrides = {}) => ({
+export const createDefaults = (overrides = {}) => ({
   streaming: { enabled: false, platform: "", timeMode: "", size: "" },
   videoCommercial: {
     enabled: false,

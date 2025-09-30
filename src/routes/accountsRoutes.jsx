@@ -18,7 +18,7 @@ const CreateOpportunity = lazy(() =>
   import("../components/accounts/offerings/CreateOpportunity")
 );
 const EditOpportunity = lazy(() =>
-  import("../components/accounts/offerings/EditOpportunity")
+  import("../features/offerings/components/editOffering")
 );
 
 const EditPricePoolEvent = lazy(() =>

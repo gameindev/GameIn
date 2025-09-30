@@ -1,26 +1,33 @@
 import { useState } from "react";
 import {
-    Box,
-    Center,
-    Text,
-    Flex,
-    Collapse,
-    ActionIcon,
-    Button,
+  Box,
+  Center,
+  Text,
+  Flex,
+  Collapse,
+  ActionIcon,
+  Button,
 } from "@mantine/core";
 import { theme } from "../../../styles/theme/customTheme";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 
 export default function StatBox({
-    title,
-    action,
-    background,
-    children,
-    accordion = false,
-    actionCTA = false,
-    defaultOpen = true,
+  title,
+  action,
+  background,
+  children,
+  accordion = false,
+  actionCTA = false,
+  defaultOpen = true,
+  onSponsorClick,
 }) {
   const [opened, setOpened] = useState(defaultOpen);
+
+  const handleSponsorClick = () => {
+    if (onSponsorClick) {
+      onSponsorClick();
+    }
+  };
 
   return (
     <Box
@@ -48,7 +55,11 @@ export default function StatBox({
                 aria-label="Toggle content"
                 color="white"
               >
-                {opened ? <IconChevronUp size={18} /> : <IconChevronDown size={18} />}
+                {opened ? (
+                  <IconChevronUp size={18} />
+                ) : (
+                  <IconChevronDown size={18} />
+                )}
               </ActionIcon>
             )}
             {action && <div className="action_cta">{action}</div>}
@@ -75,6 +86,7 @@ export default function StatBox({
             width: "fit-content",
             alignSelf: "flex-end",
           }}
+          onClick={handleSponsorClick}
         >
           Sponsor
         </Button>
