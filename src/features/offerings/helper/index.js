@@ -82,6 +82,7 @@ export function buildOfferingPayload(form = {}, mode = "create") {
   };
 
   if (mode === "edit") {
+    offering.status = OfferingStatus.OFFERED;
     offering.notes = form?.note || "";
     offering.logo = form?.uploadLogo || null;
   }

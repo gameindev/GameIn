@@ -1,6 +1,7 @@
 import { lazy } from "react";
 import routePaths from "./endpoints";
 import DisplayOfferings from "../pages/accounts/offerings/DisplayOfferings";
+import { withRoleAccess } from "../features/offerings/services/withRoleAccess";
 
 // Lazy load brand-related components
 const Dashboard = lazy(() => import("../pages/accounts/Dashboard"));
@@ -25,6 +26,8 @@ const EditPricePoolEvent = lazy(() =>
   import("../components/accounts/offerings/EditPricePoolEvent")
 );
 
+const EditOpportunityWithAccess = withRoleAccess(EditOpportunity);
+
 const { DASHBOARD, PROFILE, SPONSORSHIPS, OFFERINGS, STATS, NEWSFEED, INBOX } =
   routePaths.ACCOUNTS;
 
@@ -45,7 +48,8 @@ const accountsdRoutes = [
   // Offerings
   { path: OFFERINGS.ROOT, element: <Offerings /> },
   { path: OFFERINGS.CREATE_OFFERING, element: <CreateOpportunity /> },
-  { path: OFFERINGS.EDIT_OFFERING, element: <EditOpportunity /> },
+  { path: OFFERINGS.TPP_EDIT_OFFERING, element: <EditOpportunityWithAccess /> },
+  { path: OFFERINGS.FPP_EDIT_OFFERING, element: <EditOpportunityWithAccess /> },
   { path: OFFERINGS.EDIT_PRICEPOOLEVENT, element: <EditPricePoolEvent /> },
   { path: OFFERINGS.VIEW, element: <Offerings /> },
 

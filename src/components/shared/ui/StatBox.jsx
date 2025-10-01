@@ -20,6 +20,7 @@ export default function StatBox({
   actionCTA = false,
   defaultOpen = true,
   onSponsorClick,
+  ...props
 }) {
   const [opened, setOpened] = useState(defaultOpen);
 
@@ -34,6 +35,7 @@ export default function StatBox({
       w="100%"
       h="100%"
       p="md"
+      {...props}
       style={{
         background: background || theme.colors.secondaryGrey[0],
         borderRadius: theme.radius.md,
@@ -47,7 +49,7 @@ export default function StatBox({
             {title || "Card Title"}
           </Text>
 
-          <Flex align="center" gap="xs">
+          <Flex align="right" gap="xs">
             {accordion && (
               <ActionIcon
                 variant="transparent"
@@ -67,11 +69,13 @@ export default function StatBox({
         </Flex>
 
         {accordion ? (
-          <Collapse in={opened}>
+          <Collapse h={"100%"} in={opened}>
             <Box mt="sm">{children}</Box>
           </Collapse>
         ) : (
-          <Box mt="sm">{children}</Box>
+          <Box style={{ ...props.style }} mt="sm">
+            {children}
+          </Box>
         )}
       </Box>
 

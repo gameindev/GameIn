@@ -4,7 +4,7 @@ import { createDefaults } from "../formConfigs/opportunityConfig";
 // Offer section mappers (form <-> api)
 export const OFFER_MAPPERS = {
   [OfferingCategory.LOGO_STREAM]: {
-    formKey: "streaming",
+    formKey: OfferingCategory.LOGO_STREAM,
     toForm: (offer) => ({
       enabled: true,
       platform: offer.platform?.toLowerCase() || "",
@@ -19,7 +19,7 @@ export const OFFER_MAPPERS = {
   },
 
   [OfferingCategory.VIDEO_COMMERCIAL]: {
-    formKey: "videoCommercial",
+    formKey: OfferingCategory.VIDEO_COMMERCIAL,
     toForm: (offer) => ({
       enabled: true,
       platform: offer.platform?.toLowerCase() || "",
@@ -38,7 +38,7 @@ export const OFFER_MAPPERS = {
   },
 
   [OfferingCategory.SOCIAL_POST]: {
-    formKey: "socialMedia",
+    formKey: OfferingCategory.SOCIAL_POST,
     toForm: (offer) => ({
       enabled: true,
       platform: offer.platform?.toLowerCase() || "",
@@ -53,7 +53,7 @@ export const OFFER_MAPPERS = {
   },
 
   [OfferingCategory.MERCHANDISE]: {
-    formKey: "merchProducts",
+    formKey: OfferingCategory.MERCHANDISE,
     toForm: (offer) => ({
       enabled: true,
       platform: offer.platform?.toLowerCase() || "",

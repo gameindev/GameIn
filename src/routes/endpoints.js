@@ -21,7 +21,8 @@ const routePaths = {
     OFFERINGS: {
       ROOT: "/offerings",
       CREATE_OFFERING: "/offerings/create-offering",
-      EDIT_OFFERING: "/:username/offerings/:offeringId/edit-offering",
+      FPP_EDIT_OFFERING: "/offerings/:offeringId/edit-offering",
+      TPP_EDIT_OFFERING: "/:username/offerings/:offeringId/edit-offering",
       EDIT_PRICEPOOLEVENT: "/offerings/edit-pricepool-event",
       VIEW: "/:username/offerings",
     },

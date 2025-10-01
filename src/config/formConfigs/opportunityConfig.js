@@ -2,20 +2,21 @@ import streamingLogo from "../../assets/accounts/offerings/streaming-logo.png";
 import commercialBreak from "../../assets/accounts/offerings/commercial-break.png";
 import socialMediaPost from "../../assets/accounts/offerings/social-media-post.png";
 import merchProducts from "../../assets/accounts/offerings/merch-products.png";
+import { OfferingCategory } from "../../utils/enum";
 
 export const sections = [
   {
     number: "01",
     title: "STREAMING LOGO PLACEMENT",
     description: "You are offering to place a brand logo in your live stream",
-    type: "streaming",
+    type: OfferingCategory.LOGO_STREAM,
     image: streamingLogo,
   },
   {
     number: "02",
     title: "VIDEO: COMMERCIAL BREAK",
     description: "You are offering to generate product ads in your videos",
-    type: "videoCommercial",
+    type: OfferingCategory.VIDEO_COMMERCIAL,
     image: commercialBreak,
   },
   {
@@ -23,7 +24,7 @@ export const sections = [
     title: "SOCIAL MEDIA POSTING",
     description:
       "You are offering to place branded posts in your social media accounts",
-    type: "socialMedia",
+    type: OfferingCategory.SOCIAL_POST,
     image: socialMediaPost,
   },
   {
@@ -31,23 +32,42 @@ export const sections = [
     title: "MERCH, CLOTHING, PRODUCTS",
     description:
       "You are offering to place advertisings in your social media accounts",
-    type: "merchProducts",
+    type: OfferingCategory.MERCHANDISE,
     image: merchProducts,
   },
 ];
 
 export const createDefaults = (overrides = {}) => ({
-  streaming: { enabled: false, platform: "", timeMode: "", size: "" },
-  videoCommercial: {
+  [OfferingCategory.LOGO_STREAM]: {
+    enabled: false,
+    platform: "",
+    timeMode: "",
+    schedule: "",
+    size: "",
+  },
+  [OfferingCategory.VIDEO_COMMERCIAL]: {
     enabled: false,
     platform: "",
     timeMode: "",
     size: "",
     duration: "",
+    schedule: "",
     repetation: "",
   },
-  socialMedia: { enabled: false, platform: "", timeMode: "", size: "" },
-  merchProducts: { enabled: false, platform: "", timeMode: "", types: "" },
+  [OfferingCategory.SOCIAL_POST]: {
+    enabled: false,
+    platform: "",
+    timeMode: "",
+    schedule: "",
+    size: "",
+  },
+  [OfferingCategory.MERCHANDISE]: {
+    enabled: false,
+    platform: "",
+    timeMode: "",
+    schedule: "",
+    types: "",
+  },
   dateTitle: { startDate: null, endDate: null, title: "", description: "" },
   price: {
     choosePrice: "",
@@ -121,14 +141,14 @@ export const FORM_CONFIG = {
 };
 
 export const TIME_MODE_CONFIG = {
-  streaming: [
+  [OfferingCategory.LOGO_STREAM]: [
     { value: "timespan", label: "Time span" },
     { value: "starttoend", label: "Start to End" },
     { value: "perhour", label: "Per Hour" },
     { value: "eventtrigger", label: "Event Trigger" },
     { value: "fixedfrequency", label: "Fixed Frequency" },
   ],
-  videoCommercial: [
+  [OfferingCategory.VIDEO_COMMERCIAL]: [
     { value: "shoutout", label: "Shoutout" },
     { value: "adsegment", label: "Ad Segment" },
     { value: "productreview", label: "Product Review" },
@@ -136,7 +156,7 @@ export const TIME_MODE_CONFIG = {
     { value: "sponsored", label: "Sponsor Intro/Outro" },
     { value: "custom", label: "custom" },
   ],
-  socialMedia: [
+  [OfferingCategory.SOCIAL_POST]: [
     { value: "timespan", label: "Time span" },
     { value: "introonly", label: "Intro Only" },
     { value: "outroonly", label: "Outro Only" },
@@ -145,7 +165,7 @@ export const TIME_MODE_CONFIG = {
     { value: "hashtagonly", label: "Hashtag Only" },
     { value: "custom", label: "custom" },
   ],
-  merchProducts: [
+  [OfferingCategory.MERCHANDISE]: [
     { value: "timespan", label: "Time span" },
     { value: "introonly", label: "Intro Only" },
     { value: "outroonly", label: "Outro Only" },
@@ -162,7 +182,7 @@ export const TIME_MODE_CONFIG = {
 };
 
 export const LOGO_SIZES_CONFIG = {
-  streaming: [
+  [OfferingCategory.LOGO_STREAM]: [
     { value: "100px", label: "100px" },
     { value: "150px", label: "150px" },
     { value: "200px", label: "200px" },
@@ -171,14 +191,14 @@ export const LOGO_SIZES_CONFIG = {
     { value: "fullwidth", label: "Full Width" },
     { value: "custom", label: "Custom" },
   ],
-  videoCommercial: [
+  [OfferingCategory.VIDEO_COMMERCIAL]: [
     { value: "small", label: "Small" },
     { value: "medium", label: "Medium" },
     { value: "wide", label: "Wide" },
     { value: "fullscreen", label: "Full Screen" },
     { value: "custom", label: "Custom" },
   ],
-  socialMedia: [
+  [OfferingCategory.SOCIAL_POST]: [
     { value: "portrait", label: "Portrait" },
     { value: "square", label: "Square" },
     { value: "landscape", label: "Landscape" },
@@ -186,7 +206,7 @@ export const LOGO_SIZES_CONFIG = {
     { value: "fulltakeover", label: "FullScreen Takeover" },
     { value: "custom", label: "Custom" },
   ],
-  merchProducts: [],
+  [OfferingCategory.MERCHANDISE]: [],
   default: [
     { value: "small", label: "Small" },
     { value: "medium", label: "Medium" },

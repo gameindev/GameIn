@@ -1,9 +1,8 @@
-// src/features/offerings/mappers/offerMappers.js
 import { OfferingCategory } from "../../../utils/enum";
 
 export const OFFER_MAPPERS = {
   [OfferingCategory.LOGO_STREAM]: {
-    key: "streaming",
+    key: OfferingCategory.LOGO_STREAM,
     fromApi: (o = {}) => ({
       enabled: true,
       platform: o?.platform?.toLowerCase() || "",
@@ -13,12 +12,13 @@ export const OFFER_MAPPERS = {
     toApi: (f = {}) => ({
       ...(f?.platform && { platform: f.platform.toUpperCase() }),
       ...(f?.timeMode && { time_mode: f.timeMode }),
+      ...(f?.schedule && { schedule: f.schedule }),
       ...(f?.size && { size: f.size }),
     }),
   },
 
   [OfferingCategory.VIDEO_COMMERCIAL]: {
-    key: "videoCommercial",
+    key: OfferingCategory.VIDEO_COMMERCIAL,
     fromApi: (o = {}) => ({
       enabled: true,
       platform: o?.platform?.toLowerCase() || "",
@@ -32,12 +32,13 @@ export const OFFER_MAPPERS = {
       ...(f?.timeMode && { time_mode: f.timeMode }),
       ...(f?.duration && { duration: f.duration }),
       ...(f?.repetation && { repetition: f.repetation }),
+      ...(f?.schedule && { schedule: f.schedule }),
       ...(f?.size && { size: f.size }),
     }),
   },
 
   [OfferingCategory.SOCIAL_POST]: {
-    key: "socialMedia",
+    key: OfferingCategory.SOCIAL_POST,
     fromApi: (o = {}) => ({
       enabled: true,
       platform: o?.platform?.toLowerCase() || "",
@@ -47,12 +48,13 @@ export const OFFER_MAPPERS = {
     toApi: (f = {}) => ({
       ...(f?.platform && { platform: f.platform.toUpperCase() }),
       ...(f?.timeMode && { time_mode: f.timeMode }),
+      ...(f?.schedule && { schedule: f.schedule }),
       ...(f?.size && { size: f.size }),
     }),
   },
 
   [OfferingCategory.MERCHANDISE]: {
-    key: "merchProducts",
+    key: OfferingCategory.MERCHANDISE,
     fromApi: (o = {}) => ({
       enabled: true,
       platform: o?.platform?.toLowerCase() || "",
@@ -62,6 +64,7 @@ export const OFFER_MAPPERS = {
     toApi: (f = {}) => ({
       ...(f?.platform && { platform: f.platform.toUpperCase() }),
       ...(f?.timeMode && { time_mode: f.timeMode }),
+      ...(f?.schedule && { schedule: f.schedule }),
       ...(f?.types && { sub_type: f.types }),
     }),
   },

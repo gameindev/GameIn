@@ -11,7 +11,6 @@ import { Link } from "react-router";
 import { useWatch } from "react-hook-form";
 import FormField from "../../shared/ui/FormField";
 import { InlineFields, OfferingOpportunities } from "./style";
-
 import {
   SelectField,
   TextField,
@@ -23,6 +22,7 @@ import {
   TIME_MODE_CONFIG,
   LOGO_SIZES_CONFIG,
 } from "./../../../config/formConfigs/opportunityConfig";
+import { OfferingCategory } from "../../../utils/enum";
 import { useFormDisabled } from "../../../context/FormDisableContext";
 
 // Generate field configs
@@ -41,8 +41,8 @@ const getFieldConfigs = (mode, type) => {
   ];
 
   const CONFIGS = {
-    streaming: BASE_FIELDS,
-    videoCommercial:
+    [OfferingCategory.LOGO_STREAM]: BASE_FIELDS,
+    [OfferingCategory.VIDEO_COMMERCIAL]:
       mode === "edit"
         ? [
             ...BASE_FIELDS,
@@ -50,7 +50,7 @@ const getFieldConfigs = (mode, type) => {
               name: "repetitionDuration",
               wrapperFields: [
                 {
-                  name: "videoCommercial.repetation",
+                  name: "repetation",
                   Component: NumberInput,
                   componentProps: {
                     placeholder: "00",
@@ -60,7 +60,7 @@ const getFieldConfigs = (mode, type) => {
                   },
                 },
                 {
-                  name: "videoCommercial.duration",
+                  name: "duration",
                   Component: SelectField("duration", "Duration", {
                     data: FORM_CONFIG.durations,
                     placeholder: "sec",
@@ -100,8 +100,8 @@ const getFieldConfigs = (mode, type) => {
               style: { width: "7.5rem" },
             }),
           ],
-    socialMedia: BASE_FIELDS,
-    merchProducts: [
+    [OfferingCategory.SOCIAL_POST]: BASE_FIELDS,
+    [OfferingCategory.MERCHANDISE]: [
       ...BASE_FIELDS.slice(0, 2),
       SelectField("types", "Type", { data: FORM_CONFIG.postTypes }),
     ],
@@ -188,10 +188,13 @@ export default function OpportunityFormFields({
   }, [price, setValue, type]);
 
   const getDisabled = (fieldName) => {
+    if (isDisabled) return true;
     if (mode !== "edit") return false;
-    if (!isDisabled && overrideDisabledFields.includes(fieldName)) {
-      return false;
-    }
+    if (overrideDisabledFields.includes("all")) false;
+    const isOverridden = overrideDisabledFields.some((field) =>
+      fieldName.endsWith(field)
+    );
+    if (isOverridden) return false;
     return true;
   };
 
