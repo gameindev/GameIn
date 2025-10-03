@@ -106,12 +106,9 @@ export class OfferingsController {
         status: 200,
         description: 'Offering adjusted successfully',
     })
-    @Patch(':id/adjust')
     @UseInterceptors(FileInterceptor('logo'))
-    @ApiOperation({ summary: 'Adjust an offering' })
     @ApiConsumes('multipart/form-data')
     @ApiExtraModels(PatchOfferingBundleDto, PatchOfferingDto, PatchOfferingOfferDto)
-    @ApiResponse({ status: 200, description: 'Offering adjusted successfully' })    
     @ApiBody({
         schema: {
             type: 'object',
@@ -137,6 +134,7 @@ export class OfferingsController {
             required: ['offering'],
         },
     })
+    @Patch(':id/adjust')
     async adjustOffer(
         @UploadedFile() logo: Express.Multer.File,
         @Body('offering') offeringRaw: string,
@@ -160,9 +158,29 @@ export class OfferingsController {
 
 
         return this.offeringService.createAdjustment(dto, logo, user);
-        
+
     }
 
+
+    @ApiOperation({
+        summary: 'Creates a new Offering'
+    })
+    @ApiResponse({
+        status: 201,
+        description: 'Offering created successfully based on the query'
+    })
+    @ApiParam({
+        type: Number,
+        name: 'id',
+        example: 1
+    })
+    @Patch(':id/reset')
+    async resetOffering(
+        @Param('id') id: number,
+        @ActiveUser() user: ActiveUserData,
+    ) {
+        return this.offeringService.resetOffering(id, user);
+    }
 
 
     // @Patch(':id/price')

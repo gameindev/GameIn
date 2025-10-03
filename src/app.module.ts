@@ -16,6 +16,7 @@ import * as dotenvFlow from 'dotenv-flow';
 import environmentValidation from "./config/environment.validation";
 import jwtConfig from "./auth/config/jwt.config";
 import { JwtModule } from "@nestjs/jwt";
+import type { LoggerOptions } from 'typeorm';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
 import { AccessTokenGuard } from "./auth/guards/access-token/access-token.guard";
 import { AuthenticationGuard } from "./auth/guards/authentication/authentication.guard";
@@ -52,6 +53,7 @@ import { TeamsModule } from './teams/teams.module';
 import { Team } from "./teams/teams.entity";
 import { TeamMembers } from "./teams/team-members/team-members.entity";
 import { TeamLinks } from "./teams/team-links/team-links.entity";
+
 dotenvFlow.config();
 
 const ENV = process.env.NODE_ENV;
@@ -66,9 +68,44 @@ const ENV = process.env.NODE_ENV;
         }),
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
-            
+
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => {
+                const isProduction = process.env.NODE_ENV === 'production';
+                const sslEnabled = configService.get('database.ssl') === true || process.env.DATABASE_SSL === 'true';
+                const loggingEnv = (process.env.TYPEORM_LOGGING ?? configService.get('database.logging')) as string | boolean | undefined;
+                const maxQueryExecutionTimeMs = Number(process.env.TYPEORM_MAX_QUERY_MS ?? 1000);
+                const poolMax = Number(process.env.TYPEORM_POOL_MAX ?? 10);
+                const poolMin = Number(process.env.TYPEORM_POOL_MIN ?? 1);
+                const poolIdle = Number(process.env.TYPEORM_POOL_IDLE ?? 30000);
+                const poolAcquire = Number(process.env.TYPEORM_POOL_ACQUIRE ?? 30000);
+                const allowedLogTokens = new Set<Exclude<LoggerOptions, boolean | 'all'>[number]>([
+                    'query',
+                    'schema',
+                    'error',
+                    'warn',
+                    'info',
+                    'log',
+                    'migration',
+                ]);
+
+                let loggingOption: LoggerOptions | undefined;
+                if (typeof loggingEnv === 'boolean') {
+                    loggingOption = loggingEnv;
+                } else if (typeof loggingEnv === 'string') {
+                    const trimmed = loggingEnv.trim().toLowerCase();
+                    if (trimmed === 'true') loggingOption = true;
+                    else if (trimmed === 'false') loggingOption = false;
+                    else if (trimmed === 'all') loggingOption = 'all';
+                    else {
+                        const tokens = trimmed
+                            .split(',')
+                            .map(t => t.trim())
+                            .filter((t): t is Exclude<LoggerOptions, boolean | 'all'>[number] => allowedLogTokens.has(t as any));
+                        loggingOption = (tokens.length > 0 ? tokens : undefined) as LoggerOptions | undefined;
+                    }
+                }
+
                 return {
                     type: "postgres", // Use the injected ConfigService t,
                     host: configService.get('database.host'), // Use the injected ConfigService t,
@@ -92,11 +129,24 @@ const ENV = process.env.NODE_ENV;
                         OfferingPrice,
                         Team,
                         TeamMembers,
-                        TeamLinks
+                        TeamLinks,
                     ],
-                    // synchronize: configService.get('database.synchronize')
+                    // synchronize: configService.get('database.synchronize')
+
                     synchronize: false,
-                    namingStrategy: new SnakeNamingStrategy()}
+                    namingStrategy: new SnakeNamingStrategy(),
+                    logging: (loggingOption ?? (!isProduction ? (['error', 'warn', 'query'] as LoggerOptions) : (['error', 'warn'] as LoggerOptions))) as LoggerOptions,
+                    maxQueryExecutionTime: maxQueryExecutionTimeMs,
+                    ssl: sslEnabled
+                        ? { rejectUnauthorized: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false' }
+                        : undefined,
+                    extra: {
+                        max: poolMax,
+                        min: poolMin,
+                        idleTimeoutMillis: poolIdle,
+                        connectionTimeoutMillis: poolAcquire,
+                    },
+                }
             }
         }),
         ConfigModule.forFeature(jwtConfig),

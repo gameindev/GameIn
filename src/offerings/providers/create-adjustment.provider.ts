@@ -16,23 +16,25 @@ export class CreateAdjustmentProvider {
     constructor(
         @InjectRepository(Offering)
         private readonly repo: Repository<Offering>,
-        private readonly offeringOffersService: OfferingOffersService,       
+        private readonly offeringOffersService: OfferingOffersService,
         private readonly uploadService: UploadsService,
-        
+
     ) { }
 
     async createAdjustment(dto: PatchOfferingBundleDto, logo?: Express.Multer.File, user?: ActiveUserData) {
+
         const offeringId = dto.offering.id;
 
         // Step 1: Fetch offering
         const offering = await this.findExistingOffering(offeringId);
-   
-        
+        console.log(offering)
+
+
         // if the user.sub is equal to the offering.user_id, then the user is the owner of the offering
         // Check if user is either the owner (creator) or any brand user
         const isOwner = user?.sub === offering.user?.id;
         const isBrand = user?.user_type === UserType.BRAND;
-        
+
         // Ensure user exists before proceeding
         if (!user) {
             throw new ForbiddenException('Authentication required');
@@ -47,7 +49,7 @@ export class CreateAdjustmentProvider {
             if (dto.offering.notes) {
                 offering.notes = dto.offering.notes;
             }
-            
+
 
             // Step 4: Adjust offers — pass the entity directly
             if (dto.offering.offers?.length) {
@@ -58,8 +60,8 @@ export class CreateAdjustmentProvider {
             const updated = await this.repo.findOne({
                 where: { id: offering.id },
                 relations: ['offering_offers'],
-            });
-
+            });            
+            
             return updated;
         }
 
@@ -69,7 +71,7 @@ export class CreateAdjustmentProvider {
 
     // ✅ Separated private method: fetch offering or throw
     private async findExistingOffering(id: number): Promise<Offering> {
-        const offering = await this.repo.findOne({ where: { id }, relations: ['users'] });
+        const offering = await this.repo.findOne({ where: { id }, relations: ['user'] });
         if (!offering) throw new NotFoundException(`Offering with ID ${id} not found`);
         return offering;
     }

@@ -1,5 +1,4 @@
 import { OfferingBaseService } from './offering.base.service';
-import { Offering } from './../offerings.entity';
 import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import { OfferingOffersService } from '../offering-offers/providers/offering-offers.service';
@@ -14,6 +13,7 @@ import { OfferingOffers } from '../offering-offers/offering-offers.entity';
 import { FindOfferingsParams } from '../enums/offering-type.enum';
 import { CreateAdjustmentProvider } from './create-adjustment.provider';
 import { PatchOfferingBundleDto } from '../dtos/patch-offering-bundle.dto';
+import { Offering } from '../offerings.entity';
 
 
 
@@ -32,7 +32,7 @@ export class OfferingsService {
 
         @InjectRepository(Offering)
         private readonly repo: Repository<Offering>,
- 
+
         @InjectRepository(OfferingOffers)
         private readonly offeringOffersRepo: Repository<OfferingOffers>
     ) { }
@@ -49,13 +49,13 @@ export class OfferingsService {
             // 2) Offers (optional)
             let offers = [];
             if (dto.offers?.length) {
-               
+
                 offers = await this.offeringOffersService.bulkCreate(offering.id, dto.offers, manager);
             }
 
             // 3) Price (optional; single)
             let prices = null;
-            if (dto.price) {               
+            if (dto.price) {
                 prices = await this.priceService.create(offering.id, dto.price, manager);
             }
 
@@ -69,29 +69,29 @@ export class OfferingsService {
 
     async createOffering(offerinDto: CreateOfferingDto, user: ActiveUserData, manager?: EntityManager) {
         let currentUser;
-        
+
         try {
             currentUser = await this.userService.getUserById(user.sub);
         } catch (error) {
             throw new InternalServerErrorException('Error while trying to find User.');
         }
-        
+
         if (!currentUser) {
             throw new BadRequestException('User not found!');
         }
         if (currentUser.user_type !== UserType.CREATOR) {
             throw new BadRequestException('User is not a CREATOR');
         }
-        
+
         const repo = manager ? manager.getRepository(Offering) : this.repo;
         const offering = repo.create({
             ...offerinDto,
             user: currentUser,
             last_adjusted_by: currentUser,
-        }); 
-        
+        });
+
         try {
-            const savedOffering = await repo.save(offering);            
+            const savedOffering = await repo.save(offering);
             const { user, ...offeringWithoutUser } = savedOffering;
             return { ...offeringWithoutUser, user_id: user.id };
         } catch (error) {
@@ -170,7 +170,7 @@ export class OfferingsService {
 
     async findOneById(
         id: number,
-        relations?: Array<'users' | 'offering_offers' | 'offering_price' | 'logo'>,
+        relations?: Array<'user' | 'offering_offers' | 'offering_price' | 'logo'>,
     ) {
         try {
             // Validate relations against entity metadata to avoid invalid joins
@@ -195,11 +195,38 @@ export class OfferingsService {
         }
     }
 
-    
+
     async createAdjustment(dto: PatchOfferingBundleDto, logo?: Express.Multer.File, user?: ActiveUserData) {
         return await this.createAdjustmentProvider.createAdjustment(dto, logo, user);
     }
 
 
+
+    async resetOffering(id: number, user?: ActiveUserData) {
+
+        const offering = await this.findOneById(id, ['user'])
+        
+        if (!offering) {
+            throw new NotFoundException(`Offering with ID ${id} not found`);
+        }
+        console.log(offering)
+
+        // Check ownership before proceeding
+        if (user && offering.user?.id !== user.sub) {
+            throw new BadRequestException('You do not have permission to reset this offering');
+        }
+
+        try {
+            offering.adjustment_count = 0; 
+            offering.last_adjusted_at = null;
+            offering.last_adjusted_by = null;
+            await this.repo.save(offering);
+        } catch (error) {
+            throw new InternalServerErrorException('Failed to reset offering');
+        }
+
+        return offering;
+
+    }
 
 }
