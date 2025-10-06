@@ -107,7 +107,7 @@ console.log(ENV)
                     namingStrategy: new SnakeNamingStrategy(),
                     logging: isProduction ? ['error', 'warn'] : ['error', 'warn', 'query'],
                     ssl: configService.get<boolean>('database.ssl') || process.env.DATABASE_SSL === 'true'
-                        ? { rejectUnauthorized: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false' }
+                        ? false
                         : false,
                     extra: {
                         max: Number(process.env.TYPEORM_POOL_MAX ?? 10),
