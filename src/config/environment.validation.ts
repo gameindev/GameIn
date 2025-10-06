@@ -18,5 +18,5 @@ export default Joi.object({
     JWT_ACCESS_TOKEN_TTL: Joi.number().required(),
     JWT_REFRESH_TOKEN_TTL: Joi.number().required(),
     API_VERSION: Joi.string().required(),
-    UPLOAD_STRATEGY: Joi.string().valid('local', 's3').default('local'),
+    UPLOAD_STRATEGY: Joi.string().valid('local', 's3', 'do').default('local'),
 })
