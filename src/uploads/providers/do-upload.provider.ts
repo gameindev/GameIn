@@ -20,15 +20,14 @@ export class DOUploadProvider implements UploadProviderInterface {
     constructor(private configService: ConfigService) {
         this.region = this.configService.get<string>('DO_SPACES_REGION'); // e.g. "nyc3"
         this.bucket = this.configService.get<string>('DO_SPACES_BUCKET'); // e.g. "my-space"
-        this.endpoint = `https://${this.bucket}.${this.region}.digitaloceanspaces.com`;
 
         this.s3 = new S3Client({
-            endpoint: this.endpoint,
-            region: this.region,
-            forcePathStyle: false, // DO Spaces uses virtual-hosted-style URLs
+            endpoint: `https://${this.configService.get('DO_SPACES_REGION')}.digitaloceanspaces.com`, // e.g. sfo2
+            region: this.configService.get('DO_SPACES_REGION'),
+            forcePathStyle: false, // ✅ use virtual-hosted style (no double bucket)
             credentials: {
-                accessKeyId: this.configService.get<string>('DO_SPACES_KEY'),
-                secretAccessKey: this.configService.get<string>('DO_SPACES_SECRET'),
+                accessKeyId: this.configService.get('DO_SPACES_KEY'),
+                secretAccessKey: this.configService.get('DO_SPACES_SECRET'),
             },
         });
     }
