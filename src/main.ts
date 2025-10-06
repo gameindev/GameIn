@@ -59,13 +59,22 @@ async function bootstrap() {
     const allowedOrigins =
         process.env.CORS_ORIGINS?.split(',').map((o) => o.trim()).filter(Boolean) || defaultOrigins;
 
+    const defaultAllowedHeaders = [
+        'Content-Type',
+        'Authorization',
+        'X-Requested-With',
+        'x-captcha-token',
+        'x-xsrf-token',
+    ];
+    const allowedHeaders = process.env.CORS_ALLOWED_HEADERS
+        ? process.env.CORS_ALLOWED_HEADERS.split(',').map((h) => h.trim()).filter(Boolean)
+        : defaultAllowedHeaders;
+
     app.enableCors({
         origin: allowedOrigins,
         methods: process.env.CORS_METHODS ?? 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
         credentials: true,
-        allowedHeaders:
-            process.env.CORS_ALLOWED_HEADERS ??
-            '*',
+        allowedHeaders,
         exposedHeaders: process.env.CORS_EXPOSED_HEADERS,
     });
 
