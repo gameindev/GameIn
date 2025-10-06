@@ -7,7 +7,7 @@ import { AuthType } from './enums/auth-type.enum';
 import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { UserTypeGuard } from './guards/user-type.guard';
 import { UserTypes } from './decorators/user-types.decorator';
-import { UserType } from 'src/users/enums/user-type.enums';
+import { UserType } from '../users/enums/user-type.enums';
 
 @Controller('auth')
 export class AuthController {

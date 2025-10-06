@@ -3,13 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user.entity';
 import { DataSource, Repository } from 'typeorm';
 import { PathcUserRoleDto } from '../dtos/patch-user-role.dto';
-import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
-import { HashingProvider } from 'src/auth/providers/hashing.provider';
-import { UsersBioService } from 'src/users-bio/providers/users-bio.service';
-import { UserType } from 'src/users/enums/user-type.enums';
-import { CreatorProfilesService } from 'src/creator-profiles/providers/creator-profiles.service';
-import { BrandProfilesService } from 'src/brand-profiles/providers/brand-profiles.service';
-import { GenerateTokensProvider } from 'src/auth/providers/generate-tokens.provider';
+import { ActiveUserData } from '@/auth/interfaces/active-user-data.interface';
+import { HashingProvider } from '@/auth/providers/hashing.provider';
+import { UsersBioService } from '@/users-bio/providers/users-bio.service';
+import { UserType } from '@/users/enums/user-type.enums';
+import { CreatorProfilesService } from '@/creator-profiles/providers/creator-profiles.service';
+import { BrandProfilesService } from '@/brand-profiles/providers/brand-profiles.service';
+import { GenerateTokensProvider } from '@/auth/providers/generate-tokens.provider';
 import { access } from 'fs';
 
 @Injectable()

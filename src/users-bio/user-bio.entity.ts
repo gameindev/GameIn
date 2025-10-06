@@ -1,5 +1,5 @@
-import { PreferredGames } from "src/preferred-games/preferred-games.entity";
-import { User } from "src/users/user.entity";
+import { PreferredGames } from "@/preferred-games/preferred-games.entity";
+import { User } from "@/users/user.entity";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, Index, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 

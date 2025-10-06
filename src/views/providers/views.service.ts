@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BrandProfile } from 'src/brand-profiles/brand-profile.entity';
+import { BrandProfile } from '@/brand-profiles/brand-profile.entity';
 import { Repository, MoreThan } from 'typeorm';
 import { ProfileView } from '../views.entity';
-import { CreatorProfile } from 'src/creator-profiles/creator-profile.entity';
+import { CreatorProfile } from '@/creator-profiles/creator-profile.entity';
 
 @Injectable()
 export class ViewsService {

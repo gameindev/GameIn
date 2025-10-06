@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import axios, { AxiosError } from 'axios';
 import axiosRetry from 'axios-retry';
 import * as Cheerio from 'cheerio';
-import { PatchPreferredGamesDto } from 'src/preferred-games/dto/patch-preferred-games.dto';
+import { PatchPreferredGamesDto } from '@/preferred-games/dto/patch-preferred-games.dto';
 
 // Setup axios globally with retry
 axiosRetry(axios, {

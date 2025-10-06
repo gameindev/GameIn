@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEnum, IsInt, IsOptional, IsString, MaxLength } from "class-validator";
-import { PaymentProvider } from "src/offerings/enums/payment-provider.enum";
+import { PaymentProvider } from "@/offerings/enums/payment-provider.enum";
 import { Unique } from "typeorm";
 
 

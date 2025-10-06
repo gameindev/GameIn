@@ -1,5 +1,5 @@
-import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
-import { User } from 'src/users/user.entity';
+import { ActiveUserData } from '@/auth/interfaces/active-user-data.interface';
+import { User } from '@/users/user.entity';
 import { ConnectionState, SocialPlatform } from '../enums/social-platform.enums';
 
 export interface SocialIntegrationServiceInterface {

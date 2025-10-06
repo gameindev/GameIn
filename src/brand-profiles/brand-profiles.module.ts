@@ -6,7 +6,7 @@ import { BrandProfile } from './brand-profile.entity';
 import { UpdateBrandProfileProvider } from './providers/update-brand-profile.provider';
 import { UpdateBrandCoverPicProvider } from './providers/update-brand-cover-pic.provider';
 import { UpdateBrandProfilePicProvider } from './providers/update-brand-profile-pic.provider';
-import { UploadsModule } from 'src/uploads/uploads.module';
+import { UploadsModule } from '@/uploads/uploads.module';
 
 @Module({
     controllers: [BrandProfilesController],

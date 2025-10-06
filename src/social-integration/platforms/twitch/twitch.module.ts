@@ -5,8 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SocialIntegration } from '../../entities/social-integration.entity';
 import twitchConfig from './twitch.config';
-import { UsersModule } from 'src/users/users.module';
-import { User } from 'src/users/user.entity';
+import { UsersModule } from '@/users/users.module';
+import { User } from '@/users/user.entity';
 
 @Module({
     imports: [

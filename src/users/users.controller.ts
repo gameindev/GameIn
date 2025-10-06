@@ -1,20 +1,19 @@
 /* eslint-disable */
 import { Body, ClassSerializerInterceptor, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards, UseInterceptors } from "@nestjs/common";
-import { UserTypeGuard } from "src/auth/guards/user-type.guard";
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { GetUsersParamDto } from "./dtos/get-user-param.dto";
 import { CreateUserDto } from "./dtos/post-create-user.dto";
 import { PatchUserDto } from "./dtos/patch-user.dto";
 import { UsersService } from "./providers/users.service";
-import { AccessTokenGuard } from "src/auth/guards/access-token/access-token.guard";
-import { Auth } from "src/auth/decorators/auth.decorator";
-import { AuthType } from "src/auth/enums/auth-type.enum";
-import { ActiveUser } from "src/auth/decorators/active-user.decorator";
-import { ActiveUserData } from "src/auth/interfaces/active-user-data.interface";
-import { PathcUserRoleDto } from "./dtos/patch-user-role.dto";
-import { UserTypes } from "src/auth/decorators/user-types.decorator";
 import { UserType } from "./enums/user-type.enums";
 import { create } from "domain";
+import { UserTypeGuard } from "@/auth/guards/user-type.guard";
+import { UserTypes } from "@/auth/decorators/user-types.decorator";
+import { AuthType } from "@/auth/enums/auth-type.enum";
+import { Auth } from "@/auth/decorators/auth.decorator";
+import { ActiveUserData } from "@/auth/interfaces/active-user-data.interface";
+import { ActiveUser } from "@/auth/decorators/active-user.decorator";
+import { PathcUserRoleDto } from "./dtos/patch-user-role.dto";
 
 
 

@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsArray, IsEnum, IsInt, IsOptional, IsString, IsUrl, Length } from 'class-validator';
 import { TeamLinkType } from '../enums/team-link-type.enum';
 import { Transform, Type } from 'class-transformer';
-import { PaymentProvider } from 'src/offerings/enums/payment-provider.enum';
+import { PaymentProvider } from '@/offerings/enums/payment-provider.enum';
 import { SocialLinkDto } from '../team-links/dtos/social-link.dto';
 import { SimpleLinkDto } from '../team-links/dtos/simple-link.dto';
 import { TeamMemberDto } from '../team-members/dtos/team-member.dto';

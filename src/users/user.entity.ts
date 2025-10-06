@@ -2,11 +2,11 @@
 
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { UserType } from "./enums/user-type.enums";
-import { CreatorProfile } from "src/creator-profiles/creator-profile.entity";
-import { BrandProfile } from "src/brand-profiles/brand-profile.entity";
+import { CreatorProfile } from "@/creator-profiles/creator-profile.entity";
+import { BrandProfile } from "@/brand-profiles/brand-profile.entity";
 import { Exclude } from "class-transformer";
-import { UserBio } from "src/users-bio/user-bio.entity";
-import { SocialIntegration } from "src/social-integration/entities/social-integration.entity";
+import { UserBio } from "@/users-bio/user-bio.entity";
+import { SocialIntegration } from "@/social-integration/entities/social-integration.entity";
 
 /**
  * User entity.

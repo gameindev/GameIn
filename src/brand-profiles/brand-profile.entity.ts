@@ -1,7 +1,7 @@
-import { UploadEntity } from "src/uploads/upload.entity";
-import { UserBio } from "src/users-bio/user-bio.entity";
-import { User } from "src/users/user.entity";
+
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, Index, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { UploadEntity } from "@/uploads/upload.entity";
+import { User } from "@/users/user.entity";
 
 /**
  * Brand Profile Entity

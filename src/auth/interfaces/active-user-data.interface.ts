@@ -1,4 +1,4 @@
-import { UserType } from "src/users/enums/user-type.enums";
+import { UserType } from "@/users/enums/user-type.enums";
 
 export interface ActiveUserData {
     // ID of the user

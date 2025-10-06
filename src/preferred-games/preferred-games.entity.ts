@@ -1,5 +1,5 @@
-import { UserBio } from "src/users-bio/user-bio.entity";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { UserBio } from "@/users-bio/user-bio.entity";
 
 
 /**

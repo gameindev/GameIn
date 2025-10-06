@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, In, Repository } from 'typeorm';
 import { TeamMembers } from '../team-members.entity';
 import { TeamMemberDto } from '../dtos/team-member.dto';
-import { TeamMemberRole } from 'src/teams/enums/team-member-role.enum';
-import { TeamMemberStatus } from 'src/teams/enums/team-member-status.enum';
+import { TeamMemberRole } from '@/teams/enums/team-member-role.enum';
+import { TeamMemberStatus } from '@/teams/enums/team-member-status.enum';
 
 @Injectable()
 export class TeamMembersService {

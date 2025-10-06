@@ -7,7 +7,7 @@ import { TeamMembersModule } from './team-members/team-members.module';
 import { TeamLinksModule } from './team-links/team-links.module';
 import { TeamMembers } from './team-members/team-members.entity';
 import { TeamLinks } from './team-links/team-links.entity';
-import { UploadsModule } from 'src/uploads/uploads.module';
+import { UploadsModule } from '@/uploads/uploads.module';
 
 @Module({
     controllers: [TeamsController],

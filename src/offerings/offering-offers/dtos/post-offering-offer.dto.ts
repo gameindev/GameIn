@@ -1,9 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { IsEnum, IsInt, IsOptional, IsPositive, IsString, MaxLength } from "class-validator";
-import { OfferingCategory } from "src/offerings/enums/offering-category.enum";
-import { SizePreset } from "src/offerings/enums/size-preset.enum";
-import { TimeMode } from "src/offerings/enums/time-mode.enum";
-import { SocialPlatform } from "src/social-integration/enums/social-platform.enums";
+import { OfferingCategory } from "@/offerings/enums/offering-category.enum";
+import { SocialPlatform } from "@/social-integration/enums/social-platform.enums";
+
 
 
 

@@ -5,9 +5,9 @@ import { OfferingOffersService } from '../offering-offers/providers/offering-off
 import { OfferingPriceService } from '../offering-price/providers/offering-price.service';
 import { CreateOfferingBundleDto } from '../dtos/post-offering-bundle.dto';
 import { CreateOfferingDto } from '../dtos/post-offering.dto';
-import { UsersService } from 'src/users/providers/users.service';
-import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
-import { UserType } from 'src/users/enums/user-type.enums';
+import { UsersService } from '@/users/providers/users.service';
+import { ActiveUserData } from '@/auth/interfaces/active-user-data.interface';
+import { UserType } from '@/users/enums/user-type.enums';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OfferingOffers } from '../offering-offers/offering-offers.entity';
 import { FindOfferingsParams } from '../enums/offering-type.enum';

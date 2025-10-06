@@ -3,8 +3,8 @@ import { UsersBioController } from './users-bio.controller';
 import { UsersBioService } from './providers/users-bio.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserBio } from './user-bio.entity';
-import { MetadataModule } from 'src/metadata/metadata.module';
-import { PreferredGamesModule } from 'src/preferred-games/preferred-games.module';
+import { MetadataModule } from '@/metadata/metadata.module';
+import { PreferredGamesModule } from '@/preferred-games/preferred-games.module';
 
 @Module({
     imports: [

@@ -1,6 +1,6 @@
-import { PaymentProvider } from "src/offerings/enums/payment-provider.enum";
-import { UploadEntity } from "src/uploads/upload.entity";
-import { User } from "src/users/user.entity";
+import { PaymentProvider } from "@/offerings/enums/payment-provider.enum";
+import { UploadEntity } from "@/uploads/upload.entity";
+import { User } from "@/users/user.entity";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, Index, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { TeamLinks } from "./team-links/team-links.entity";
 import { TeamMembers } from "./team-members/team-members.entity";

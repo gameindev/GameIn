@@ -19,8 +19,8 @@ import { TeamMemberStatus } from '../enums/team-member-status.enum';
 import { SocialLinkDto } from '../team-links/dtos/social-link.dto';
 import { SimpleLinkDto } from '../team-links/dtos/simple-link.dto';
 import { UpdateTeamDto } from '../dtos/patch-team.dto';
-import { UploadsService } from 'src/uploads/providers/uploads.service';
-import { UploadEntity } from 'src/uploads/upload.entity';
+import { UploadsService } from '@/uploads/providers/uploads.service';
+import { UploadEntity } from '@/uploads/upload.entity';
 
 
 

@@ -5,7 +5,7 @@ import { TeamLinks } from '../team-links.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { SocialLinkDto } from '../dtos/social-link.dto';
 import { SimpleLinkDto } from '../dtos/simple-link.dto';
-import { TeamLinkType } from 'src/teams/enums/team-link-type.enum';
+import { TeamLinkType } from '@/teams/enums/team-link-type.enum';
 
 @Injectable()
 export class TeamLinksService {

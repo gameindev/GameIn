@@ -4,8 +4,8 @@ import { EventType } from "../enums/event-type.enum";
 import { Type } from "class-transformer";
 import { OfferingStatus } from "../enums/offering-status.enum";
 import { ApiProperty } from "@nestjs/swagger";
-import { SocialPlatform } from "src/social-integration/enums/social-platform.enums";
 import { bool, boolean } from "joi";
+import { SocialPlatform } from "@/social-integration/enums/social-platform.enums";
 
 
 /**

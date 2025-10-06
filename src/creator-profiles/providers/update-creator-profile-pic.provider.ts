@@ -1,8 +1,8 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { CreatorProfile } from "../creator-profile.entity";
 import { Repository } from "typeorm";
-import { UploadsService } from "src/uploads/providers/uploads.service";
 import { BadRequestException, InternalServerErrorException } from "@nestjs/common";
+import { UploadsService } from "@/uploads/providers/uploads.service";
 
 export class UpdateCreatorProfilePicProvider {
     constructor(

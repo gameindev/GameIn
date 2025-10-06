@@ -4,8 +4,8 @@ import { Repository } from 'typeorm';
 import { SocialIntegration } from '../entities/social-integration.entity';
 import { SocialIntegrationProvider } from './social-integration.provider';
 import { ConnectionState, SocialPlatform } from '../enums/social-platform.enums';
-import { User } from 'src/users/user.entity';
-import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
+import { User } from '@/users/user.entity';
+import { ActiveUserData } from '@/auth/interfaces/active-user-data.interface';
 import { ConnectionCheckResult, SocialIntegrationServiceInterface } from '../interfaces/social-integration-service.interface';
 
 type ProviderMap = Record<SocialPlatform, SocialIntegrationServiceInterface>;

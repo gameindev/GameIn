@@ -4,7 +4,7 @@ import { User } from '../user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
+import { ActiveUserData } from '@/auth/interfaces/active-user-data.interface';
 
 @Injectable()
 export class UpdateUserProvider {

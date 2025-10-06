@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Team } from "../teams.entity";
-import { User } from "src/users/user.entity";
+import { User } from "@/users/user.entity";
 import { TeamMemberRole } from "../enums/team-member-role.enum";
 import { TeamMemberStatus } from "../enums/team-member-status.enum";
 

@@ -3,7 +3,7 @@ import { ConfigService, ConfigType } from '@nestjs/config';
 import { EmailProviderInterface, SendOptions } from './interfaces/email-provider.interface';
 import * as fs from 'fs';
 import * as path from 'path';
-import appConfig from 'src/config/app.config';
+import appConfig from '@/config/app.config';
 import Handlebars from 'handlebars';
 
 @Injectable()

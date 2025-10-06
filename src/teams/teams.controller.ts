@@ -19,7 +19,7 @@ import { TeamsService } from './providers/teams.service';
 import { CreateTeamDto } from './dtos/post-team.dto';
 import { CreateTeamWithFilesDto } from './dtos/post-team.with-files.dto';
 import { TeamMemberDto } from './team-members/dtos/team-member.dto';
-import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
+import { ActiveUser } from '@/auth/decorators/active-user.decorator';
 import { SimpleLinkDto } from './team-links/dtos/simple-link.dto';
 import { SocialLinkDto } from './team-links/dtos/social-link.dto';
 import { UpdateTeamDto } from './dtos/patch-team.dto';

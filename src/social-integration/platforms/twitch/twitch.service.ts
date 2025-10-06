@@ -5,12 +5,12 @@ import { firstValueFrom } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SocialIntegration } from '../../entities/social-integration.entity';
-import { User } from 'src/users/user.entity';
+import { User } from '@/users/user.entity';
 import { SocialPlatform } from '../../enums/social-platform.enums';
 import { SocialIntegrationServiceInterface } from '../../interfaces/social-integration-service.interface';
 import twitchConfig from './twitch.config';
-import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
-import { UsersService } from 'src/users/providers/users.service';
+import { ActiveUserData } from '@/auth/interfaces/active-user-data.interface';
+import { UsersService } from '@/users/providers/users.service';
 
 @Injectable()
 export class TwitchService implements SocialIntegrationServiceInterface {

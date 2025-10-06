@@ -13,8 +13,8 @@ import {
 import { FollowDto } from './dtos/follow.dto';
 import { UserFollowService } from './providers/user-follow.service';
 import { ApiBearerAuth, ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
-import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
+import { ActiveUser } from '@/auth/decorators/active-user.decorator';
+import { ActiveUserData } from '@/auth/interfaces/active-user-data.interface';
 
 @ApiTags('User-Follow')
 @Controller('users')
