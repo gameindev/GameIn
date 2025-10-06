@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { S3UploadProvider } from './providers/s3-upload.provider';
 import { LocalUploadProvider } from './providers/local-upload.provider';
 import { UploadEntity } from './upload.entity';
+import { DOUploadProvider } from './providers/do-upload.provider';
 
 const UploadProviderFactory: Provider = {
     provide: 'UploadProviderInterface',
@@ -16,6 +17,8 @@ const UploadProviderFactory: Provider = {
         switch (uploadStrategy) {
             case 's3':
                 return new S3UploadProvider(configService);
+            case 'do':
+                return new DOUploadProvider(configService);
             case 'local':
             default:
                 return new LocalUploadProvider();
