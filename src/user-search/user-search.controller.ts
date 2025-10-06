@@ -2,9 +2,10 @@ import { ClassSerializerInterceptor, Controller, Get, Query, UseGuards, UseInter
 import { UserSearchService } from './providers/user-search.service';
 import { UserSearchDto } from './dtos/user-search.dto';
 import { ApiBearerAuth, ApiOperation, ApiProperty, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { UserTypeGuard } from '@/auth/guards/user-type.guard';
-import { UserType } from '@/users/enums/user-type.enums';
-import { UserTypes } from '@/auth/decorators/user-types.decorator';
+import { UserTypeGuard } from '../auth/guards/user-type.guard';
+import { UserType } from '../users/enums/user-type.enums';
+import { UserTypes } from '../auth/decorators/user-types.decorator';
+
 
 @ApiTags('Search')
 @Controller('search')

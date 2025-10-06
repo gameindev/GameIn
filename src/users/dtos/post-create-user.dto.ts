@@ -3,9 +3,7 @@
 import { IsBoolean, IsEmail, IsEnum, IsISO8601, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength, ValidateNested } from "class-validator";
 import { UserType } from "../enums/user-type.enums";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { Type } from "class-transformer";
-import { CreateCreatorProfileDto } from "@/creator-profiles/dtos/create-creatorProfile.dto";
-import { CreateBrandProfileDto } from "@/brand-profiles/dtos/create-brandProfile.dto";
+
 
 
 /**

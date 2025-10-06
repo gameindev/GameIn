@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException } from '@
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreatorProfile } from '../creator-profile.entity';
 import { Repository } from 'typeorm';
-import { UploadsService } from '@/uploads/providers/uploads.service';
+import { UploadsService } from '../../uploads/providers/uploads.service';
 
 @Injectable()
 export class UpdateCreatorCoverPicProvider {

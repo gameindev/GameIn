@@ -10,10 +10,10 @@ import { Offering } from './offerings.entity';
 import { OfferingOffers } from './offering-offers/offering-offers.entity';
 import { OfferingPrice } from './offering-price/offering-price.entity';
 import { OfferingBaseService } from './providers/offering.base.service';
-import { UsersModule } from '@/users/users.module';
 import { OfferingsScheduler } from './scheduler/offerings.scheduler';
 import { CreateAdjustmentProvider } from './providers/create-adjustment.provider';
-import { UploadsModule } from '@/uploads/uploads.module';
+import { UsersModule } from '../users/users.module';
+import { UploadsModule } from '../uploads/uploads.module';
 
 @Module({
     controllers: [OfferingsController],

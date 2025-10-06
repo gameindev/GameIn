@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional, PartialType } from "@nestjs/swagger";
 import { IsArray, IsInt, IsNotEmpty, IsOptional, IsString, ValidateNested } from "class-validator";
 import { CreateBioDto } from "./create-bio.dto";
 import { Type } from "class-transformer";
-import { PatchPreferredGamesDto } from "@/preferred-games/dto/patch-preferred-games.dto";
+import { PatchPreferredGamesDto } from "../../preferred-games/dto/patch-preferred-games.dto";
 
 /**
  * Patch bio DTO.

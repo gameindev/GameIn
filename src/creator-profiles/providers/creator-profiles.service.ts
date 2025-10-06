@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreatorProfile } from '../creator-profile.entity';
 import { QueryRunner, Repository } from 'typeorm';
-import { User } from '@/users/user.entity';
 import { PatchCreatorProfileDto } from '../dtos/patch-creatorProfile.dto';
 import { UpdateCreatorProfileProvider } from './update-creator-profile.provider';
 import { UpdateCreatorProfilePicProvider } from './update-creator-profile-pic.provider';
 import { UpdateCreatorCoverPicProvider } from './update-creator-cover-pic.provider';
+import { User } from '../../users/user.entity';
 
 /**
  * Creator Profiles service.

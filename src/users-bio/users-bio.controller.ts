@@ -1,10 +1,9 @@
 import { Body, Controller, Get, Patch, Query } from '@nestjs/common';
 import { UsersBioService } from './providers/users-bio.service';
-import { MetadataService } from '@/metadata/providers/metadata.service';
-import { Auth } from '@/auth/decorators/auth.decorator';
-import { AuthType } from '@/auth/enums/auth-type.enum';
+
 import { PatchBioDto } from './dtos/patch-bio.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { MetadataService } from '../metadata/providers/metadata.service';
 
 @Controller('users-bio')
 export class UsersBioController {

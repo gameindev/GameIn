@@ -1,14 +1,14 @@
 import { HttpService } from '@nestjs/axios';
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { ActiveUserData } from '@/auth/interfaces/active-user-data.interface';
-import { SocialIntegrationServiceInterface } from '@/social-integration/interfaces/social-integration-service.interface';
 import discordConfig from './discord.config';
 import { ConfigType } from '@nestjs/config';
-import { SocialIntegration } from '@/social-integration/entities/social-integration.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { firstValueFrom } from 'rxjs';
-import { SocialPlatform } from '@/social-integration/enums/social-platform.enums';
+import { SocialIntegrationServiceInterface } from '../../interfaces/social-integration-service.interface';
+import { SocialIntegration } from '../../entities/social-integration.entity';
+import { ActiveUserData } from '../../../auth/interfaces/active-user-data.interface';
+import { SocialPlatform } from '../../enums/social-platform.enums';
 
 @Injectable()
 export class DiscordService implements SocialIntegrationServiceInterface {

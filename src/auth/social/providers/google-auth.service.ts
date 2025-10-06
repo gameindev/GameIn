@@ -1,10 +1,10 @@
 import { forwardRef, Inject, Injectable, OnModuleInit, UnauthorizedException } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { OAuth2Client } from 'google-auth-library';
-import jwtConfig from '@/auth/config/jwt.config';
 import { GoogleTokenDto } from '../dtos/google-token.dto';
-import { UsersService } from '@/users/providers/users.service';
-import { GenerateTokensProvider } from '@/auth/providers/generate-tokens.provider';
+import jwtConfig from '../../config/jwt.config';
+import { UsersService } from '../../../users/providers/users.service';
+import { GenerateTokensProvider } from '../../providers/generate-tokens.provider';
 
 @Injectable()
 export class GoogleAuthService implements OnModuleInit {

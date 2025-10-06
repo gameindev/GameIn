@@ -4,13 +4,6 @@ import { OfferingsService } from './providers/offerings.service';
 import { CreateOfferingDto } from './dtos/post-offering.dto';
 import { CreateOfferingBundleDto } from './dtos/post-offering-bundle.dto';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
-import { UserTypeGuard } from '@/auth/guards/user-type.guard';
-import { UserTypes } from '@/auth/decorators/user-types.decorator';
-import { UserType } from '@/users/enums/user-type.enums';
-import { ActiveUser } from '@/auth/decorators/active-user.decorator';
-import { ActiveUserData } from '@/auth/interfaces/active-user-data.interface';
-import { Auth } from '@/auth/decorators/auth.decorator';
-import { AuthType } from '@/auth/enums/auth-type.enum';
 import { FindOfferingsQueryDto } from './dtos/get-offering.dto';
 import { Offering } from './offerings.entity';
 import { OfferingOffersService } from './offering-offers/providers/offering-offers.service';
@@ -19,6 +12,13 @@ import { PatchOfferingBundleDto } from './dtos/patch-offering-bundle.dto';
 import { PatchOfferingDto } from './dtos/patch-offering.dto';
 import { PatchOfferingOfferDto } from './offering-offers/dtos/patch-offering-offer.dto';
 import { OfferingCategory } from './enums/offering-category.enum';
+import { UserTypeGuard } from '../auth/guards/user-type.guard';
+import { UserType } from '../users/enums/user-type.enums';
+import { UserTypes } from '../auth/decorators/user-types.decorator';
+import { ActiveUser } from '../auth/decorators/active-user.decorator';
+import { ActiveUserData } from '../auth/interfaces/active-user-data.interface';
+import { AuthType } from '../auth/enums/auth-type.enum';
+import { Auth } from '../auth/decorators/auth.decorator';
 
 @Controller('offerings')
 @ApiBearerAuth()

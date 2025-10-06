@@ -4,7 +4,7 @@ import { OfferingOffersService } from './providers/offering-offers.service';
 import { OfferingOffers } from './offering-offers.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OfferingsModule } from '../offerings.module';
-import { UsersModule } from '@/users/users.module';
+import { UsersModule } from '../../users/users.module';
 
 @Module({
     controllers: [OfferingOffersController],

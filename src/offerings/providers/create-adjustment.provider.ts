@@ -6,10 +6,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Offering } from '../offerings.entity';
 import { Repository } from 'typeorm';
 import { PatchOfferingBundleDto } from '../dtos/patch-offering-bundle.dto';
-import { UploadsService } from '@/uploads/providers/uploads.service';
 import { OfferingOffersService } from '../offering-offers/providers/offering-offers.service';
-import { ActiveUserData } from '@/auth/interfaces/active-user-data.interface';
-import { UserType } from '@/users/enums/user-type.enums';
+import { UploadsService } from '../../uploads/providers/uploads.service';
+import { ActiveUserData } from '../../auth/interfaces/active-user-data.interface';
+import { UserType } from '../../users/enums/user-type.enums';
 
 @Injectable()
 export class CreateAdjustmentProvider {

@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { SocialPlatform } from "../enums/social-platform.enums";
-import { User } from "@/users/user.entity";
+import { User } from "../../users/user.entity";
+
 
 
 /**

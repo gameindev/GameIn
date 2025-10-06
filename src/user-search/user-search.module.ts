@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { UserSearchController } from './user-search.controller';
 import { UserSearchService } from './providers/user-search.service';
-import { UsersModule } from '@/users/users.module';
+import { UsersModule } from '../users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '@/users/user.entity';
-import { CreatorProfile } from '@/creator-profiles/creator-profile.entity';
-import { BrandProfile } from '@/brand-profiles/brand-profile.entity';
+import { User } from '../users/user.entity';
+import { CreatorProfile } from '../creator-profiles/creator-profile.entity';
+import { BrandProfile } from '../brand-profiles/brand-profile.entity';
+
 
 @Module({
     controllers: [UserSearchController],

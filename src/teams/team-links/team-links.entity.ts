@@ -1,7 +1,7 @@
 import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Team } from "../teams.entity";
 import { TeamLinkType } from "../enums/team-link-type.enum";
-import { SocialPlatform } from "@/social-integration/enums/social-platform.enums";
+import { SocialPlatform } from "../../social-integration/enums/social-platform.enums";
 
 /**
  * TeamLinks Entity

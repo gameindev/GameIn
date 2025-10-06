@@ -1,8 +1,9 @@
-import { User } from '../user.entity';
-import { UserType } from '../enums/user-type.enums';
-import { CreatorProfile } from '@/creator-profiles/creator-profile.entity';
-import { BrandProfile } from '@/brand-profiles/brand-profile.entity';
-import { Repository } from 'typeorm';
+import { Repository } from "typeorm";
+import { CreatorProfile } from "../../creator-profiles/creator-profile.entity";
+import { User } from "../user.entity";
+import { BrandProfile } from "../../brand-profiles/brand-profile.entity";
+import { UserType } from "../enums/user-type.enums";
+
 
 interface PopulateOptions {
     users: User[];

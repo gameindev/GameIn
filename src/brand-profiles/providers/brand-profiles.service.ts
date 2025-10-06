@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BrandProfile } from '../brand-profile.entity';
 import { QueryRunner, Repository } from 'typeorm';
-import { User } from '@/users/user.entity';
 import { PatchBrandProfileDto } from '../dtos/patch-brandProfile.dto';
 import { UpdateBrandProfileProvider } from './update-brand-profile.provider';
 import { UpdateBrandCoverPicProvider } from './update-brand-cover-pic.provider';
 import { UpdateBrandProfilePicProvider } from './update-brand-profile-pic.provider';
+import { User } from '../../users/user.entity';
 
 @Injectable()
 export class BrandProfilesService {

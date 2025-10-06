@@ -2,15 +2,15 @@ import { HttpService } from '@nestjs/axios';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ActiveUserData } from '@/auth/interfaces/active-user-data.interface';
-import { SocialIntegration } from '@/social-integration/entities/social-integration.entity';
-import { SocialIntegrationServiceInterface } from '@/social-integration/interfaces/social-integration-service.interface';
-import { UsersService } from '@/users/providers/users.service';
 import { Repository } from 'typeorm';
 import xConfig from './x.config';
 import { firstValueFrom } from 'rxjs';
-import { SocialPlatform } from '@/social-integration/enums/social-platform.enums';
 import { createHash, randomBytes } from 'crypto';
+import { SocialIntegrationServiceInterface } from '../../interfaces/social-integration-service.interface';
+import { SocialIntegration } from '../../entities/social-integration.entity';
+import { UsersService } from '../../../users/providers/users.service';
+import { ActiveUserData } from '../../../auth/interfaces/active-user-data.interface';
+import { SocialPlatform } from '../../enums/social-platform.enums';
 
 const pkceStore = new Map<string, { verifier: string; userId: number; ts: number }>();
 

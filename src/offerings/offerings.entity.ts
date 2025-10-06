@@ -4,8 +4,8 @@ import { EventType } from "./enums/event-type.enum";
 import { OfferingStatus } from "./enums/offering-status.enum";
 import { OfferingOffers } from "./offering-offers/offering-offers.entity";
 import { OfferingPrice } from "./offering-price/offering-price.entity";
-import { User } from "@/users/user.entity";
-import { UploadEntity } from "@/uploads/upload.entity";
+import { User } from "../users/user.entity";
+import { UploadEntity } from "../uploads/upload.entity";
 
 
 

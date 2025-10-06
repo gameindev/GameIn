@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { IsDefined, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min } from "class-validator";
-import { OfferingCategory } from "@/offerings/enums/offering-category.enum";
+import { OfferingCategory } from "../../enums/offering-category.enum";
+
 
 
 export class PatchOfferingOfferDto {

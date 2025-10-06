@@ -1,9 +1,8 @@
 import { forwardRef, Inject, Injectable, RequestTimeoutException, UnauthorizedException } from '@nestjs/common';
 import { SigninDto } from '../dtos/signin.dto';
-import { UsersService } from '@/users/providers/users.service';
 import { HashingProvider } from './hashing.provider';
 import { GenerateTokensProvider } from './generate-tokens.provider';
-import { UserType } from '@/users/enums/user-type.enums';
+import { UsersService } from '../../users/providers/users.service';
 
 @Injectable()
 export class SignInProvider {

@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsString, IsUrl, Length } from 'class-validator';
-import { TeamLinkType } from '@/teams/enums/team-link-type.enum';
+import { TeamLinkType } from '../../enums/team-link-type.enum';
 
 export class SimpleLinkDto {
     @ApiProperty({

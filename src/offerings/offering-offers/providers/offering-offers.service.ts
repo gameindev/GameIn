@@ -3,12 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { CreateOfferingOfferDto } from '../dtos/post-offering-offer.dto';
 import { OfferingOffers } from '../offering-offers.entity';
-import { Offering } from '@/offerings/offerings.entity';
-import { OfferingStatus } from '@/offerings/enums/offering-status.enum';
-import { OfferingsService } from '@/offerings/providers/offerings.service';
-import { ActiveUserData } from '@/auth/interfaces/active-user-data.interface';
 import { isEqual } from 'lodash';
-import { UsersService } from '@/users/providers/users.service';
+import { OfferingsService } from '../../providers/offerings.service';
+import { UsersService } from '../../../users/providers/users.service';
+import { Offering } from '../../offerings.entity';
+import { ActiveUserData } from '../../../auth/interfaces/active-user-data.interface';
+import { OfferingStatus } from '../../enums/offering-status.enum';
 
 
 @Injectable()

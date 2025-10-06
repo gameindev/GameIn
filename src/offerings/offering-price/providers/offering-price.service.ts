@@ -3,9 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { OfferingPrice } from '../offering-price.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { CreateOfferingPriceDto } from '../dtos/post-offer-price.dto';
-import { Offering } from '@/offerings/offerings.entity';
-import { OfferingStatus } from '@/offerings/enums/offering-status.enum';
-import { OfferingsService } from '@/offerings/providers/offerings.service';
+import { OfferingsService } from '../../providers/offerings.service';
+import { OfferingStatus } from '../../enums/offering-status.enum';
 
 @Injectable()
 export class OfferingPriceService {

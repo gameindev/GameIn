@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsNotEmpty, IsOptional } from 'class-validator';
-import { TeamMemberRole } from '@/teams/enums/team-member-role.enum';
-import { TeamMemberStatus } from '@/teams/enums/team-member-status.enum';
+import { TeamMemberRole } from '../../enums/team-member-role.enum';
+import { TeamMemberStatus } from '../../enums/team-member-status.enum';
 
 export class TeamMemberDto {
     @ApiProperty({

@@ -6,13 +6,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from '../dtos/post-create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { PatchUserDto } from '../dtos/patch-user.dto';
-import { CreatorProfilesService } from '@/creator-profiles/providers/creator-profiles.service';
 import { UserType } from '../enums/user-type.enums';
-import { BrandProfilesService } from '@/brand-profiles/providers/brand-profiles.service';
 import { CreateUserProvider } from './create-user.provider';
 import { FindOneUserByEmailProvider } from './find-one-user-by-email.provider';
 import { UpdateUserProvider } from './update-user.provider';
-import { ActiveUserData } from '@/auth/interfaces/active-user-data.interface';
 import { FindOneByIdentifierProvider } from './find-one-by-identifier.provider';
 import { FindOneByGoogleIdProvider } from './find-one-by-google-id.provider';
 import { CreateGoogleUserProvider } from './create-google-user.provider';
@@ -21,6 +18,7 @@ import { PathcUserRoleDto } from '../dtos/patch-user-role.dto';
 import { UpdateUserRoleProvider } from './update-user-role.provider';
 import { CheckOneByIdentifierProvider } from './check-one-by-identifier.provider';
 import { FindOneByUsernameProvider } from './find-user-by-username-provider';
+import { ActiveUserData } from '../../auth/interfaces/active-user-data.interface';
 
 /**
  * Users service.

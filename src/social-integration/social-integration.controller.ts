@@ -3,10 +3,10 @@ import { SocialIntegrationService } from './providers/social-integration.service
 import { SocialPlatform } from './enums/social-platform.enums';
 import { Request } from 'express';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { Auth } from '@/auth/decorators/auth.decorator';
-import { AuthType } from '@/auth/enums/auth-type.enum';
-import { ActiveUser } from '@/auth/decorators/active-user.decorator';
-import { ActiveUserData } from '@/auth/interfaces/active-user-data.interface';
+import { ActiveUserData } from '../auth/interfaces/active-user-data.interface';
+import { ActiveUser } from '../auth/decorators/active-user.decorator';
+import { AuthType } from '../auth/enums/auth-type.enum';
+import { Auth } from '../auth/decorators/auth.decorator';
 
 @ApiTags('Social Integration')
 @Controller('social-integration')

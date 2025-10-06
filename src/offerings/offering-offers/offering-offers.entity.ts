@@ -1,7 +1,7 @@
 import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
 import { Offering } from "../offerings.entity";
 import { OfferingCategory } from "../enums/offering-category.enum";
-import { SocialPlatform } from "@/social-integration/enums/social-platform.enums";
+import { SocialPlatform } from "../../social-integration/enums/social-platform.enums";
 
 
 

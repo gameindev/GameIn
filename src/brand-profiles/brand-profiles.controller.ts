@@ -2,10 +2,10 @@ import { Body, Controller, Param, Patch, UploadedFile, UploadedFiles, UseGuards,
 import { BrandProfilesService } from './providers/brand-profiles.service';
 import { PatchBrandProfileDto } from './dtos/patch-brandProfile.dto';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { UserTypeGuard } from '@/auth/guards/user-type.guard';
-import { UserTypes } from '@/auth/decorators/user-types.decorator';
-import { UserType } from '@/users/enums/user-type.enums';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { UserTypeGuard } from '../auth/guards/user-type.guard';
+import { UserType } from '../users/enums/user-type.enums';
+import { UserTypes } from '../auth/decorators/user-types.decorator';
 
 /**
  * Controller for Brand Profiles.

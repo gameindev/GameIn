@@ -3,7 +3,6 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './providers/auth.service';
 import { HashingProvider } from './providers/hashing.provider';
 import { BcryptProvider } from './providers/bcrypt.provider';
-import { UsersModule } from '@/users/users.module';
 import { SignInProvider } from './providers/sign-in.provider';
 import { ConfigModule } from '@nestjs/config';
 import jwtConfig from './config/jwt.config';
@@ -12,6 +11,7 @@ import { GenerateTokensProvider } from './providers/generate-tokens.provider';
 import { RefreshTokensProvider } from './providers/refresh-tokens.provider';
 import { GoogleAuthController } from './social/google-auth.controller';
 import { GoogleAuthService } from './social/providers/google-auth.service';
+import { UsersModule } from '../users/users.module';
 
 @Module({
     controllers: [AuthController, GoogleAuthController],

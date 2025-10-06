@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedExceptio
 import { JwtService } from '@nestjs/jwt';
 import { Socket } from 'socket.io';
 import { ConfigType } from '@nestjs/config';
-import jwtConfig from '@/auth/config/jwt.config';
+import jwtConfig from '../config/jwt.config';
 
 @Injectable()
 export class WsAccessTokenGuard implements CanActivate {

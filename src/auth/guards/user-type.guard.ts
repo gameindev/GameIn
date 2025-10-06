@@ -1,8 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { UserType } from '@/users/enums/user-type.enums';
-import { ActiveUserData } from '@/auth/interfaces/active-user-data.interface';
-import { REQUEST_USER_KEY } from '@/auth/contants/auth.contants';
+import { UserType } from '../../users/enums/user-type.enums';
+import { REQUEST_USER_KEY } from '../contants/auth.contants';
+import { ActiveUserData } from '../interfaces/active-user-data.interface';
 
 @Injectable()
 export class UserTypeGuard implements CanActivate {

@@ -4,13 +4,13 @@ import * as bcrypt from 'bcrypt';
 import { DataSource, Repository } from 'typeorm';
 import { User } from '../user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreatorProfilesService } from '@/creator-profiles/providers/creator-profiles.service';
-import { BrandProfilesService } from '@/brand-profiles/providers/brand-profiles.service';
-import { UserType } from '../enums/user-type.enums';
-import { HashingProvider } from '@/auth/providers/hashing.provider';
-import { UsersBioService } from '@/users-bio/providers/users-bio.service';
+import { CreatorProfilesService } from '../../creator-profiles/providers/creator-profiles.service';
+import { BrandProfilesService } from '../../brand-profiles/providers/brand-profiles.service';
+import { HashingProvider } from '../../auth/providers/hashing.provider';
+import { EmailsService } from '../../emails/emails.service';
 import { generateToken } from '../utils/common-utilities';
-import { EmailsService } from '@/emails/emails.service';
+import { UserType } from '../enums/user-type.enums';
+
 
 @Injectable()
 export class CreateUserProvider {

@@ -3,10 +3,10 @@ import { CreatorProfilesController } from './creator-profiles.controller';
 import { CreatorProfilesService } from './providers/creator-profiles.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CreatorProfile } from './creator-profile.entity';
-import { UploadsModule } from '@/uploads/uploads.module';
 import { UpdateCreatorProfileProvider } from './providers/update-creator-profile.provider';
 import { UpdateCreatorProfilePicProvider } from './providers/update-creator-profile-pic.provider';
 import { UpdateCreatorCoverPicProvider } from './providers/update-creator-cover-pic.provider';
+import { UploadsModule } from '../uploads/uploads.module';
 
 @Module({
     controllers: [CreatorProfilesController],

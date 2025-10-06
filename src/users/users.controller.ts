@@ -7,13 +7,13 @@ import { PatchUserDto } from "./dtos/patch-user.dto";
 import { UsersService } from "./providers/users.service";
 import { UserType } from "./enums/user-type.enums";
 import { create } from "domain";
-import { UserTypeGuard } from "@/auth/guards/user-type.guard";
-import { UserTypes } from "@/auth/decorators/user-types.decorator";
-import { AuthType } from "@/auth/enums/auth-type.enum";
-import { Auth } from "@/auth/decorators/auth.decorator";
-import { ActiveUserData } from "@/auth/interfaces/active-user-data.interface";
-import { ActiveUser } from "@/auth/decorators/active-user.decorator";
 import { PathcUserRoleDto } from "./dtos/patch-user-role.dto";
+import { UserTypeGuard } from "../auth/guards/user-type.guard";
+import { UserTypes } from "../auth/decorators/user-types.decorator";
+import { AuthType } from "../auth/enums/auth-type.enum";
+import { Auth } from "../auth/decorators/auth.decorator";
+import { ActiveUserData } from "../auth/interfaces/active-user-data.interface";
+import { ActiveUser } from "../auth/decorators/active-user.decorator";
 
 
 

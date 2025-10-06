@@ -1,7 +1,7 @@
 
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, Index, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { UploadEntity } from "@/uploads/upload.entity";
-import { User } from "@/users/user.entity";
+import { User } from "../users/user.entity";
+import { UploadEntity } from "../uploads/upload.entity";
 
 /**
  * Brand Profile Entity

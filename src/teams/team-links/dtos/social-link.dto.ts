@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsString, IsUrl, Length } from 'class-validator';
-import { SocialPlatform } from '@/social-integration/enums/social-platform.enums';
-import { TeamLinkType } from '@/teams/enums/team-link-type.enum';
+import { SocialPlatform } from '../../../social-integration/enums/social-platform.enums';
+import { TeamLinkType } from '../../enums/team-link-type.enum';
 
 export class SocialLinkDto {
     @ApiProperty({

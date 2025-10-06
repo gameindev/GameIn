@@ -5,7 +5,7 @@ import { Type } from "class-transformer";
 import { OfferingStatus } from "../enums/offering-status.enum";
 import { ApiProperty } from "@nestjs/swagger";
 import { bool, boolean } from "joi";
-import { SocialPlatform } from "@/social-integration/enums/social-platform.enums";
+import { SocialPlatform } from "../../social-integration/enums/social-platform.enums";
 
 
 /**

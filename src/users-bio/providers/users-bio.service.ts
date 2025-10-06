@@ -3,10 +3,11 @@ import { DataSource, Repository } from 'typeorm';
 import { UserBio } from '../user-bio.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateBioDto } from '../dtos/create-bio.dto';
-import { User } from '@/users/user.entity';
+
 import { PatchBioDto } from '../dtos/patch-bio.dto';
-import { PreferredGames } from '@/preferred-games/preferred-games.entity';
-import { PreferredGamesService } from '@/preferred-games/providers/preferred-games.service';
+import { PreferredGamesService } from '../../preferred-games/providers/preferred-games.service';
+import { User } from '../../users/user.entity';
+import { PreferredGames } from '../../preferred-games/preferred-games.entity';
 
 @Injectable()
 export class UsersBioService {

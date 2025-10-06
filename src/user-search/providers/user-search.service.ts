@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '@/users/user.entity';
 import { Brackets, Repository } from 'typeorm';
 import { UserSearchDto } from '../dtos/user-search.dto';
+import { User } from '../../users/user.entity';
 
 @Injectable()
 export class UserSearchService {

@@ -2,12 +2,10 @@ import { Body, Controller, Param, Patch, UploadedFile, UploadedFiles, UseGuards,
 import { CreatorProfilesService } from './providers/creator-profiles.service';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { PatchCreatorProfileDto } from './dtos/patch-creatorProfile.dto';
-import { UserTypeGuard } from '@/auth/guards/user-type.guard';
-import { UserType } from '@/users/enums/user-type.enums';
-import { UserTypes } from '@/auth/decorators/user-types.decorator';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { Auth } from '@/auth/decorators/auth.decorator';
-import { AuthType } from '@/auth/enums/auth-type.enum';
+import { UserTypeGuard } from '../auth/guards/user-type.guard';
+import { UserType } from '../users/enums/user-type.enums';
+import { UserTypes } from '../auth/decorators/user-types.decorator';
 
 
 /**
