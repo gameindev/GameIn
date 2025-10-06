@@ -1,0 +1,1 @@
+import{n as l,j as o,O as n,ab as p,s as c}from"./index-C5_jzTTu.js";const x=({allowedRoles:a})=>{const e=l(u=>{var s,t,r;return(r=(t=(s=u.user)==null?void 0:s.profile)==null?void 0:t.user)==null?void 0:r.user_type});return console.log(e),a.includes(e)?o.jsx(n,{}):o.jsx(p,{to:c.WELCOMEPAGE,replace:!0})};export{x as default};

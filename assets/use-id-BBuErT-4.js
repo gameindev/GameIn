@@ -1,0 +1,1 @@
+import{R as o,r as s,ax as u,Q as i}from"./index-C5_jzTTu.js";const a=o.useId||(()=>{});function d(){const e=a();return e?`mantine-${e.replace(/:/g,"")}`:""}function f(e){const t=d(),[n,r]=s.useState(t);return u(()=>{r(i())},[]),typeof e=="string"?e:typeof window>"u"?t:n}export{f as u};
