@@ -51,6 +51,11 @@ export class CreateAdjustmentProvider {
             }
 
 
+            if (dto.offering.status) {
+                offering.status = dto.offering.status;
+            }
+
+
             // Step 4: Adjust offers — pass the entity directly
             if (dto.offering.offers?.length) {
                 await this.offeringOffersService.adjustOffers(offering, dto.offering.offers, user);

@@ -2,8 +2,10 @@
 
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsArray, IsDefined, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min, ValidateNested } from "class-validator";
+import { IsArray, IsDefined, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min, ValidateNested } from "class-validator";
 import { PatchOfferingOfferDto } from "../offering-offers/dtos/patch-offering-offer.dto";
+import { OfferingStatus } from "../enums/offering-status.enum";
+
 
 export class PatchOfferingDto {
     @ApiProperty({
@@ -28,6 +30,17 @@ export class PatchOfferingDto {
     @IsOptional()
     @IsString()
     notes?: string;
+
+
+
+    @ApiPropertyOptional({
+        description: 'Status of the offering',
+        enum: OfferingStatus,
+        example: OfferingStatus.OFFERED
+    })
+    @IsEnum(OfferingStatus)
+    status?: OfferingStatus; 
+
 
     @ApiPropertyOptional({
         description: 'The offers for the current Offering',

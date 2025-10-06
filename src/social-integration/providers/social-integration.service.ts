@@ -61,7 +61,7 @@ export class SocialIntegrationService {
         try {
             const profile = await provider.probeProfile(row.access_token);
             const summary = provider.profileSummary?.(profile);
-            return { user_id: userId, platform, state: 'CONNECTED', label: this.labelFor('CONNECTED'), summary };
+            return { user_id: userId, platform, state: 'CONNECTED', label: this.labelFor('CONNECTED'), summary, integration_id: row.id };
         } catch (err) {
             // 4) Try refresh on auth failure (if refresh_token + provider supports refresh)
             if (this.isUnauthorized(err) && row.refresh_token && provider.refreshTokenIfNeeded(userId, row.refresh_token)) {
@@ -70,13 +70,13 @@ export class SocialIntegrationService {
                     if (refreshed?.access_token) {
                         row.access_token = refreshed.access_token;
                         if (refreshed.refresh_token) row.refresh_token = refreshed.refresh_token;
-                        await this.integrationRepo.save(row);
+                        const integration = await this.integrationRepo.save(row);
 
                         // Re-probe after refresh
                         try {
                             const profile = await provider.probeProfile(row.access_token);
                             const summary = provider.profileSummary?.(profile);
-                            return { user_id: userId, platform, state: 'CONNECTED', label: this.labelFor('CONNECTED'), refreshed: true, summary };
+                            return { user_id: userId, platform, state: 'CONNECTED', label: this.labelFor('CONNECTED'), integration_id: integration.id, refreshed: true, summary };
                         } catch (err2) {
                             this.logger.warn(`Re-probe failed after refresh (${platform}): ${err2?.message ?? err2}`);
                         }

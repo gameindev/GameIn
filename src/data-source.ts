@@ -1,7 +1,9 @@
 ﻿import 'reflect-metadata';
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { config } from 'dotenv';
 import * as dotenvFlow from 'dotenv-flow';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+
+// Entities
 import { User } from './users/user.entity';
 import { CreatorProfile } from './creator-profiles/creator-profile.entity';
 import { BrandProfile } from './brand-profiles/brand-profile.entity';
@@ -17,22 +19,25 @@ import { OfferingPrice } from './offerings/offering-price/offering-price.entity'
 import { Team } from './teams/teams.entity';
 import { TeamMembers } from './teams/team-members/team-members.entity';
 import { TeamLinks } from './teams/team-links/team-links.entity';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
-// This loads your .env files just like in your main app
-dotenvFlow.config();
+// ✅ Load environment variables for local/dev
+if (process.env.NODE_ENV !== 'production') {
+    dotenvFlow.config();
+}
+
+// ✅ Build DB connection settings
+const isProduction = process.env.NODE_ENV === 'production';
 
 export const dataSourceOptions: DataSourceOptions = {
     type: 'postgres',
-    host: process.env.DB_HOST,
-    port: parseInt(process.env.DB_PORT, 10),
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    schema: "public",
-    logging: ['error', 'query', 'warn'],
-    logger: 'advanced-console',
-    // You MUST list all your entities here for the CLI to find them
+    host: process.env.DB_HOST || 'localhost',
+    port: parseInt(process.env.DB_PORT ?? '5432', 10),
+    username: process.env.DB_USERNAME || 'postgres',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'gamein_db',
+    schema: 'public',
+
+    // 🧩 Entities
     entities: [
         User,
         UploadEntity,
@@ -48,16 +53,28 @@ export const dataSourceOptions: DataSourceOptions = {
         OfferingPrice,
         Team,
         TeamMembers,
-        TeamLinks
+        TeamLinks,
     ],
-    // This tells TypeORM where to find and create migration files
+
+    // 🧱 Migrations
     migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
 
-    // Set synchronize to false for migrations
+    // ⚙️ Logging — quieter in production
+    logging: isProduction ? ['error', 'warn'] : ['error', 'query', 'warn'],
+    logger: 'advanced-console',
+
+    // ❌ Never auto-sync in production (use migrations)
     synchronize: false,
+
     namingStrategy: new SnakeNamingStrategy(),
+
+    // 🛡️ SSL (DigitalOcean Managed PostgreSQL often requires this)
+    ssl: isProduction
+        ? {
+            rejectUnauthorized: false, // required for DO managed DBs
+        }
+        : false,
 };
 
 const dataSource = new DataSource(dataSourceOptions);
 export default dataSource;
-

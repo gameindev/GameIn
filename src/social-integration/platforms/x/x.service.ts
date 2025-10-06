@@ -111,7 +111,7 @@ export class XService implements SocialIntegrationServiceInterface {
 
             // <-- CHANGE 3: Use userId to find integration
             let integration = await this.integrationRepo.findOne({
-                where: { user: { id: userId }, platform: SocialPlatform.TWITCH }
+                where: { user: { id: userId }, platform: SocialPlatform.X }
             });
 
             if (integration) {
@@ -123,7 +123,7 @@ export class XService implements SocialIntegrationServiceInterface {
                 // <-- CHANGE 4: Create new integration with user ID
                 const newIntegration = this.integrationRepo.create({
                     user: { id: userId }, // Associate by ID
-                    platform: SocialPlatform.TWITCH,
+                    platform: SocialPlatform.X,
                     access_token,
                     refresh_token,
                     social_id: userProfile.id,

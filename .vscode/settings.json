@@ -12,6 +12,9 @@
     },
     "[handlebars]": {
         "editor.defaultFormatter": "mohd-akram.vscode-html-format"
+    },
+    "[markdown]": {
+        "editor.defaultFormatter": "yzhang.markdown-all-in-one"
     }
   }
   
