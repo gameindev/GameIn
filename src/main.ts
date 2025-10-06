@@ -55,7 +55,7 @@ async function bootstrap() {
     }
 
     /** ------------------ 🔐 CORS ------------------ */
-    const defaultOrigins = ['http://localhost:5173', 'http://localhost:5174'];
+    const defaultOrigins = ['http://localhost:5173', 'http://localhost:5174', 'https://frontend-app-vn9qp.ondigitalocean.app'];
     const allowedOrigins =
         process.env.CORS_ORIGINS?.split(',').map((o) => o.trim()).filter(Boolean) || defaultOrigins;
 
