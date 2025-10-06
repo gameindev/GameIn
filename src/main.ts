@@ -65,7 +65,7 @@ async function bootstrap() {
         credentials: true,
         allowedHeaders:
             process.env.CORS_ALLOWED_HEADERS ??
-            'Origin, X-Requested-With, Content-Type, Accept, Authorization, x-captcha-token',
+            '*',
         exposedHeaders: process.env.CORS_EXPOSED_HEADERS,
     });
 
