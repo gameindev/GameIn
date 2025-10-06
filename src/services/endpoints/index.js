@@ -25,7 +25,7 @@ export const API_PATHS = {
         LIST: "/offerings",
         DETAILS: (id) => `/offerings/${id}`,
         CREATE: "/offerings",
-        UPDATE: (id) => `/offerings/${id}`,
+        UPDATE: (id) => `/offerings/${id}/adjust`,
         DELETE: (id) => `/offerings/${id}`,
         DISPLAY_OFFERINGS: ({ page = 1, limit = 20, userId = undefined, relations = [] }) => {
             if (!userId) throw new Error('userId is required for DISPLAY_OFFERINGS');
@@ -40,6 +40,16 @@ export const API_PATHS = {
     SEARCH: {
         SEARCH_USERS: "/search/users",
     },
+    CONVERSATION: {
+        CREATE: "/messaging/conversation",
+        LIST: (id) => `/messaging/conversations/${id}`
+    },
+    SETTINGS: {
+        SOCIAL: {
+            CHECK_ALL: "/social-integration/status/all",
+            CONNECT: (platform) => `social-integration/connect?platform=${platform}`
+        }
+    }
     // SEARCH: ({ keyword, userType, country, page = 1, limit = 20 }) =>
     //   `/search/users?keyword=${keyword}${userType && `&user_type=${userType}`}${
     //     country && `&country=${country}`

@@ -1,3 +1,18 @@
+import {
+  Bell,
+  Bolt,
+  ChevronDown,
+  CreditCard,
+  Flame,
+  Home,
+  Newspaper,
+  Plug2,
+  Plus,
+  Shield,
+  Star,
+  User,
+} from "lucide-react";
+import { useState } from "react";
 import React from "react";
 import { Link, useLocation } from "react-router";
 import { SidebarStyles } from "../styles/layouts";
@@ -6,6 +21,7 @@ import { theme } from "../styles/theme/customTheme";
 import coverImage from "../assets/creators/creator_image.jpg";
 import AvatarSection from "./../components/shared/ui/AvatarSection";
 import routePaths from "../routes/endpoints";
+import { Accordion } from "@mantine/core";
 import {
   IconFlame,
   IconHome,
@@ -22,34 +38,80 @@ export default function Sidebar() {
     {
       icon: <IconHome size="1em" />,
       label: "Account",
+      active: false,
       link: routePaths.ACCOUNTS.DASHBOARD.ROOT,
     },
     {
       icon: <IconNews size="1em" />,
       label: "News Feed",
-      link: routePaths.ACCOUNTS.NEWSFEED.ROOT,
+      active: false,
+      link: routePaths.ACCOUNTS.DASHBOARD.ROOT,
     },
     {
       icon: <IconStar size="1em" />,
       label: "Creators",
+      active: false,
       link: routePaths.SEARCH.replace(":userType", "creator"),
     },
     {
       icon: <IconFlame size="1em" />,
       label: "Brands",
+      active: false,
       link: routePaths.SEARCH.replace(":userType", "brand"),
     },
     {
       icon: <IconSettings2 size="1em" />,
       label: "Settings",
-      link: routePaths.SETTINGS.ROOT,
+      active: false,
+      link: '#',
+      children: [
+        {
+          icon: <User size="1em" />,
+          label: "Account",
+          active: false,
+          link: routePaths.SETTINGS.ACCOUNT,
+        },
+        {
+          icon: <Plug2 size="1em" />,
+          label: "Integrations",
+          active: false,
+          link: routePaths.SETTINGS.INTEGRATIONS,
+        },
+        {
+          icon: <Bell size="1em" />,
+          label: "Notifications",
+          active: false,
+          link: routePaths.SETTINGS.NOTIFICATIONS,
+        },
+        {
+          icon: <Shield size="1em" />,
+          label: "Privacy",
+          active: false,
+          link: routePaths.SETTINGS.PRIVACY,
+        },
+        {
+          icon: <CreditCard size="1em" />,
+          label: "Payments",
+          active: false,
+          link: routePaths.SETTINGS.PAYMENTS,
+        },
+      ],
     },
   ];
 
-  const isActive = (itemPath, currentPath) => {
-    if (itemPath === "/") return currentPath === "/";
-    return currentPath === itemPath || currentPath.startsWith(itemPath + "/");
-  };
+  const [menuItems, setMenuItems] = useState(sidebarItems);
+
+  const handleActive = key => {
+    setMenuItems(prevItems =>
+      prevItems.map((item, index) =>
+        index === key ? { ...item, active: true } : { ...item, active: false }
+      )
+    );
+  }
+  // const isActive = (itemPath, currentPath) => {
+  //   if (itemPath === "/") return currentPath === "/";
+  //   return currentPath === itemPath || currentPath.startsWith(itemPath + "/");
+  // };
 
   return (
     <SidebarStyles>
@@ -77,7 +139,33 @@ export default function Sidebar() {
       </div>
       <div className="profile-links">
         <ul>
-          {sidebarItems.map((item, index) => {
+          {menuItems?.map(({ link, label, icon, children }, index) => (
+            <li key={index}>
+              <Accordion className="menu-accordion" variant="unstyled" radius="md" defaultValue="submenu">
+                <Accordion.Item value={label.toLowerCase()}>
+                  <Link to={link}>
+                     <Accordion.Control icon={icon} chevron={children ? '' : <></> }>{label}</Accordion.Control>
+                  </Link>
+                  {children && (
+                    <Accordion.Panel>
+                      <ul>
+                        {children?.map(({ link, label, icon, active }, subIndex) => (
+                          <li key={subIndex}>
+                            <Link to={link} className={active ? "active" : ""} onClick={() => handleActive(index)}>
+                              {icon}
+                              <span>{label}</span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </Accordion.Panel>
+                  )}
+                </Accordion.Item>
+              </Accordion>
+              {index % 2 !== 0 && <div className="divider"></div>}
+            </li>
+          ))}
+          {/* {sidebarItems.map((item, index) => {
             const active = isActive(item.link, location.pathname);
             return (
               <li key={index} className={active ? "active" : ""}>
@@ -88,7 +176,7 @@ export default function Sidebar() {
                 {index % 2 !== 0 && <div className="divider"></div>}
               </li>
             );
-          })}
+          })} */}
         </ul>
       </div>
     </SidebarStyles>

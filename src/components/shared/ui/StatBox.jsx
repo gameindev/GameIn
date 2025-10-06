@@ -1,32 +1,41 @@
 import { useState } from "react";
 import {
-    Box,
-    Center,
-    Text,
-    Flex,
-    Collapse,
-    ActionIcon,
-    Button,
+  Box,
+  Center,
+  Text,
+  Flex,
+  Collapse,
+  ActionIcon,
+  Button,
 } from "@mantine/core";
 import { theme } from "../../../styles/theme/customTheme";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 
 export default function StatBox({
-    title,
-    action,
-    background,
-    children,
-    accordion = false,
-    actionCTA = false,
-    defaultOpen = true,
+  title,
+  action,
+  background,
+  children,
+  accordion = false,
+  actionCTA = false,
+  defaultOpen = true,
+  onSponsorClick,
+  ...props
 }) {
   const [opened, setOpened] = useState(defaultOpen);
+
+  const handleSponsorClick = () => {
+    if (onSponsorClick) {
+      onSponsorClick();
+    }
+  };
 
   return (
     <Box
       w="100%"
       h="100%"
       p="md"
+      {...props}
       style={{
         background: background || theme.colors.secondaryGrey[0],
         borderRadius: theme.radius.md,
@@ -40,7 +49,7 @@ export default function StatBox({
             {title || "Card Title"}
           </Text>
 
-          <Flex align="center" gap="xs">
+          <Flex align="right" gap="xs">
             {accordion && (
               <ActionIcon
                 variant="transparent"
@@ -48,7 +57,11 @@ export default function StatBox({
                 aria-label="Toggle content"
                 color="white"
               >
-                {opened ? <IconChevronUp size={18} /> : <IconChevronDown size={18} />}
+                {opened ? (
+                  <IconChevronUp size={18} />
+                ) : (
+                  <IconChevronDown size={18} />
+                )}
               </ActionIcon>
             )}
             {action && <div className="action_cta">{action}</div>}
@@ -56,11 +69,13 @@ export default function StatBox({
         </Flex>
 
         {accordion ? (
-          <Collapse in={opened}>
+          <Collapse h={"100%"} in={opened}>
             <Box mt="sm">{children}</Box>
           </Collapse>
         ) : (
-          <Box mt="sm">{children}</Box>
+          <Box style={{ ...props.style }} mt="sm">
+            {children}
+          </Box>
         )}
       </Box>
 
@@ -75,6 +90,7 @@ export default function StatBox({
             width: "fit-content",
             alignSelf: "flex-end",
           }}
+          onClick={handleSponsorClick}
         >
           Sponsor
         </Button>

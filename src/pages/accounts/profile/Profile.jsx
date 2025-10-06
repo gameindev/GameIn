@@ -20,7 +20,7 @@ export default function Profile() {
     const navigate = useNavigate();
 
     const { userProfile, isSelf } = useOutletContext();
-    console.log(userProfile, isSelf);
+
 
     if (!userProfile) return <Text>Loading profile...</Text>;
 

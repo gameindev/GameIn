@@ -33,7 +33,7 @@ export default function CreateOpportunity() {
   const { control, handleSubmit, reset, setValue } = useFormHandler({
     defaultValues,
     onSubmit: async (data) => {
-      const payload = buildOfferingPayload(data);
+      const payload = buildOfferingPayload(data, "create");
       console.log("Payload to API", payload);
 
       try {

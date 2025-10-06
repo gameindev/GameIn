@@ -3,7 +3,6 @@ import { lazy, Suspense } from "react";
 import routePaths from "./endpoints";
 import { USERTYPES } from "../utils/enum";
 import accountsdRoutes from "./accountsRoutes";
-import settingsRoutes from "./settingsRoute";
 
 // --- Lazy-loaded Components ---
 const ErrorPage = lazy(() => import("./ErrorPage"));
@@ -19,8 +18,14 @@ const WelcomePage = lazy(() => import("../pages/WelcomePage"));
 const Register = lazy(() => import("../pages/auth/Register"));
 const Signin = lazy(() => import("../pages/auth/Signin"));
 const SearchByUserType = lazy(() => import("../pages/search/SearchByUserType"));
-const Settings = lazy(() => import("../pages/settings/Index"));
 const Accounts = lazy(() => import("../pages/accounts/Index"));
+
+
+const Integrations = lazy(() => import("../pages/settings/Integrations"));
+const Account = lazy(() => import("../pages/settings/Account"));
+const Notifications = lazy(() => import("../pages/settings/Notifications"));
+const Privacy = lazy(() => import("../pages/settings/Privacy"));
+const Payments = lazy(() => import("../pages/settings/Payments"));
 
 // Features/Components
 const CreateTeam = lazy(() => import("../components/features/createTeam/CreateTeam") );
@@ -68,9 +73,13 @@ const router = createHashRouter([
           element: withSuspense( <RoleGuard allowedRoles={[USERTYPES.BRAND, USERTYPES.CREATOR]} /> ),
           children: [
             { element: withSuspense(<Accounts />), children: wrapRoutes(accountsdRoutes)},
-            { element: withSuspense(<Settings />), children: wrapRoutes(settingsRoutes) },
             { path: routePaths.ACCOUNTS.PROFILE.CREATE_TEAM, element: withSuspense(<CreateTeam />), },
             { path: routePaths.SEARCH, element: withSuspense(<SearchByUserType />), },
+            { path: routePaths.SETTINGS.ACCOUNT, element: <Account /> },
+            { path: routePaths.SETTINGS.INTEGRATIONS, element: <Integrations /> },
+            { path: routePaths.SETTINGS.NOTIFICATIONS, element: <Notifications /> },
+            { path: routePaths.SETTINGS.PRIVACY, element: <Privacy /> },
+            { path: routePaths.SETTINGS.PAYMENTS, element: <Payments /> },
           ],
         }]
       },
