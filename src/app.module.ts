@@ -8,6 +8,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
 import * as dotenvFlow from "dotenv-flow";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
+import * as fs from 'fs';
 
 // 🧱 Modules
 import { UsersModule } from "./users/users.module";
@@ -107,7 +108,10 @@ console.log(ENV)
                     namingStrategy: new SnakeNamingStrategy(),
                     logging: isProduction ? ['error', 'warn'] : ['error', 'warn', 'query'],
                     ssl: configService.get<boolean>('database.ssl') || process.env.DATABASE_SSL === 'true'
-                        ? { rejectUnauthorized: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false' }
+                        ? {
+                            rejectUnauthorized: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false',
+                            ca: process.env.DATABASE_SSL_CA ? fs.readFileSync(process.env.DATABASE_SSL_CA).toString() : undefined
+                        }
                         : false,
                     extra: {
                         max: Number(process.env.TYPEORM_POOL_MAX ?? 10),
