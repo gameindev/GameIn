@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiExtraModels, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, getSchemaPath } from '@nestjs/swagger';
 import { OfferingsService } from './providers/offerings.service';
 import { CreateOfferingDto } from './dtos/post-offering.dto';
@@ -22,6 +22,7 @@ import { Auth } from '../auth/decorators/auth.decorator';
 
 @Controller('offerings')
 @ApiBearerAuth()
+@UseInterceptors(ClassSerializerInterceptor)
 export class OfferingsController {
 
     constructor(
@@ -64,7 +65,6 @@ export class OfferingsController {
             $ref: getSchemaPath(FindOfferingsQueryDto),
         },
     })
-    @Auth(AuthType.None)
     getOfferings(@Query() query: FindOfferingsQueryDto) {
         return this.offeringService.findAll(query);
     }
@@ -86,7 +86,6 @@ export class OfferingsController {
         example: ['users', 'offering_offers', 'offering_price'],
     })
     @ApiOkResponse({ description: 'Offering fetched successfully', type: Offering })
-    // @Auth(AuthType.None)
     getOfferingById(
         @Param('id', ParseIntPipe) id: number,
         @Query() query: FindOfferingsQueryDto,
@@ -181,6 +180,53 @@ export class OfferingsController {
     ) {
         return this.offeringService.resetOffering(id, user);
     }
+
+
+
+
+    @ApiOperation({
+        summary: 'Accept an offering',
+        description: 'Accepts the offering and updates the status to accepted.',
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Offering accepted successfully',
+    })
+    @ApiParam({
+        type: Number,
+        name: 'id',
+        example: 1
+    })
+    @Patch(':id/accept')
+    async acceptOffering(
+        @Param('id') id: number,
+        @ActiveUser() user: ActiveUserData,
+    ) {
+        return this.offeringService.acceptOffering(id, user);
+    }
+
+
+    @ApiOperation({
+        summary: 'Negotiate an offering',
+        description: 'Negotiates the offering and updates the status to pending.',
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Offering negotiated successfully',
+    })
+    @ApiParam({
+        type: Number,
+        name: 'id',
+        example: 1
+    })
+    @Patch(':id/negotiate')
+    async negotiateOffering(
+        @Param('id') id: number,
+        @ActiveUser() user: ActiveUserData,
+    ) {
+        return this.offeringService.negotiateOffering(id, user);
+    }
+
 
 
     // @Patch(':id/price')

@@ -26,7 +26,7 @@ export class SesEmailProvider implements EmailProviderInterface {
             this.config.emailFrom || this.config.awsSESSender || 'no-reply@example.com';
     }
 
-    async send({ to, subject, html, text, from, headers }: SendOptions): Promise<{ provider: "smtp" | "ses"; messageId: string; raw?: unknown; }> {
+    async send({ to, subject, html, text, from, headers }: SendOptions): Promise<{ provider: "smtp" | "ses" | "sendgrid"; messageId: string; raw?: unknown; }> {
         const toArr = Array.isArray(to) ? to : [to];
         const cmd = new SendEmailCommand({
             Destination: { ToAddresses: toArr },

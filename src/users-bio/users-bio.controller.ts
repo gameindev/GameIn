@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Patch, Query } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Query, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { UsersBioService } from './providers/users-bio.service';
 
 import { PatchBioDto } from './dtos/patch-bio.dto';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { MetadataService } from '../metadata/providers/metadata.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users-bio')
 export class UsersBioController {
@@ -25,15 +26,18 @@ export class UsersBioController {
         type: PatchBioDto,
     })
     @ApiBearerAuth()
+    @ApiConsumes('multipart/form-data')
+    @UseInterceptors(FileInterceptor('intro_video'))
     @Patch()
     async updateUserBio(
         @Body() patchUserBioDto: PatchBioDto,
+        @UploadedFile() introVideo?: Express.Multer.File,
     ) {
         if (patchUserBioDto.preferred_games) {
             patchUserBioDto.preferred_games = await this.metadataService.enrichPreferredGames(patchUserBioDto.preferred_games); 
         }
 
-        return await this.userBioService.updateUserBio(patchUserBioDto);
+        return await this.userBioService.updateUserBio(patchUserBioDto, introVideo);
     }
 
 

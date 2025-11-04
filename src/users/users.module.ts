@@ -19,13 +19,15 @@ import { BrandProfilesModule } from "../brand-profiles/brand-profiles.module";
 import { UsersBioModule } from "../users-bio/users-bio.module";
 import { AuthModule } from "../auth/auth.module";
 import { EmailsModule } from "../emails/emails.module";
+import { UserVerificationProvider } from "./providers/user-verification.provider";
+import { UserVerificationController } from "./user-verification.controller";
 
 
 /**
  * Users module.
  */
 @Module({
-    controllers: [UsersController],
+    controllers: [UsersController, UserVerificationController],
     providers: [
         UsersService,
         CreateUserProvider,
@@ -37,6 +39,7 @@ import { EmailsModule } from "../emails/emails.module";
         UpdateUserRoleProvider,
         CheckOneByIdentifierProvider,
         FindOneByUsernameProvider,
+        UserVerificationProvider,
     ],
     exports: [UsersService],
     imports: [

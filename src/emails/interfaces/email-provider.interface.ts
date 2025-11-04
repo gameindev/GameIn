@@ -12,7 +12,7 @@ export interface SendOptions {
 
 export interface EmailProviderInterface {
     send(options: SendOptions): Promise<{
-        provider: 'smtp' | 'ses';
+        provider: 'smtp' | 'ses' | 'sendgrid';
         messageId: string;
         raw?: unknown;
     }>;

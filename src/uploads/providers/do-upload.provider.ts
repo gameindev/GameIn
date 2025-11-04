@@ -6,6 +6,7 @@ import {
     PutObjectCommand,
     DeleteObjectCommand,
     CopyObjectCommand,
+    HeadObjectCommand,
 } from '@aws-sdk/client-s3';
 import { v4 as uuid } from 'uuid';
 import { UploadProviderInterface } from '../interfaces/upload.interface';
@@ -86,6 +87,28 @@ export class DOUploadProvider implements UploadProviderInterface {
     async move(sourceKey: string, destinationKey: string): Promise<void> {
         await this.copy(sourceKey, destinationKey);
         await this.delete(sourceKey);
+    }
+
+    /**
+     * Check if an object exists in Space
+     */
+    async exists(filePath: string): Promise<boolean> {
+        try {
+            await this.s3.send(
+                new HeadObjectCommand({
+                    Bucket: this.bucket,
+                    Key: filePath,
+                }),
+            );
+            return true;
+        } catch (error: any) {
+            // If error is 404, file doesn't exist
+            if (error.name === 'NotFound' || error.$metadata?.httpStatusCode === 404) {
+                return false;
+            }
+            // For other errors, rethrow
+            throw error;
+        }
     }
 
     /**

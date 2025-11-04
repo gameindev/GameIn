@@ -1,4 +1,4 @@
-import { Controller, Get, ParseEnumPipe, Query, Req } from '@nestjs/common';
+import { Controller, Get, ParseEnumPipe, Query, Req, Res } from '@nestjs/common';
 import { SocialIntegrationService } from './providers/social-integration.service';
 import { SocialPlatform } from './enums/social-platform.enums';
 import { Request } from 'express';
@@ -7,6 +7,7 @@ import { ActiveUserData } from '../auth/interfaces/active-user-data.interface';
 import { ActiveUser } from '../auth/decorators/active-user.decorator';
 import { AuthType } from '../auth/enums/auth-type.enum';
 import { Auth } from '../auth/decorators/auth.decorator';
+import { Response } from 'express';
 
 @ApiTags('Social Integration')
 @Controller('social-integration')
@@ -72,10 +73,19 @@ export class SocialIntegrationController {
     async handleCallback(
         @Query('platform') platform: SocialPlatform,
         @Query('code') code: string,
-        @Query('state') state: string
+        @Query('state') state: string,
+        @Res() res: Response
     ) {
-        await this.service.handleCallback(platform, code, state);
-        return { success: true, message: 'Platform Connected!' };
+        try {
+            await this.service.handleCallback(platform, code, state);
+        
+            // Redirect to frontend success page
+            const redirectUrl = `${process.env.FRONTEND_HOST}/#/social-integration/callback?status=success`;
+            return res.redirect(redirectUrl);
+          } catch (err) {
+            const redirectUrl = `${process.env.FRONTEND_HOST}/#/social-integration/callback?status=error&message=${encodeURIComponent(err.message)}`;
+            return res.redirect(redirectUrl);
+          }
     }
 
 

@@ -73,7 +73,7 @@ export class User {
         nullable: true,
     })
     brand_profile: BrandProfile;
-    
+
     // faqs: UserFaq[];
 
     @Column({
@@ -95,6 +95,13 @@ export class User {
     is_first?: boolean;
 
     @Column({
+        type: 'boolean',
+        default: false,
+        nullable: true,
+    })
+    is_logged_in?: boolean;
+
+    @Column({
         default: null,
         nullable: true
     })
@@ -114,18 +121,30 @@ export class User {
     })
     social_integrations: SocialIntegration[];
 
-    
-    
-    
+    @Column({
+        type: 'varchar',
+        length: 30,
+        nullable: true,
+    })
+    timezone?: string;
+
+    @Column({
+        type: 'varchar',
+        length: 10,
+        nullable: true,
+    })
+    language?: string;
+
+
     // ratingReceived: UserRating[];
     // ratingGiven: UserRating[];
 
     @CreateDateColumn()
     created_at: Date;
-    
+
     @UpdateDateColumn()
-    updated_at: Date;   
-    
+    updated_at: Date;
+
     @DeleteDateColumn()
     deleted_at: Date;
 }

@@ -83,6 +83,8 @@ export class UpdateUserRoleProvider {
             return {
                 user: {
                     id: user.id,
+                    username: user.username,
+                    email: user.email,
                     user_type: user.user_type,
                 },
                 accessToken: tokens?.accessToken,

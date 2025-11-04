@@ -1,6 +1,7 @@
 
 
 export enum OfferingStatus{
+    SPONSORED = 'SPONSORED',
     DRAFT = 'DRAFT',
     OFFERED = 'OFFERED',
     PENDING = 'PENDING',

@@ -46,7 +46,8 @@ export class UpdateBrandCoverPicProvider {
         }
 
         try {
-            return await this.brandProfileRepository.save(brandProfile);
+            const result = await this.brandProfileRepository.save(brandProfile);
+            return result;
         } catch (error) {
             throw new InternalServerErrorException('Error while trying to update brand profile.');
         }

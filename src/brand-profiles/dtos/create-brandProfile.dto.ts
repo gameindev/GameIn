@@ -58,6 +58,13 @@ export class CreateBrandProfileDto {
     @Min(0)
     rank?: number;
 
+
+    @ApiPropertyOptional({ example: 'United States', maxLength: 30 })
+    @IsOptional()
+    @IsString()
+    @MaxLength(30)
+    country?: string;
+
     // @ApiPropertyOptional({
     //     type: () => CreateUserBioDto,
     //     description: 'Optional nested bio object',

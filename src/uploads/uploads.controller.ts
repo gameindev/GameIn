@@ -16,22 +16,25 @@ export class UploadsController {
         private readonly uploadsService: UploadsService,
     ) { }
 
-    // /**
-    //  * Upload a file
-    //  * @param file
-    //  * @returns
-    //  */
-    // @ApiHeaders([
-    //     { name: 'Content-Type', description: 'multipart/form-data' },
-    //     { name: 'Authorization', description: 'Bearer Token' }
-    // ])
-    // @ApiOperation({
-    //     summary: 'Upload a file to the server',
-    // })
-    // @ApiBearerAuth()
-    // @Post('file')
-    // @UseInterceptors(FileInterceptor('file'))
-    // public uploadFile(@UploadedFile() file: Express.Multer.File) {
-    //     return this.uploadsService.manageUpload(file);
-    // }
+    /**
+     * Upload a file
+     * @param file
+     * @returns
+     */
+    @ApiHeaders([
+        { name: 'Content-Type', description: 'multipart/form-data' },
+        { name: 'Authorization', description: 'Bearer Token' }
+    ])
+    @ApiOperation({
+        summary: 'Upload a file to the server',
+    })
+    @ApiBearerAuth()
+    @Post('file')
+    @UseInterceptors(FileInterceptor('file'))
+    public async uploadFile(@UploadedFile() file: Express.Multer.File) {
+        if (!file) {
+            throw new Error('No file provided');
+        }
+        return await this.uploadsService.uploadNew(file);
+    }
 }

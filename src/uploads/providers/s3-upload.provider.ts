@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Express } from 'express';
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, DeleteObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
 import { v4 as uuid } from 'uuid';
 import { UploadProviderInterface } from '../interfaces/upload.interface';
 
@@ -41,5 +41,22 @@ export class S3UploadProvider implements UploadProviderInterface {
             Bucket: this.bucket,
             Key: filePath,
         }));
+    }
+
+    async exists(filePath: string): Promise<boolean> {
+        try {
+            await this.s3.send(new HeadObjectCommand({
+                Bucket: this.bucket,
+                Key: filePath,
+            }));
+            return true;
+        } catch (error: any) {
+            // If error is 404, file doesn't exist
+            if (error.name === 'NotFound' || error.$metadata?.httpStatusCode === 404) {
+                return false;
+            }
+            // For other errors, rethrow
+            throw error;
+        }
     }
 }

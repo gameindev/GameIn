@@ -19,6 +19,7 @@ import { UpdateUserRoleProvider } from './update-user-role.provider';
 import { CheckOneByIdentifierProvider } from './check-one-by-identifier.provider';
 import { FindOneByUsernameProvider } from './find-user-by-username-provider';
 import { ActiveUserData } from '../../auth/interfaces/active-user-data.interface';
+import { UserVerificationProvider } from './user-verification.provider';
 
 /**
  * Users service.
@@ -55,6 +56,10 @@ export class UsersService {
 
         @Inject(FindOneByUsernameProvider)
         private readonly findUserByUsernameProvider: FindOneByUsernameProvider,
+
+
+        @Inject(UserVerificationProvider)
+        private readonly userVerificationProvider: UserVerificationProvider,
     ) { }
 
 
@@ -251,6 +256,16 @@ export class UsersService {
             throw new InternalServerErrorException('Failed to soft delete user');
         }
     }
+
+    public async sendVerificationEmail(email: string) {
+        return await this.userVerificationProvider.sendVerificationEmail(email);
+    }
+
+    public async verifyEmail(token: string) {
+        return await this.userVerificationProvider.verifyEmail(token);
+    }
+
+
 
     public async findUserOneByEmail(email: string) {
         return await this.findOneUserByEmailProvider.findOneByEmail(email);

@@ -62,14 +62,14 @@ export class CreateUserDto {
     user_type: UserType;
 
     @ApiProperty({
-        description: 'The date of birth of the user in DD-MM-YYYY format',
+        description: 'The date of birth of the user in MM-DD-YYYY format',
         type: String,
-        example: '01-01-1990',
+        example: '01-26-2000',
     })
     @IsString()
     @IsNotEmpty()
     @Matches(/^\d{2}-\d{2}-\d{4}$/, {
-        message: 'Date must be in DD-MM-YYYY format',
+        message: 'Date must be in MM-DD-YYYY format',
     })
     date_of_birth: string;
 
@@ -99,6 +99,23 @@ export class CreateUserDto {
     @IsOptional()
     is_active?: boolean;
 
+    @ApiPropertyOptional({
+        description: 'The timezone of the user',
+        type: String,
+        example: 'America/New_York',
+    })
+    @IsString()
+    @IsOptional()
+    timezone?: string;
+
+    @ApiPropertyOptional({
+        description: 'The language of the user',
+        type: String,
+        example: 'en',
+    })
+    @IsString()
+    @IsOptional()
+    language?: string;
       
 
 

@@ -14,7 +14,7 @@ export class BrandProfile {
     @Index()
     @OneToOne(() => User, user => user.brand_profile, {
         onDelete: 'CASCADE',
-    })
+    }) 
     @JoinColumn({ name: 'user_id' })
     user: User;
 
@@ -72,6 +72,15 @@ export class BrandProfile {
         default: 0,
     })
     rank: number;
+
+
+    @Column({
+        type: 'varchar',
+        length: 30,
+        nullable: true,
+    })
+    country: string;
+    
 
     @CreateDateColumn()
     created_at: Date;

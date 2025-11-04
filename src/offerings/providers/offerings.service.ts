@@ -14,6 +14,10 @@ import { Offering } from '../offerings.entity';
 import { UsersService } from '../../users/providers/users.service';
 import { ActiveUserData } from '../../auth/interfaces/active-user-data.interface';
 import { UserType } from '../../users/enums/user-type.enums';
+import { FindOfferingsQueryDto } from '../dtos/get-offering.dto';
+import { OfferingStatus } from '../enums/offering-status.enum';
+import { UploadsService } from '../../uploads/providers/uploads.service';
+import { User } from '@/users/user.entity';
 
 
 
@@ -26,6 +30,7 @@ export class OfferingsService {
         private readonly offeringOffersService: OfferingOffersService,
         private readonly priceService: OfferingPriceService,
         private readonly userService: UsersService,
+        private readonly uploadService: UploadsService,
 
         @Inject(CreateAdjustmentProvider)
         private readonly createAdjustmentProvider: CreateAdjustmentProvider,
@@ -101,7 +106,7 @@ export class OfferingsService {
 
 
 
-    async findAll(params: FindOfferingsParams = {}) {
+    async findAll(params: FindOfferingsQueryDto = {}) {
         try {
             // ---- defaults + validation ----
             const page = Number.isInteger(params.page) && params.page! > 0 ? params.page! : 1;
@@ -115,7 +120,7 @@ export class OfferingsService {
             const allowedRelations = new Set(entityMeta.relations.map(r => r.propertyName));
             const requested = Array.isArray(params.relations) && params.relations.length
                 ? params.relations
-                : ['users']; // sensible default
+                : ['user', 'last_adjusted_by']; // sensible default
 
             const relationsToJoin = requested.filter(r => allowedRelations.has(r));
 
@@ -131,6 +136,14 @@ export class OfferingsService {
             if (typeof params.user_id === 'number' && Number.isFinite(params.user_id)) {
                 // Since the user relation is eager and always loaded, we can filter directly
                 qb.andWhere('off.user.id = :uid', { uid: params.user_id });
+            }
+
+            // ---- optional filter: ids array ----
+            if (Array.isArray(params.ids) && params.ids.length > 0) {
+                const validIds = params.ids.filter(id => typeof id === 'number' && Number.isFinite(id) && id > 0);
+                if (validIds.length > 0) {
+                    qb.andWhere('off.id IN (:...ids)', { ids: validIds });
+                }
             }
 
             // ---- ordering ----
@@ -170,7 +183,7 @@ export class OfferingsService {
 
     async findOneById(
         id: number,
-        relations?: Array<'user' | 'offering_offers' | 'offering_price' | 'logo'>,
+        relations?: Array<'user' | 'offering_offers' | 'offering_price' | 'logo' | 'last_adjusted_by'>,
     ) {
         try {
             // Validate relations against entity metadata to avoid invalid joins
@@ -202,31 +215,91 @@ export class OfferingsService {
 
 
 
-    async resetOffering(id: number, user?: ActiveUserData) {
 
-        const offering = await this.findOneById(id, ['user'])
-        
+    async acceptOffering(id: number, user: ActiveUserData) {
+        const offering = await this.findOneById(id, ['user', 'logo'])
         if (!offering) {
             throw new NotFoundException(`Offering with ID ${id} not found`);
         }
-        console.log(offering)
+        offering.status = OfferingStatus.ACCEPTED;
+        offering.accepted_by = await this.userService.getUserById(user.sub);
+        
+        await this.repo.save(offering);
+        return offering;
+    }
 
-        // Check ownership before proceeding
-        if (user && offering.user?.id !== user.sub) {
-            throw new BadRequestException('You do not have permission to reset this offering');
+
+
+
+    async negotiateOffering(id: number, user?: ActiveUserData) {
+        const offering = await this.findOneById(id, ['user', 'logo'])
+        if (!offering) {
+            throw new NotFoundException(`Offering with ID ${id} not found`);
         }
+        offering.status = OfferingStatus.PENDING;
+        
+        await this.repo.save(offering);
+        return offering;
+    }
+
+
+    async resetOffering(id: number, user?: ActiveUserData) {
+        const offering = await this.findOneById(id, ['user', 'logo'])
+
+        if (!offering) {
+            throw new NotFoundException(`Offering with ID ${id} not found`);
+        }
+   
 
         try {
-            offering.adjustment_count = 0; 
+            // Store reference to logo before clearing it
+            const logoToDelete = offering.logo;
+            
+            // Clear the logo reference first (updates foreign key column)
+            offering.logo = null;
+            
+            offering.adjustment_count = 0;
             offering.last_adjusted_at = null;
             offering.last_adjusted_by = null;
+            offering.notes = null;
+            offering.status = OfferingStatus.DRAFT;
+            
+            // Save the offering first to clear the foreign key reference
             await this.repo.save(offering);
+            
+            // Now delete the logo upload entity if it existed
+            if (logoToDelete !== null) {
+                try {
+                    await this.uploadService.deleteUpload(logoToDelete);
+                } catch (e) {
+                    // If the upload is already deleted or not found, continue without throwing
+                    if (e?.message && e.message.includes('not found')) {
+                        // handle as non-critical
+                    } else {
+                        throw e;
+                    }
+                }
+            }
         } catch (error) {
             throw new InternalServerErrorException('Failed to reset offering');
         }
 
         return offering;
 
+    }
+
+
+
+    async sponsoreOfferings(id: number, brand: User) {
+        const offering = await this.findOneById(id, ['user', 'logo'])
+        if (!offering) {
+            throw new NotFoundException(`Offering with ID ${id} not found`);
+        }
+
+        offering.status = OfferingStatus.SPONSORED;
+        offering.accepted_by = brand;
+        await this.repo.save(offering);
+        return offering;
     }
 
 }

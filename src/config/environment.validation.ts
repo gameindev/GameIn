@@ -19,4 +19,25 @@ export default Joi.object({
     JWT_REFRESH_TOKEN_TTL: Joi.number().required(),
     API_VERSION: Joi.string().required(),
     UPLOAD_STRATEGY: Joi.string().valid('local', 's3', 'do').default('local'),
+
+    // Stripe Configuration
+    STRIPE_SECRET_KEY: Joi.string().optional(),
+    STRIPE_PUBLISHABLE_KEY: Joi.string().optional(),
+    STRIPE_WEBHOOK_SECRET: Joi.string().optional(),
+    STRIPE_API_VERSION: Joi.string().optional().default('2025-10-29.preview'),
+
+    // PayPal Configuration
+    PAYPAL_CLIENT_ID: Joi.string().optional(),
+    PAYPAL_CLIENT_SECRET: Joi.string().optional(),
+    PAYPAL_MODE: Joi.string().valid('sandbox', 'live').optional().default('sandbox'),
+
+    // Razorpay Configuration
+    RAZORPAY_KEY_ID: Joi.string().optional(),
+    RAZORPAY_KEY_SECRET: Joi.string().optional(),
+    RAZORPAY_WEBHOOK_SECRET: Joi.string().optional(),
+
+    // Payment General Configuration
+    DEFAULT_PAYMENT_PROVIDER: Joi.string().valid('STRIPE', 'PAYPAL', 'RAZORPAY', 'MANUAL').optional().default('STRIPE'),
+    FRONTEND_URL: Joi.string().uri().optional().default('http://localhost:3000'),
+    PAYMENT_WEBHOOK_PATH: Joi.string().optional().default('/api/payments/webhook'),
 })

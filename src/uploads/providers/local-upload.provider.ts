@@ -29,4 +29,9 @@ export class LocalUploadProvider implements UploadProviderInterface {
             fs.unlinkSync(absolutePath);
         }
     }
+
+    async exists(filePath: string): Promise<boolean> {
+        const absolutePath = path.resolve(process.cwd(), 'media', filePath);
+        return fs.existsSync(absolutePath);
+    }
 }

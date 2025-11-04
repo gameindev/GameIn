@@ -8,6 +8,8 @@ import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { UserTypeGuard } from './guards/user-type.guard';
 import { UserTypes } from './decorators/user-types.decorator';
 import { UserType } from '../users/enums/user-type.enums';
+import { ActiveUser } from './decorators/active-user.decorator';
+import { ActiveUserData } from './interfaces/active-user-data.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -83,6 +85,37 @@ export class AuthController {
     @UserTypes(UserType.ADMIN, UserType.CREATOR, UserType.BRAND, UserType.COMMUNITY)
     public async refreshTokens(@Body() refreshTokenDto: RefreshTokenDto) {
         return this.authService.refreshTokens(refreshTokenDto);
+    }
+
+
+
+    
+
+    @ApiOperation({
+        summary: 'Logout',
+        description: 'Logout the authenticated user',
+    })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'The user is successfully logged out.',
+        schema: {
+            properties: {
+                message: {
+                    type: 'string',
+                    description: 'Success message',
+                    example: 'Successfully logged out'
+                }
+            }
+        }
+    })
+    @ApiBearerAuth()
+    @Post('logout')
+    @HttpCode(HttpStatus.OK)
+    @UseGuards(UserTypeGuard)
+    @UserTypes(UserType.ADMIN, UserType.CREATOR, UserType.BRAND, UserType.COMMUNITY)
+    @UseInterceptors(ClassSerializerInterceptor)
+    public async logout(@ActiveUser() user: ActiveUserData) {
+        return this.authService.logout(user);
     }
 
 

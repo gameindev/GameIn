@@ -5,7 +5,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import smtpConfig from './config/smtp.config';
 import { SesEmailProvider } from './providers/ses-email.provider';
 import { SmtpEmailProvider } from './providers/smtp-email.provider';
+import { SendgridEmailProvider } from './providers/sendgrid-email.provider';
 import sesConfig from './config/ses.config';
+import sendgridConfig from './config/sendgrid.config';
 
 
 const EmailProviderFactory: Provider = {
@@ -15,6 +17,8 @@ const EmailProviderFactory: Provider = {
         const strategy = (config.get<string>('appConfig.emailStrategy') || config.get<string>('EMAIL_STRATEGY') || 'smtp').toLowerCase();
 
         switch (strategy) {
+            case 'sendgrid':
+                return new SendgridEmailProvider(sendgridConfig());
             case 'ses':
                 return new SesEmailProvider(sesConfig());
             case 'smtp':

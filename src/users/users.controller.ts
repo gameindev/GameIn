@@ -287,7 +287,6 @@ Use '*' to load all supported relations.`,
      * @returns 
      */
     @ApiBearerAuth()
-    @ApiTags('Auth')
     @ApiOperation({
         summary: 'Assigns a role to an OAuth user'
     })
@@ -352,5 +351,6 @@ Use '*' to load all supported relations.`,
     }
 
 
+    
 
 }

@@ -157,10 +157,10 @@ export class TwitchService implements SocialIntegrationServiceInterface {
     }
 
     async refreshTokenIfNeeded(integrationId: number): Promise<{ access_token: string; refresh_token?: string }> {
-        const integration = await this.integrationRepo.findOne({
-            where: { id: integrationId },
-            relations: ['users']
-        });
+		const integration = await this.integrationRepo.findOne({
+			where: { id: integrationId },
+			relations: ['user']
+		});
 
         if (!integration) {
             throw new Error('Integration not found');
@@ -196,10 +196,10 @@ export class TwitchService implements SocialIntegrationServiceInterface {
     }
 
     async fetchAndStoreStats(integrationId: number): Promise<any> {
-        const integration = await this.integrationRepo.findOne({
-            where: { id: integrationId },
-            relations: ['users'],
-        });
+		const integration = await this.integrationRepo.findOne({
+			where: { id: integrationId },
+			relations: ['user'],
+		});
 
         if (!integration) {
             throw new Error('Integration not found');

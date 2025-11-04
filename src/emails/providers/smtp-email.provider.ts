@@ -26,7 +26,7 @@ export class SmtpEmailProvider implements EmailProviderInterface {
         this.defaultFrom = this.config.emailFrom || 'no-reply@gamein.dev';
     }
 
-    async send({ to, from, subject, html, text, headers }: SendOptions): Promise<{ provider: "smtp" | "ses"; messageId: string; raw?: unknown; }> {
+    async send({ to, from, subject, html, text, headers }: SendOptions): Promise<{ provider: "smtp" | "ses" | "sendgrid"; messageId: string; raw?: unknown; }> {
         const info = await this.transporter.sendMail({
             from: from ?? this.defaultFrom,
             to: Array.isArray(to) ? to.join(',') : to,

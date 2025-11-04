@@ -63,4 +63,24 @@ export class UpdateUserProvider {
             throw new InternalServerErrorException('Update failed');
         }
     }
+
+
+
+
+
+    async updateUserIsLoggedIn(id: number): Promise<void> {   
+        try {
+            await this.userRepository.update(id, { is_logged_in: true });
+        } catch (error) {
+            throw new ConflictException(error);
+        }
+    }
+
+    async updateUserIsLoggedOut(id: number): Promise<void> {
+        try {
+            await this.userRepository.update(id, { is_logged_in: false });
+        } catch (error) {
+            throw new ConflictException(error);
+        }
+    }
 }

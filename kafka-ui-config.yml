@@ -1,0 +1,10 @@
+kafka:
+  clusters:
+    - name: local
+      bootstrapServers: kafka:9092
+      kraft: true
+      properties:
+        security.protocol: PLAINTEXT
+        sasl.mechanism: PLAIN
+        request.timeout.ms: 30000
+        retry.backoff.ms: 5000

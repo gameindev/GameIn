@@ -46,7 +46,8 @@ export class UpdateCreatorCoverPicProvider {
         }
 
         try {
-            return await this.creatorProfileRepository.save(creatorProfile);
+            const result = await this.creatorProfileRepository.save(creatorProfile);
+            return result;
         } catch (error) {
             throw new InternalServerErrorException('Error while trying to update creator profile.');
         }

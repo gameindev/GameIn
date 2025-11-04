@@ -15,6 +15,8 @@ export class OfferingBundleResponseDto {
     prices!: OfferingPrice | null;
 }
 
+
+
 export class FindOfferingsResponseDto {
     @ApiProperty({ type: () => [Offering] })
     data!: Offering[];

@@ -8,6 +8,7 @@ import { PatchBioDto } from '../dtos/patch-bio.dto';
 import { PreferredGamesService } from '../../preferred-games/providers/preferred-games.service';
 import { User } from '../../users/user.entity';
 import { PreferredGames } from '../../preferred-games/preferred-games.entity';
+import { UploadsService } from '../../uploads/providers/uploads.service';
 
 @Injectable()
 export class UsersBioService {
@@ -25,6 +26,7 @@ export class UsersBioService {
          * Injecting PreferredGames Service.
          */
         private readonly preferredGamesService: PreferredGamesService,
+        private readonly uploadsService: UploadsService,
     ) { }
 
     public async createUserBio(User: User): Promise<any> {
@@ -44,12 +46,20 @@ export class UsersBioService {
 
 
 
-    public async updateUserBio(patchBioDto: PatchBioDto) {
+    public async updateUserBio(patchBioDto: PatchBioDto, introVideo?: Express.Multer.File) {
         return await this.dataSource.transaction(async manager => {
             const userBioRepoTx = manager.getRepository(UserBio);
             const preferredGamesRepoTx = manager.getRepository(PreferredGames);
 
             const { preferred_games, user_id, ...bioFields } = patchBioDto;
+
+            if (introVideo) {
+                if (introVideo.mimetype !== 'video/mp4') {
+                    throw new BadRequestException('Only MP4 files are allowed for intro video');
+                }
+                const upload = await this.uploadsService.uploadNew(introVideo);
+                bioFields.video_bio_url = upload.path;
+            }
 
             let userBio = await userBioRepoTx.findOne({
                 where: { user: { id: user_id } },

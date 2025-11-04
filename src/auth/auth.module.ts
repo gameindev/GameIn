@@ -12,6 +12,9 @@ import { RefreshTokensProvider } from './providers/refresh-tokens.provider';
 import { GoogleAuthController } from './social/google-auth.controller';
 import { GoogleAuthService } from './social/providers/google-auth.service';
 import { UsersModule } from '../users/users.module';
+import { UpdateUserProvider } from '../users/providers/update-user.provider';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from '../users/user.entity';
 
 @Module({
     controllers: [AuthController, GoogleAuthController],
@@ -24,13 +27,15 @@ import { UsersModule } from '../users/users.module';
         SignInProvider,
         GenerateTokensProvider,
         RefreshTokensProvider,
-        GoogleAuthService
+        GoogleAuthService,
+        UpdateUserProvider
     ],
     imports: [
-        forwardRef(() => UsersModule),
         ConfigModule.forFeature(jwtConfig),
-        JwtModule.registerAsync(jwtConfig.asProvider())
+        JwtModule.registerAsync(jwtConfig.asProvider()),
+        TypeOrmModule.forFeature([User]),
+        forwardRef(() => UsersModule)
     ],
-    exports: [AuthService, HashingProvider, GenerateTokensProvider, GoogleAuthService]
+    exports: [AuthService, HashingProvider, GenerateTokensProvider, GoogleAuthService, UpdateUserProvider]
 })
 export class AuthModule { }

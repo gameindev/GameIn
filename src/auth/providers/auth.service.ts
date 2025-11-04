@@ -3,6 +3,8 @@ import { SigninDto } from '../dtos/signin.dto';
 import { SignInProvider } from './sign-in.provider';
 import { RefreshTokenDto } from '../dtos/refresh-token.dto';
 import { RefreshTokensProvider } from './refresh-tokens.provider';
+import { UpdateUserProvider } from '../../users/providers/update-user.provider';
+import { ActiveUserData } from '../interfaces/active-user-data.interface';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +19,12 @@ export class AuthService {
          */
         private readonly refreshTokenProvider: RefreshTokensProvider,
 
+        /**
+         * Injecting UpdateUserProvider.
+         */
+        @Inject(forwardRef(() => UpdateUserProvider))
+        private readonly updateUserProvider: UpdateUserProvider,
+
     ) { }
 
     public async signIn(signinDto: SigninDto) {
@@ -25,5 +33,10 @@ export class AuthService {
 
     public async refreshTokens(refreshTokenDto: RefreshTokenDto) {
         return await this.refreshTokenProvider.refreshTokens(refreshTokenDto);
+    }
+
+    public async logout(user: ActiveUserData) {
+        await this.updateUserProvider.updateUserIsLoggedOut(user.sub);
+        return { message: 'Successfully logged out' };
     }
 }

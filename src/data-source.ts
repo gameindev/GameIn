@@ -19,9 +19,18 @@ import { OfferingPrice } from './offerings/offering-price/offering-price.entity'
 import { Team } from './teams/teams.entity';
 import { TeamMembers } from './teams/team-members/team-members.entity';
 import { TeamLinks } from './teams/team-links/team-links.entity';
+import { ConversationEntity } from './chat/chat.entity';
+import { ConversationParticipantEntity } from './chat/conversation-participant.entity';
+import { MessageEntity } from './chat/message.entity';
+import { MessageReceiptEntity } from './chat/message-receipt.entity';
+import { OfferingOrder } from './offerings-order/offering-order.entity';
+import { PaymentIntent } from './payments/payment-intent.entity';
+import { Payment } from './payments/payment.entity';
+import { PaymentRefund } from './payments/payment-refund.entity';
+import { Invoice } from './invoices/invoice.entity';
 
 // ✅ Load environment variables for local/dev
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'production') { 
     dotenvFlow.config();
 }
 
@@ -54,6 +63,15 @@ export const dataSourceOptions: DataSourceOptions = {
         Team,
         TeamMembers,
         TeamLinks,
+        ConversationEntity,
+        ConversationParticipantEntity,
+        MessageEntity,
+        MessageReceiptEntity,
+        OfferingOrder,
+        PaymentIntent,
+        Payment,
+        PaymentRefund,
+        Invoice,
     ],
 
     // 🧱 Migrations
@@ -69,11 +87,12 @@ export const dataSourceOptions: DataSourceOptions = {
     namingStrategy: new SnakeNamingStrategy(),
 
     // 🛡️ SSL (DigitalOcean Managed PostgreSQL often requires this)
-    ssl: isProduction
-        ? {
-            rejectUnauthorized: false, // required for DO managed DBs
-        }
-        : false,
+    ssl: false,
+    // ssl: isProduction
+    //     ? {
+    //         rejectUnauthorized: false, // required for DO managed DBs
+    //     }
+    //     : false,
 };
 
 const dataSource = new DataSource(dataSourceOptions);

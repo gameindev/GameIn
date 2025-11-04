@@ -5,11 +5,12 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { RedisIoAdapter } from './redis/redisIOAdaptor.service';
 
 async function bootstrap() {
     const isProduction = process.env.NODE_ENV === 'production';
     const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-        logger: isProduction ? ['error', 'warn'] : ['log', 'error', 'warn', 'debug', 'verbose'],
+        logger: isProduction ? ['error', 'warn'] : ['log', 'error', 'warn', 'debug'],
     });
 
     /** ------------------ 🛡 Global Pipes ------------------ */
@@ -59,23 +60,18 @@ async function bootstrap() {
     const allowedOrigins =
         process.env.CORS_ORIGINS?.split(',').map((o) => o.trim()).filter(Boolean) || defaultOrigins;
 
-    const defaultAllowedHeaders = [
-        'Content-Type',
-        'Authorization',
-        'X-Requested-With',
-        'x-captcha-token',
-        'x-xsrf-token',
-    ];
-    const allowedHeaders = process.env.CORS_ALLOWED_HEADERS
-        ? process.env.CORS_ALLOWED_HEADERS.split(',').map((h) => h.trim()).filter(Boolean)
-        : defaultAllowedHeaders;
 
     app.enableCors({
-        origin: allowedOrigins,
+        origin: defaultOrigins,
         methods: process.env.CORS_METHODS ?? 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
         credentials: true,
-        allowedHeaders,
-        exposedHeaders: process.env.CORS_EXPOSED_HEADERS,
+        allowedHeaders: [
+            'Content-Type',
+            'Authorization',
+            'X-Requested-With',
+            'x-captcha-token',
+            'x-xsrf-token',
+        ],
     });
 
     /** ------------------ 🌐 Proxy / Headers ------------------ */
@@ -88,9 +84,16 @@ async function bootstrap() {
         prefix: '/uploads/',
     });
 
-    /** ------------------ ⚡️ Start Server ------------------ */
-    const port = process.env.PORT || (process.env.NODE_ENV === 'production' ? 8080 : 3000); // 8080 for DigitalOcean
+    const redisIoAdapter = new RedisIoAdapter(app);
+    await redisIoAdapter.connectToRedis();
+
+    app.useWebSocketAdapter(redisIoAdapter);
+
+    /** ------------------ 🚀 Start Server ------------------ */
+    const port = process.env.PORT ?? 3000;
     await app.listen(port);
-    console.log(`🚀 Server running on port ${port} (${isProduction ? 'production' : 'development'})`);
+
+    console.log(`🚀 Server is running on: http://localhost:${port}`);
+    console.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
 }
 bootstrap();

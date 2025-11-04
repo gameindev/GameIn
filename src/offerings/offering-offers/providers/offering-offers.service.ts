@@ -115,7 +115,7 @@ export class OfferingOffersService {
         if (
             !offering ||
             offering.adjustment_count >= 8 ||
-            offering.status === OfferingStatus.ACCEPTED
+            offering.status === OfferingStatus.ACCEPTED 
         ) {
             throw new BadRequestException('Adjustment not allowed');
         }

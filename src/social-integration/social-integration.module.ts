@@ -8,6 +8,7 @@ import { TwitchModule } from './platforms/twitch/twitch.module';
 import { InstagramModule } from './platforms/instagram/instagram.module';
 import { DiscordModule } from './platforms/discord/discord.module';
 import { XModule } from './platforms/x/x.module';
+import { TiktokModule } from './platforms/tiktok/tiktok.module';
 
 @Module({
     imports: [
@@ -16,6 +17,7 @@ import { XModule } from './platforms/x/x.module';
         InstagramModule,
         DiscordModule,
         XModule,
+        TiktokModule,
     ],
     controllers: [SocialIntegrationController],
     providers: [SocialIntegrationService, SocialIntegrationProvider, SocialProviderMap],

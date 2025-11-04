@@ -106,9 +106,14 @@ export class Offering {
     @Column({ type: 'timestamp', nullable: true })
     last_adjusted_at: Date;
 
-    @ManyToOne(() => User, { nullable: true, eager: false, cascade: ['insert', 'update'], onDelete: 'SET NULL', })
+    @ManyToOne(() => User, { nullable: true, eager: true, cascade: ['insert', 'update'], onDelete: 'SET NULL', })
     @JoinColumn({ name: 'last_adjusted_by', referencedColumnName: 'id' })
     last_adjusted_by: User;
+
+
+    @ManyToOne(() => User, { nullable: true, eager: true, cascade: ['insert', 'update'], onDelete: 'SET NULL', })
+    @JoinColumn({ name: 'accepted_by', referencedColumnName: 'id' })
+    accepted_by: User;
 
     @CreateDateColumn()
     created_at: Date;

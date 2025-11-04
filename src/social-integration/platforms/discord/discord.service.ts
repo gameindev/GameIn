@@ -123,7 +123,7 @@ export class DiscordService implements SocialIntegrationServiceInterface {
     async refreshTokenIfNeeded(integrationId: number): Promise<{ access_token: string; refresh_token?: string }> {
         const integration = await this.integrationRepo.findOne({
             where: { id: integrationId },
-            relations: ['users']
+            relations: ['user']
         });
 
         if (!integration) {
@@ -162,31 +162,52 @@ export class DiscordService implements SocialIntegrationServiceInterface {
 
 
     async fetchAndStoreStats(integrationId: number): Promise<any> {
+        this.logger.log(`Fetching Discord stats for integration ${integrationId}`);
+
         const integration = await this.integrationRepo.findOne({
             where: { id: integrationId },
-            relations: ['users'],
+            relations: ['user'],
         });
 
         if (!integration) {
             throw new Error('Integration not found');
         }
 
-        // 1. Refresh access token if needed
-        await this.refreshTokenIfNeeded(integrationId);
+        // 1️⃣ Refresh token if needed
+        const { access_token } = await this.refreshTokenIfNeeded(integrationId);
 
-        const url = `${this.baseUrl}/users/@me`;
-        const response = await firstValueFrom(
-            this.httpService.get(url, {
-                headers: {
-                    Authorization: `Bearer ${integration.access_token}`,
-                    'Client-Id': this.config.discordClientId,
-                },
+        // 2️⃣ Fetch Discord profile
+        const profileUrl = `${this.baseUrl}/users/@me`;
+        const { data: userData } = await firstValueFrom(
+            this.httpService.get(profileUrl, {
+                headers: { Authorization: `Bearer ${access_token}` },
             }),
         );
 
-        console.log("Discord User", response.data)
+        // 3️⃣ Fetch user’s connections
+        const connectionsUrl = `${this.baseUrl}/users/@me/connections`;
+        const { data: connections } = await firstValueFrom(
+            this.httpService.get(connectionsUrl, {
+                headers: { Authorization: `Bearer ${access_token}` },
+            }),
+        );
 
-        return response.data
+        // 4️⃣ Discord doesn’t expose follower/like/view metrics for personal accounts.
+        // You can approximate “follower-type” count by checking mutual connections or servers if you’re using a bot.
+        // For now, we’ll safely log profile + connections.
+
+        const summary = {
+            id: userData.id,
+            username: userData.global_name ?? userData.username,
+            avatar: userData.avatar
+                ? `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`
+                : null,
+            connectionsCount: connections?.length ?? 0,
+        };
+
+        this.logger.log('Discord Stats:', summary);
+
+        return summary;
     }
 
 }

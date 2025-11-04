@@ -20,6 +20,7 @@ const UploadProviderFactory: Provider = {
             case 'do':
                 return new DOUploadProvider(configService);
             case 'local':
+                return new LocalUploadProvider();
             default:
                 return new LocalUploadProvider();
         }

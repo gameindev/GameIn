@@ -70,15 +70,15 @@ export class CreateUserProvider {
             })
 
             // Send a verification email
-            // const email = this.emailService.sendTemplate('verify-account', {
-            //     username: newUser.username,
-            //     verifyUrl: 'http://localhost:3000?token='+newUser.token,
-            // }, {
-            //     subject: 'GameIn Account Verification',
-            //     to: newUser.email,
-            // });
+            const email = this.emailService.sendTemplate('verify-account', {
+                username: newUser.username,
+                verifyUrl: process.env.EMAIL_VERIFICATION_URL + '/verify-account?token=' + newUser.token,
+            }, {
+                subject: 'GameIn Account Verification',
+                to: newUser.email,
+            });
+            
 
-            console.log(newUser)
             const savedUser = await queryRunner.manager.save(User, newUser);
 
             if (savedUser.user_type === UserType.CREATOR) {

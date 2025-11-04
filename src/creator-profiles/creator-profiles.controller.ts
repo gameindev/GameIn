@@ -93,7 +93,7 @@ export class CreatorProfilesController {
     ) {
         const file = profileImageFile['profile_image'][0];
         const result = this.creatorProfilesService.updateCreatorProfilePic(profileId, file);
-        console.log("Result", result)
+        
         return result;
     }
 

@@ -16,7 +16,7 @@ const pkceStore = new Map<string, { verifier: string; userId: number; ts: number
 
 @Injectable()
 export class XService implements SocialIntegrationServiceInterface {
-    private readonly baseUrl = 'https://api.x.com/2';
+    private readonly baseUrl = 'https://api.twitter.com/2';
     private readonly logger = new Logger(XService.name);
 
     constructor(
@@ -46,7 +46,7 @@ export class XService implements SocialIntegrationServiceInterface {
         return Array.isArray(s) ? s.join(' ') : `${s}`.trim();
     }
 
-    async probeProfile(accessToken: string): Promise<any>{
+    async probeProfile(accessToken: string): Promise<any> {
         return {}
     }
 
@@ -85,7 +85,7 @@ export class XService implements SocialIntegrationServiceInterface {
         const { verifier, userId } = entry;
 
         // 2) Exchange code -> tokens (form-url-encoded)
-        const tokenUrl = 'https://api.x.com/2/oauth2/token';
+        const tokenUrl = 'https://api.twitter.com/2/oauth2/token';
         const basic = Buffer.from(`${this.config.xClientId}:${this.config.xClientSecret}`).toString('base64');
         const body = new URLSearchParams({
             grant_type: 'authorization_code',
@@ -97,13 +97,13 @@ export class XService implements SocialIntegrationServiceInterface {
 
         try { // Added try-catch for better error handling
             const response = await firstValueFrom(
-            this.httpService.post(tokenUrl, body.toString(), {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization': `Basic ${basic}`, // <-- required for confidential clients
-                },
-            }),
-        );
+                this.httpService.post(tokenUrl, body.toString(), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Authorization': `Basic ${basic}`, // <-- required for confidential clients
+                    },
+                }),
+            );
 
             const { access_token, refresh_token } = response.data;
 
@@ -136,7 +136,7 @@ export class XService implements SocialIntegrationServiceInterface {
             throw error;
         }
 
-        
+
 
     }
 
@@ -146,7 +146,6 @@ export class XService implements SocialIntegrationServiceInterface {
             this.httpService.get(url, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
-                    'Client-Id': this.config.xClientId,
                 },
             }),
         );
@@ -156,7 +155,7 @@ export class XService implements SocialIntegrationServiceInterface {
     async refreshTokenIfNeeded(integrationId: number): Promise<{ access_token: string; refresh_token?: string }> {
         const integration = await this.integrationRepo.findOne({
             where: { id: integrationId },
-            relations: ['users']
+            relations: ['user']
         });
 
         if (!integration) {
@@ -165,12 +164,11 @@ export class XService implements SocialIntegrationServiceInterface {
 
         if (!integration.refresh_token) {
             throw new Error('No refresh token available');
-        }        
+        }
 
-        const tokenUrl = 'https://api.x.com/2/oauth2/token';       
+        const tokenUrl = 'https://api.twitter.com/2/oauth2/token';
         const params = new URLSearchParams({
             client_id: this.config.xClientId,
-            client_secret: this.config.xClientSecret,
             grant_type: 'refresh_token',
             refresh_token: integration.refresh_token
         });
@@ -189,13 +187,109 @@ export class XService implements SocialIntegrationServiceInterface {
 
         await this.integrationRepo.save(integration);
 
-        return {access_token, refresh_token}
+        return { access_token, refresh_token }
     }
 
 
 
     async fetchAndStoreStats(integrationId: number): Promise<any> {
-        throw new Error('Method not implemented.');
+        const integration = await this.integrationRepo.findOne({
+            where: { id: integrationId },
+            relations: ['user'],
+        });
+
+        if (!integration) {
+            throw new Error('Integration not found');
+        }
+
+        // ✅ Correct base URL for Twitter
+        const baseUrl = 'https://api.twitter.com/2';
+
+        // 1️⃣ Refresh token if needed
+        const { access_token } = await this.refreshTokenIfNeeded(integrationId);
+
+        try {
+            // 2️⃣ Fetch followers count
+            const followersUrl = `${baseUrl}/users/${integration.social_id}/followers`;
+            const followersRes = await firstValueFrom(
+                this.httpService.get(followersUrl, {
+                    headers: {
+                        Authorization: `Bearer ${access_token}`,
+                    },
+                }),
+            );
+            const followersCount = followersRes.data?.meta?.result_count ?? 0;
+
+            // 3️⃣ Fetch latest tweets with metrics
+            const tweetsUrl = `${baseUrl}/users/${integration.social_id}/tweets?max_results=50&tweet.fields=public_metrics`;
+            const tweetsRes = await firstValueFrom(
+                this.httpService.get(tweetsUrl, {
+                    headers: {
+                        Authorization: `Bearer ${access_token}`,
+                    },
+                }),
+            );
+
+            const tweets = tweetsRes.data?.data ?? [];
+
+            // 4️⃣ Determine top liked & top viewed tweets
+            let topLiked = null;
+            let topViewed = null;
+
+            if (tweets.length > 0) {
+                topLiked = tweets.reduce((max, t) =>
+                    (t.public_metrics?.like_count ?? 0) >
+                        (max.public_metrics?.like_count ?? 0)
+                        ? t
+                        : max,
+                );
+
+                topViewed = tweets.reduce((max, t) =>
+                    (t.public_metrics?.impression_count ?? 0) >
+                        (max.public_metrics?.impression_count ?? 0)
+                        ? t
+                        : max,
+                );
+            }
+
+            const topLikeSummary = topLiked
+                ? {
+                    id: topLiked.id,
+                    text: topLiked.text,
+                    likes: topLiked.public_metrics?.like_count ?? 0,
+                }
+                : null;
+
+            const topViewSummary = topViewed
+                ? {
+                    id: topViewed.id,
+                    text: topViewed.text,
+                    views: topViewed.public_metrics?.impression_count ?? 0,
+                }
+                : null;
+
+            // 5️⃣ Log for verification
+            this.logger.log(`[X Stats] User ${integration.user.id}`, {
+                followers: followersCount,
+                topLiked: topLikeSummary,
+                topViewed: topViewSummary,
+            });
+
+            // 6️⃣ Return summary
+            return {
+                followers: followersCount,
+                topLiked: topLikeSummary,
+                topViewed: topViewSummary,
+            };
+        } catch (error) {
+            this.logger.error(`Error fetching X stats: ${error.response?.data?.error || error.message}`);
+            if (error.response?.status === 401) {
+                throw new Error('Invalid or expired access token. Please reconnect X account.');
+            }
+            throw error;
+        }
     }
+
+
 
 }

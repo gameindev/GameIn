@@ -10,7 +10,7 @@ import * as dotenvFlow from "dotenv-flow";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import * as fs from 'fs';
 
-// 🧱 Modules
+// 🧱 Modules 
 import { UsersModule } from "./users/users.module";
 import { CreatorProfilesModule } from "./creator-profiles/creator-profiles.module";
 import { BrandProfilesModule } from "./brand-profiles/brand-profiles.module";
@@ -54,22 +54,42 @@ import discordConfig from "./social-integration/platforms/discord/discord.config
 import xConfig from "./social-integration/platforms/x/x.config";
 import sesConfig from "./emails/config/ses.config";
 import smtpConfig from "./emails/config/smtp.config";
+import sendgridConfig from "./emails/config/sendgrid.config";
+import kafkaConfig from "./kafka/kafka.config";
+import stripeConfig from "./payments/config/stripe.config";
+import paypalConfig from "./payments/config/paypal.config";
+import razorpayConfig from "./payments/config/razorpay.config";
+import paymentsConfig from "./payments/config/payments.config";
 import { AccessTokenGuard } from "./auth/guards/access-token/access-token.guard";
 import { AuthenticationGuard } from "./auth/guards/authentication/authentication.guard";
 import { DataResponseInterceptor } from "./common/interceptors/data-response/data-response.interceptor";
 import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
+import { ChatModule } from './chat/chat.module';
+import { ConversationEntity } from "./chat/chat.entity";
+import { ConversationParticipantEntity } from "./chat/conversation-participant.entity";
+import { MessageEntity } from "./chat/message.entity";
+import { MessageReceiptEntity } from "./chat/message-receipt.entity";
+import { KafkaModule } from './kafka/kafka.module';
+import { OfferingsOrderModule } from './offerings-order/offerings-order.module';
+import { InvoicesModule } from './invoices/invoices.module';
+import { PaymentIntent } from './payments/payment-intent.entity';
+import { Payment } from './payments/payment.entity';
+import { PaymentRefund } from './payments/payment-refund.entity';
+import { Invoice } from './invoices/invoice.entity';
+import { OfferingOrder } from "./offerings-order/offering-order.entity";
+import { PaymentsModule } from './payments/payments.module';
 
 dotenvFlow.config(); // ✅ Loads .env only in local/dev
 
 const ENV = process.env.NODE_ENV || 'development';
-console.log(ENV)
+// console.log(ENV)
 @Module({
-    imports: [
+    imports: [ 
         /** 🌍 Global Config Module */
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: [`.env.${ENV}`, '.env'],
-            load: [appConfig, databaseConfig, jwtConfig, twitchConfig, xConfig, sesConfig, smtpConfig, discordConfig],
+            load: [appConfig, databaseConfig, jwtConfig, twitchConfig, xConfig, sesConfig, smtpConfig, sendgridConfig, discordConfig, kafkaConfig, stripeConfig, paypalConfig, razorpayConfig, paymentsConfig],
             validationSchema: environmentValidation,
         }),
 
@@ -103,21 +123,36 @@ console.log(ENV)
                         Team,
                         TeamMembers,
                         TeamLinks,
+                        ConversationEntity,
+                        ConversationParticipantEntity,
+                        MessageEntity,
+                        MessageReceiptEntity,
+                        OfferingOrder,
+                        PaymentIntent,
+                        Payment,
+                        PaymentRefund,
+                        Invoice,
                     ],
                     synchronize: false, // 🚫 Always false in production
                     namingStrategy: new SnakeNamingStrategy(),
-                    logging: isProduction ? ['error', 'warn'] : ['error', 'warn', 'query'],
+                    // logging: isProduction ? ['error', 'warn'] : ['error', 'warn', 'query'],
                     ssl: configService.get<boolean>('database.ssl') || process.env.DATABASE_SSL === 'true'
-                        ? {
-                            rejectUnauthorized: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false',
-                            ca: process.env.DATABASE_SSL_CA ? fs.readFileSync(process.env.DATABASE_SSL_CA).toString() : undefined
-                        }
+                        ? false
                         : false,
+
+                    // TODO: Need to replace in Production
+                    // ? {
+                    //     rejectUnauthorized: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false',
+                    //     ca: process.env.DATABASE_SSL_CA ? fs.readFileSync(process.env.DATABASE_SSL_CA).toString() : undefined
+                    // }
+                    // : false,
                     extra: {
-                        max: Number(process.env.TYPEORM_POOL_MAX ?? 10),
-                        min: Number(process.env.TYPEORM_POOL_MIN ?? 1),
+                        max: Number(process.env.TYPEORM_POOL_MAX ?? 20),
+                        min: Number(process.env.TYPEORM_POOL_MIN ?? 2),
                         idleTimeoutMillis: Number(process.env.TYPEORM_POOL_IDLE ?? 30000),
-                        connectionTimeoutMillis: Number(process.env.TYPEORM_POOL_ACQUIRE ?? 30000),
+                        connectionTimeoutMillis: Number(process.env.TYPEORM_POOL_ACQUIRE ?? 60000),
+                        // Removed statement_timeout - it was causing "canceling statement due to statement timeout"
+                        // Services inside transactions may need longer than 30s
                     },
                 };
             },
@@ -143,6 +178,11 @@ console.log(ENV)
         EmailsModule,
         OfferingsModule,
         TeamsModule,
+        ChatModule,
+        KafkaModule,
+        OfferingsOrderModule,
+        InvoicesModule,
+        PaymentsModule,
     ],
     controllers: [AppController],
     providers: [

@@ -14,6 +14,8 @@ import { OfferingsScheduler } from './scheduler/offerings.scheduler';
 import { CreateAdjustmentProvider } from './providers/create-adjustment.provider';
 import { UsersModule } from '../users/users.module';
 import { UploadsModule } from '../uploads/uploads.module';
+import { ChatModule } from '@/chat/chat.module';
+import { OfferingsOrderModule } from '@/offerings-order/offerings-order.module';
 
 @Module({
     controllers: [OfferingsController],
@@ -23,15 +25,17 @@ import { UploadsModule } from '../uploads/uploads.module';
         OfferingPriceService, 
         OfferingBaseService, 
         OfferingsScheduler,
-        CreateAdjustmentProvider
+        CreateAdjustmentProvider,
     ],
     imports: [
         TypeOrmModule.forFeature([Offering, OfferingOffers, OfferingPrice]),
         forwardRef(() => OfferingOffersModule),
         UsersModule,
         forwardRef(() => OfferingPriceModule),
-        UploadsModule
-    ],
+        UploadsModule,
+        ChatModule,
+        OfferingsOrderModule,
+    ], 
     exports: [OfferingsService, OfferingBaseService],
 })
 export class OfferingsModule { }

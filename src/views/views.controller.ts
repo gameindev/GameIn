@@ -1,6 +1,7 @@
 import { Controller, Patch, Param, Req, ParseIntPipe } from '@nestjs/common';
 import { ViewsService } from './providers/views.service';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { UserType } from '../users/enums/user-type.enums';
 
 @Controller('views')
 export class ViewsController {
@@ -17,7 +18,7 @@ export class ViewsController {
     @ApiParam({
         name: 'type',
         description: 'The type of profile to view',
-        enum: ['creator', 'brand'],
+        enum: UserType,
     })
     @ApiParam({
         name: 'id',
@@ -27,7 +28,7 @@ export class ViewsController {
     
     @Patch(':type/:id/view')
     async addUniqueView(
-        @Param('type') type: 'creator' | 'brand',
+        @Param('type') type: UserType.CREATOR | UserType.BRAND,
         @Param('id', ParseIntPipe) id: number,
         @Req() req
     ) {
@@ -36,7 +37,7 @@ export class ViewsController {
         return this.viewsService.addUniqueView({
             profile_id: id,
             profile_type: type,
-            viewer_id: userId,
+            viewer_id: userId as number,
             ip_address: ip,
         });
     }

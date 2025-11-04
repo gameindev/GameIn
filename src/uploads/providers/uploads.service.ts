@@ -31,10 +31,18 @@ export class UploadsService {
     }
 
 
-    async deleteUpload(existingUpload: UploadEntity): Promise<void> {
-        if (!existingUpload) return;
+    async deleteUpload(existingUpload: UploadEntity): Promise<boolean> {       
+        if (!existingUpload) return false;        
 
-        await this.provider.delete(existingUpload.path);
-        await this.uploadRepo.delete(existingUpload.id);
+        // Check if file exists based on upload strategy
+        const fileExists = await this.provider.exists(existingUpload.path);
+        
+        if (fileExists) {
+            await this.provider.delete(existingUpload.path);
+        }
+        
+        const deleteResult = await this.uploadRepo.delete(existingUpload.id);
+
+        return !!deleteResult.affected && deleteResult.affected > 0;
     }
 }

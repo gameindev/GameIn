@@ -33,14 +33,40 @@ export class FindOfferingsQueryDto {
     user_id?: number;
 
     @ApiPropertyOptional({
+        description: 'Filter by offering IDs (comma-separated or array)',
+        isArray: true,
+        type: Number,
+        example: [1, 2, 3],
+    })
+    @IsOptional()
+    @Transform(({ value }) => {
+        if (!value) return undefined;
+        // Handle array from repeated query params: ?ids=1&ids=2
+        if (Array.isArray(value)) {
+            return value.map((v) => Number(v)).filter((v) => !isNaN(v) && v > 0);
+        }
+        // Handle comma-separated string: ?ids=1,2,3
+        if (typeof value === 'string') {
+            return value.split(',').map((v) => Number(v.trim())).filter((v) => !isNaN(v) && v > 0);
+        }
+        // Handle single value: ?ids=1
+        const num = Number(value);
+        return !isNaN(num) && num > 0 ? [num] : undefined;
+    })
+    @IsArray()
+    @IsInt({ each: true })
+    @Min(1, { each: true })
+    ids?: number[];
+
+    @ApiPropertyOptional({
         description: 'Relations to include (comma-separated or repeated)',
         isArray: true,
-        enum: ['users', 'offering_offers', 'offering_price'],
-        example: ['users', 'offering_offers', 'offering_price'],
+        enum: ['user', 'offering_offers', 'offering_price', 'last_adjusted_by', 'logo'],
+        example: ['user', 'offering_offers', 'offering_price', 'last_adjusted_by', 'logo'],
     })
     @IsOptional()
     @IsArray()
-    @IsIn(['users', 'offering_offers', 'offering_price'], { each: true })
+    @IsIn(['user', 'offering_offers', 'offering_price', 'last_adjusted_by', 'logo'], { each: true })
     @Transform(({ value }) =>
         Array.isArray(value)
             ? value
@@ -48,8 +74,13 @@ export class FindOfferingsQueryDto {
                 ? value.split(',').map((v) => v.trim()).filter(Boolean)
                 : undefined,
     )
-    relations?: Array<'users' | 'offering_offers' | 'offering_price'>;
+    relations?: Array<'user' | 'offering_offers' | 'offering_price' | 'last_adjusted_by' | 'logo'>;
 }
+
+
+
+
+
 
 export class PaginationMetaDto {
     @ApiPropertyOptional()
