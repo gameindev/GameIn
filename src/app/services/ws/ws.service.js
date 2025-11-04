@@ -13,7 +13,9 @@ export function initSocket(token, onEvents = {}) {
 
     socket = io(import.meta.env.VITE_CHAT_SOCKET_URL || "http://localhost:3000", {
         auth: { token: `Bearer ${token}` },
-        transports: ["websocket", "polling"],
+        transports: ["websocket"],
+        path: '/socket.io',
+        secure:true
     });
 
     // Bind provided event handlers dynamically
