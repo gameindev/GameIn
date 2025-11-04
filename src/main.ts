@@ -64,15 +64,26 @@ async function bootstrap() {
         ];
 
     app.enableCors({
-        origin: allowedOrigins,
-        credentials: true,
-        methods: process.env.CORS_METHODS ?? 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-        allowedHeaders: process.env.CORS_ALLOWED_HEADERS?.split(',') ?? [
+        origin: (origin, callback) => {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error(`Origin ${origin} not allowed by CORS`));
+            }
+        },
+        credentials: true, // ✅ required for cookies / auth headers
+        methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+        allowedHeaders: [
             'Content-Type',
             'Authorization',
             'X-Requested-With',
             'x-captcha-token',
             'x-xsrf-token',
+        ],
+        exposedHeaders: [
+            'Content-Type',
+            'Authorization',
+            'X-Requested-With',
         ],
     });
 
