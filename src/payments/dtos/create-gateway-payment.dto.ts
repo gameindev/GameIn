@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsNumber, IsOptional, IsString, IsEmail, Min, IsObject } from 'class-validator';
-import { PaymentProvider } from '@/offerings/enums/payment-provider.enum';
+import { PaymentProvider } from '../../offerings/enums/payment-provider.enum';
 
 export class CreateGatewayPaymentDto {
     @ApiProperty({ description: 'Payment amount' })

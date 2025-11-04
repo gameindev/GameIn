@@ -3,12 +3,12 @@ import { Repository } from 'typeorm';
 import { OfferingOrder } from '../offering-order.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateOfferingOrderDto } from '../dtos/post-offering-order.dto';
-import { ActiveUserData } from '@/auth/interfaces/active-user-data.interface';
 import { PostOfferingOrderProvider } from './post-offering-order.provider';
 import { GetOfferingOrderProvider } from './get-offering-order.provider';
 import { FindOfferingOrdersQueryDto } from '../dtos/get-offering-order.dto';
 import { OrderStatus } from '../enums/order-status.enum';
-import { OfferingsService } from '@/offerings/providers/offerings.service';
+import { OfferingsService } from '../../offerings/providers/offerings.service';
+import { ActiveUserData } from '../../auth/interfaces/active-user-data.interface';
 
 @Injectable()
 export class OfferingsOrderService {

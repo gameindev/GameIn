@@ -8,11 +8,11 @@ import { OfferingOffersService } from '../offering-offers/providers/offering-off
 import { UploadsService } from '../../uploads/providers/uploads.service';
 import { ActiveUserData } from '../../auth/interfaces/active-user-data.interface';
 import { UserType } from '../../users/enums/user-type.enums';
-import { ChatService } from '@/chat/providers/chat.service';
-import { MessageType } from '@/chat/enum/message-type.enum';
-import { OfferingsOrderService } from '@/offerings-order/providers/offerings-order.service';
-import { OrderStatus } from '@/offerings-order/enums/order-status.enum';
 import { UploadEntity } from '../../uploads/upload.entity';
+import { OfferingsOrderService } from '../../offerings-order/providers/offerings-order.service';
+import { ChatService } from '../../chat/providers/chat.service';
+import { OrderStatus } from '../../offerings-order/enums/order-status.enum';
+import { MessageType } from '../../chat/enum/message-type.enum';
 
 @Injectable()
 export class CreateAdjustmentProvider {

@@ -2,7 +2,7 @@ import { Controller, Get, Post, Query } from '@nestjs/common';
 import { UsersService } from './providers/users.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Auth } from '../auth/decorators/auth.decorator';
-import { AuthType } from '@/auth/enums/auth-type.enum';
+import { AuthType } from '../auth/enums/auth-type.enum';
 
 @Controller('user-verification')
 @ApiTags('User Verification')

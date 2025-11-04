@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { OfferingOrder } from '@/offerings-order/offering-order.entity';
 import { InvoiceStatus } from './enums/invoice-status.enum';
+import { OfferingOrder } from '../offerings-order/offering-order.entity';
 
 @Entity({ name: 'invoice' })
 export class Invoice {

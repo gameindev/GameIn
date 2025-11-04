@@ -2,12 +2,11 @@ import { Body, ClassSerializerInterceptor, Controller, Get, Param, Post, Query, 
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { OfferingsOrderService } from './providers/offerings-order.service';
 import { CreateOfferingOrderDto } from './dtos/post-offering-order.dto';
-import { UserType } from '@/users/enums/user-type.enums';
-import { UserTypes } from '@/auth/decorators/user-types.decorator';
-import { ActiveUserData } from '@/auth/interfaces/active-user-data.interface';
-import { ActiveUser } from '@/auth/decorators/active-user.decorator';
-import { FindOfferingsQueryDto } from '@/offerings/dtos/get-offering.dto';
 import { FindOfferingOrdersQueryDto } from './dtos/get-offering-order.dto';
+import { UserType } from '../users/enums/user-type.enums';
+import { UserTypes } from '../auth/decorators/user-types.decorator';
+import { ActiveUser } from '../auth/decorators/active-user.decorator';
+import { ActiveUserData } from '../auth/interfaces/active-user-data.interface';
 
 @Controller('offerings-order')
 @ApiBearerAuth()

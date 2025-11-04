@@ -17,7 +17,8 @@ import { UserType } from '../../users/enums/user-type.enums';
 import { FindOfferingsQueryDto } from '../dtos/get-offering.dto';
 import { OfferingStatus } from '../enums/offering-status.enum';
 import { UploadsService } from '../../uploads/providers/uploads.service';
-import { User } from '@/users/user.entity';
+import { User } from '../../users/user.entity';
+
 
 
 

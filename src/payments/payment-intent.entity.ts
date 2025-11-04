@@ -1,9 +1,9 @@
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { OfferingOrder } from '@/offerings-order/offering-order.entity';
-import { Invoice } from '@/invoices/invoice.entity';
-import { PaymentProvider } from '@/offerings/enums/payment-provider.enum';
 import { PaymentStatus } from './enums/payment-status.enum';
 import { Payment } from './payment.entity';
+import { OfferingOrder } from '../offerings-order/offering-order.entity';
+import { Invoice } from '../invoices/invoice.entity';
+import { PaymentProvider } from '../offerings/enums/payment-provider.enum';
 
 
 @Entity({ name: 'payment_intent' })

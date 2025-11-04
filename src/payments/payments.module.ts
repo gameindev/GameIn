@@ -13,8 +13,8 @@ import { RazorpayAdapter } from './adapters/razorpay.adapter';
 import { PaymentIntent } from './payment-intent.entity';
 import { Payment } from './payment.entity';
 import { PaymentRefund } from './payment-refund.entity';
-import { InvoicesModule } from '@/invoices/invoices.module';
-import { OfferingsOrderModule } from '@/offerings-order/offerings-order.module';
+import { OfferingsOrderModule } from '../offerings-order/offerings-order.module';
+import { InvoicesModule } from '../invoices/invoices.module';
 
 @Module({
     imports: [

@@ -5,9 +5,8 @@ import { EntityManager, Repository } from 'typeorm';
 import { CreateOfferingPriceDto } from '../dtos/post-offer-price.dto';
 import { OfferingsService } from '../../providers/offerings.service';
 import { OfferingStatus } from '../../enums/offering-status.enum';
-import { OfferingsOrderService } from '@/offerings-order/providers/offerings-order.service';
-import { OrderStatus } from '@/offerings-order/enums/order-status.enum';
 import { PaymentProvider } from '../../enums/payment-provider.enum';
+import { OfferingsOrderService } from '../../../offerings-order/providers/offerings-order.service';
 
 @Injectable()
 export class OfferingPriceService {

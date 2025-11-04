@@ -1,12 +1,12 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { OfferingOrder } from "../offering-order.entity";
 import { Repository } from "typeorm";
-import { OfferingsService } from "@/offerings/providers/offerings.service";
-import { UsersService } from "@/users/providers/users.service";
-import { ActiveUserData } from "@/auth/interfaces/active-user-data.interface";
 import { ForbiddenException, forwardRef, Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { UserType } from "@/users/enums/user-type.enums";
 import { FindOfferingOrdersQueryDto } from "../dtos/get-offering-order.dto";
+import { OfferingsService } from "../../offerings/providers/offerings.service";
+import { UsersService } from "../../users/providers/users.service";
+import { ActiveUserData } from "../../auth/interfaces/active-user-data.interface";
+import { UserType } from "../../users/enums/user-type.enums";
 
 
 @Injectable()

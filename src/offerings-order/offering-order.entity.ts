@@ -1,8 +1,9 @@
-import { OfferingType } from "@/offerings/enums/offering-type.enum";
-import { Offering } from "@/offerings/offerings.entity";
-import { User } from "@/users/user.entity";
+
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { OrderStatus } from "./enums/order-status.enum";
+import { Offering } from "../offerings/offerings.entity";
+import { User } from "../users/user.entity";
+import { OfferingType } from "../offerings/enums/offering-type.enum";
 
 
 @Entity({ name: 'offering_order' })

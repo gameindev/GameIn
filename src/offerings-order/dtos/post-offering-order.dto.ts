@@ -1,7 +1,7 @@
-import { OfferingType } from "@/offerings/enums/offering-type.enum";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength } from "class-validator";
 import { OrderStatus } from "../enums/order-status.enum";
+import { OfferingType } from "../../offerings/enums/offering-type.enum";
 
 
 export class CreateOfferingOrderDto {

@@ -5,8 +5,8 @@ import { PaymentIntent } from '../payment-intent.entity';
 import { CreatePaymentIntentDto } from '../dtos/create-payment-intent.dto';
 import { UpdatePaymentIntentDto } from '../dtos/update-payment-intent.dto';
 import { PaymentStatus } from '../enums/payment-status.enum';
-import { InvoicesService } from '@/invoices/providers/invoices.service';
-import { OfferingsOrderService } from '@/offerings-order/providers/offerings-order.service';
+import { InvoicesService } from '../../invoices/providers/invoices.service';
+import { OfferingsOrderService } from '../../offerings-order/providers/offerings-order.service';
 
 @Injectable()
 export class PaymentIntentService {

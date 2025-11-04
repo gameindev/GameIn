@@ -14,8 +14,8 @@ import { OfferingsScheduler } from './scheduler/offerings.scheduler';
 import { CreateAdjustmentProvider } from './providers/create-adjustment.provider';
 import { UsersModule } from '../users/users.module';
 import { UploadsModule } from '../uploads/uploads.module';
-import { ChatModule } from '@/chat/chat.module';
-import { OfferingsOrderModule } from '@/offerings-order/offerings-order.module';
+import { OfferingsOrderModule } from '../offerings-order/offerings-order.module';
+import { ChatModule } from '../chat/chat.module';
 
 @Module({
     controllers: [OfferingsController],

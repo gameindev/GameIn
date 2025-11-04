@@ -4,13 +4,13 @@ import { PaymentsService } from './payments.service';
 import { PaymentIntentService } from './payment-intent.service';
 import { PaymentService } from './payment.service';
 import { PaymentRefundService } from './payment-refund.service';
-import { InvoicesService } from '@/invoices/providers/invoices.service';
-import { OfferingsOrderService } from '@/offerings-order/providers/offerings-order.service';
-import { PaymentProvider } from '@/offerings/enums/payment-provider.enum';
 import { PaymentStatus } from '../enums/payment-status.enum';
-import { InvoiceStatus } from '@/invoices/enums/invoice-status.enum';
-import { OrderStatus } from '@/offerings-order/enums/order-status.enum';
 import { RefundStatus } from '../enums/refund-status.enum';
+import { InvoicesService } from '../../invoices/providers/invoices.service';
+import { OfferingsOrderService } from '../../offerings-order/providers/offerings-order.service';
+import { PaymentProvider } from '../../offerings/enums/payment-provider.enum';
+import { InvoiceStatus } from '../../invoices/enums/invoice-status.enum';
+import { OrderStatus } from '../../offerings-order/enums/order-status.enum';
 
 /**
  * Service that orchestrates the complete payment flow from order to payment completion

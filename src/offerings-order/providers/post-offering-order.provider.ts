@@ -3,13 +3,13 @@ import { OfferingOrder } from "../offering-order.entity";
 import { OfferingsOrderService } from "./offerings-order.service";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CreateOfferingOrderDto } from "../dtos/post-offering-order.dto";
-import { ActiveUserData } from "@/auth/interfaces/active-user-data.interface";
-import { OfferingsService } from "@/offerings/providers/offerings.service";
 import { ForbiddenException, forwardRef, Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { UsersService } from "@/users/providers/users.service";
-import { UserType } from "@/users/enums/user-type.enums";
 import { v4 as uuid } from 'uuid';
 import { OrderStatus } from "../enums/order-status.enum";
+import { OfferingsService } from "../../offerings/providers/offerings.service";
+import { UsersService } from "../../users/providers/users.service";
+import { ActiveUserData } from "../../auth/interfaces/active-user-data.interface";
+import { UserType } from "../../users/enums/user-type.enums";
 
 
 @Injectable()
