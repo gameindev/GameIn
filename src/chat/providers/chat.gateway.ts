@@ -14,8 +14,12 @@ import { ChatService } from './chat.service';
 
 @UseGuards(WsAccessTokenGuard)
 @WebSocketGateway({
-    cors: '*',
+    cors: {
+        origin: ['https://gamein.gg', 'https://www.gamein.gg'],
+        credentials: true,
+    },
     transports: ['websocket'],
+    path: '/socket.io',
 })
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer() server: Server;
@@ -32,7 +36,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
     afterInit(server: any) {
         console.log('ChatGateway initialized');
-        
+
         // Set up Kafka consumer for read events
         this.setupReadEventConsumer();
     }
@@ -335,7 +339,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         @ConnectedSocket() client: Socket,
         @MessageBody() data: { conversationId: number, content: string, attachments?: any[], json_data?: Record<string, any>, timestamp?: string, type?: MessageType, client_msg_id?: string }
     ) {
-        
+
         if (!data?.conversationId || !data?.content) return;
 
         try {
@@ -402,7 +406,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     // Method to handle Kafka read events and broadcast via WebSocket
     async handleMessageReadEvent(readData: any) {
         console.log('Handling message read event:', readData);
-        
+
         const broadcastData = {
             messageId: readData.messageId,
             conversationId: readData.conversationId,
@@ -410,7 +414,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
             readAt: readData.readAt,
             timestamp: readData.timestamp || new Date().toISOString()
         };
-        
+
         await this.broadcastReadStatus(readData.conversationId, broadcastData);
     }
 
