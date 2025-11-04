@@ -6,6 +6,9 @@ const baseURL = import.meta.env.VITE_BACKEND_URL || "https://backend-app-ifeze.o
 const api = axios.create({
     baseURL,
     withCredentials: true,
+    headers: {
+        'Content-Type': 'application/json',
+    },
     timeout: 30000, // 30 seconds timeout for file uploads
 });
 
