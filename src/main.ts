@@ -56,7 +56,7 @@ async function bootstrap() {
     }
 
     /** ------------------ 🔐 CORS ------------------ */
-    const defaultOrigins = ['http://localhost:5173', 'http://localhost:5174', 'https://gamein.gg', 'https://www.gamein.gg' , 'https://frontend-app-vn9qp.ondigitalocean.app'];
+    const defaultOrigins = ['https://gamein.gg', 'https://www.gamein.gg', 'http://localhost:5173', 'http://localhost:5174', 'https://frontend-app-vn9qp.ondigitalocean.app'];
     const allowedOrigins =
         process.env.CORS_ORIGINS?.split(',').map((o) => o.trim()).filter(Boolean) || defaultOrigins;
 
@@ -90,10 +90,7 @@ async function bootstrap() {
     app.useWebSocketAdapter(redisIoAdapter);
 
     /** ------------------ 🚀 Start Server ------------------ */
-    const port = process.env.PORT ?? 3000;
-    await app.listen(port);
-
-    console.log(`🚀 Server is running on: http://localhost:${port}`);
-    console.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
+    await app.listen(process.env.PORT || 8080, '0.0.0.0');
+    console.log(`🚀 Server running on port ${process.env.PORT || 8080}`);
 }
 bootstrap();
