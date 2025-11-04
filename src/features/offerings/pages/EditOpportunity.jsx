@@ -12,7 +12,7 @@ import { offeringService } from "../services";
 import Preloader from "../../../shared/components/Preloader";
 import { offeringSectionMapper } from "../types/offeringSection.mapper";
 import { FormDisableProvider } from "../../../shared/context/FormDisableContext";
-import ExpiryTimer from "../components/ExpiryTimer";
+import ExpiryTimer from "../components/ExpiryTimer.jsx";
 import OfferingSection from "../components/OfferingSection";
 import OpportunityFormFields from "../components/OpportunityFormFields";
 import FormField from "../../../shared/components/FormField";
