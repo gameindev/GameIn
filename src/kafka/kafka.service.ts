@@ -16,6 +16,19 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
 
     async onModuleInit() {
         this.kafkaConfig = this.configService.get('kafka');
+        await this.initializeKafkaComponents();
+        await this.connectWithRetry();
+    }
+
+    private async initializeKafkaComponents(): Promise<void> {
+        // Ensure kafkaConfig is available
+        if (!this.kafkaConfig) {
+            this.kafkaConfig = this.configService.get('kafka');
+
+            if (!this.kafkaConfig) {
+                throw new Error('Kafka configuration is not available. Please check your environment variables.');
+            }
+        }
 
         const kafkaOptions: any = {
             clientId: this.kafkaConfig.clientId,
@@ -40,12 +53,12 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
         // Configure consumer with session timeout and heartbeat interval
         const consumerOptions = {
             groupId: this.kafkaConfig.groupId,
-            sessionTimeout: this.kafkaConfig.sessionTimeout,
-            heartbeatInterval: this.kafkaConfig.heartbeatInterval,
+            sessionTimeout: this.kafkaConfig.sessionTimeout || 30000,
+            heartbeatInterval: this.kafkaConfig.heartbeatInterval || 3000,
             maxWaitTimeInMs: 5000,
             retry: {
-                initialRetryTime: this.kafkaConfig.retry.initialRetryTime,
-                retries: this.kafkaConfig.retry.retries,
+                initialRetryTime: this.kafkaConfig.retry?.initialRetryTime || 100,
+                retries: this.kafkaConfig.retry?.retries || 8,
             },
         };
 
@@ -57,9 +70,6 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
             ...consumerOptions,
             groupId: `${this.kafkaConfig.groupId}-message-persistence`
         });
-
-        // Connect with retry logic
-        await this.connectWithRetry();
     }
 
     private async connectWithRetry(): Promise<void> {
@@ -68,9 +78,32 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
             return;
         }
 
+        // Ensure kafkaConfig is initialized
+        if (!this.kafkaConfig) {
+            this.logger.warn('Kafka config not initialized, initializing now...');
+            this.kafkaConfig = this.configService.get('kafka');
+
+            // If still not available, use defaults
+            if (!this.kafkaConfig) {
+                this.logger.error('Kafka config not available, using defaults');
+                this.kafkaConfig = {
+                    maxRetries: 10,
+                    retryDelay: 2000,
+                    sessionTimeout: 30000,
+                    heartbeatInterval: 3000,
+                };
+            }
+        }
+
+        // If Kafka instance or consumers are not initialized, initialize them first
+        if (!this.kafka || !this.producer || !this.consumer || !this.messagePersistenceConsumer) {
+            this.logger.log('Initializing Kafka components before connecting...');
+            await this.initializeKafkaComponents();
+        }
+
         this.isInitializing = true;
-        const maxRetries = this.kafkaConfig.maxRetries || 10;
-        const retryDelay = this.kafkaConfig.retryDelay || 2000;
+        const maxRetries = this.kafkaConfig?.maxRetries || 10;
+        const retryDelay = this.kafkaConfig?.retryDelay || 2000;
 
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
             try {
