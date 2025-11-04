@@ -15,10 +15,17 @@ import { ChatService } from './chat.service';
 @UseGuards(WsAccessTokenGuard)
 @WebSocketGateway({
     cors: {
-        origin: ['https://gamein.gg', 'https://www.gamein.gg'],
+        origin: [
+            'https://gamein.gg',
+            'https://www.gamein.gg',
+            'https://frontend-app-vn9qp.ondigitalocean.app',
+            'http://localhost:5173'
+        ],
+        methods: ['GET', 'POST'],
+        allowedHeaders: ['Authorization', 'Content-Type'],
         credentials: true,
     },
-    transports: ['websocket'],
+    // remove transports: ['websocket'] to allow fallback
     path: '/socket.io',
 })
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
