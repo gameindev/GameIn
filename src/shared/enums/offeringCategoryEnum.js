@@ -1,0 +1,6 @@
+export const OfferingCategory = {
+    LOGO_STREAM: "LOGO_STREAM",
+    VIDEO_COMMERCIAL: "VIDEO_COMMERCIAL",
+    SOCIAL_POST: "SOCIAL_POST",
+    MERCHANDISE: "MERCHANDISE",
+};

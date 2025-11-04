@@ -1,0 +1,15 @@
+export const MESSAGE_TYPES = {
+    TEXT: 'TEXT',
+    IMAGE: 'IMAGE',
+    VIDEO: 'VIDEO',
+    SYSTEM: 'SYSTEM',
+    DOCUMENT: 'DOCUMENT',
+    AUDIO: 'AUDIO',
+    FILE: 'FILE',
+    LOCATION: 'LOCATION',
+    CONTACT: 'CONTACT',
+    EVENT: 'EVENT',
+    TASK: 'TASK',
+    ALARM: 'ALARM',
+    OTHER: 'OTHER'
+}

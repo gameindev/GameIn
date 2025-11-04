@@ -1,0 +1,164 @@
+import { createGlobalStyle } from "styled-components";
+
+export const GlobalStyles = createGlobalStyle`
+    *{        
+        box-sizing: border-box;
+    }
+
+    :root{
+        /* font-size: 0.833334vw; */
+        /* font-size: clamp(0.75em, -2.3321em + 3.6101vw, 2em); */
+
+        /* @media(max-width: 1366px){
+            font-size: 0.9vw;
+        } */
+    }    
+
+    body{
+        background: ${({ theme }) => theme.colors.body[0]};
+        font-family: 'Exo2', sans-serif !important;
+        
+        font-size: 75%;
+
+        @media (min-width: 1200px) {
+            font-size: 75%;
+        }
+
+        @media (min-width: 1400px) {
+            font-size: 85%;
+        }
+
+        @media (min-width: 1600px) {
+            font-size: 88%;
+        }
+    }
+
+    * {
+        font-family: 'Exo2', sans-serif !important;
+    }
+
+    ul{
+        margin: 0;
+        padding: 0;
+
+        li {
+            list-style: none;
+        }
+    }
+
+
+
+    figure {
+        margin: 0;
+    }
+
+    .wrapper{
+        display: flex;
+        width: 100%;
+
+        .ad-banner{
+            min-width: 14.875em;
+            position: sticky;
+            top: 5em;
+            height: calc(100vh - 5em);
+            background: ${({ theme }) => theme.colors.secondaryGrey[1]};
+        }
+    }
+
+    main{
+        &:not(.logged-in){
+            flex: 1;
+        }
+        &.logged-in{
+            padding: 2.5em;
+            min-width: calc(100% - 35.5em);
+        }
+    }
+    
+    .container, .container-fluid{
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .container{
+        max-width: 75%;
+        /* padding: 0 4em; */
+        /* @media (min-width: 1920px){
+            max-width: 70em;
+        } */
+    }
+
+    .container-fluid{
+        max-width: 90%;
+        /* padding: 0 2em; */
+        /* @media (min-width: 1920px){
+            max-width: 90em;
+        } */
+    }
+
+    ::placeholder {
+        color: ${({ theme }) => theme.colors.white[0]} !important;
+        opacity: 0.7 !important;
+    }
+
+    /* Mantine Overwrite Styles */
+    
+    /* .mantine-PasswordInput-innerInput{
+        padding: 4em !important;
+    } */
+
+     .mantine-RadioCard-card[data-checked] {
+        border: 0.125em solid ${({ theme }) =>
+          theme.colors.primary[0]} !important;
+     }
+
+
+     /* Lucide icons overwrite styles */
+     svg.lucide[width="24"] {
+        width: 1.5em;
+        height: 1.5em;
+    }
+    
+    .hoverGreen:hover{
+        background-color: ${({ theme }) => theme.colors.primary[0]} !important;
+    }
+
+    .hoverGreen:hover svg path {
+        color: ${({ theme }) => theme.colors.black[0]} !important;
+    }
+
+    .hoverGrey:hover{
+        background-color: ${({ theme }) =>
+          theme.colors.hoverGrey[0]} !important;
+    }
+
+    .hoverGrey:hover svg path {
+        color: ${({ theme }) => theme.colors.black[0]} !important;
+    }
+
+    .hoverRed:hover{
+        background-color: ${({ theme }) => theme.colors.hoverRed[0]} !important;
+    }
+
+    .hoverRed:hover svg path {
+        color: ${({ theme }) => theme.colors.inputBgColor[0]} !important;
+    }
+
+    .hoverYellow:hover{
+        background-color: ${({ theme }) => theme.colors.yellow[0]} !important;
+    }
+
+    .hoverYellow:hover img {
+        filter: brightness(0);
+    }
+
+    .myCropImage img{
+        object-fit: contain;
+    }
+
+    .mantine-Input-input{
+        font-size: 1.05em;
+        padding: 1.2em;
+        border-radius: 8px;
+    }
+`;

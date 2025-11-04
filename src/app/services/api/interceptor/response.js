@@ -1,0 +1,39 @@
+import { AUTH_ENDPOINTS } from "../../../../features/auth/api/authEndpoints";
+
+import { refreshTokens } from "../../token/tokenRefreshService";
+import api from "../index";
+
+export const responseInterceptor = (response) => {
+    return response;
+};
+
+export const responseErrorInterceptor = async (error) => {
+    // console.error("Response Error Interceptor:", error.response || error.message);
+
+    const originalRequest = error.config;
+
+    if (error.response) {
+        const { status } = error.response;
+
+        if (
+            status === 401 &&
+            !originalRequest._retry &&
+            !originalRequest.url.includes(AUTH_ENDPOINTS.REFRESH_TOKENS)
+        ) {
+            originalRequest._retry = true;
+            try {
+                const newAccessToken = await refreshTokens();
+                originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+                return api(originalRequest);
+            } catch (err) {
+                return Promise.reject(err);
+            }
+        } else if (status === 403) {
+            console.error("Forbidden: User does not have necessary permissions.");
+        } else if (status >= 500) {
+            console.error("Server error. Please try again later.");
+        }
+    }
+
+    return Promise.reject(error);
+};

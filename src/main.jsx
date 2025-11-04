@@ -1,36 +1,38 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import App from "./App.jsx";
-import { ColorSchemeScript, MantineProvider } from "@mantine/core";
-import "./styles";
-import { GlobalStyles, theme } from "./styles/theme";
-import { ThemeProvider } from "styled-components";
-import { Provider } from "react-redux";
-import { persistor, store } from "./stores/store.js";
-import { PersistGate } from "redux-persist/integration/react";
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import './shared/styles/index.js'
+import App from './app/App.jsx'
+import { ColorSchemeScript, MantineProvider } from '@mantine/core'
+import { GoogleOAuthProvider } from '@react-oauth/google'
+import { ThemeProvider } from 'styled-components'
 import { Notifications } from "@mantine/notifications";
-import { GoogleOAuthProvider } from "@react-oauth/google";
+import { theme } from './shared/styles/theme/customTheme.js'
+import { GlobalStyles } from './shared/styles/theme/globalTheme.js'
+import StoreProvider from './app/providers/StoreProvider.jsx'
+import { PersistGate } from 'redux-persist/integration/react'
+import { persistor } from './app/store/index.js'
 
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <ColorSchemeScript  />
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_OAUTH_CLIENT_ID}>
-      <MantineProvider
-        theme={theme}
-        defaultColorScheme="dark"
-        withGlobalStyles
-        withNormalizeCSS
-      >
-        <Notifications />
-        <ThemeProvider theme={theme}>
-          <GlobalStyles />
-          <Provider store={store}>
-            <PersistGate loading={null} persistor={persistor}>
-              <App />
-            </PersistGate>
-          </Provider>
-        </ThemeProvider>
-      </MantineProvider>
-    </GoogleOAuthProvider>
-  </StrictMode>
-);
+createRoot(document.getElementById('root')).render(
+    <>
+        <ColorSchemeScript />
+        <GoogleOAuthProvider clientId={import.meta.env.VITE_OAUTH_CLIENT_ID}>
+            <MantineProvider
+                theme={theme}
+                defaultColorScheme="dark"
+                withGlobalStyles
+                withNormalizeCSS
+            >
+                <Notifications />
+                <ThemeProvider theme={theme}>
+                    <GlobalStyles />
+                    <StoreProvider>
+                        <PersistGate loading={null} persistor={persistor}>
+                            <App />
+                        </PersistGate>
+                    </StoreProvider>
+                </ThemeProvider>
+            </MantineProvider>
+        </GoogleOAuthProvider>
+    </>,
+)

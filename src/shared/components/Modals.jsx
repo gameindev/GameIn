@@ -1,0 +1,18 @@
+import { Modal } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import IconButton from "./IconButton";
+
+
+export default function ReusableModal({ title, children }) {
+    const [opened, { open, close }] = useDisclosure(false);
+
+    return (
+        <>
+            <Modal opened={opened} onClose={close} size={"lg"} title={title} centered>
+                {typeof children === "function" ? children({ close }) : children}
+            </Modal>
+
+            <IconButton hoverClass="hoverYellow" onClick={open}  />
+        </>
+    );
+}

@@ -1,0 +1,10 @@
+
+export const OfferingStatus = {
+    SPONSORED: "SPONSORED",
+    DRAFT: "DRAFT",
+    OFFERED: "OFFERED",
+    PENDING: "PENDING",
+    ACCEPTED: "ACCEPTED",
+    COMPLETED: "COMPLETED",
+    DISMISSED: "DISMISSED",
+};
