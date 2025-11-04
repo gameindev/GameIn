@@ -13,9 +13,8 @@ export function initSocket(token, onEvents = {}) {
 
     socket = io(import.meta.env.VITE_CHAT_SOCKET_URL || "http://localhost:3000", {
         auth: { token: `Bearer ${token}` },
-        transports: ["websocket"],
+        // let Socket.IO pick transports and upgrade automatically
         path: '/socket.io',
-        secure:true
     });
 
     // Bind provided event handlers dynamically
@@ -39,20 +38,20 @@ export function joinConversation(conversationId) {
  */
 export function sendMessage(conversationId, content, attachments = [], type = 'TEXT', clientMsgId = null) {
     if (!socket || !conversationId) return;
-    
+
     const messageData = {
-        conversationId, 
-        content, 
+        conversationId,
+        content,
         attachments,
         type,
         timestamp: new Date().toISOString()
     };
-    
+
     // Include client_msg_id if provided
     if (clientMsgId) {
         messageData.client_msg_id = clientMsgId;
     }
-    
+
     console.log('Sending WebSocket message:', messageData);
     socket.emit("send_message", messageData);
 }
