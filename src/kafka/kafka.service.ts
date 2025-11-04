@@ -9,52 +9,173 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
     private producer: Producer;
     private consumer: Consumer;
     private messagePersistenceConsumer: Consumer;
+    private kafkaConfig: any;
+    private isInitializing = false;
 
     constructor(private configService: ConfigService) { }
 
     async onModuleInit() {
-        const kafkaConfig = this.configService.get('kafka');
+        this.kafkaConfig = this.configService.get('kafka');
 
         const kafkaOptions: any = {
-            clientId: kafkaConfig.clientId,
-            brokers: kafkaConfig.brokers,
-            retry: kafkaConfig.retry,
-            connectionTimeout: kafkaConfig.connectionTimeout,
-            requestTimeout: kafkaConfig.requestTimeout,
+            clientId: this.kafkaConfig.clientId,
+            brokers: this.kafkaConfig.brokers,
+            retry: this.kafkaConfig.retry,
+            connectionTimeout: this.kafkaConfig.connectionTimeout,
+            requestTimeout: this.kafkaConfig.requestTimeout,
         };
 
         // Add SSL configuration if provided
-        if (kafkaConfig.ssl) {
-            kafkaOptions.ssl = kafkaConfig.ssl;
+        if (this.kafkaConfig.ssl) {
+            kafkaOptions.ssl = this.kafkaConfig.ssl;
         }
 
         // Add SASL configuration if provided
-        if (kafkaConfig.sasl) {
-            kafkaOptions.sasl = kafkaConfig.sasl;
+        if (this.kafkaConfig.sasl) {
+            kafkaOptions.sasl = this.kafkaConfig.sasl;
         }
 
         this.kafka = new Kafka(kafkaOptions);
 
+        // Configure consumer with session timeout and heartbeat interval
+        const consumerOptions = {
+            groupId: this.kafkaConfig.groupId,
+            sessionTimeout: this.kafkaConfig.sessionTimeout,
+            heartbeatInterval: this.kafkaConfig.heartbeatInterval,
+            maxWaitTimeInMs: 5000,
+            retry: {
+                initialRetryTime: this.kafkaConfig.retry.initialRetryTime,
+                retries: this.kafkaConfig.retry.retries,
+            },
+        };
+
         this.producer = this.kafka.producer();
-        this.consumer = this.kafka.consumer({
-            groupId: kafkaConfig.groupId
-        });
+        this.consumer = this.kafka.consumer(consumerOptions);
 
         // Create a separate consumer for message persistence with its own group
         this.messagePersistenceConsumer = this.kafka.consumer({
-            groupId: `${kafkaConfig.groupId}-message-persistence`
+            ...consumerOptions,
+            groupId: `${this.kafkaConfig.groupId}-message-persistence`
         });
 
-        try {
-            await this.producer.connect();
-            await this.consumer.connect();
-            await this.messagePersistenceConsumer.connect();
-            this.logger.log('Kafka producer and consumers connected successfully');
-        } catch (error) {
-            this.logger.error('Failed to connect to Kafka:', error);
-            // Don't throw error to prevent app crash, just log it
-            this.logger.warn('Kafka connection failed, will retry on next message send');
+        // Connect with retry logic
+        await this.connectWithRetry();
+    }
+
+    private async connectWithRetry(): Promise<void> {
+        if (this.isInitializing) {
+            this.logger.warn('Kafka connection already in progress, skipping duplicate initialization');
+            return;
         }
+
+        this.isInitializing = true;
+        const maxRetries = this.kafkaConfig.maxRetries || 10;
+        const retryDelay = this.kafkaConfig.retryDelay || 2000;
+
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                // Disconnect producer first if already connected (safe to call even if not connected)
+                try {
+                    await this.producer?.disconnect();
+                } catch (disconnectError) {
+                    // Ignore disconnect errors
+                }
+
+                // Connect producer first
+                await this.producer.connect();
+                this.logger.log('Kafka producer connected successfully');
+
+                // Connect consumers with retry logic for group coordinator errors
+                await this.connectConsumerWithRetry(this.consumer, 'main consumer', attempt);
+                await this.connectConsumerWithRetry(this.messagePersistenceConsumer, 'message persistence consumer', attempt);
+
+                this.logger.log('Kafka producer and consumers connected successfully');
+                this.isInitializing = false;
+                return;
+            } catch (error) {
+                const errorMessage = error?.message || String(error);
+                const isGroupCoordinatorError =
+                    errorMessage.includes('group coordinator') ||
+                    errorMessage.includes('GroupCoordinator') ||
+                    errorMessage.includes('COORDINATOR_NOT_AVAILABLE') ||
+                    errorMessage.includes('NOT_COORDINATOR') ||
+                    errorMessage.includes('The group coordinator is not available');
+
+                if (isGroupCoordinatorError && attempt < maxRetries) {
+                    const delay = retryDelay * attempt; // Exponential backoff
+                    this.logger.warn(
+                        `Group coordinator not available (attempt ${attempt}/${maxRetries}). ` +
+                        `Retrying in ${delay}ms...`
+                    );
+                    await this.sleep(delay);
+                    continue;
+                }
+
+                if (attempt === maxRetries) {
+                    this.logger.error(`Failed to connect to Kafka after ${maxRetries} attempts:`, error);
+                    this.logger.warn('Kafka connection failed, will retry on next message send');
+                } else {
+                    this.logger.warn(`Kafka connection attempt ${attempt} failed:`, errorMessage);
+                    await this.sleep(retryDelay);
+                }
+            }
+        }
+
+        this.isInitializing = false;
+    }
+
+    private async connectConsumerWithRetry(consumer: Consumer, consumerName: string, attempt: number): Promise<void> {
+        const maxRetries = 5;
+        const baseDelay = 1000;
+
+        for (let retry = 1; retry <= maxRetries; retry++) {
+            try {
+                // Try to disconnect first if already connected (safe to call even if not connected)
+                try {
+                    await consumer.disconnect();
+                } catch (disconnectError) {
+                    // Ignore disconnect errors (consumer might not be connected)
+                }
+
+                await consumer.connect();
+                this.logger.log(`Kafka ${consumerName} connected successfully`);
+                return;
+            } catch (error) {
+                const errorMessage = error?.message || String(error);
+                const isGroupCoordinatorError =
+                    errorMessage.includes('group coordinator') ||
+                    errorMessage.includes('GroupCoordinator') ||
+                    errorMessage.includes('COORDINATOR_NOT_AVAILABLE') ||
+                    errorMessage.includes('NOT_COORDINATOR') ||
+                    errorMessage.includes('The group coordinator is not available');
+
+                // Check if already connected (this is sometimes OK)
+                if (errorMessage.includes('already connected') || errorMessage.includes('Already connected')) {
+                    this.logger.log(`Kafka ${consumerName} already connected`);
+                    return;
+                }
+
+                if (isGroupCoordinatorError && retry < maxRetries) {
+                    const delay = baseDelay * retry;
+                    this.logger.warn(
+                        `${consumerName}: Group coordinator not available (retry ${retry}/${maxRetries}). ` +
+                        `Waiting ${delay}ms before retry...`
+                    );
+                    await this.sleep(delay);
+                    continue;
+                }
+
+                if (retry === maxRetries) {
+                    throw new Error(`${consumerName} connection failed after ${maxRetries} retries: ${errorMessage}`);
+                }
+
+                await this.sleep(baseDelay);
+            }
+        }
+    }
+
+    private sleep(ms: number): Promise<void> {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     async onModuleDestroy() {
@@ -218,13 +339,32 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
     }
 
     isConnected(): boolean {
-        return !!(this.producer && this.consumer && this.messagePersistenceConsumer && this.kafka);
+        // Check if all components are initialized
+        if (!this.producer || !this.consumer || !this.messagePersistenceConsumer || !this.kafka) {
+            return false;
+        }
+
+        // Note: KafkaJS doesn't expose connection state directly, so we check if initialized
+        // The actual connection state is managed internally by KafkaJS
+        return true;
     }
 
     async ensureConnection(): Promise<void> {
         if (!this.isConnected()) {
             this.logger.log('Reconnecting to Kafka...');
-            await this.onModuleInit();
+            await this.connectWithRetry();
+        } else {
+            // Verify connections are actually working by checking if we can reconnect if needed
+            try {
+                // Quick check: try to get metadata (lightweight operation)
+                const admin = this.kafka.admin();
+                await admin.connect();
+                await admin.listTopics();
+                await admin.disconnect();
+            } catch (error) {
+                this.logger.warn('Kafka connection appears to be lost, reconnecting...');
+                await this.connectWithRetry();
+            }
         }
     }
 }

@@ -65,7 +65,12 @@ services:
       KAFKA_LOG_RETENTION_HOURS: 168
       KAFKA_LOG_SEGMENT_BYTES: 1073741824
       KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 300000
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      # Group coordinator settings - give broker time to initialize before rebalancing
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 3000
+      # Group coordinator session timeout (should match client session timeout)
+      KAFKA_GROUP_MAX_SESSION_TIMEOUT_MS: 60000
+      # Metadata refresh interval
+      KAFKA_METADATA_MAX_AGE_MS: 300000
 
     volumes:
       - kafka_data:/data

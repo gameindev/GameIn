@@ -47,5 +47,10 @@ export default registerAs('kafka', () => {
         },
         connectionTimeout: parseInt(process.env.KAFKA_CONNECTION_TIMEOUT || '3000'),
         requestTimeout: parseInt(process.env.KAFKA_REQUEST_TIMEOUT || '30000'),
+        // Consumer-specific configuration
+        sessionTimeout: parseInt(process.env.KAFKA_SESSION_TIMEOUT || '30000'),
+        heartbeatInterval: parseInt(process.env.KAFKA_HEARTBEAT_INTERVAL || '3000'),
+        maxRetries: parseInt(process.env.KAFKA_CONSUMER_MAX_RETRIES || '10'),
+        retryDelay: parseInt(process.env.KAFKA_CONSUMER_RETRY_DELAY || '2000'),
     };
 });
