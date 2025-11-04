@@ -9,12 +9,17 @@ let socket = null;
  * @param {function} onEvents - object with event handlers
  */
 export function initSocket(token, onEvents = {}) {
-    if (socket) return socket; // reuse existing connection
+    if (socket?.connected) return socket;
 
-    socket = io(import.meta.env.VITE_CHAT_SOCKET_URL || "http://localhost:3000", {
-        auth: { token: `Bearer ${token}` },
-        // let Socket.IO pick transports and upgrade automatically
-        path: '/socket.io',
+    // ✅ Use secure WSS endpoint from environment
+    const socketUrl = import.meta.env.VITE_CHAT_SOCKET_URL || "wss://backend-app-ifeze.ondigitalocean.app";
+
+    socket = io(socketUrl, {
+        transports: ["websocket"], // no polling fallback
+        path: "/socket.io",
+        auth: {
+            token: `Bearer ${token}`,
+        },
     });
 
     // Bind provided event handlers dynamically
