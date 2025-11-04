@@ -30,7 +30,7 @@ import { PaymentRefund } from './payments/payment-refund.entity';
 import { Invoice } from './invoices/invoice.entity';
 
 // ✅ Load environment variables for local/dev
-if (process.env.NODE_ENV !== 'production') { 
+if (process.env.NODE_ENV !== 'production') {
     dotenvFlow.config();
 }
 
@@ -87,12 +87,12 @@ export const dataSourceOptions: DataSourceOptions = {
     namingStrategy: new SnakeNamingStrategy(),
 
     // 🛡️ SSL (DigitalOcean Managed PostgreSQL often requires this)
-    ssl: false,
-    // ssl: isProduction
-    //     ? {
-    //         rejectUnauthorized: false, // required for DO managed DBs
-    //     }
-    //     : false,
+
+    ssl: isProduction
+        ? {
+            rejectUnauthorized: false, // required for DO managed DBs
+        }
+        : false,
 };
 
 const dataSource = new DataSource(dataSourceOptions);

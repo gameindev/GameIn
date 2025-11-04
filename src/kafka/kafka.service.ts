@@ -4,9 +4,6 @@ import { Kafka, Producer, Consumer, EachMessagePayload } from 'kafkajs';
 
 @Injectable()
 export class KafkaService implements OnModuleInit, OnModuleDestroy {
-    subscribe(arg0: string, arg1: (message: any) => Promise<void>) {
-        throw new Error('Method not implemented.');
-    }
     private readonly logger = new Logger(KafkaService.name);
     private kafka: Kafka;
     private producer: Producer;
@@ -18,13 +15,25 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
     async onModuleInit() {
         const kafkaConfig = this.configService.get('kafka');
 
-        this.kafka = new Kafka({
+        const kafkaOptions: any = {
             clientId: kafkaConfig.clientId,
             brokers: kafkaConfig.brokers,
             retry: kafkaConfig.retry,
             connectionTimeout: kafkaConfig.connectionTimeout,
             requestTimeout: kafkaConfig.requestTimeout,
-        });
+        };
+
+        // Add SSL configuration if provided
+        if (kafkaConfig.ssl) {
+            kafkaOptions.ssl = kafkaConfig.ssl;
+        }
+
+        // Add SASL configuration if provided
+        if (kafkaConfig.sasl) {
+            kafkaOptions.sasl = kafkaConfig.sasl;
+        }
+
+        this.kafka = new Kafka(kafkaOptions);
 
         this.producer = this.kafka.producer();
         this.consumer = this.kafka.consumer({

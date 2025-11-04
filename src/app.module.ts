@@ -84,7 +84,7 @@ dotenvFlow.config(); // ✅ Loads .env only in local/dev
 const ENV = process.env.NODE_ENV || 'development';
 // console.log(ENV)
 @Module({
-    imports: [ 
+    imports: [
         /** 🌍 Global Config Module */
         ConfigModule.forRoot({
             isGlobal: true,
@@ -137,15 +137,12 @@ const ENV = process.env.NODE_ENV || 'development';
                     namingStrategy: new SnakeNamingStrategy(),
                     // logging: isProduction ? ['error', 'warn'] : ['error', 'warn', 'query'],
                     ssl: configService.get<boolean>('database.ssl') || process.env.DATABASE_SSL === 'true'
-                        ? false
+                        ? {
+                            rejectUnauthorized: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false',
+                            ca: process.env.DATABASE_SSL_CA ? fs.readFileSync(process.env.DATABASE_SSL_CA).toString() : undefined
+                        }
                         : false,
 
-                    // TODO: Need to replace in Production
-                    // ? {
-                    //     rejectUnauthorized: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false',
-                    //     ca: process.env.DATABASE_SSL_CA ? fs.readFileSync(process.env.DATABASE_SSL_CA).toString() : undefined
-                    // }
-                    // : false,
                     extra: {
                         max: Number(process.env.TYPEORM_POOL_MAX ?? 20),
                         min: Number(process.env.TYPEORM_POOL_MIN ?? 2),
