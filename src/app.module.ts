@@ -136,7 +136,12 @@ const ENV = process.env.NODE_ENV || 'development';
                     synchronize: false, // 🚫 Always false in production
                     namingStrategy: new SnakeNamingStrategy(),
                     // logging: isProduction ? ['error', 'warn'] : ['error', 'warn', 'query'],
-                    ssl: false,
+                    ssl: configService.get<boolean>('database.ssl') || process.env.DATABASE_SSL === 'true'
+                        ? {
+                            rejectUnauthorized: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false',
+                            ca: process.env.DATABASE_SSL_CA ? fs.readFileSync(process.env.DATABASE_SSL_CA).toString() : undefined
+                        }
+                        : false,
 
                     extra: {
                         max: Number(process.env.TYPEORM_POOL_MAX ?? 20),
