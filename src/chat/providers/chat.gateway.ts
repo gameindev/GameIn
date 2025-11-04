@@ -19,13 +19,10 @@ import { ChatService } from './chat.service';
             'https://gamein.gg',
             'https://www.gamein.gg',
             'https://frontend-app-vn9qp.ondigitalocean.app',
-            'http://localhost:5173'
         ],
-        methods: ['GET', 'POST'],
-        allowedHeaders: ['Authorization', 'Content-Type'],
         credentials: true,
     },
-    // remove transports: ['websocket'] to allow fallback
+    transports: ['websocket'],
     path: '/socket.io',
 })
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {

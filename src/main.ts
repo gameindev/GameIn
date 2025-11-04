@@ -56,16 +56,18 @@ async function bootstrap() {
     }
 
     /** ------------------ 🔐 CORS ------------------ */
-    const defaultOrigins = ['https://gamein.gg', 'https://www.gamein.gg', 'http://localhost:5173', 'http://localhost:5174', 'https://frontend-app-vn9qp.ondigitalocean.app'];
     const allowedOrigins =
-        process.env.CORS_ORIGINS?.split(',').map((o) => o.trim()).filter(Boolean) || defaultOrigins;
-
+        process.env.CORS_ORIGINS?.split(',').map(o => o.trim()) || [
+            'https://gamein.gg',
+            'https://www.gamein.gg',
+            'https://frontend-app-vn9qp.ondigitalocean.app',
+        ];
 
     app.enableCors({
-        origin: defaultOrigins,
-        methods: process.env.CORS_METHODS ?? 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+        origin: allowedOrigins,
         credentials: true,
-        allowedHeaders: [
+        methods: process.env.CORS_METHODS ?? 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+        allowedHeaders: process.env.CORS_ALLOWED_HEADERS?.split(',') ?? [
             'Content-Type',
             'Authorization',
             'X-Requested-With',
@@ -75,14 +77,10 @@ async function bootstrap() {
     });
 
     /** ------------------ 🌐 Proxy / Headers ------------------ */
-    if (process.env.TRUST_PROXY === 'true') {
-        app.set('trust proxy', 1);
-    }
+    app.set('trust proxy', 1);
 
     /** ------------------ 📁 Static Assets ------------------ */
-    app.useStaticAssets(join(process.cwd(), 'media/uploads'), {
-        prefix: '/uploads/',
-    });
+    app.useStaticAssets(join(process.cwd(), 'media/uploads'), { prefix: '/uploads/' });
 
     const redisIoAdapter = new RedisIoAdapter(app);
     await redisIoAdapter.connectToRedis();

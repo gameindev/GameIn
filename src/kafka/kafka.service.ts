@@ -21,6 +21,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
     }
 
     private async initializeKafkaComponents(): Promise<void> {
+        
         // Ensure kafkaConfig is available
         if (!this.kafkaConfig) {
             this.kafkaConfig = this.configService.get('kafka');
@@ -33,22 +34,23 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
         const kafkaOptions: any = {
             clientId: this.kafkaConfig.clientId,
             brokers: this.kafkaConfig.brokers,
-            retry: this.kafkaConfig.retry,
-            connectionTimeout: this.kafkaConfig.connectionTimeout,
-            requestTimeout: this.kafkaConfig.requestTimeout,
+            ssl: this.kafkaConfig.ssl ?? true,
+            sasl: this.kafkaConfig.sasl ?? {
+                mechanism: 'plain',
+                username: process.env.KAFKA_SASL_USERNAME,
+                password: process.env.KAFKA_SASL_PASSWORD,
+            },
+            retry: {
+                retries: this.kafkaConfig.retries ?? 10,
+            },
+            connectionTimeout: this.kafkaConfig.connectionTimeout ?? 5000,
+            requestTimeout: this.kafkaConfig.requestTimeout ?? 30000,
         };
 
-        // Add SSL configuration if provided
-        if (this.kafkaConfig.ssl) {
-            kafkaOptions.ssl = this.kafkaConfig.ssl;
-        }
-
-        // Add SASL configuration if provided
-        if (this.kafkaConfig.sasl) {
-            kafkaOptions.sasl = this.kafkaConfig.sasl;
-        }
 
         this.kafka = new Kafka(kafkaOptions);
+
+        this.logger.log(`🔗 Connecting to Kafka: ${this.kafkaConfig.brokers.join(', ')}`);
 
         // Configure consumer with session timeout and heartbeat interval
         const consumerOptions = {

@@ -11,26 +11,34 @@ export class RedisIoAdapter extends IoAdapter {
 
     async connectToRedis(): Promise<void> {
         // 👇 pull connection details from environment
-        const host = process.env.REDIS_HOST || 'localhost';
+        const host = process.env.REDIS_HOST;
         const port = process.env.REDIS_PORT || '6379';
         const password = process.env.REDIS_PASSWORD || '';
         const url = password
             ? `redis://:${encodeURIComponent(password)}@${host}:${port}`
             : `redis://${host}:${port}`;
 
-        const pubClient = createClient({ url });
+        console.log('🔗 Connecting to Redis at', url);
+
+        const pubClient = createClient({ url, socket: { reconnectStrategy: 5000 } });
         const subClient = pubClient.duplicate();
+
+        pubClient.on('error', (err) => console.error('Redis Pub error', err));
+        subClient.on('error', (err) => console.error('Redis Sub error', err));
 
         await Promise.all([pubClient.connect(), subClient.connect()]);
 
         this.adapterConstructor = createAdapter(pubClient, subClient);
         RedisIoAdapter.pubClient = pubClient;
         RedisIoAdapter.subClient = subClient;
+
+        console.log('✅ Redis adapter connected');
     }
 
     createIOServer(port: number, options?: ServerOptions): any {
         const server = super.createIOServer(port, options);
         server.adapter(this.adapterConstructor);
+        console.log('✅ Socket.IO server with Redis adapter initialized');
         return server;
     }
 
