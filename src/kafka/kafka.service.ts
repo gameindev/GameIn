@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Kafka, Producer, Consumer, EachMessagePayload } from 'kafkajs';
+import { Kafka, Producer, Consumer, EachMessagePayload, logLevel } from 'kafkajs';
 
 @Injectable()
 export class KafkaService implements OnModuleInit, OnModuleDestroy {
@@ -11,27 +11,25 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
     private messagePersistenceConsumer: Consumer;
     private kafkaConfig: any;
     private isInitializing = false;
+    private isProducerConnected = false;
+    private reconnectingProducer = false;
 
-    constructor(private configService: ConfigService) { }
+    constructor(private configService: ConfigService) {}
 
     async onModuleInit() {
         this.kafkaConfig = this.configService.get('kafka');
         await this.initializeKafkaComponents();
         await this.connectWithRetry();
+        this.setupProducerEventListeners();
     }
 
     private async initializeKafkaComponents(): Promise<void> {
-        
-        // Ensure kafkaConfig is available
         if (!this.kafkaConfig) {
             this.kafkaConfig = this.configService.get('kafka');
-
-            if (!this.kafkaConfig) {
-                throw new Error('Kafka configuration is not available. Please check your environment variables.');
-            }
+            if (!this.kafkaConfig) throw new Error('Kafka configuration not available.');
         }
 
-        const kafkaOptions: any = {
+        this.kafka = new Kafka({
             clientId: this.kafkaConfig.clientId,
             brokers: this.kafkaConfig.brokers,
             ssl: this.kafkaConfig.ssl ?? true,
@@ -40,67 +38,37 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
                 username: process.env.KAFKA_SASL_USERNAME,
                 password: process.env.KAFKA_SASL_PASSWORD,
             },
-            retry: {
-                retries: this.kafkaConfig.retries ?? 10,
-            },
-            connectionTimeout: this.kafkaConfig.connectionTimeout ?? 5000,
-            requestTimeout: this.kafkaConfig.requestTimeout ?? 30000,
-        };
+            logLevel: logLevel.NOTHING,
+            retry: { retries: 8, initialRetryTime: 200, factor: 0.3 },
+        });
 
-
-        this.kafka = new Kafka(kafkaOptions);
-
-        this.logger.log(`🔗 Connecting to Kafka: ${this.kafkaConfig.brokers.join(', ')}`);
-
-        // Configure consumer with session timeout and heartbeat interval
-        const consumerOptions = {
-            groupId: this.kafkaConfig.groupId,
+        const baseConsumerConfig = {
             sessionTimeout: this.kafkaConfig.sessionTimeout || 30000,
             heartbeatInterval: this.kafkaConfig.heartbeatInterval || 3000,
-            maxWaitTimeInMs: 5000,
-            retry: {
-                initialRetryTime: this.kafkaConfig.retry?.initialRetryTime || 100,
-                retries: this.kafkaConfig.retry?.retries || 8,
-            },
+            retry: { retries: 5 },
         };
 
-        this.producer = this.kafka.producer();
-        this.consumer = this.kafka.consumer(consumerOptions);
+        this.producer = this.kafka.producer({
+            allowAutoTopicCreation: true,
+            idempotent: true,
+            retry: { retries: 8, initialRetryTime: 300 },
+        });
 
-        // Create a separate consumer for message persistence with its own group
+        this.consumer = this.kafka.consumer({
+            ...baseConsumerConfig,
+            groupId: this.kafkaConfig.groupId,
+        });
+
         this.messagePersistenceConsumer = this.kafka.consumer({
-            ...consumerOptions,
-            groupId: `${this.kafkaConfig.groupId}-message-persistence`
+            ...baseConsumerConfig,
+            groupId: `${this.kafkaConfig.groupId}-message-persistence`,
         });
     }
 
     private async connectWithRetry(): Promise<void> {
         if (this.isInitializing) {
-            this.logger.warn('Kafka connection already in progress, skipping duplicate initialization');
+            this.logger.warn('Kafka connection already in progress');
             return;
-        }
-
-        // Ensure kafkaConfig is initialized
-        if (!this.kafkaConfig) {
-            this.logger.warn('Kafka config not initialized, initializing now...');
-            this.kafkaConfig = this.configService.get('kafka');
-
-            // If still not available, use defaults
-            if (!this.kafkaConfig) {
-                this.logger.error('Kafka config not available, using defaults');
-                this.kafkaConfig = {
-                    maxRetries: 10,
-                    retryDelay: 2000,
-                    sessionTimeout: 30000,
-                    heartbeatInterval: 3000,
-                };
-            }
-        }
-
-        // If Kafka instance or consumers are not initialized, initialize them first
-        if (!this.kafka || !this.producer || !this.consumer || !this.messagePersistenceConsumer) {
-            this.logger.log('Initializing Kafka components before connecting...');
-            await this.initializeKafkaComponents();
         }
 
         this.isInitializing = true;
@@ -109,143 +77,81 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
 
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
             try {
-                // Disconnect producer first if already connected (safe to call even if not connected)
-                try {
-                    await this.producer?.disconnect();
-                } catch (disconnectError) {
-                    // Ignore disconnect errors
-                }
-
-                // Connect producer first
                 await this.producer.connect();
-                this.logger.log('Kafka producer connected successfully');
-
-                // Connect consumers with retry logic for group coordinator errors
-                await this.connectConsumerWithRetry(this.consumer, 'main consumer', attempt);
-                await this.connectConsumerWithRetry(this.messagePersistenceConsumer, 'message persistence consumer', attempt);
-
-                this.logger.log('Kafka producer and consumers connected successfully');
+                this.isProducerConnected = true;
+                this.logger.log('✅ Kafka producer connected');
+                await this.consumer.connect();
+                await this.messagePersistenceConsumer.connect();
+                this.logger.log('✅ Kafka consumers connected');
                 this.isInitializing = false;
                 return;
             } catch (error) {
-                const errorMessage = error?.message || String(error);
-                const isGroupCoordinatorError =
-                    errorMessage.includes('group coordinator') ||
-                    errorMessage.includes('GroupCoordinator') ||
-                    errorMessage.includes('COORDINATOR_NOT_AVAILABLE') ||
-                    errorMessage.includes('NOT_COORDINATOR') ||
-                    errorMessage.includes('The group coordinator is not available');
-
-                if (isGroupCoordinatorError && attempt < maxRetries) {
-                    const delay = retryDelay * attempt; // Exponential backoff
-                    this.logger.warn(
-                        `Group coordinator not available (attempt ${attempt}/${maxRetries}). ` +
-                        `Retrying in ${delay}ms...`
-                    );
-                    await this.sleep(delay);
-                    continue;
-                }
-
-                if (attempt === maxRetries) {
-                    this.logger.error(`Failed to connect to Kafka after ${maxRetries} attempts:`, error);
-                    this.logger.warn('Kafka connection failed, will retry on next message send');
-                } else {
-                    this.logger.warn(`Kafka connection attempt ${attempt} failed:`, errorMessage);
-                    await this.sleep(retryDelay);
-                }
+                this.logger.warn(`Kafka connection attempt ${attempt} failed: ${error.message}`);
+                await this.sleep(retryDelay * attempt);
             }
         }
 
         this.isInitializing = false;
+        this.logger.error(`❌ Failed to connect to Kafka after ${maxRetries} attempts`);
     }
 
-    private async connectConsumerWithRetry(consumer: Consumer, consumerName: string, attempt: number): Promise<void> {
-        const maxRetries = 5;
-        const baseDelay = 1000;
+    private setupProducerEventListeners() {
+        this.producer.on(this.producer.events.CONNECT, () => {
+            this.isProducerConnected = true;
+            this.logger.log('🔗 Kafka producer connected');
+        });
 
-        for (let retry = 1; retry <= maxRetries; retry++) {
+        this.producer.on(this.producer.events.DISCONNECT, async () => {
+            this.isProducerConnected = false;
+            if (this.reconnectingProducer) return;
+            this.reconnectingProducer = true;
+            this.logger.warn('⚠️ Kafka producer disconnected — attempting to reconnect...');
+            await this.retryReconnectProducer();
+        });
+
+        this.producer.on(this.producer.events.REQUEST_TIMEOUT, () => {
+            this.logger.warn('⌛ Kafka producer request timed out');
+        });
+    }
+
+    private async retryReconnectProducer() {
+        for (let attempt = 1; attempt <= 10; attempt++) {
             try {
-                // Try to disconnect first if already connected (safe to call even if not connected)
-                try {
-                    await consumer.disconnect();
-                } catch (disconnectError) {
-                    // Ignore disconnect errors (consumer might not be connected)
-                }
-
-                await consumer.connect();
-                this.logger.log(`Kafka ${consumerName} connected successfully`);
+                await this.producer.connect();
+                this.isProducerConnected = true;
+                this.reconnectingProducer = false;
+                this.logger.log('✅ Kafka producer reconnected successfully');
                 return;
-            } catch (error) {
-                const errorMessage = error?.message || String(error);
-                const isGroupCoordinatorError =
-                    errorMessage.includes('group coordinator') ||
-                    errorMessage.includes('GroupCoordinator') ||
-                    errorMessage.includes('COORDINATOR_NOT_AVAILABLE') ||
-                    errorMessage.includes('NOT_COORDINATOR') ||
-                    errorMessage.includes('The group coordinator is not available');
-
-                // Check if already connected (this is sometimes OK)
-                if (errorMessage.includes('already connected') || errorMessage.includes('Already connected')) {
-                    this.logger.log(`Kafka ${consumerName} already connected`);
-                    return;
-                }
-
-                if (isGroupCoordinatorError && retry < maxRetries) {
-                    const delay = baseDelay * retry;
-                    this.logger.warn(
-                        `${consumerName}: Group coordinator not available (retry ${retry}/${maxRetries}). ` +
-                        `Waiting ${delay}ms before retry...`
-                    );
-                    await this.sleep(delay);
-                    continue;
-                }
-
-                if (retry === maxRetries) {
-                    throw new Error(`${consumerName} connection failed after ${maxRetries} retries: ${errorMessage}`);
-                }
-
-                await this.sleep(baseDelay);
+            } catch (err) {
+                this.logger.warn(`Reconnect attempt ${attempt} failed: ${err.message}`);
+                await this.sleep(3000 * attempt);
             }
         }
-    }
-
-    private sleep(ms: number): Promise<void> {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    async onModuleDestroy() {
-        try {
-            await this.producer?.disconnect();
-            await this.consumer?.disconnect();
-            await this.messagePersistenceConsumer?.disconnect();
-            this.logger.log('Kafka connections closed');
-        } catch (error) {
-            this.logger.error('Error closing Kafka connections:', error);
-        }
+        this.logger.error('❌ Failed to reconnect Kafka producer after multiple attempts');
+        this.reconnectingProducer = false;
     }
 
     async sendMessage(topic: string, message: any, partition?: number) {
         try {
-            // Ensure producer is connected
-            await this.ensureConnection();
-
-            if (!this.producer) {
-                throw new Error('Kafka producer is not initialized. Make sure Kafka service is connected.');
+            if (!this.isProducerConnected) {
+                this.logger.warn('Producer disconnected — attempting reconnection before sending...');
+                await this.retryReconnectProducer();
             }
 
-            // Create topic if it doesn't exist
             await this.createTopicIfNotExists(topic);
 
             const result = await this.producer.send({
                 topic,
-                messages: [{
-                    key: message.key || null,
-                    value: JSON.stringify(message.value || message),
-                    partition,
-                }],
+                messages: [
+                    {
+                        key: message.key || null,
+                        value: JSON.stringify(message.value || message),
+                        partition,
+                    },
+                ],
             });
 
-            this.logger.log(`Message sent to topic ${topic}:`, result);
+            this.logger.log(`📤 Message sent to topic ${topic}`, result);
             return result;
         } catch (error) {
             this.logger.error(`Failed to send message to topic ${topic}:`, error);
@@ -253,18 +159,14 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
         }
     }
 
-    async subscribeToTopic(topic: string, handler: (payload: EachMessagePayload) => Promise<void>, fromBeginning: boolean = false) {
+    async subscribeToTopic(
+        topic: string,
+        handler: (payload: EachMessagePayload) => Promise<void>,
+        fromBeginning: boolean = false,
+    ) {
         try {
-            // Ensure consumer is connected before subscribing
             await this.ensureConnection();
-
-            if (!this.consumer) {
-                throw new Error('Kafka consumer is not initialized. Make sure Kafka service is connected.');
-            }
-
-            // Create topic if it doesn't exist
             await this.createTopicIfNotExists(topic);
-
             await this.consumer.subscribe({ topic, fromBeginning });
 
             await this.consumer.run({
@@ -284,18 +186,14 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
         }
     }
 
-    async subscribeToMessagePersistence(topic: string, handler: (payload: EachMessagePayload) => Promise<void>, fromBeginning: boolean = true) {
+    async subscribeToMessagePersistence(
+        topic: string,
+        handler: (payload: EachMessagePayload) => Promise<void>,
+        fromBeginning: boolean = true,
+    ) {
         try {
-            // Ensure consumer is connected before subscribing
             await this.ensureConnection();
-
-            if (!this.messagePersistenceConsumer) {
-                throw new Error('Kafka message persistence consumer is not initialized. Make sure Kafka service is connected.');
-            }
-
-            // Create topic if it doesn't exist
             await this.createTopicIfNotExists(topic);
-
             await this.messagePersistenceConsumer.subscribe({ topic, fromBeginning });
 
             await this.messagePersistenceConsumer.run({
@@ -308,27 +206,24 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
                 },
             });
 
-            this.logger.log(`Message persistence consumer subscribed to topic: ${topic} (fromBeginning: ${fromBeginning})`);
+            this.logger.log(
+                `Message persistence consumer subscribed to topic: ${topic} (fromBeginning: ${fromBeginning})`,
+            );
         } catch (error) {
             this.logger.error(`Failed to subscribe message persistence consumer to topic ${topic}:`, error);
             throw error;
         }
     }
 
-    async createTopic(topic: string, numPartitions: number = 1, replicationFactor: number = 1) {
+    async createTopic(topic: string, numPartitions = 1, replicationFactor = 1) {
         const admin = this.kafka.admin();
         try {
             await admin.connect();
-
-            const topicExists = await admin.listTopics().then(topics => topics.includes(topic));
+            const topicExists = (await admin.listTopics()).includes(topic);
 
             if (!topicExists) {
                 await admin.createTopics({
-                    topics: [{
-                        topic,
-                        numPartitions,
-                        replicationFactor,
-                    }],
+                    topics: [{ topic, numPartitions, replicationFactor }],
                 });
                 this.logger.log(`Topic ${topic} created successfully`);
             } else {
@@ -342,64 +237,56 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
         }
     }
 
-    async createTopicIfNotExists(topic: string, numPartitions: number = 1, replicationFactor: number = 1) {
+    async createTopicIfNotExists(topic: string, numPartitions = 1, replicationFactor = 1) {
         try {
             const admin = this.kafka.admin();
             await admin.connect();
 
             const topics = await admin.listTopics();
-
             if (!topics.includes(topic)) {
                 await admin.createTopics({
-                    topics: [{
-                        topic,
-                        numPartitions,
-                        replicationFactor,
-                    }],
+                    topics: [{ topic, numPartitions, replicationFactor }],
                 });
                 this.logger.log(`Topic ${topic} created automatically`);
             }
         } catch (error) {
             this.logger.warn(`Could not create topic ${topic} automatically:`, error.message);
-            // Don't throw error, just log warning
         }
-    }
-
-    getProducer(): Producer {
-        return this.producer;
-    }
-
-    getConsumer(): Consumer {
-        return this.consumer;
     }
 
     isConnected(): boolean {
-        // Check if all components are initialized
-        if (!this.producer || !this.consumer || !this.messagePersistenceConsumer || !this.kafka) {
-            return false;
-        }
-
-        // Note: KafkaJS doesn't expose connection state directly, so we check if initialized
-        // The actual connection state is managed internally by KafkaJS
-        return true;
+        return !!this.kafka && !!this.producer && !!this.consumer && !!this.messagePersistenceConsumer;
     }
 
     async ensureConnection(): Promise<void> {
         if (!this.isConnected()) {
-            this.logger.log('Reconnecting to Kafka...');
+            this.logger.warn('Kafka not connected — reconnecting...');
             await this.connectWithRetry();
         } else {
-            // Verify connections are actually working by checking if we can reconnect if needed
             try {
-                // Quick check: try to get metadata (lightweight operation)
                 const admin = this.kafka.admin();
                 await admin.connect();
                 await admin.listTopics();
                 await admin.disconnect();
             } catch (error) {
-                this.logger.warn('Kafka connection appears to be lost, reconnecting...');
+                this.logger.warn('Kafka connection appears lost — reconnecting...');
                 await this.connectWithRetry();
             }
+        }
+    }
+
+    private sleep(ms: number): Promise<void> {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    async onModuleDestroy() {
+        try {
+            await this.producer?.disconnect();
+            await this.consumer?.disconnect();
+            await this.messagePersistenceConsumer?.disconnect();
+            this.logger.log('🧹 Kafka connections closed');
+        } catch (error) {
+            this.logger.error('Error closing Kafka connections:', error);
         }
     }
 }
