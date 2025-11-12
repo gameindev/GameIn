@@ -10,7 +10,7 @@ const ProfilePage = lazy(() => import("../../features/account/profile/pages/Prof
 const SponsorShips = lazy(() => import("../../features/sponsorships/pages/Sponsorships"))
 const Offerings = lazy(() => import("../../features/offerings/pages/OfferingsPage"))
 const StatsPage = lazy(() => import("../../features/stats-page/pages/StatsPage"))
-const NewsFeed = lazy(() => import("../../features/newsfeed/pages/Newsfeed"))
+const NewsFeed = lazy(() => import("../../features/newsfeed/pages/NewsFeed"))
 const Inbox = lazy(() => import("../../features/inbox/pages/Inbox"))
 const EditBio = lazy(() => import("../../features/account/profile/pages/edit-profile/EditBio"))
 const CreateOpportunity = lazy(() => import("../../features/offerings/pages/CreateOpportunity"))
