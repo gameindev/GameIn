@@ -72,7 +72,7 @@ export class CreateUserProvider {
             // Send a verification email
             const email = this.emailService.sendTemplate('verify-account', {
                 username: newUser.username,
-                verifyUrl: process.env.EMAIL_VERIFICATION_URL + '#/verify-account?token=' + newUser.token,
+                verifyUrl: process.env.EMAIL_VERIFICATION_URL + '/#/verify-account?email=' + newUser.email + '&token=' + newUser.token,
             }, {
                 subject: 'GameIn Account Verification',
                 to: newUser.email,
