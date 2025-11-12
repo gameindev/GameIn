@@ -19,7 +19,7 @@ const OfferingCard = ({
     navigate,
     user,
 }) => {
-    const { isBrand, timerActive, expired, hasReset } = useEditLock({
+    const { isBrand, timerActive, expired, hasReset, isAccepted } = useEditLock({
         offering,
         user,
     });
@@ -29,6 +29,7 @@ const OfferingCard = ({
     const canShowSponsorButton =
         isBrand &&
         !isSelf &&
+        !isAccepted &&
         (expired ||
             !timerActive ||
             offering.status === OfferingStatus.DRAFT ||

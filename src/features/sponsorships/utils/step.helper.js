@@ -9,7 +9,7 @@ export const statusStep = {
     [OfferingStatus.OFFERED]: 0,
     [OfferingStatus.PENDING]: 1,
     [OfferingStatus.ACCEPTED]: 2,
-    [OfferingStatus.COMPLETED]: 3,
+    [OfferingStatus.SPONSORED]: 3,
   };
   
   export const getStepColor = (stepIndex, currentStep) =>

@@ -11,6 +11,7 @@ import { getAccessToken } from "../../app/services/token";
 import ProfileBanner from "./profile-banner/ProfileBanner";
 import InfoTabs from "../../shared/components/InfoTabs";
 import Preloader from "../../shared/components/Preloader";
+import VerifyEmailBanner from "../../shared/components/VerifyEmailBanner";
 
 
 const Account = () => {
@@ -55,7 +56,7 @@ const Account = () => {
         return () => {
             cancelled = true;
         };
-    }, [username, user?.username, user?.user_type]); // get intentionally omitted as it's stable in functionality
+    }, [username, user?.username, user?.user_type]); 
 
 
     if (!isSelf && !profileOwner) return <Preloader />;
@@ -86,6 +87,7 @@ const Account = () => {
 
     return (
         <>
+            {isSelf && <VerifyEmailBanner />}
             <ProfileBanner
                 userProfile={isSelf ? user : profileOwner}
                 isSelf={isSelf}

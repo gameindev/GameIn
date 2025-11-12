@@ -1,8 +1,9 @@
-import { theme } from "../styles/theme/customTheme";
+import { Hexagon } from "./HexagonDemo";
+import { theme } from "../../../styles/theme/customTheme";
 import HexContainer from "./HexContainer";
-import ReusableModal from "./Modals";
-import EditAvatar from "../../features/edit-avatar/pages/EditAvatar";
-import fallbackAvatar from "../../assets/shared/fallbackAvator.jpg";
+import ReusableModal from "./../modals/modal";
+import EditAvator from "./../modals/EditAvator/EditAvator";
+import fallbackAvatar from "./../../../assets/shared/fallbackAvator.jpg";
 
 const AvatarSection = ({
   avatar,
@@ -54,7 +55,7 @@ const AvatarSection = ({
       {controls && (
         <div className="action">
           <ReusableModal title={"Update Profile Picture"}>
-            {({ close }) => <EditAvatar type="avatar" close={close} />}
+            {({ close }) => <EditAvator type="avatar" close={close} />}
           </ReusableModal>
         </div>
       )}

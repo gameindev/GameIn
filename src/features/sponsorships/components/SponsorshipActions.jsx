@@ -49,6 +49,7 @@ const SponsorshipActions = ({
                     <>
                         {sponsorship.status !== OfferingStatus.DRAFT
                             && sponsorship.status !== OfferingStatus.ACCEPTED
+                            && sponsorship.status !== OfferingStatus.SPONSORED
                             && user.user_type === USERTYPES.CREATOR ? (
                             <>
                                 <IconButton

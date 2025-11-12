@@ -1,11 +1,10 @@
 import axios from 'axios';
 import { applyInterceptors } from './interceptor';
 
-const baseURL = import.meta.env.VITE_BACKEND_URL || "https://backend-app-ifeze.ondigitalocean.app/api";
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000/api';
 
 const api = axios.create({
-    baseURL,
-    withCredentials: true,
+    baseURL: API_BASE_URL,
     headers: {
         'Content-Type': 'application/json',
     },
