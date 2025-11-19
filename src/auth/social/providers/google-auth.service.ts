@@ -47,14 +47,11 @@ export class GoogleAuthService implements OnModuleInit {
             const loginTicket = await this.oauthClient.verifyIdToken({
                 idToken: googleTokenDto.token,
             })
-
             // Extract the payload from Google JWT
             const { email, sub: googleId, given_name } = loginTicket.getPayload();
-            console.log(email, googleId, given_name);
 
             // Find the user in our database using GoogleId
             const user = await this.userService.findOneByGoogleId(googleId);
-            console.log('User found by Google ID:', user);
 
             // If the googleId exists generate token
             if (user) {
@@ -62,30 +59,17 @@ export class GoogleAuthService implements OnModuleInit {
             }
 
             // If not create the user in our database and generate token
-            console.log('User not found, creating new user with:', { email, googleId, given_name });
             const newUser = await this.userService.createGoogleUser({
                 email: email,
                 google_id: googleId,
                 given_name: given_name
             });
-            console.log('New user created:', newUser);
+
 
             return this.generateTokensProvider.generateTokens(newUser);
         } catch (error) {
-            // Log the actual error for debugging
-            console.error('Google authentication error:', error);
-            console.error('Error message:', error?.message);
-            console.error('Error stack:', error?.stack);
-            console.error('Error code:', error?.code);
-            console.error('Error constraint:', error?.constraint);
-
-            // If it's already an HTTP exception, re-throw it to preserve the status code
-            if (error?.statusCode) {
-                throw error;
-            }
-
-            // Otherwise throw UnauthorizedException if the user is not found
-            throw new UnauthorizedException(`Google authentication failed: ${error?.message || 'Unknown error'}`);
+            // throw UnauthorizedException if the user is not found
+            throw new UnauthorizedException('Google authentication failed');
         }
 
     }
