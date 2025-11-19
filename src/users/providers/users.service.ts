@@ -199,7 +199,7 @@ export class UsersService {
      * @returns 
      */
     public async createUser(createUserDto: CreateUserDto): Promise<Partial<User>> {
-        return this.createUserProvider.createUser(createUserDto); 
+        return this.createUserProvider.createUser(createUserDto);
     }
 
 
@@ -281,7 +281,7 @@ export class UsersService {
     }
 
 
-   
+
     public async findUserByUsername(username: string) {
         return await this.findUserByUsernameProvider.findUserByUsername(username);
     }
@@ -298,5 +298,9 @@ export class UsersService {
 
     public async updateOAuthUserRole(patchUserRoleDto: PathcUserRoleDto, userSub: ActiveUserData) {
         return await this.updateUserRoleProvider.updateOAuthUserRole(patchUserRoleDto, userSub);
+    }
+
+    public async updateUserGoogleId(userId: number, googleId: string) {
+        return await this.updateUserProvider.updateUserGoogleId(userId, googleId);
     }
 }

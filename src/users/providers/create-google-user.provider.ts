@@ -33,9 +33,33 @@ export class CreateGoogleUserProvider {
             return savedUser;
 
         } catch (error) {
-            throw new ConflictException(error, {
-                description: 'Could not create new user',
-            })
+            // If it's a unique constraint violation, provide more context
+            if (error?.code === '23505') { // PostgreSQL unique violation
+                // Check the error detail to determine which field caused the violation
+                const detail = error?.detail || '';
+                let field = 'field';
+                if (detail.includes('email')) {
+                    field = 'email';
+                } else if (detail.includes('username')) {
+                    field = 'username';
+                } else if (detail.includes('google_id')) {
+                    field = 'google_id';
+                }
+
+                throw new ConflictException(
+                    `User with this ${field} already exists`,
+                    {
+                        description: 'Could not create new user - duplicate entry',
+                    }
+                );
+            }
+
+            throw new ConflictException(
+                error?.message || 'Could not create new user',
+                {
+                    description: 'Could not create new user',
+                }
+            );
         }
     }
 }

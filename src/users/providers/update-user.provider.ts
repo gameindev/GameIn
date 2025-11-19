@@ -68,7 +68,7 @@ export class UpdateUserProvider {
 
 
 
-    async updateUserIsLoggedIn(id: number): Promise<void> {   
+    async updateUserIsLoggedIn(id: number): Promise<void> {
         try {
             await this.userRepository.update(id, { is_logged_in: true });
         } catch (error) {
@@ -79,6 +79,14 @@ export class UpdateUserProvider {
     async updateUserIsLoggedOut(id: number): Promise<void> {
         try {
             await this.userRepository.update(id, { is_logged_in: false });
+        } catch (error) {
+            throw new ConflictException(error);
+        }
+    }
+
+    async updateUserGoogleId(id: number, googleId: string): Promise<void> {
+        try {
+            await this.userRepository.update(id, { google_id: googleId });
         } catch (error) {
             throw new ConflictException(error);
         }
