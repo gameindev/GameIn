@@ -64,7 +64,12 @@ const router = createHashRouter([
                 path: routePaths.REGISTER,
                 element: withSuspense(<GuestRoute> <SignupPage /> </GuestRoute>),
             
-            },{
+            },
+            {
+                path: routePaths.VERIFY_ACCOUNT,
+                element: withSuspense(<EmailVerificationPage />),
+            },
+            {
                 path: routePaths.FEEDBACK,
                 element: withSuspense(<FeedbackForm />),
             },
