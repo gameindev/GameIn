@@ -81,7 +81,7 @@ export default function CreateOpportunity() {
                         />
                     </OfferingSection>
 
-                    <OfferingSection title="Terms of use" background="rgba(105, 179, 231, 0.2)">
+                    <OfferingSection className="terms_condition"  title="Terms of use" background="rgba(105, 179, 231, 0.2)">
                         <OpportunityFormFields control={control} type="terms" />
                     </OfferingSection>
                 </Grid>

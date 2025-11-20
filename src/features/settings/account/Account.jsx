@@ -45,7 +45,7 @@ const Account = () => {
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [accountError, setAccountError] = useState("");
-  const [verified, setVerified] = useState(!!user?.is_verified);
+  // const [verified, setVerified] = useState(!!user?.is_verified);
 
   useEffect(() => {
     if (user) {
@@ -54,7 +54,7 @@ const Account = () => {
       setUsername(user.username);
       setLanguage(user.language || "English");
       setTimezone(user.timezone || null);
-      setVerified(!!user.is_verified);
+      // setVerified(!!user.is_verified);
     }
   }, [user]);
 
@@ -233,7 +233,7 @@ const Account = () => {
                 withAsterisk
               />
             </Grid.Col>
-            <Grid.Col span={6} style={{ display: "flex"}}>
+            {/* <Grid.Col span={6} style={{ display: "flex"}}>
               <Checkbox
                 label="Email Verified"
                 checked={verified}
@@ -243,7 +243,7 @@ const Account = () => {
                   dispatch(setUser({ ...user, is_verified: next }));
                 }}
               />
-            </Grid.Col>
+            </Grid.Col> */}
             <Grid.Col span={6}>
               <Select
                 label="TIMEZONE"
@@ -267,7 +267,7 @@ const Account = () => {
                 withAsterisk
               />
             </Grid.Col>
-
+            <Grid.Col span={6}></Grid.Col>
             {accountError && (
               <Grid.Col span={12}>
                 <Text c="red" size="sm">

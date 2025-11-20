@@ -1,4 +1,4 @@
-import { createHashRouter } from "react-router";
+﻿import { createHashRouter } from "react-router";
 import { lazy, Suspense } from "react";
 import routePaths from "./routes";
 import { USERTYPES } from "../../shared/enums/userTypesEnum";
@@ -9,6 +9,7 @@ const Preloader = lazy(() => import("../../shared/components/Preloader"));
 const Layout = lazy(() => import("../layout/Layout"));
 const ErrorPage = lazy(() => import("../layout/ErrorPage"));
 const WelcomePage = lazy(() => import("../pages/Welcome"));
+const HomeAlt = lazy(() => import("../pages/HomeAlt"));
 const LoginPage = lazy(() => import("../../features/auth/pages/LoginPage"));
 const SignupPage = lazy(() => import("../../features/auth/pages/SignupPage"));
 const EmailVerificationPage = lazy(() => import("../../features/auth/pages/verification/EmailVerificationPage"));  
@@ -26,6 +27,8 @@ const SettingsPayments = lazy(() => import('../../features/settings/payment/Paym
 const SocialCallback = lazy(() => import('../../features/settings/integration/pages/SocialCallback'))
 const PaymentSuccess = lazy(() => import('../../features/payments/pages/PaymentSuccess'))
 const PaymentCancel = lazy(() => import('../../features/payments/pages/PaymentCancel'))
+
+const FeedbackForm = lazy(() => import('../../features/feedback/pages/FeedbackForm'))
 
 
 // Suspense wrapper utility for lazy components
@@ -47,7 +50,11 @@ const router = createHashRouter([
         children: [
             {
                 index: true,
-                element: withSuspense(<WelcomePage />),
+                element: withSuspense(<GuestRoute><WelcomePage /></GuestRoute>),
+            },
+            {
+                path: routePaths.HOME_ALT,
+                element: withSuspense(<GuestRoute><HomeAlt /></GuestRoute>),
             },
             {
                 path: routePaths.LOGIN,
@@ -56,12 +63,11 @@ const router = createHashRouter([
             {
                 path: routePaths.REGISTER,
                 element: withSuspense(<GuestRoute> <SignupPage /> </GuestRoute>),
+            
+            },{
+                path: routePaths.FEEDBACK,
+                element: withSuspense(<FeedbackForm />),
             },
-            {
-                path: routePaths.VERIFY_ACCOUNT,
-                element: withSuspense(<EmailVerificationPage />),
-            },
-            // Authenticated Account routes
             {
                 element: withSuspense(<RequireAuth />),
                 children: [{
@@ -86,3 +92,5 @@ const router = createHashRouter([
 ]);
 
 export default router; 
+
+

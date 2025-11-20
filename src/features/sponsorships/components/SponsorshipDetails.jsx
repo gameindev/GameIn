@@ -13,6 +13,7 @@ const SponsorshipDetails = ({
   theme,
   onAccept,
   onNegotiate,
+  onReject
 }) => {
   const offers = offeringService.getLatestOffers(
     sponsorship.offering_offers || []
@@ -83,6 +84,7 @@ const SponsorshipDetails = ({
               theme={theme}
               onAccept={onAccept}
               onNegotiate={onNegotiate}
+              onReject={onReject}
               sponsorshipId={sponsorship?.id}
             />
           )}

@@ -68,6 +68,12 @@ export default function SearchByUserType() {
         reset(defaultValues);
     }, [setRoleData, userType, reset]);
 
+    // Trigger default search on page load
+    useEffect(() => {
+        if (userType && (userType?.toUpperCase() === USERTYPES.BRAND || userType?.toUpperCase() === USERTYPES.CREATOR)) {
+            useSearchSubmit(defaultValues, userType, lastQueryRef, setSearchData, user, get);
+        }
+    }, [userType, user, get]);
 
     if (
         userType?.toUpperCase() !== USERTYPES.BRAND &&
@@ -77,7 +83,7 @@ export default function SearchByUserType() {
     }
 
     const onSubmit = async (formData) => {        
-        useSearchSubmit(formData, userType, lastQueryRef, setSearchData, user, get)
+        await useSearchSubmit(formData, userType, lastQueryRef, setSearchData, user, get);
     }
 
     return (

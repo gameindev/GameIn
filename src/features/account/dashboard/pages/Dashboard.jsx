@@ -3,6 +3,8 @@ import { useNavigate } from "react-router";
 import StatBox from "../../../../shared/components/StatBox";
 import IconButton from "../../../../shared/components/IconButton";
 import ProfileBioCard from "../../profile/components/ProfileBioCard";
+import SponsorshipCompactList from "../../../../shared/components/SponsorshipCompactList";
+import OffersCompactList from "../../../../shared/components/OffersCompactList";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -23,12 +25,22 @@ const Dashboard = () => {
                 onClick={() => navigate("/sponsorships")}
               />
             }
-          ></StatBox>
+          >
+            <SponsorshipCompactList />
+          </StatBox>
         </Grid.Col>
 
         <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-          <StatBox>
-            <Text>Stat</Text>
+          <StatBox
+            title={"Offers"}
+            action={
+              <IconButton
+                hoverClass="hoverYellow"
+                onClick={() => navigate("/sponsorships")}
+              />
+            }
+          >
+            <OffersCompactList />
           </StatBox>
         </Grid.Col>
 

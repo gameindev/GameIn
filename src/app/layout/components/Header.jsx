@@ -37,6 +37,10 @@ const Header = () => {
             path: routePaths.WELCOMEPAGE,
         },
         {
+            label: "New Home",
+            path: routePaths.HOME_ALT,
+        },
+        {
             label: "About",
             path: routePaths.WELCOMEPAGE,
         },
@@ -53,7 +57,7 @@ const Header = () => {
 
 
     return (
-        <HeaderSection>
+        <HeaderSection $isLoggedIn={isLoggedInUser}>
             <Card className="headerCard" radius={0}>
                 <div className="container-fluid">
                     <div className="headerFlex">

@@ -1,7 +1,7 @@
-import { Text } from "@mantine/core";
+﻿import { Text } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
-import { theme } from "../../shared/styles/theme/customTheme"
+import { useEffect, useMemo, useState } from "react";
+import { theme } from "../../shared/styles/theme/customTheme";
 import styled from "styled-components";
 
 const SwitchStyles = styled.div`
@@ -29,7 +29,7 @@ const SwitchStyles = styled.div`
         right: 0;
         bottom: 0;
         background-color: ${theme.colors.inputBgColor[0]};
-        transition: 0.3 s;
+        transition: 0.3s;
         border-radius: ${theme.radius.sm};
     }
 
@@ -55,35 +55,51 @@ const SwitchStyles = styled.div`
     }
 `;
 
-export const SwitchButton = ({ fieldName, label, ...props }) => {
-    const [checked, setChecked] = useState(false);
-    
-    useEffect(() => {
-        if (props.checked){
-            setChecked(props.checked)
-        }
-    }, [])
+export const SwitchButton = ({ fieldName, label, checked, value, onChange, onClick, name, disabled, ...rest }) => {
 
-    return (
-        <SwitchStyles>
-            <Text>{label}</Text>
-            <label>
-                <input
-                    type="checkbox"
-                    name={fieldName}
-                    onChange={() => setChecked((prev) => !prev)}
-                    {...props}
-                />
-                <span className="slider">
-                    <span className="icon">
-                        {checked ? (
-                            <IconCheck size={theme.spacing.sm} color="#3C4044" />
-                        ) : (
-                            <IconX size={theme.spacing.sm} />
-                        )}
-                    </span>
-                </span>
-            </label>
-        </SwitchStyles>
-    )
-}
+  const isControlled = typeof checked === "boolean";
+  const initial = isControlled ? checked : Boolean(value);
+  const [internal, setInternal] = useState(initial);
+
+  const isChecked = useMemo(() => (isControlled ? Boolean(checked) : internal), [isControlled, checked, internal]);
+
+  useEffect(() => {
+    if (!isControlled) setInternal(Boolean(value));
+  }, [value, isControlled]);
+  const toggle = () => {
+    const next = !isChecked;
+    if (!isControlled) setInternal(next);
+    if (typeof onChange === "function") onChange(next);
+    if (typeof onClick === "function") onClick(next);
+  };
+
+  return (
+    <SwitchStyles>
+      <Text>{label}</Text>
+      <label>
+        <input
+          type="checkbox"
+          name={name || fieldName}
+          checked={isChecked}
+          onChange={toggle}
+          disabled={disabled}
+          aria-checked={isChecked}
+          {...rest}
+        />
+        <span className="slider">
+          <span className="icon">
+            {isChecked ? (
+              <IconCheck size={theme.spacing.sm} color="#3C4044" />
+            ) : (
+              <IconX size={theme.spacing.sm} />
+            )}
+          </span>
+        </span>
+      </label>
+    </SwitchStyles>
+  );
+};
+
+
+
+

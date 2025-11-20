@@ -48,7 +48,7 @@ const OpportunitySection = ({
                 <Grid gutter={20}>
                     <Grid.Col span={{ base: 12, md: 4, lg: 4 }}>
                         <StatBox
-                            title={statTitle}
+                            title={" "}
                             background="transparent linear-gradient(45deg,  rgba(157, 127, 239, 0.2) 0%, rgba(105, 179, 231, 0.2) 50%, rgba(92, 229, 176, 0.2) 100%) 0% 0% no-repeat padding-box"
                         >
                             {formContent ? (

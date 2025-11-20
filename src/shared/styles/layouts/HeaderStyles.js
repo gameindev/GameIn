@@ -7,7 +7,7 @@ export const HeaderSection = styled.header`
   z-index: 99;
 
   .headerCard {
-    padding: 0.75em 0;
+    padding: ${({ $isLoggedIn }) => ($isLoggedIn ? '1em' : '1.625em')} 0;
   }
 
   .headerFlex {

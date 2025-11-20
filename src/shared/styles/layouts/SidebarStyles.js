@@ -1,4 +1,4 @@
-import styled from "styled-components";
+﻿import styled from "styled-components";
 
 export const SidebarStyles = styled.aside`
   display: flex;
@@ -128,7 +128,7 @@ export const SidebarStyles = styled.aside`
         color: ${({ theme }) => theme.colors.text[0]};
         text-transform: uppercase;
 
-        &:hover {
+        &:hover, &.active {
           background: ${({ theme }) => theme.colors.inputBgColor[0]};
           color: ${({ theme }) => theme.colors.primary[0]};
           transition: all 0.3s ease-in-out;
@@ -148,3 +148,4 @@ export const SidebarStyles = styled.aside`
     }
   }
 `;
+

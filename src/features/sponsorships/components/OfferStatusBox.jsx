@@ -8,6 +8,7 @@ const OfferStatusBox = ({
     theme,
     onAccept,
     onNegotiate,
+    onReject,
     sponsorshipId,
 }) => {
     return (
@@ -53,7 +54,7 @@ const OfferStatusBox = ({
                     <Text size="sm">Negotiate</Text>
                 </Group>
                 <Group>
-                    <IconButton iconSize={18} Icon={IconX} hoverClass="hoverRed" />
+                    <IconButton iconSize={18} Icon={IconX} hoverClass="hoverRed"  onClick={() => onReject && onReject(sponsorshipId)} />
                     <Text size="sm">Decline</Text>
                 </Group>
             </Flex>

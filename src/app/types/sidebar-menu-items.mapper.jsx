@@ -20,7 +20,7 @@ export const sidebarItems = [
         icon: <IconNews size="1em" />,
         label: "News Feed",
         active: false,
-        link: routePaths.ACCOUNTS.DASHBOARD.ROOT,
+        link: routePaths.ACCOUNTS.NEWSFEED.ROOT,
     },
     {
         icon: <IconStar size="1em" />,

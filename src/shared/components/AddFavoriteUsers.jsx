@@ -31,8 +31,6 @@ function AddFavoriteModal({
   const [following, setFollowing] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  console.log(user);
-
   // Fetch followers
   const fetchFollowers = async () => {
     try {

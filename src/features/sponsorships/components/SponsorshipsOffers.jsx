@@ -15,7 +15,7 @@ const SponsorshipsOffers = () => {
     const [openedRow, setOpenedRow] = useState(null);
     const { userProfile, isSelf } = useOutletContext();
     const user = useAppSelector(currentUser);
-    const { sponsorships, handleAcceptOffering, handleNegotiateOffering } =
+    const { sponsorships, handleAcceptOffering, handleNegotiateOffering, handleResetOffering } =
         useSponsorships({ userId: userProfile?.id });
     
     
@@ -39,7 +39,7 @@ const SponsorshipsOffers = () => {
 
     const toggleRow = (index) =>
         setOpenedRow((prev) => (prev === index ? null : index));
-
+    
     const filteredSponsorships = sponsorships?.filter((s) => {
         const hiddenStatuses = [
             OfferingStatus.DISMISSED,
@@ -85,6 +85,7 @@ const SponsorshipsOffers = () => {
                         user={user}
                         handleAcceptOffering={handleAcceptOffering}
                         handleNegotiateOffering={negotiateOffering}
+                        handleResetOffering={handleResetOffering}
                     />
                 ))
             )}

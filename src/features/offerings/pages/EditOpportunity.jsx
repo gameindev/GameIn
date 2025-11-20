@@ -53,7 +53,7 @@ const EditOpportunity = ({ rolePermissions }) => {
     verifyPayment,
     loading: paymentLoading,
   } = usePayment();
-  
+
   const { offerings, loading, error, submitEdit, toFormValues } = useOfferings({
     userId: user?.id,
     offeringId,
@@ -204,7 +204,7 @@ const EditOpportunity = ({ rolePermissions }) => {
     user,
     offering: offerings.data,
   });
-
+  
   const sponsorEdit = watch("sponsorEdit");
 
   // Reset form once offering data loads
@@ -283,13 +283,19 @@ const EditOpportunity = ({ rolePermissions }) => {
             <OfferingSection
               key={s.type}
               title={
-                <Text component="span">
-                  <Text component="span" fw={700}>
+                <>
+                  <Text
+                    component="span"
+                    mr={8}
+                    fw={700}
+                    c={theme.colors.primary[0]}
+                  >
                     {s.number}
                   </Text>{" "}
                   {s.title}
-                </Text>
+                </>
               }
+              background={"rgb(157, 127, 239, 0.1)"}
             >
               <Image
                 src={s.image}
@@ -338,6 +344,7 @@ const EditOpportunity = ({ rolePermissions }) => {
                 autosize: true,
                 minRows: 4,
                 maxRows: 10,
+                disabled: isCreator
               }}
             />
             {!isCreator && (
@@ -369,6 +376,7 @@ const EditOpportunity = ({ rolePermissions }) => {
           />
 
           <OfferingSection
+            className="terms_condition"
             title="Terms of use"
             background="rgba(105, 179, 231, 0.2)"
           >

@@ -1,8 +1,10 @@
-const routePaths = {
+﻿const routePaths = {
     WELCOMEPAGE: "/",
+    HOME_ALT: "/home-alt",
     LOGIN: "/login",
     REGISTER: "/register",
     VERIFY_ACCOUNT: "/verify-account",
+    FEEDBACK: "/feedback",
     SEARCH: "/search/:userType",
     ACCOUNTS: {
         DASHBOARD: {

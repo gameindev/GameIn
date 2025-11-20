@@ -11,7 +11,6 @@ import {
   startInactivityTracker,
   stopInactivityTracker,
 } from "../services/token/inactivityTracker";
-// VerifyEmailBanner will be rendered within specific pages (Dashboard/Profile)
 
 const Layout = () => {
   const location = useLocation();

@@ -112,6 +112,12 @@ export const GlobalStyles = createGlobalStyle`
           theme.colors.primary[0]} !important;
      }
 
+     .mantine-Carousel-indicator:not([data-active]){
+        background-color: ${({ theme }) =>
+          theme.colors.secondaryGrey[0]} !important;
+        opacity: 1 !important;
+     }
+
 
      /* Lucide icons overwrite styles */
      svg.lucide[width="24"] {
@@ -160,5 +166,27 @@ export const GlobalStyles = createGlobalStyle`
         font-size: 1.05em;
         padding: 1.2em;
         border-radius: 8px;
+    }
+
+    .recharts-polar-grid-concentric-polygon:nth-child(1){
+        fill: rgba(92, 229, 176,1);
+        filter: drop-shadow(4px 8px 12px black);
+    }
+    .recharts-polar-grid-concentric-polygon:nth-child(2){
+        fill: rgba(92, 229, 176,0.7)
+    }
+    .recharts-polar-grid-concentric-polygon:nth-child(3){
+        fill: rgba(92, 229, 176,0.6)
+    }
+    .recharts-polar-grid-concentric-polygon:nth-child(4){
+        fill: rgba(92, 229, 176,0.4)
+    }
+    .recharts-polar-grid-concentric-polygon:nth-child(5){
+        fill: rgba(92, 229, 176,0.2)
+    }
+
+    .terms_condition .mantine-Checkbox-icon{
+        color: ${({ theme }) => theme.colors.skyblue[0]} !important;
+        background: ${({ theme }) => theme.colors.skyblue[0]} !important;
     }
 `;
