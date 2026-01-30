@@ -16,6 +16,7 @@ import { UsersModule } from '../users/users.module';
 import { UploadsModule } from '../uploads/uploads.module';
 import { OfferingsOrderModule } from '../offerings-order/offerings-order.module';
 import { ChatModule } from '../chat/chat.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
     controllers: [OfferingsController],
@@ -35,6 +36,7 @@ import { ChatModule } from '../chat/chat.module';
         UploadsModule,
         ChatModule,
         OfferingsOrderModule,
+        NotificationsModule,
     ], 
     exports: [OfferingsService, OfferingBaseService],
 })

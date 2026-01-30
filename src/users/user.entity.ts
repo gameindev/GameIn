@@ -7,6 +7,8 @@ import { CreatorProfile } from "../creator-profiles/creator-profile.entity";
 import { BrandProfile } from "../brand-profiles/brand-profile.entity";
 import { UserBio } from "../users-bio/user-bio.entity";
 import { SocialIntegration } from "../social-integration/entities/social-integration.entity";
+import { UserFavourite } from "../user-favourite/user-favourite.entity";
+import { UserFaq } from "../user-faqs/user-faq.entity";
 
 /**
  * User entity.
@@ -74,7 +76,11 @@ export class User {
     })
     brand_profile: BrandProfile;
 
-    // faqs: UserFaq[];
+    @OneToMany(() => UserFaq, (faq) => faq.user, {
+        cascade: true,
+        eager: false,
+    })
+    faqs: UserFaq[];
 
     @Column({
         default: true,
@@ -121,6 +127,12 @@ export class User {
     })
     social_integrations: SocialIntegration[];
 
+    @OneToMany(() => UserFavourite, userFavourite => userFavourite.user)
+    favourites: UserFavourite[];
+
+    @OneToMany(() => UserFavourite, userFavourite => userFavourite.favourite_user)
+    favourited_by: UserFavourite[];
+
     @Column({
         type: 'varchar',
         length: 30,
@@ -134,6 +146,7 @@ export class User {
         nullable: true,
     })
     language?: string;
+    
 
 
     // ratingReceived: UserRating[];

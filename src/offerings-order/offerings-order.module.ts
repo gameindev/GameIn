@@ -7,6 +7,7 @@ import { PostOfferingOrderProvider } from './providers/post-offering-order.provi
 import { GetOfferingOrderProvider } from './providers/get-offering-order.provider';
 import { UsersModule } from '../users/users.module';
 import { OfferingsModule } from '../offerings/offerings.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
     controllers: [OfferingsOrderController],
@@ -15,7 +16,8 @@ import { OfferingsModule } from '../offerings/offerings.module';
     imports: [
         TypeOrmModule.forFeature([OfferingOrder]),
         UsersModule,
-        forwardRef(() => OfferingsModule)
+        forwardRef(() => OfferingsModule),
+        NotificationsModule,
     ]
 
 })

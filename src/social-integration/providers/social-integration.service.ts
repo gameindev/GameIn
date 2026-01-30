@@ -115,4 +115,36 @@ export class SocialIntegrationService {
         const provider = this.integrationProvider.getProvider(platform);
         return provider.fetchAndStoreStats(integrationId);
     }
+
+    /**
+     * Normalize platform-specific stats to a consistent shape for the frontend.
+     * { followers?, likes?, views?, connectionsCount? } - null/undefined means N/A for that platform.
+     */
+    normalizeStats(platform: SocialPlatform, raw: any): { followers?: number | null; likes?: number | null; views?: number | null; connectionsCount?: number | null } {
+        if (raw == null) return {};
+
+        switch (platform) {
+            case SocialPlatform.TWITCH: {
+                const followers = raw.followersCount ?? raw.followers ?? null;
+                const views = raw.viewCount ?? raw.mostViewed?.views ?? null;
+                return { followers, likes: null, views };
+            }
+            case SocialPlatform.X: {
+                const followers = raw.followers ?? raw.public_metrics?.followers_count ?? null;
+                const likes = raw.topLiked?.likes ?? raw.totalLikes ?? null;
+                const views = raw.topViewed?.views ?? raw.totalViews ?? null;
+                return { followers, likes: likes ?? null, views: views ?? null };
+            }
+            case SocialPlatform.DISCORD: {
+                return { followers: null, likes: null, views: null, connectionsCount: raw.connectionsCount ?? null };
+            }
+            case SocialPlatform.YOUTUBE: {
+                const followers = raw.followers ?? null;
+                const views = raw.views ?? null;
+                return { followers, likes: raw.likes ?? null, views };
+            }
+            default:
+                return {};
+        }
+    }
 }

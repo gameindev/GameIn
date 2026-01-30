@@ -8,9 +8,13 @@ import { PaymentStatus } from '../enums/payment-status.enum';
 import { RefundStatus } from '../enums/refund-status.enum';
 import { InvoicesService } from '../../invoices/providers/invoices.service';
 import { OfferingsOrderService } from '../../offerings-order/providers/offerings-order.service';
+import { OfferingsService } from '../../offerings/providers/offerings.service';
 import { PaymentProvider } from '../../offerings/enums/payment-provider.enum';
 import { InvoiceStatus } from '../../invoices/enums/invoice-status.enum';
 import { OrderStatus } from '../../offerings-order/enums/order-status.enum';
+import { NotificationEventsService } from '../../notifications/providers/notification-events.service';
+import { NotificationType } from '../../notifications/enums/notification-type.enum';
+import { NotificationChannel } from '../../notifications/enums/notification-channel.enum';
 
 /**
  * Service that orchestrates the complete payment flow from order to payment completion
@@ -24,7 +28,9 @@ export class PaymentFlowService {
         private readonly refundService: PaymentRefundService,
         private readonly invoicesService: InvoicesService,
         private readonly offeringsOrderService: OfferingsOrderService,
+        private readonly offeringsService: OfferingsService,
         private readonly configService: ConfigService,
+        private readonly notificationEvents: NotificationEventsService,
     ) {}
 
     /**
@@ -153,11 +159,30 @@ export class PaymentFlowService {
         if (verification.success && verification.status === 'succeeded') {
             await this.invoicesService.markAsPaid(paymentIntent.invoice_id);
 
-            // Update order status
+            // Get order with relations to access offering and brand
+            const order = await this.offeringsOrderService.findOne(paymentIntent.order_id, ['offering', 'brand']);
+
+            // Update order status (this will trigger order status notification)
             await this.offeringsOrderService.update(paymentIntent.order_id, {
                 status: OrderStatus.PAID,
             });
-            
+
+            // Update offering status to SPONSORED
+            if (order && order.offering_id && order.brand) {
+                await this.offeringsService.sponsoreOfferings(order.offering_id, order.brand).catch((error) => {
+                    console.error('Failed to update offering status to SPONSORED:', error);
+                });
+            }
+
+            // Send payment received notification to creator
+            await this.sendPaymentNotification(paymentIntent, payment, true).catch((error) => {
+                console.error('Failed to send payment success notification:', error);
+            });
+        } else {
+            // Send payment failed notification to brand
+            await this.sendPaymentNotification(paymentIntent, payment, false).catch((error) => {
+                console.error('Failed to send payment failure notification:', error);
+            });
         }
 
         return {
@@ -221,6 +246,71 @@ export class PaymentFlowService {
         return refunds
             .filter(refund => refund.status === RefundStatus.SUCCEEDED)
             .reduce((sum, refund) => sum + Number(refund.amount), 0);
+    }
+
+    /**
+     * Send payment notification (success or failure)
+     */
+    private async sendPaymentNotification(
+        paymentIntent: any,
+        payment: any,
+        success: boolean,
+    ) {
+        // Get order with relations to access creator and brand
+        const order = await this.offeringsOrderService.findOne(paymentIntent.order_id, ['creator', 'brand', 'offering']);
+
+        if (!order) {
+            console.error(`Order ${paymentIntent.order_id} not found for payment notification`);
+            return;
+        }
+
+        if (success) {
+            // Notify creator about payment received
+            await this.notificationEvents.publishNotification({
+                userId: order.creator.id,
+                type: NotificationType.PAYMENT_RECEIVED,
+                channels: [NotificationChannel.IN_APP, NotificationChannel.EMAIL],
+                title: 'Payment Received',
+                message: `You received a payment of ${paymentIntent.currency} ${paymentIntent.amount} for order "${order.title}"`,
+                data: {
+                    orderId: order.id,
+                    orderIdString: order.order_id,
+                    paymentId: payment.id,
+                    amount: paymentIntent.amount,
+                    currency: paymentIntent.currency,
+                    orderTitle: order.title,
+                },
+                metadata: {
+                    email: order.creator.email,
+                    emailTemplate: 'payment-received',
+                    emailSubject: `Payment Received: ${paymentIntent.currency} ${paymentIntent.amount}`,
+                },
+                priority: 'high',
+            });
+        } else {
+            // Notify brand about payment failure
+            await this.notificationEvents.publishNotification({
+                userId: order.brand.id,
+                type: NotificationType.PAYMENT_FAILED,
+                channels: [NotificationChannel.IN_APP, NotificationChannel.EMAIL],
+                title: 'Payment Failed',
+                message: `Payment failed for order "${order.title}". Please try again.`,
+                data: {
+                    orderId: order.id,
+                    orderIdString: order.order_id,
+                    paymentId: payment?.id,
+                    amount: paymentIntent.amount,
+                    currency: paymentIntent.currency,
+                    orderTitle: order.title,
+                },
+                metadata: {
+                    email: order.brand.email,
+                    emailTemplate: 'payment-failed',
+                    emailSubject: `Payment Failed: ${order.title}`,
+                },
+                priority: 'high',
+            });
+        }
     }
 }
 

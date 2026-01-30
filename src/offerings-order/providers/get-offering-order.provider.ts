@@ -35,29 +35,37 @@ export class GetOfferingOrderProvider {
             relations = [],
         } = query;
 
-        // Always get the latest user info
         const currentUser = await this.userService.getUserById(user.sub);
         if (!currentUser) {
             throw new NotFoundException('User not found');
         }
 
-        if (currentUser.user_type !== UserType.BRAND) {
-            throw new ForbiddenException('You are not authorized to get all offering orders for this user type');
+        if (currentUser.user_type !== UserType.BRAND && currentUser.user_type !== UserType.CREATOR) {
+            throw new ForbiddenException('Only brands and creators can fetch offering orders');
         }
 
-        // Build query
-        const where: any = {
-            brand: { id: user.sub }
-        };
+        const userId = Number(user.sub);
+        if (!Number.isInteger(userId) || userId < 1) {
+            throw new ForbiddenException('Invalid user context');
+        }
 
-        if (creator_id)  where.creator = { id: creator_id };
-        if (brand_id)    where.brand = { id: brand_id };
-        if (offering_id) where.offering = { id: offering_id };
-        if (status)      where.status = status;
-        if (created_at)  where.created_at = created_at;
-        if (updated_at)  where.updated_at = updated_at;
-        if (deleted_at)  where.deleted_at = deleted_at;
-        if (order_id)    where.order_id = order_id;
+        // Base filter: BRAND sees orders where they are the brand; CREATOR sees orders where they are the creator
+        const where: Record<string, unknown> = {};
+        if (currentUser.user_type === UserType.BRAND) {
+            where.brand_id = userId;
+        } else {
+            where.creator_id = userId;
+        }
+
+        // Optional filters: BRAND can filter by creator_id; CREATOR can filter by brand_id
+        if (currentUser.user_type === UserType.BRAND && creator_id != null) where.creator_id = Number(creator_id);
+        if (currentUser.user_type === UserType.CREATOR && brand_id != null) where.brand_id = Number(brand_id);
+        if (offering_id != null) where.offering_id = Number(offering_id);
+        if (status) where.status = status;
+        if (created_at) where.created_at = created_at;
+        if (updated_at) where.updated_at = updated_at;
+        if (deleted_at) where.deleted_at = deleted_at;
+        if (order_id) where.order_id = order_id;
 
         // Merge default and requested relations
         const baseRelations = ['brand', 'offering', 'creator'];
@@ -87,20 +95,25 @@ export class GetOfferingOrderProvider {
 
     async getOfferingOrderById(id: number, user: ActiveUserData) {
         const currentUser = await this.userService.getUserById(user.sub);
-
         if (!currentUser) {
             throw new NotFoundException('User not found');
         }
 
-        if (currentUser.user_type !== UserType.BRAND) {
-            throw new ForbiddenException('You are not authorized to get an offering order for this user type');
+        if (currentUser.user_type !== UserType.BRAND && currentUser.user_type !== UserType.CREATOR) {
+            throw new ForbiddenException('Only brands and creators can fetch an offering order');
         }
 
-        const offeringOrder = await this.repo.findOne({ where: { id }, relations: ['brand', 'offering'] });
+        const offeringOrder = await this.repo.findOne({
+            where: { id },
+            relations: ['brand', 'offering', 'creator'],
+        });
         if (!offeringOrder) {
             throw new NotFoundException('Offering order not found');
         }
-        if (offeringOrder.brand.id !== currentUser.id) {
+
+        const isBrand = offeringOrder.brand_id === currentUser.id;
+        const isCreator = offeringOrder.creator_id === currentUser.id;
+        if (!isBrand && !isCreator) {
             throw new ForbiddenException('You are not authorized to get this offering order');
         }
         return offeringOrder;

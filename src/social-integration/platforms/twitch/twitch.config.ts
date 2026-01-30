@@ -1,7 +1,12 @@
 import { registerAs } from "@nestjs/config";
 
+function getEnv(key: string, alt?: string): string {
+    const v = process.env[key] || process.env[alt!];
+    return (v && typeof v === 'string') ? v.trim() : '';
+}
+
 export default registerAs('twitchConfig', () => ({
-    twitchClientId: process.env.TWITCH_CLIENT_ID || '',
-    twitchClientSecret: process.env.TWITCH_CLIENT_SECRET || '',
-    twitchCallbackUrl: process.env.TWITCH_CALLBACK_URL || '',
+    twitchClientId: getEnv('TWITCH_CLIENT_ID'),
+    twitchClientSecret: getEnv('TWITCH_CLIENT_SECRET'),
+    twitchCallbackUrl: getEnv('TWITCH_CALLBACK_URL', 'TWITCH_REDIRECT_URI'),
 }));

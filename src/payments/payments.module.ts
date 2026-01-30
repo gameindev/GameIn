@@ -15,12 +15,16 @@ import { Payment } from './payment.entity';
 import { PaymentRefund } from './payment-refund.entity';
 import { OfferingsOrderModule } from '../offerings-order/offerings-order.module';
 import { InvoicesModule } from '../invoices/invoices.module';
+import { NotificationsModule } from '../notifications/notifications.module';
+import { OfferingsModule } from '../offerings/offerings.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([PaymentIntent, Payment, PaymentRefund]),
         forwardRef(() => InvoicesModule),
         forwardRef(() => OfferingsOrderModule),
+        forwardRef(() => OfferingsModule),
+        NotificationsModule,
     ],
     providers: [
         PaymentsService,

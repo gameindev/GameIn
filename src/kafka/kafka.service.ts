@@ -13,6 +13,12 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
     private isInitializing = false;
     private isProducerConnected = false;
     private reconnectingProducer = false;
+    // Track topic subscriptions and handlers
+    private topicHandlers = new Map<string, (payload: EachMessagePayload) => Promise<void>>();
+    private messagePersistenceHandlers = new Map<string, (payload: EachMessagePayload) => Promise<void>>();
+    private isConsumerRunning = false;
+    private isMessagePersistenceConsumerRunning = false;
+    private messagePersistenceConsumerStartScheduled = false;
 
     constructor(private configService: ConfigService) {}
 
@@ -29,18 +35,34 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
             if (!this.kafkaConfig) throw new Error('Kafka configuration not available.');
         }
 
-        this.kafka = new Kafka({
+        // Build Kafka configuration based on environment
+        // Local dev: no SSL/SASL (PLAINTEXT)
+        // Production: SSL + SASL (when KAFKA_USE_SSL and KAFKA_USE_SASL are set)
+        const kafkaOptions: any = {
             clientId: this.kafkaConfig.clientId,
             brokers: this.kafkaConfig.brokers,
-            ssl: this.kafkaConfig.ssl ?? true,
-            sasl: this.kafkaConfig.sasl ?? {
-                mechanism: 'plain',
-                username: process.env.KAFKA_SASL_USERNAME,
-                password: process.env.KAFKA_SASL_PASSWORD,
-            },
             logLevel: logLevel.NOTHING,
             retry: { retries: 8, initialRetryTime: 200, factor: 0.3 },
-        });
+        };
+
+        // Only add SSL if explicitly configured (production)
+        if (this.kafkaConfig.ssl) {
+            kafkaOptions.ssl = this.kafkaConfig.ssl;
+            this.logger.log('🔒 Kafka SSL enabled (production mode)');
+        } else {
+            this.logger.log('🔓 Kafka using PLAINTEXT (local development mode)');
+        }
+
+        // Only add SASL if explicitly configured (production)
+        // kafka.config.ts sets sasl to undefined when KAFKA_USE_SASL !== 'true'
+        if (this.kafkaConfig.sasl) {
+            kafkaOptions.sasl = this.kafkaConfig.sasl;
+            this.logger.log('🔐 Kafka SASL authentication enabled (production mode)');
+        } else {
+            this.logger.log('🔓 Kafka SASL authentication disabled (local development mode)');
+        }
+
+        this.kafka = new Kafka(kafkaOptions);
 
         const baseConsumerConfig = {
             sessionTimeout: this.kafkaConfig.sessionTimeout || 30000,
@@ -167,21 +189,51 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
         try {
             await this.ensureConnection();
             await this.createTopicIfNotExists(topic);
+            
+            // Store the handler for this topic
+            this.topicHandlers.set(topic, handler);
+            
+            // If consumer is already running, we can't subscribe to new topics
+            // This is a KafkaJS limitation - you can only subscribe before run()
+            if (this.isConsumerRunning) {
+                const error = new Error(
+                    `Cannot subscribe to topic "${topic}" - consumer is already running. ` +
+                    `All topic subscriptions must happen before the consumer starts. ` +
+                    `Consider using subscribeToMessagePersistence() for this topic instead.`
+                );
+                this.logger.error(error.message);
+                this.topicHandlers.delete(topic);
+                throw error;
+            }
+            
+            // Subscribe to the topic (can be called multiple times before run())
             await this.consumer.subscribe({ topic, fromBeginning });
 
-            await this.consumer.run({
-                eachMessage: async (payload) => {
-                    try {
-                        await handler(payload);
-                    } catch (error) {
-                        this.logger.error(`Error processing message from topic ${topic}:`, error);
-                    }
-                },
-            });
+            // Only start the consumer if it's not already running
+            if (!this.isConsumerRunning) {
+                this.isConsumerRunning = true;
+                await this.consumer.run({
+                    eachMessage: async (payload) => {
+                        try {
+                            const topicName = payload.topic;
+                            const topicHandler = this.topicHandlers.get(topicName);
+                            if (topicHandler) {
+                                await topicHandler(payload);
+                            } else {
+                                this.logger.warn(`No handler found for topic: ${topicName}`);
+                            }
+                        } catch (error) {
+                            this.logger.error(`Error processing message from topic ${payload.topic}:`, error);
+                        }
+                    },
+                });
+            }
 
             this.logger.log(`Subscribed to topic: ${topic} (fromBeginning: ${fromBeginning})`);
         } catch (error) {
             this.logger.error(`Failed to subscribe to topic ${topic}:`, error);
+            // Remove handler if subscription failed
+            this.topicHandlers.delete(topic);
             throw error;
         }
     }
@@ -194,23 +246,81 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
         try {
             await this.ensureConnection();
             await this.createTopicIfNotExists(topic);
+            
+            // Check if we're already subscribed to this topic
+            if (this.messagePersistenceHandlers.has(topic)) {
+                // Update the handler in case it changed, but don't re-subscribe
+                this.messagePersistenceHandlers.set(topic, handler);
+                this.logger.log(
+                    `Handler updated for already-subscribed topic: ${topic} (consumer ${this.isMessagePersistenceConsumerRunning ? 'running' : 'not running'})`,
+                );
+                return; // Already subscribed, just update handler
+            }
+            
+            // Store the handler for this topic BEFORE checking if consumer is running
+            // This way, if the consumer is already running, we at least have the handler registered
+            this.messagePersistenceHandlers.set(topic, handler);
+            
+            // If consumer is already running, we can't subscribe to new topics
+            // This is a KafkaJS limitation - you can only subscribe before run()
+            // However, we'll keep the handler registered so messages can still be processed
+            // if the topic was already subscribed by another service
+            if (this.isMessagePersistenceConsumerRunning) {
+                this.logger.warn(
+                    `Cannot subscribe to topic "${topic}" - message persistence consumer is already running. ` +
+                    `Handler has been registered, but subscription will be skipped. ` +
+                    `If this topic was already subscribed by another service, messages will still be processed.`,
+                );
+                // Don't throw error - just log warning and return
+                // The handler is registered, so if the topic is already subscribed, it will work
+                return;
+            }
+            
+            // Subscribe to the topic (can be called multiple times before run())
             await this.messagePersistenceConsumer.subscribe({ topic, fromBeginning });
 
-            await this.messagePersistenceConsumer.run({
-                eachMessage: async (payload) => {
-                    try {
-                        await handler(payload);
-                    } catch (error) {
-                        this.logger.error(`Error processing message from topic ${topic}:`, error);
+            // Only start the consumer if it's not already running or scheduled
+            // Use a small delay to allow other modules to subscribe before starting
+            if (!this.isMessagePersistenceConsumerRunning && !this.messagePersistenceConsumerStartScheduled) {
+                // Mark as scheduled to prevent multiple timeouts
+                this.messagePersistenceConsumerStartScheduled = true;
+                
+                // Delay starting the consumer by 100ms to allow other modules to subscribe
+                // This helps avoid race conditions where one module starts the consumer
+                // before another module can subscribe
+                setTimeout(async () => {
+                    // Double-check that consumer isn't running (another module might have started it)
+                    if (!this.isMessagePersistenceConsumerRunning) {
+                        this.isMessagePersistenceConsumerRunning = true;
+                        await this.messagePersistenceConsumer.run({
+                            eachMessage: async (payload) => {
+                                try {
+                                    const topicName = payload.topic;
+                                    const topicHandler = this.messagePersistenceHandlers.get(topicName);
+                                    if (topicHandler) {
+                                        await topicHandler(payload);
+                                    } else {
+                                        this.logger.warn(`No handler found for topic: ${topicName}`);
+                                    }
+                                } catch (error) {
+                                    this.logger.error(`Error processing message from topic ${payload.topic}:`, error);
+                                }
+                            },
+                        });
+                        this.logger.log(`Message persistence consumer started with ${this.messagePersistenceHandlers.size} topic(s)`);
                     }
-                },
-            });
+                }, 100);
+            }
 
             this.logger.log(
                 `Message persistence consumer subscribed to topic: ${topic} (fromBeginning: ${fromBeginning})`,
             );
         } catch (error) {
             this.logger.error(`Failed to subscribe message persistence consumer to topic ${topic}:`, error);
+            // Only remove handler if subscription actually failed (not just a warning)
+            if (error.message && !error.message.includes('already running')) {
+                this.messagePersistenceHandlers.delete(topic);
+            }
             throw error;
         }
     }

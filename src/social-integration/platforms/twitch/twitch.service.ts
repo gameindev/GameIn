@@ -205,8 +205,9 @@ export class TwitchService implements SocialIntegrationServiceInterface {
             throw new Error('Integration not found');
         }
 
-        // 1. Refresh access token if needed
-        await this.refreshTokenIfNeeded(integrationId);
+        // 1. Refresh access token if needed and use fresh token
+        const tokens = await this.refreshTokenIfNeeded(integrationId);
+        if (tokens?.access_token) integration.access_token = tokens.access_token;
 
         // 2. Fetch followers count
         const followersUrl = `${this.baseUrl}/channels/followers?broadcaster_id=${integration.social_id}`;
@@ -221,7 +222,25 @@ export class TwitchService implements SocialIntegrationServiceInterface {
 
         const followersCount = followersResponse.data.total ?? 0;
 
-        // 3. Fetch most viewed video
+        // 2b. Fetch channel info for total view count (Get Channel Information)
+        let viewCount: number | null = null;
+        try {
+            const channelUrl = `${this.baseUrl}/channels?broadcaster_id=${integration.social_id}`;
+            const channelResponse = await firstValueFrom(
+                this.httpService.get(channelUrl, {
+                    headers: {
+                        Authorization: `Bearer ${integration.access_token}`,
+                        'Client-Id': this.config.twitchClientId,
+                    },
+                }),
+            );
+            const channel = channelResponse.data?.data?.[0];
+            if (channel?.view_count != null) viewCount = Number(channel.view_count);
+        } catch (e) {
+            this.logger.warn(`Twitch channel view count failed: ${e?.message ?? e}`);
+        }
+
+        // 3. Fetch most viewed video (fallback for views if channel view_count not available)
         const videosUrl = `${this.baseUrl}/videos?user_id=${integration.social_id}&sort=views`;
         const videosResponse = await firstValueFrom(
             this.httpService.get(videosUrl, {
@@ -243,15 +262,20 @@ export class TwitchService implements SocialIntegrationServiceInterface {
             }
             : null;
 
+        // Use channel total view_count if available, else top video views
+        const views = viewCount ?? mostViewed?.views ?? null;
+
         // 4. Log or store as needed
-        console.log(`[Twitch Stats] User ${integration.user.id}`, {
+        this.logger.log(`[Twitch Stats] User ${integration.user.id}`, {
             followersCount,
+            viewCount: views,
             mostViewed,
         });
 
-        // 5. Return the stats (you can also persist them)
+        // 5. Return the stats (normalized for frontend)
         return {
             followersCount,
+            viewCount: views,
             mostViewed,
         };
     }

@@ -4,6 +4,9 @@ import { UserFollow } from '../user-follow.entity';
 import { Repository } from 'typeorm';
 import { FollowDto } from '../dtos/follow.dto';
 import { User } from '../../users/user.entity';
+import { NotificationEventsService } from '../../notifications/providers/notification-events.service';
+import { NotificationType } from '../../notifications/enums/notification-type.enum';
+import { NotificationChannel } from '../../notifications/enums/notification-channel.enum';
 
 
 
@@ -15,6 +18,8 @@ export class UserFollowService {
 
         @InjectRepository(User)
         private readonly userRepo: Repository<User>,
+
+        private readonly notificationEvents: NotificationEventsService,
     ) { }
 
     async follow(followerId: number, dto: FollowDto) {
@@ -42,6 +47,9 @@ export class UserFollowService {
                 const result = await this.followRepo.save(existing);
                 await this.increaseFollowerCount(following);
 
+                // Send notification to the user being followed
+                await this.sendFollowNotification(follower, following);
+
                 return result;
             }
             return existing;
@@ -50,6 +58,9 @@ export class UserFollowService {
         const follow = this.followRepo.create({ follower, following });
         const result = await this.followRepo.save(follow);
         await this.increaseFollowerCount(following);
+
+        // Send notification to the user being followed
+        await this.sendFollowNotification(follower, following);
 
         return result
     }
@@ -113,6 +124,37 @@ export class UserFollowService {
         if (user.brand_profile != null && user.creator_profile == null) {
             user.brand_profile.followers--;
             return await this.userRepo.save(user);
+        }
+    }
+
+    /**
+     * Send notification when a user follows another user
+     */
+    private async sendFollowNotification(follower: User, following: User) {
+        try {
+            const followerName = follower.username || follower.email || 'Someone';
+            const followerProfilePic = follower.creator_profile?.profile_image?.path || 
+                                     follower.brand_profile?.profile_image?.path || 
+                                     null;
+
+            await this.notificationEvents.publishNotification({
+                userId: following.id,
+                type: NotificationType.NEW_FOLLOWER,
+                channels: [NotificationChannel.IN_APP], // Only in-app for now
+                title: 'New Follower',
+                message: `${followerName} started following you`,
+                data: {
+                    followerId: follower.id,
+                    followerName: followerName,
+                    followerUsername: follower.username,
+                    followerProfilePic: followerProfilePic,
+                },
+                metadata: {},
+                priority: 'normal',
+            });
+        } catch (error) {
+            // Log error but don't fail the follow operation
+            console.error('Failed to send follow notification:', error);
         }
     }
 }

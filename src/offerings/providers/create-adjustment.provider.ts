@@ -13,6 +13,8 @@ import { OfferingsOrderService } from '../../offerings-order/providers/offerings
 import { ChatService } from '../../chat/providers/chat.service';
 import { OrderStatus } from '../../offerings-order/enums/order-status.enum';
 import { MessageType } from '../../chat/enum/message-type.enum';
+import { OfferingPriceService } from '../offering-price/providers/offering-price.service';
+import { UsersService } from '../../users/providers/users.service';
 
 @Injectable()
 export class CreateAdjustmentProvider {
@@ -23,6 +25,8 @@ export class CreateAdjustmentProvider {
         private readonly uploadService: UploadsService,
         private readonly chatService: ChatService,
         private readonly offeringsOrderService: OfferingsOrderService,
+        private readonly offeringPriceService: OfferingPriceService,
+        private readonly usersService: UsersService,
     ) { }
 
     async createAdjustment(dto: PatchOfferingBundleDto, logo?: Express.Multer.File, user?: ActiveUserData) {
@@ -60,17 +64,74 @@ export class CreateAdjustmentProvider {
             offering.status = dto.offering.status;
         }
 
-        await this.repo.save(offering);
-
-        if (dto.offering.offers?.length) {
-            await this.offeringOffersService.adjustOffers(offering, dto.offering.offers, user);
+        if (dto.offering.start_date !== undefined) {
+            offering.start_date = dto.offering.start_date;
         }
 
-        // Reload offering with latest price after any updates
+        if (dto.offering.end_date !== undefined) {
+            offering.end_date = dto.offering.end_date;
+        }
+
+        await this.repo.save(offering);
+
+        if (dto.offers?.length) {
+            await this.offeringOffersService.adjustOffers(offering, dto.offers, user);
+        }
+
+        // Update price if provided
+        if (dto.price) {
+            try {
+                await this.offeringPriceService.updatePrice(offering.id, dto.price, user);
+            } catch (priceErr) {
+                throw new BadRequestException(`Failed to update price: ${priceErr.message}`);
+            }
+        }
+
+        // Increment adjustment_count only once per adjustment operation
+        // Check if any actual adjustment was made
+        const hasAdjustments = 
+            logo !== undefined ||
+            dto.offering.notes !== undefined ||
+            dto.offering.status !== undefined ||
+            dto.offering.start_date !== undefined ||
+            dto.offering.end_date !== undefined ||
+            (dto.offers?.length && dto.offers.length > 0) ||
+            dto.price !== undefined;
+
+        if (hasAdjustments) {
+            // Reload offering to get latest state before incrementing
+            const offeringToUpdate = await this.repo.findOne({
+                where: { id: offering.id },
+                relations: ['user'],
+            });
+            
+            if (offeringToUpdate) {
+                offeringToUpdate.adjustment_count++;
+                offeringToUpdate.last_adjusted_at = new Date();
+                const getUser = await this.usersService.getUserById(user?.sub);
+                offeringToUpdate.last_adjusted_by = getUser;
+                await this.repo.save(offeringToUpdate);
+            }
+        }
+
+        // Reload offering with all versions of offers and prices (similar to offers)
         const updatedOffering = await this.repo.findOne({
             where: { id: offering.id },
-            relations: ['offering_offers', 'offering_price'],
+            relations: ['offering_offers', 'offering_prices'],
         });
+        
+        // Set latest price version for backward compatibility (OneToOne relation)
+        if (updatedOffering && updatedOffering.offering_prices?.length > 0) {
+            // Get the latest version (highest version number)
+            const latestPrice = updatedOffering.offering_prices.reduce((latest, current) => {
+                return (!latest || current.version > latest.version) ? current : latest;
+            });
+            updatedOffering.offering_price = latestPrice;
+        } else if (updatedOffering) {
+            // Fallback to service method if relation didn't load
+            const latestPrice = await this.offeringPriceService.getPriceByOfferingId(offering.id);
+            updatedOffering.offering_price = latestPrice;
+        }
 
         let updated = null;
         let brandOrderCreated = false;
@@ -103,11 +164,19 @@ export class CreateAdjustmentProvider {
                     }
                 }
 
-                // Return the latest offering state
+                // Return the latest offering state with all versions
                 updated = await this.repo.findOne({
                     where: { id: offering.id },
-                    relations: ['offering_offers'],
+                    relations: ['offering_offers', 'offering_prices'],
                 });
+                
+                // Set latest price version for backward compatibility
+                if (updated && updated.offering_prices?.length > 0) {
+                    const latestPrice = updated.offering_prices.reduce((latest, current) => {
+                        return (!latest || current.version > latest.version) ? current : latest;
+                    });
+                    updated.offering_price = latestPrice;
+                }
 
                 // Proceed with non-critical cleanup and chat handling, but skip order creation
             } else {
@@ -130,11 +199,19 @@ export class CreateAdjustmentProvider {
                 brandOrderCreated = true;
                 updated = await this.repo.findOne({
                     where: { id: offering.id },
-                    relations: ['offering_offers'],
+                    relations: ['offering_offers', 'offering_prices'],
                 });
 
                 if (!updated) {
                     throw new InternalServerErrorException('Failed to reload updated offering');
+                }
+                
+                // Set latest price version for backward compatibility
+                if (updated.offering_prices?.length > 0) {
+                    const latestPrice = updated.offering_prices.reduce((latest, current) => {
+                        return (!latest || current.version > latest.version) ? current : latest;
+                    });
+                    updated.offering_price = latestPrice;
                 }
             }
 
@@ -177,16 +254,35 @@ export class CreateAdjustmentProvider {
             return updated;
         } 
 
-        // For non-brand adjustments, still return the most recent offering
-        return await this.repo.findOne({
+        // For non-brand adjustments, still return the most recent offering with all versions
+        const finalOffering = await this.repo.findOne({
             where: { id: offering.id },
-            relations: ['offering_offers'],
+            relations: ['offering_offers', 'offering_prices'],
         });
+        
+        // Set latest price version for backward compatibility
+        if (finalOffering && finalOffering.offering_prices?.length > 0) {
+            const latestPrice = finalOffering.offering_prices.reduce((latest, current) => {
+                return (!latest || current.version > latest.version) ? current : latest;
+            });
+            finalOffering.offering_price = latestPrice;
+        }
+        
+        return finalOffering;
     }
 
     private async findExistingOffering(id: number): Promise<Offering> {
-        const offering = await this.repo.findOne({ where: { id }, relations: ['user', 'offering_price'] });
+        const offering = await this.repo.findOne({ where: { id }, relations: ['user', 'offering_prices'] });
         if (!offering) throw new NotFoundException(`Offering with ID ${id} not found`);
+        
+        // Set latest price for backward compatibility
+        if (offering.offering_prices && offering.offering_prices.length > 0) {
+            const latestPrice = offering.offering_prices.reduce((latest, current) => {
+                return (!latest || current.version > latest.version) ? current : latest;
+            });
+            offering.offering_price = latestPrice;
+        }
+        
         return offering;
     }
 

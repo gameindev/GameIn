@@ -19,6 +19,8 @@ import { BrandProfilesModule } from "../brand-profiles/brand-profiles.module";
 import { UsersBioModule } from "../users-bio/users-bio.module";
 import { AuthModule } from "../auth/auth.module";
 import { EmailsModule } from "../emails/emails.module";
+import { NotificationsModule } from "../notifications/notifications.module";
+import { NewsfeedModule } from "../newsfeed/newsfeed.module";
 import { UserVerificationProvider } from "./providers/user-verification.provider";
 import { UserVerificationController } from "./user-verification.controller";
 
@@ -48,7 +50,9 @@ import { UserVerificationController } from "./user-verification.controller";
         BrandProfilesModule,
         UsersBioModule,
         forwardRef(() => AuthModule),
-        EmailsModule
+        EmailsModule,
+        NotificationsModule,
+        forwardRef(() => NewsfeedModule), // Import NewsfeedModule to create welcome posts
     ],
 })
 export class UsersModule { }

@@ -57,7 +57,7 @@ export class OfferingsController {
     @ApiOperation({
         summary: 'List offerings',
         description:
-            'Returns paginated offerings with optional relations. Use `relations=user,offering_offers,offering_price` to include joins.',
+            'Returns paginated offerings with optional relations. Use `relations=user,offering_offers,offering_prices,offering_price` to include joins.',
     })
     @ApiOkResponse({
         description: 'Offerings list with pagination metadata',
@@ -80,10 +80,10 @@ export class OfferingsController {
     @ApiQuery({
         name: 'relations',
         required: false,
-        description: 'Relations to include (comma-separated or repeated). Allowed: user, offering_offers, offering_price',
+        description: 'Relations to include (comma-separated or repeated). Allowed: user, offering_offers, offering_prices, offering_price',
         isArray: true,
         type: String,
-        example: ['users', 'offering_offers', 'offering_price'],
+        example: ['users', 'offering_offers', 'offering_prices', 'offering_price'],
     })
     @ApiOkResponse({ description: 'Offering fetched successfully', type: Offering })
     getOfferingById(
@@ -99,7 +99,7 @@ export class OfferingsController {
 
     @ApiOperation({
         summary: 'Adjust an offering',
-        description: 'Adjusts the offers parameters and logo based on the provided bundle DTOs.',
+        description: 'Adjusts the offers parameters, price, and logo based on the provided bundle DTOs.',
     })
     @ApiResponse({
         status: 200,
@@ -117,6 +117,9 @@ export class OfferingsController {
                     example: JSON.stringify({
                         id: 1,
                         notes: 'Example notes',
+                        status: 'OFFERED',
+                        start_date: '2025-09-01T10:00:00.000Z',
+                        end_date: '2025-09-10T10:00:00.000Z',
                         offers: [
                             {
                                 offering_id: 1,
@@ -126,6 +129,13 @@ export class OfferingsController {
                                 size: 'PORTRAIT',
                             },
                         ],
+                        price: {
+                            price: '1,000.00',
+                            platform_fee: '75.00',
+                            tax: '215.00',
+                            total: '1,290.00',
+                            payment_provider: 'PAYPAL',
+                        },
                     }),
                 },
                 logo: { type: 'string', format: 'binary' },
@@ -139,7 +149,7 @@ export class OfferingsController {
         @Body('offering') offeringRaw: string,
         @ActiveUser() user: ActiveUserData,
     ) {
-        let parsed: PatchOfferingDto;
+        let parsed: any;
 
         try {
             parsed = JSON.parse(offeringRaw);
@@ -147,9 +157,22 @@ export class OfferingsController {
             throw new BadRequestException('Invalid JSON in offering');
         }
 
+        // Extract price and offers from parsed object if they exist
+        const { price, offers, ...offeringData } = parsed;
+
         // Manual transformation and validation
         const dto = new PatchOfferingBundleDto();
-        dto.offering = parsed;
+        dto.offering = offeringData as PatchOfferingDto;
+        
+        // Add offers to bundle if provided
+        if (offers) {
+            dto.offers = offers;
+        }
+        
+        // Add price to bundle if provided
+        if (price) {
+            dto.price = price;
+        }
 
         if (!dto.offering.id) {
             throw new BadRequestException('Offering ID is required');

@@ -36,6 +36,6 @@ import { User } from '../users/user.entity';
         TypeOrmModule.forFeature([User]),
         forwardRef(() => UsersModule)
     ],
-    exports: [AuthService, HashingProvider, GenerateTokensProvider, GoogleAuthService, UpdateUserProvider]
+    exports: [AuthService, HashingProvider, GenerateTokensProvider, GoogleAuthService, UpdateUserProvider, JwtModule]
 })
 export class AuthModule { }

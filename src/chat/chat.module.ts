@@ -5,7 +5,6 @@ import { ChatGateway } from './providers/chat.gateway';
 import { WsAccessTokenGuard } from '../auth/guards/ws-access-token.guard';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConversationEntity } from './chat.entity';
-import { ConversationParticipantEntity } from './conversation-participant.entity';
 import { User } from '../users/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -16,12 +15,13 @@ import { UploadEntity } from '../uploads/upload.entity';
 import { MessagePersistenceConsumer } from './providers/message-persistence.consumer';
 import { MessageReceiptEntity } from './message-receipt.entity';
 import { MessageEntity } from './message.entity';
+import { NotificationsModule } from '../notifications/notifications.module';
+import { ConversationParticipantEntity } from './conversation-participant.entity';
 
 @Module({
     controllers: [ChatController],
     providers: [ChatService, ChatGateway, WsAccessTokenGuard, MessagePersistenceConsumer],
     imports: [
-        TypeOrmModule.forFeature([ConversationEntity, ConversationParticipantEntity, User, MessageEntity, MessageReceiptEntity, UploadEntity]),
         TypeOrmModule.forFeature([ConversationEntity, ConversationParticipantEntity, User, MessageEntity, MessageReceiptEntity, UploadEntity]),
         JwtModule.registerAsync({
             imports: [ConfigModule],
@@ -39,7 +39,7 @@ import { MessageEntity } from './message.entity';
         JwtModule.registerAsync(jwtConfig.asProvider()),
         KafkaModule,
         UploadsModule,
-        
+        NotificationsModule,
     ],
     exports: [ChatService]
 })

@@ -1,4 +1,4 @@
-import { Controller, Get, ParseEnumPipe, Query, Req, Res } from '@nestjs/common';
+import { Controller, Get, ParseIntPipe, ParseEnumPipe, Query, Req, Res } from '@nestjs/common';
 import { SocialIntegrationService } from './providers/social-integration.service';
 import { SocialPlatform } from './enums/social-platform.enums';
 import { Request } from 'express';
@@ -52,8 +52,9 @@ export class SocialIntegrationController {
      */
     @Get('connect')
     @Auth(AuthType.Bearer)
+    @ApiQuery({ name: 'platform', enum: SocialPlatform })
     async getAuthUrl(
-        @Query('platform') platform: SocialPlatform,
+        @Query('platform', new ParseEnumPipe(SocialPlatform)) platform: SocialPlatform,
         @ActiveUser() user: ActiveUserData
     ) {
         const url = await this.service.getAuthUrl(platform, user);
@@ -70,8 +71,9 @@ export class SocialIntegrationController {
      */
     @Get('callback')
     @Auth(AuthType.None)
+    @ApiQuery({ name: 'platform', enum: SocialPlatform })
     async handleCallback(
-        @Query('platform') platform: SocialPlatform,
+        @Query('platform', new ParseEnumPipe(SocialPlatform)) platform: SocialPlatform,
         @Query('code') code: string,
         @Query('state') state: string,
         @Res() res: Response
@@ -94,9 +96,9 @@ export class SocialIntegrationController {
     @Auth(AuthType.Bearer)
     async fetchStats(
         @Query('platform') platform: SocialPlatform,
-        @Query('integrationId') integrationId: number,
+        @Query('integrationId', ParseIntPipe) integrationId: number,
     ) {
-        const followers = await this.service.fetchStats(platform, integrationId);
-        return { followers };
+        const raw = await this.service.fetchStats(platform, integrationId);
+        return this.service.normalizeStats(platform, raw);
     }
 }

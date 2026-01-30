@@ -42,17 +42,17 @@ export class OfferingsOrderController {
 
 
     
-    // Get all offering orders
+    // Get all offering orders (brand: orders they placed; creator: orders where they are the creator)
     @Get()
     @ApiOperation({
         summary: 'Get all offering orders',
-        description: 'Get all offering orders'
+        description: 'Get all offering orders. Brands see orders they placed; creators see orders where they are the creator.'
     })
     @ApiResponse({
         status: 200,
         description: 'Offering orders fetched successfully'
     })
-    @UserTypes(UserType.BRAND)
+    @UserTypes(UserType.BRAND, UserType.CREATOR)
     getAllOfferingOrders(
         @ActiveUser() user: ActiveUserData,
         @Query() query: FindOfferingOrdersQueryDto,
@@ -62,17 +62,17 @@ export class OfferingsOrderController {
 
 
 
-    // Get an offering order by id
+    // Get an offering order by id (brand or creator who owns the order)
     @Get(':id')
     @ApiOperation({
         summary: 'Get an offering order by id',
-        description: 'Get an offering order by id'
+        description: 'Get an offering order by id. Allowed if current user is the brand or the creator of the order.'
     })
     @ApiResponse({
         status: 200,
         description: 'Offering order fetched successfully'
     })
-    @UserTypes(UserType.BRAND)
+    @UserTypes(UserType.BRAND, UserType.CREATOR)
     getOfferingOrderById(
         @ActiveUser() user: ActiveUserData,
         @Param('id') id: number

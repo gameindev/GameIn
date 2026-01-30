@@ -61,12 +61,12 @@ export class FindOfferingsQueryDto {
     @ApiPropertyOptional({
         description: 'Relations to include (comma-separated or repeated)',
         isArray: true,
-        enum: ['user', 'offering_offers', 'offering_price', 'last_adjusted_by', 'logo'],
-        example: ['user', 'offering_offers', 'offering_price', 'last_adjusted_by', 'logo'],
+        enum: ['user', 'offering_offers', 'offering_prices', 'offering_price', 'last_adjusted_by', 'logo'],
+        example: ['user', 'offering_offers', 'offering_prices', 'offering_price', 'last_adjusted_by', 'logo'],
     })
     @IsOptional()
     @IsArray()
-    @IsIn(['user', 'offering_offers', 'offering_price', 'last_adjusted_by', 'logo'], { each: true })
+    @IsIn(['user', 'offering_offers', 'offering_prices', 'offering_price', 'last_adjusted_by', 'logo'], { each: true })
     @Transform(({ value }) =>
         Array.isArray(value)
             ? value
@@ -74,7 +74,7 @@ export class FindOfferingsQueryDto {
                 ? value.split(',').map((v) => v.trim()).filter(Boolean)
                 : undefined,
     )
-    relations?: Array<'user' | 'offering_offers' | 'offering_price' | 'last_adjusted_by' | 'logo'>;
+    relations?: Array<'user' | 'offering_offers' | 'offering_prices' | 'offering_price' | 'last_adjusted_by' | 'logo'>;
 }
 
 

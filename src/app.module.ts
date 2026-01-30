@@ -1,4 +1,4 @@
-﻿/* eslint-disable */
+/* eslint-disable */
 import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
@@ -52,6 +52,7 @@ import environmentValidation from "./config/environment.validation";
 import twitchConfig from "./social-integration/platforms/twitch/twitch.config";
 import discordConfig from "./social-integration/platforms/discord/discord.config";
 import xConfig from "./social-integration/platforms/x/x.config";
+import youtubeConfig from "./social-integration/platforms/youtube/youtube.config";
 import sesConfig from "./emails/config/ses.config";
 import smtpConfig from "./emails/config/smtp.config";
 import sendgridConfig from "./emails/config/sendgrid.config";
@@ -78,18 +79,31 @@ import { PaymentRefund } from './payments/payment-refund.entity';
 import { Invoice } from './invoices/invoice.entity';
 import { OfferingOrder } from "./offerings-order/offering-order.entity";
 import { PaymentsModule } from './payments/payments.module';
+import { UserFavouriteModule } from './user-favourite/user-favourite.module';
+import { UserFavourite } from "./user-favourite/user-favourite.entity";
+import { NotificationsModule } from './notifications/notifications.module';
+import { NotificationEntity } from './notifications/entities/notification.entity';
+import { NotificationPreferenceEntity } from './notifications/entities/notification-preference.entity';
+import { UserFaqsModule } from './user-faqs/user-faqs.module';
+import { UserFaq } from './user-faqs/user-faq.entity';
+import { NewsfeedModule } from './newsfeed/newsfeed.module';
+import { Post } from './newsfeed/entities/post.entity';
+import { PostMedia } from './newsfeed/entities/post-media.entity';
+import { PostLike } from './newsfeed/entities/post-like.entity';
+import { PostComment } from './newsfeed/entities/post-comment.entity';
+import { PostShare } from './newsfeed/entities/post-share.entity';
 
 dotenvFlow.config(); // ✅ Loads .env only in local/dev
 
 const ENV = process.env.NODE_ENV || 'development';
 // console.log(ENV)
 @Module({
-    imports: [
+    imports: [ 
         /** 🌍 Global Config Module */
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: [`.env.${ENV}`, '.env'],
-            load: [appConfig, databaseConfig, jwtConfig, twitchConfig, xConfig, sesConfig, smtpConfig, sendgridConfig, discordConfig, kafkaConfig, stripeConfig, paypalConfig, razorpayConfig, paymentsConfig],
+            load: [appConfig, databaseConfig, jwtConfig, twitchConfig, xConfig, youtubeConfig, sesConfig, smtpConfig, sendgridConfig, discordConfig, kafkaConfig, stripeConfig, paypalConfig, razorpayConfig, paymentsConfig],
             validationSchema: environmentValidation,
         }),
 
@@ -132,17 +146,29 @@ const ENV = process.env.NODE_ENV || 'development';
                         Payment,
                         PaymentRefund,
                         Invoice,
+                        UserFavourite,
+                        NotificationEntity,
+                        NotificationPreferenceEntity,
+                        UserFaq,
+                        Post,
+                        PostMedia,
+                        PostLike,
+                        PostComment,
+                        PostShare,
                     ],
                     synchronize: false, // 🚫 Always false in production
                     namingStrategy: new SnakeNamingStrategy(),
                     // logging: isProduction ? ['error', 'warn'] : ['error', 'warn', 'query'],
                     ssl: configService.get<boolean>('database.ssl') || process.env.DATABASE_SSL === 'true'
-                        ? {
-                            rejectUnauthorized: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false',
-                            ca: process.env.DATABASE_SSL_CA ? fs.readFileSync(process.env.DATABASE_SSL_CA).toString() : undefined
-                        }
+                        ? false
                         : false,
 
+                    // TODO: Need to replace in Production
+                    // ? {
+                    //     rejectUnauthorized: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false',
+                    //     ca: process.env.DATABASE_SSL_CA ? fs.readFileSync(process.env.DATABASE_SSL_CA).toString() : undefined
+                    // }
+                    // : false,
                     extra: {
                         max: Number(process.env.TYPEORM_POOL_MAX ?? 20),
                         min: Number(process.env.TYPEORM_POOL_MIN ?? 2),
@@ -180,6 +206,10 @@ const ENV = process.env.NODE_ENV || 'development';
         OfferingsOrderModule,
         InvoicesModule,
         PaymentsModule,
+        UserFavouriteModule,
+        NotificationsModule,
+        UserFaqsModule,
+        NewsfeedModule,
     ],
     controllers: [AppController],
     providers: [

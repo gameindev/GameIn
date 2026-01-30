@@ -5,6 +5,11 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { MessageEntity } from "../message.entity";
 import { UploadsService } from "../../uploads/providers/uploads.service";
 import { UploadEntity } from "../../uploads/upload.entity";
+import { NotificationEventsService } from "../../notifications/providers/notification-events.service";
+import { NotificationType } from "../../notifications/enums/notification-type.enum";
+import { NotificationChannel } from "../../notifications/enums/notification-channel.enum";
+import { ConversationParticipantEntity } from "../conversation-participant.entity";
+import { User } from "../../users/user.entity";
 
 
 @Injectable()
@@ -19,22 +24,52 @@ export class MessagePersistenceConsumer implements OnModuleInit {
         private readonly messageRepository: Repository<MessageEntity>,
         @InjectRepository(UploadEntity)
         private readonly uploadRepository: Repository<UploadEntity>,
+        @InjectRepository(ConversationParticipantEntity)
+        private readonly participantRepository: Repository<ConversationParticipantEntity>,
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
         private readonly kafkaService: KafkaService,
         private readonly uploadsService: UploadsService,
+        private readonly notificationEvents: NotificationEventsService,
     ) { }
 
     async onModuleInit() {
-        // Wait a bit for Kafka service to be fully initialized
-        setTimeout(async () => {
-            try {
-                await this.initializeConsumer();
-                this.startBatchFlushTimer();
-            } catch (error) {
-                this.logger.error('Failed to initialize message persistence consumer:', error);
-                // Retry after 5 seconds
-                setTimeout(() => this.onModuleInit(), 5000);
+        // Subscribe immediately to ensure we register before consumer starts
+        // If Kafka isn't ready yet, we'll retry
+        try {
+            await this.initializeConsumer();
+            this.startBatchFlushTimer();
+        } catch (error) {
+            // If error is about consumer already running, it might be a race condition
+            if (error.message?.includes('already running')) {
+                this.logger.warn(
+                    `Consumer already running when trying to subscribe to chat.message.sent. ` +
+                    `This may be a race condition. Will retry once.`,
+                );
+            } else {
+                this.logger.warn('Failed to initialize message persistence consumer on first attempt, retrying...', error.message);
             }
-        }, 2000);
+            
+            // Retry after a short delay if Kafka service isn't ready
+            setTimeout(async () => {
+                try {
+                    await this.initializeConsumer();
+                    this.startBatchFlushTimer();
+                } catch (retryError) {
+                    // If still failing due to consumer running, check if handler exists
+                    if (retryError.message?.includes('already running')) {
+                        this.logger.warn(
+                            `Cannot subscribe to chat.message.sent - consumer is running. ` +
+                            `If this topic was already subscribed by another service, message persistence may still work.`,
+                        );
+                    } else {
+                        this.logger.error('Failed to initialize message persistence consumer after retry:', retryError);
+                    }
+                    // Don't retry indefinitely - log error and continue
+                    // The service will work once Kafka is properly initialized
+                }
+            }, 1000);
+        }
     }
 
     private async initializeConsumer() {
@@ -213,6 +248,13 @@ export class MessagePersistenceConsumer implements OnModuleInit {
 
             this.logger.log(`Persisted ${savedMessages.length} messages to database`);
 
+            // Send notifications to conversation participants (except sender)
+            for (const savedMessage of savedMessages) {
+                await this.sendMessageNotifications(savedMessage).catch((error) => {
+                    this.logger.error('Failed to send message notifications:', error);
+                });
+            }
+
             // Publish delivery confirmation only for new messages persisted
             await this.publishDeliveryConfirmations(filteredMessagesToPersist);
         } catch (error) {
@@ -234,6 +276,61 @@ export class MessagePersistenceConsumer implements OnModuleInit {
                     deliveredAt: new Date().toISOString(),
                 }
             });
+        }
+    }
+
+    /**
+     * Send in-app notifications to conversation participants when a new message is received
+     */
+    private async sendMessageNotifications(message: MessageEntity) {
+        try {
+            // Get conversation participants (excluding sender)
+            const participants = await this.participantRepository.find({
+                where: { conversation: { id: message.conversation.id } },
+                relations: ['user'],
+            });
+
+            // Get sender details
+            const sender = await this.userRepository.findOne({
+                where: { id: message.sender.id },
+                relations: ['creator_profile', 'brand_profile'],
+            });
+
+            if (!sender) {
+                this.logger.warn(`Sender ${message.sender.id} not found for message notification`);
+                return;
+            }
+
+            const senderName = sender.username || sender.email || 'Someone';
+            const messagePreview = message.content?.substring(0, 100) || 'New message';
+
+            // Notify each participant (except sender)
+            for (const participant of participants) {
+                if (participant.user.id === message.sender.id) {
+                    continue; // Skip sender
+                }
+
+                await this.notificationEvents.publishNotification({
+                    userId: participant.user.id,
+                    type: NotificationType.NEW_MESSAGE,
+                    channels: [NotificationChannel.IN_APP], // Only in-app for now
+                    title: 'New Message',
+                    message: `${senderName}: ${messagePreview}`,
+                    data: {
+                        conversationId: message.conversation.id,
+                        messageId: message.id,
+                        senderId: sender.id,
+                        senderName: senderName,
+                        senderUsername: sender.username,
+                        messagePreview: messagePreview,
+                        hasAttachment: !!message.attachment,
+                    },
+                    metadata: {},
+                    priority: 'high',
+                });
+            }
+        } catch (error) {
+            this.logger.error('Error sending message notifications:', error);
         }
     }
 }

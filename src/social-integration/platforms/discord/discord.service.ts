@@ -173,8 +173,10 @@ export class DiscordService implements SocialIntegrationServiceInterface {
             throw new Error('Integration not found');
         }
 
-        // 1️⃣ Refresh token if needed
-        const { access_token } = await this.refreshTokenIfNeeded(integrationId);
+        // 1️⃣ Refresh token if needed and use fresh token
+        const tokens = await this.refreshTokenIfNeeded(integrationId);
+        const access_token = tokens?.access_token ?? integration.access_token;
+        if (tokens?.access_token) integration.access_token = tokens.access_token;
 
         // 2️⃣ Fetch Discord profile
         const profileUrl = `${this.baseUrl}/users/@me`;

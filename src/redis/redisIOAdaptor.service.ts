@@ -58,4 +58,12 @@ export class RedisIoAdapter extends IoAdapter {
         }
         await RedisIoAdapter.subClient.subscribe(channel, (msg) => handler(msg));
     }
+
+    /**
+     * Get the Redis client for cache operations
+     * Reuses the existing pubClient connection
+     */
+    static getCacheClient(): ReturnType<typeof createClient> | null {
+        return RedisIoAdapter.pubClient;
+    }
 }

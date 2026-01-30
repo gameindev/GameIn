@@ -28,9 +28,18 @@ import { PaymentIntent } from './payments/payment-intent.entity';
 import { Payment } from './payments/payment.entity';
 import { PaymentRefund } from './payments/payment-refund.entity';
 import { Invoice } from './invoices/invoice.entity';
+import { UserFavourite } from './user-favourite/user-favourite.entity';
+import { NotificationEntity } from './notifications/entities/notification.entity';
+import { NotificationPreferenceEntity } from './notifications/entities/notification-preference.entity';
+import { UserFaq } from './user-faqs/user-faq.entity';
+import { Post } from './newsfeed/entities/post.entity';
+import { PostMedia } from './newsfeed/entities/post-media.entity';
+import { PostLike } from './newsfeed/entities/post-like.entity';
+import { PostComment } from './newsfeed/entities/post-comment.entity';
+import { PostShare } from './newsfeed/entities/post-share.entity';
 
 // ✅ Load environment variables for local/dev
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'production') { 
     dotenvFlow.config();
 }
 
@@ -72,6 +81,15 @@ export const dataSourceOptions: DataSourceOptions = {
         Payment,
         PaymentRefund,
         Invoice,
+        UserFavourite,
+        NotificationEntity,
+        NotificationPreferenceEntity,
+        UserFaq,
+        Post,
+        PostMedia,
+        PostLike,
+        PostComment,
+        PostShare,
     ],
 
     // 🧱 Migrations
@@ -87,12 +105,12 @@ export const dataSourceOptions: DataSourceOptions = {
     namingStrategy: new SnakeNamingStrategy(),
 
     // 🛡️ SSL (DigitalOcean Managed PostgreSQL often requires this)
-
-    ssl: isProduction
-        ? {
-            rejectUnauthorized: false, // required for DO managed DBs
-        }
-        : false,
+    ssl: false,
+    // ssl: isProduction
+    //     ? {
+    //         rejectUnauthorized: false, // required for DO managed DBs
+    //     }
+    //     : false,
 };
 
 const dataSource = new DataSource(dataSourceOptions);

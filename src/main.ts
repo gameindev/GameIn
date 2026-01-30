@@ -56,23 +56,15 @@ async function bootstrap() {
     }
 
     /** ------------------ 🔐 CORS ------------------ */
+    const defaultOrigins = ['http://localhost:5173', 'http://localhost:5174', 'https://frontend-app-vn9qp.ondigitalocean.app'];
     const allowedOrigins =
-        process.env.CORS_ORIGINS?.split(',').map(o => o.trim()) || [
-            'https://gamein.gg',
-            'https://www.gamein.gg',
-            'https://frontend-app-vn9qp.ondigitalocean.app',
-        ];
+        process.env.CORS_ORIGINS?.split(',').map((o) => o.trim()).filter(Boolean) || defaultOrigins;
+
 
     app.enableCors({
-        origin: (origin, callback) => {
-            if (!origin || allowedOrigins.includes(origin)) {
-                callback(null, true);
-            } else {
-                callback(new Error(`Origin ${origin} not allowed by CORS`));
-            }
-        },
-        credentials: true, // ✅ required for cookies / auth headers
-        methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+        origin: defaultOrigins,
+        methods: process.env.CORS_METHODS ?? 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+        credentials: true,
         allowedHeaders: [
             'Content-Type',
             'Authorization',
@@ -80,18 +72,17 @@ async function bootstrap() {
             'x-captcha-token',
             'x-xsrf-token',
         ],
-        exposedHeaders: [
-            'Content-Type',
-            'Authorization',
-            'X-Requested-With',
-        ],
     });
 
     /** ------------------ 🌐 Proxy / Headers ------------------ */
-    app.set('trust proxy', 1);
+    if (process.env.TRUST_PROXY === 'true') {
+        app.set('trust proxy', 1);
+    }
 
     /** ------------------ 📁 Static Assets ------------------ */
-    app.useStaticAssets(join(process.cwd(), 'media/uploads'), { prefix: '/uploads/' });
+    app.useStaticAssets(join(process.cwd(), 'media/uploads'), {
+        prefix: '/uploads/',
+    });
 
     const redisIoAdapter = new RedisIoAdapter(app);
     await redisIoAdapter.connectToRedis();
@@ -99,7 +90,10 @@ async function bootstrap() {
     app.useWebSocketAdapter(redisIoAdapter);
 
     /** ------------------ 🚀 Start Server ------------------ */
-    await app.listen(process.env.PORT || 8080, '0.0.0.0');
-    console.log(`🚀 Server running on port ${process.env.PORT || 8080}`);
+    const port = process.env.PORT ?? 3000;
+    await app.listen(port);
+
+    console.log(`🚀 Server is running on: http://localhost:${port}`);
+    console.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
 }
 bootstrap();

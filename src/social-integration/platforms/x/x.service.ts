@@ -50,23 +50,31 @@ export class XService implements SocialIntegrationServiceInterface {
         return {}
     }
 
+    /** redirect_uri must match exactly in authorize URL and token exchange and in X Developer Portal */
+    private getRedirectUri(): string {
+        return (this.config.xCallbackUrl || '').trim().replace(/\/$/, '');
+    }
+
     getAuthUrl(user: ActiveUserData): string {
         const verifier = this.makeVerifier();
         const challenge = this.makeChallenge(verifier);
 
-        // 2) Create state and store verifier server-side
         const state = this.makeState(user.sub);
         pkceStore.set(state, { verifier, userId: user.sub, ts: Date.now() });
 
-        // 3) Build authorize URL (S256, space-separated scopes)
+        const redirectUri = this.getRedirectUri();
+        if (!redirectUri) {
+            this.logger.warn('X_REDIRECT_URI is not set; OAuth will fail at callback');
+        }
+
         const params = new URLSearchParams({
-            client_id: this.config.xClientId,
-            redirect_uri: this.config.xCallbackUrl,
+            client_id: (this.config.xClientId || '').trim(),
+            redirect_uri: redirectUri,
             response_type: 'code',
             code_challenge: challenge,
             code_challenge_method: 'S256',
-            scope: this.scopesString(),                  // e.g. "tweet.read users.read offline.access"
-            state,                                       // opaque; mapped to userId in pkceStore
+            scope: this.scopesString(),
+            state,
         });
 
         return `https://x.com/i/oauth2/authorize?${params.toString()}`;
@@ -84,60 +92,84 @@ export class XService implements SocialIntegrationServiceInterface {
         }
         const { verifier, userId } = entry;
 
+        const redirectUri = this.getRedirectUri();
+        if (!redirectUri) {
+            this.logger.error('X_REDIRECT_URI is not set');
+            throw new Error('X callback URL is not configured');
+        }
+
         // 2) Exchange code -> tokens (form-url-encoded)
         const tokenUrl = 'https://api.twitter.com/2/oauth2/token';
-        const basic = Buffer.from(`${this.config.xClientId}:${this.config.xClientSecret}`).toString('base64');
+        const clientId = (this.config.xClientId || '').trim();
+        const clientSecret = (this.config.xClientSecret || '').trim();
+        if (!clientId || !clientSecret) {
+            this.logger.error('X_CLIENT_ID or X_CLIENT_SECRET is not set');
+            throw new Error('X OAuth credentials are not configured');
+        }
         const body = new URLSearchParams({
             grant_type: 'authorization_code',
-            code,
-            redirect_uri: this.config.xCallbackUrl,
-            code_verifier: verifier,                    // <-- the ORIGINAL verifier
-            // If you prefer Basic auth with client secret, omit client_id and add the header instead.
+            code: (code || '').trim(),
+            redirect_uri: redirectUri,
+            code_verifier: verifier,
         });
 
-        try { // Added try-catch for better error handling
-            const response = await firstValueFrom(
+        // Use axios auth option so Basic header is set correctly (avoids encoding issues)
+        let response: any;
+        try {
+            response = await firstValueFrom(
                 this.httpService.post(tokenUrl, body.toString(), {
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'Authorization': `Basic ${basic}`, // <-- required for confidential clients
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    },
+                    auth: {
+                        username: clientId,
+                        password: clientSecret,
                     },
                 }),
             );
-
-            const { access_token, refresh_token } = response.data;
-
-            const userProfile = await this.getUserProfile(access_token);
-
-            // <-- CHANGE 3: Use userId to find integration
-            let integration = await this.integrationRepo.findOne({
-                where: { user: { id: userId }, platform: SocialPlatform.X }
-            });
-
-            if (integration) {
-                integration.access_token = access_token;
-                integration.refresh_token = refresh_token;
-                integration.social_id = userProfile.id;
-                await this.integrationRepo.save(integration);
-            } else {
-                // <-- CHANGE 4: Create new integration with user ID
-                const newIntegration = this.integrationRepo.create({
-                    user: { id: userId }, // Associate by ID
-                    platform: SocialPlatform.X,
-                    access_token,
-                    refresh_token,
-                    social_id: userProfile.id,
-                });
-                await this.integrationRepo.save(newIntegration);
+        } catch (error: any) {
+            const status = error?.response?.status;
+            const data = error?.response?.data;
+            this.logger.error(
+                `X token exchange failed: ${status} - ${JSON.stringify(data || error.message)}`,
+            );
+            if (status === 401) {
+                const hint = data?.error_description || data?.error || '';
+                if (/redirect_uri|callback/i.test(String(hint))) {
+                    throw new Error(
+                        `X OAuth redirect_uri rejected. Ensure X_REDIRECT_URI matches exactly the Callback URL in your X Developer Portal (App → User authentication settings). Current value: ${redirectUri}`,
+                    );
+                }
+                throw new Error(
+                    `X OAuth credentials rejected. Check X_CLIENT_ID and X_CLIENT_SECRET (use OAuth 2.0 Client ID and Secret from X Developer Portal). ${hint}`,
+                );
             }
-        } catch (error) {
-            this.logger.error(`Error in X callback: ${error.message}`);
-            // Re-throw the error to be caught by the NestJS exception filter
             throw error;
         }
 
+        const { access_token, refresh_token } = response.data;
 
+        const userProfile = await this.getUserProfile(access_token);
 
+        let integration = await this.integrationRepo.findOne({
+            where: { user: { id: userId }, platform: SocialPlatform.X },
+        });
+
+        if (integration) {
+            integration.access_token = access_token;
+            integration.refresh_token = refresh_token;
+            integration.social_id = userProfile.id;
+            await this.integrationRepo.save(integration);
+        } else {
+            const newIntegration = this.integrationRepo.create({
+                user: { id: userId },
+                platform: SocialPlatform.X,
+                access_token,
+                refresh_token,
+                social_id: userProfile.id,
+            });
+            await this.integrationRepo.save(newIntegration);
+        }
     }
 
     async getUserProfile(accessToken: string): Promise<any> {
@@ -205,20 +237,22 @@ export class XService implements SocialIntegrationServiceInterface {
         // ✅ Correct base URL for Twitter
         const baseUrl = 'https://api.twitter.com/2';
 
-        // 1️⃣ Refresh token if needed
-        const { access_token } = await this.refreshTokenIfNeeded(integrationId);
+        // 1️⃣ Refresh token if needed and use fresh token
+        const tokens = await this.refreshTokenIfNeeded(integrationId);
+        const access_token = tokens?.access_token ?? integration.access_token;
+        if (tokens?.access_token) integration.access_token = tokens.access_token;
 
         try {
-            // 2️⃣ Fetch followers count
-            const followersUrl = `${baseUrl}/users/${integration.social_id}/followers`;
-            const followersRes = await firstValueFrom(
-                this.httpService.get(followersUrl, {
+            // 2️⃣ Fetch user with public_metrics for followers_count (v2 API)
+            const userUrl = `${baseUrl}/users/${integration.social_id}?user.fields=public_metrics`;
+            const userRes = await firstValueFrom(
+                this.httpService.get(userUrl, {
                     headers: {
                         Authorization: `Bearer ${access_token}`,
                     },
                 }),
             );
-            const followersCount = followersRes.data?.meta?.result_count ?? 0;
+            const followersCount = userRes.data?.data?.public_metrics?.followers_count ?? 0;
 
             // 3️⃣ Fetch latest tweets with metrics
             const tweetsUrl = `${baseUrl}/users/${integration.social_id}/tweets?max_results=50&tweet.fields=public_metrics`;
@@ -275,7 +309,7 @@ export class XService implements SocialIntegrationServiceInterface {
                 topViewed: topViewSummary,
             });
 
-            // 6️⃣ Return summary
+            // 6️⃣ Return summary (followers from public_metrics; likes/views from top tweet)
             return {
                 followers: followersCount,
                 topLiked: topLikeSummary,

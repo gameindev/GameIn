@@ -2,7 +2,7 @@
 
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsArray, IsDefined, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min, ValidateNested } from "class-validator";
+import { IsArray, IsDate, IsDefined, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min, ValidateNested } from "class-validator";
 import { PatchOfferingOfferDto } from "../offering-offers/dtos/patch-offering-offer.dto";
 import { OfferingStatus } from "../enums/offering-status.enum";
 
@@ -38,16 +38,32 @@ export class PatchOfferingDto {
         enum: OfferingStatus,
         example: OfferingStatus.OFFERED
     })
+    @IsOptional()
     @IsEnum(OfferingStatus)
-    status?: OfferingStatus; 
-
+    status?: OfferingStatus;
 
     @ApiPropertyOptional({
-        description: 'The offers for the current Offering',
-        type: [PatchOfferingOfferDto],
+        description: 'Start Date of the Offering/Sponsorship',
+        type: Date,
+        format: 'date-time',
+        example: '2025-09-01T10:00:00.000Z',
     })
-    @IsArray()
-    @ValidateNested({ each: true })
-    @Type(() => PatchOfferingOfferDto)
-    offers: PatchOfferingOfferDto[];
+    @IsOptional()
+    @IsDate()
+    @Type(() => Date)
+    start_date?: Date;
+
+    @ApiPropertyOptional({
+        description: 'End Date of the Offering/Sponsorship',
+        type: Date,
+        format: 'date-time',
+        example: '2025-09-10T10:00:00.000Z',
+    })
+    @IsOptional()
+    @IsDate()
+    @Type(() => Date)
+    end_date?: Date;
+
+
+    
 }

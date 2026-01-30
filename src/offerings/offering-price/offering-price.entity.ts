@@ -1,5 +1,5 @@
 import { maxLength } from 'class-validator';
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, Index, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Offering } from "../offerings.entity";
 import { PaymentProvider } from "../enums/payment-provider.enum";
 
@@ -16,7 +16,7 @@ export class OfferingPrice {
     @Column({ type: 'int', name: 'offering_id' })
     offering_id!: Number;
 
-    @OneToOne(() => Offering, (o) => o.offering_price, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+    @ManyToOne(() => Offering, (o) => o.offering_prices, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
     @JoinColumn({ name: 'offering_id' })
     offering!: Offering;
 
@@ -57,6 +57,12 @@ export class OfferingPrice {
         nullable: true,
     })
     payment_provider?: PaymentProvider;
+
+    @Column({ default: 1 })
+    version: number;
+
+    @Column({ type: 'int', name: 'updated_by_user_id', nullable: true })
+    updated_by_user_id?: number;
 
     @CreateDateColumn()
     created_at!: Date;

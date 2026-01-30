@@ -1,6 +1,6 @@
 import { OfferingBaseService } from './offering.base.service';
 import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { DataSource, EntityManager, Repository } from 'typeorm';
+import { DataSource, EntityManager, Not, Repository } from 'typeorm';
 import { OfferingOffersService } from '../offering-offers/providers/offering-offers.service';
 import { OfferingPriceService } from '../offering-price/providers/offering-price.service';
 import { CreateOfferingBundleDto } from '../dtos/post-offering-bundle.dto';
@@ -18,6 +18,9 @@ import { FindOfferingsQueryDto } from '../dtos/get-offering.dto';
 import { OfferingStatus } from '../enums/offering-status.enum';
 import { UploadsService } from '../../uploads/providers/uploads.service';
 import { User } from '../../users/user.entity';
+import { NotificationEventsService } from '../../notifications/providers/notification-events.service';
+import { NotificationType } from '../../notifications/enums/notification-type.enum';
+import { NotificationChannel } from '../../notifications/enums/notification-channel.enum';
 
 
 
@@ -32,6 +35,7 @@ export class OfferingsService {
         private readonly priceService: OfferingPriceService,
         private readonly userService: UsersService,
         private readonly uploadService: UploadsService,
+        private readonly notificationEvents: NotificationEventsService,
 
         @Inject(CreateAdjustmentProvider)
         private readonly createAdjustmentProvider: CreateAdjustmentProvider,
@@ -123,7 +127,10 @@ export class OfferingsService {
                 ? params.relations
                 : ['user', 'last_adjusted_by']; // sensible default
 
-            const relationsToJoin = requested.filter(r => allowedRelations.has(r));
+            // If offering_price is requested, load offering_prices instead to get all versions
+            const relationsToJoin = requested
+                .filter(r => allowedRelations.has(r))
+                .map(r => r === 'offering_price' ? 'offering_prices' : r);
 
             // ---- query builder ----
             const qb = this.repo.createQueryBuilder('off');
@@ -153,6 +160,19 @@ export class OfferingsService {
 
             // ---- run + paginate ----
             const [data, total] = await qb.skip(skip).take(limit).getManyAndCount();
+
+            // For each offering, if offering_prices is loaded, set latest price to offering_price for backward compatibility
+            if (relationsToJoin.includes('offering_prices') || requested.includes('offering_price')) {
+                data.forEach(offering => {
+                    if (offering.offering_prices && offering.offering_prices.length > 0) {
+                        // Get the latest version (highest version number)
+                        const latestPrice = offering.offering_prices.reduce((latest, current) => {
+                            return (!latest || current.version > latest.version) ? current : latest;
+                        });
+                        offering.offering_price = latestPrice;
+                    }
+                });
+            }
 
             return {
                 data,
@@ -184,7 +204,7 @@ export class OfferingsService {
 
     async findOneById(
         id: number,
-        relations?: Array<'user' | 'offering_offers' | 'offering_price' | 'logo' | 'last_adjusted_by'>,
+        relations?: Array<'user' | 'offering_offers' | 'offering_prices' | 'offering_price' | 'logo' | 'last_adjusted_by'>,
     ) {
         try {
             // Validate relations against entity metadata to avoid invalid joins
@@ -200,6 +220,14 @@ export class OfferingsService {
 
             if (!offering) {
                 throw new NotFoundException(`Offering with ID ${id} not found`);
+            }
+
+            // If offering_prices is loaded, set latest price for backward compatibility
+            if (offering.offering_prices && offering.offering_prices.length > 0) {
+                const latestPrice = offering.offering_prices.reduce((latest, current) => {
+                    return (!latest || current.version > latest.version) ? current : latest;
+                });
+                offering.offering_price = latestPrice;
             }
 
             return offering;
@@ -218,14 +246,64 @@ export class OfferingsService {
 
 
     async acceptOffering(id: number, user: ActiveUserData) {
-        const offering = await this.findOneById(id, ['user', 'logo'])
+        const offering = await this.findOneById(id, ['user', 'logo', 'offering_price', 'last_adjusted_by'])
         if (!offering) {
             throw new NotFoundException(`Offering with ID ${id} not found`);
         }
         offering.status = OfferingStatus.ACCEPTED;
         offering.accepted_by = await this.userService.getUserById(user.sub);
-        
+
         await this.repo.save(offering);
+
+        // When creator accepts an offering, notify the brand who adjusted it (last_adjusted_by)
+        // offering.user = CREATOR (who created the offering)
+        // user.sub = CREATOR (who is accepting the offering)
+        // offering.last_adjusted_by = BRAND (who adjusted the offering and needs to pay)
+        const creator = offering.user; // Creator who created and is accepting
+        const brand = offering.last_adjusted_by; // Brand who adjusted and needs to pay
+
+        if (!brand) {
+            console.warn(`Offering ${id} has no last_adjusted_by user. Cannot send payment notification.`);
+            return offering;
+        }
+
+        const creatorName = creator?.username || creator?.email || 'A creator';
+        const brandName = brand?.username || brand?.email || 'A brand';
+        const offeringTitle = offering.title || 'Your offering';
+        const price = offering.offering_price?.price || offering.offering_price?.total || 0;
+        // Property 'currency' may not exist on type 'OfferingPrice', so we handle that gracefully
+        const currency = (offering.offering_price && 'currency' in offering.offering_price && (offering.offering_price as any).currency)
+            ? (offering.offering_price as any).currency
+            : 'USD';
+
+        // Notify brand (who adjusted the offering) that creator accepted and they need to proceed with payment
+        await this.notificationEvents.publishNotification({
+            userId: brand.id, // Brand who adjusted - they need to pay
+            type: NotificationType.OFFER_ACCEPTED,
+            channels: [NotificationChannel.IN_APP, NotificationChannel.EMAIL],
+            title: 'Offering Accepted!',
+            message: `${creatorName} has accepted your adjusted offering "${offeringTitle}". Please proceed with payment to complete the sponsorship.`,
+            data: {
+                offeringId: offering.id,
+                offeringTitle: offering.title,
+                creatorId: creator.id,
+                creatorName: creatorName,
+                brandId: brand.id,
+                brandName: brandName,
+                price: price,
+                currency: currency,
+                requiresPayment: true, // Flag to trigger payment prompt
+            },
+            metadata: {
+                email: brand.email,
+                emailTemplate: 'offer-accepted',
+                emailSubject: `Offering Accepted: ${offeringTitle}`,
+            },
+            priority: 'high',
+        }).catch((error) => {
+            console.error('Failed to send offer accepted notification:', error);
+        });
+
         return offering;
     }
 
@@ -238,36 +316,49 @@ export class OfferingsService {
             throw new NotFoundException(`Offering with ID ${id} not found`);
         }
         offering.status = OfferingStatus.PENDING;
-        
+
         await this.repo.save(offering);
         return offering;
     }
 
 
     async resetOffering(id: number, user?: ActiveUserData) {
-        const offering = await this.findOneById(id, ['user', 'logo'])
+        const offering = await this.findOneById(id, ['user', 'logo', "offering_offers"])
 
         if (!offering) {
-            throw new NotFoundException(`Offering with ID ${id} not found`);
+            throw new NotFoundException("Offering with ID ${id} not found");
         }
-   
+
 
         try {
             // Store reference to logo before clearing it
             const logoToDelete = offering.logo;
-            
+
+            await this.offeringOffersRepo.delete({
+                offering_id: offering.id,
+                version: Not(1),
+            });
+
             // Clear the logo reference first (updates foreign key column)
             offering.logo = null;
-            
+            // offering.offering_offers = resetOfferingVersion;
+            // console.log(offering);
             offering.adjustment_count = 0;
             offering.last_adjusted_at = null;
             offering.last_adjusted_by = null;
             offering.notes = null;
             offering.status = OfferingStatus.DRAFT;
-            
+
             // Save the offering first to clear the foreign key reference
             await this.repo.save(offering);
-            
+
+            offering.offering_offers = await this.offeringOffersRepo.find({
+                where: {
+                    offering_id: offering.id,
+                    version: 1,
+                },
+            });
+
             // Now delete the logo upload entity if it existed
             if (logoToDelete !== null) {
                 try {

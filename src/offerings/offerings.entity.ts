@@ -128,6 +128,9 @@ export class Offering {
     @OneToMany(() => OfferingOffers, (m) => m.offering)
     offering_offers!: OfferingOffers[];
 
+    @OneToMany(() => OfferingPrice, (m) => m.offering)
+    offering_prices!: OfferingPrice[];
+
     @OneToOne(() => OfferingPrice, (m) => m.offering)
     offering_price!: OfferingPrice;
 }

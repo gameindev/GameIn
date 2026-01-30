@@ -70,7 +70,6 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         });
     }
 
-
     async handleConnection(client: Socket, ...args: any[]) {
         try {
             const accessToken = client.handshake.auth.token;
@@ -300,7 +299,9 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
      */
     @SubscribeMessage('get_online_users')
     handleGetOnlineUsers(@ConnectedSocket() client: Socket): void {
-        this.broadcastOnlineUsers();
+        const onlineUsers = this.getOnlineUsers();
+        // Send directly to the requesting client
+        client.emit('online_users_list', onlineUsers);
     }
 
     /**

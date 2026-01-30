@@ -10,6 +10,9 @@ import { OfferingsService } from "../../offerings/providers/offerings.service";
 import { UsersService } from "../../users/providers/users.service";
 import { ActiveUserData } from "../../auth/interfaces/active-user-data.interface";
 import { UserType } from "../../users/enums/user-type.enums";
+import { NotificationEventsService } from "../../notifications/providers/notification-events.service";
+import { NotificationType } from "../../notifications/enums/notification-type.enum";
+import { NotificationChannel } from "../../notifications/enums/notification-channel.enum";
 
 
 @Injectable()
@@ -20,7 +23,8 @@ export class PostOfferingOrderProvider {
 
         @Inject(forwardRef(() => OfferingsService))
         private readonly offeringService: OfferingsService,
-        private readonly userService: UsersService
+        private readonly userService: UsersService,
+        private readonly notificationEvents: NotificationEventsService,
     ) { }
     
 
@@ -58,6 +62,49 @@ export class PostOfferingOrderProvider {
             brand: currentUser,
             status: OrderStatus.PENDING_PAYMENT
         });
-        return this.repo.save(offeringOrder);
+        const savedOrder = await this.repo.save(offeringOrder);
+
+        // Notify creator about new order
+        await this.sendOrderCreatedNotification(savedOrder, creator, currentUser, offering).catch((error) => {
+            console.error('Failed to send order created notification:', error);
+        });
+
+        return savedOrder;
+    }
+
+    /**
+     * Send notification when a new order is created
+     */
+    private async sendOrderCreatedNotification(
+        order: OfferingOrder,
+        creator: any,
+        brand: any,
+        offering: any,
+    ) {
+        const brandName = brand.username || brand.email || 'A brand';
+        
+        await this.notificationEvents.publishNotification({
+            userId: creator.id,
+            type: NotificationType.ORDER_CREATED,
+            channels: [NotificationChannel.IN_APP, NotificationChannel.EMAIL],
+            title: 'New Order Received',
+            message: `${brandName} has placed an order for "${order.title}"`,
+            data: {
+                orderId: order.id,
+                orderIdString: order.order_id,
+                brandId: brand.id,
+                brandName: brandName,
+                offeringId: offering.id,
+                offeringTitle: order.title,
+                total: order.total,
+                currency: order.currency,
+            },
+            metadata: {
+                email: creator.email,
+                emailTemplate: 'order-created',
+                emailSubject: `New Order: ${order.title}`,
+            },
+            priority: 'high',
+        });
     }
 }

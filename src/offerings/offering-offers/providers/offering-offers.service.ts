@@ -176,8 +176,8 @@ export class OfferingOffersService {
 
         }))
 
-        // Update offering stats
-        offering.adjustment_count++;
+        // Note: adjustment_count is incremented in createAdjustment provider
+        // to ensure it only increments once per adjustment operation
         offering.last_adjusted_at = new Date();
         offering.last_adjusted_by = getUser;
         await this.offeringsService.saveOne(offering);
