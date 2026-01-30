@@ -107,7 +107,9 @@ const Integrations = () => {
 
                     {error && (
                         <Group justify="center" p="md">
-                            <Text c="red" size="sm">Error: {error}</Text>
+                            <Text c="red" size="sm">
+                                Error: {String(error)}
+                            </Text>
                         </Group>
                     )}
 

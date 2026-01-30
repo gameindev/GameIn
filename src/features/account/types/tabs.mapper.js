@@ -4,9 +4,9 @@ export const roleBasedTabs = {
     self: [
         { label: "DASHBOARD", value: routePaths.ACCOUNTS.DASHBOARD.ROOT },
         { label: "PROFILE", value: routePaths.ACCOUNTS.PROFILE.ROOT },
-        { label: "SPONSORSHIPS", value: routePaths.ACCOUNTS.SPONSORSHIPS.ROOT },
+        { label: "STATS", value: routePaths.ACCOUNTS.SPONSORSHIPS.ROOT },
         { label: "OFFERINGS", value: routePaths.ACCOUNTS.OFFERINGS.ROOT },
-        { label: "STATS", value: routePaths.ACCOUNTS.STATS.ROOT },
+        // { label: "STATS", value: routePaths.ACCOUNTS.STATS.ROOT },
         { label: "NEWSFEED", value: routePaths.ACCOUNTS.NEWSFEED.ROOT },
         { label: "INBOX", value: routePaths.ACCOUNTS.INBOX.ROOT },
     ],
@@ -14,7 +14,7 @@ export const roleBasedTabs = {
     otherCreator: (username) => [
         { label: "PROFILE", value: routePaths.helpers.profile(username) },
         {
-            label: "SPONSORSHIPS",
+            label: "STATS",
             value: routePaths.helpers.sponsorship(username),
         },
         { label: "OFFERINGS", value: routePaths.helpers.offering(username) },
@@ -23,10 +23,10 @@ export const roleBasedTabs = {
 
     otherBrand: (username) => [
         { label: "PROFILE", value: routePaths.helpers.profile(username) },
-        {
-            label: "SPONSORSHIPS",
-            value: routePaths.helpers.sponsorship(username),
-        },
+        // {
+        //     label: "SPONSORSHIPS",
+        //     value: routePaths.helpers.sponsorship(username),
+        // },
         // { label: "INBOX", value: routePaths.helpers.inbox(username) },
     ],
 

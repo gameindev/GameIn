@@ -34,33 +34,54 @@ export const useSocketManagement = (user, conversations, onNewMessage = null) =>
 
         const s = initSocket(accessToken, {
             connect: () => {
-                // console.log("Socket connected");
+                console.log("Inbox Socket connected");
                 // Request online users list on connect
                 s.emit('get_online_users');
             },
             disconnect: () => {
-                // console.log("Socket disconnected");
+                console.log("Inbox Socket disconnected");
                 setOnlineUsers([]);
                 setJoinedConversations(new Set());
             },
             user_online: (u) => {
-                // console.log('User came online:', u);
-                setOnlineUsers((prev) => [...prev.filter((x) => x.userId !== u.userId), u]);
+                console.log('Inbox: User came online:', u);
+                setOnlineUsers((prev) => {
+                    const filtered = prev.filter((x) => (x.userId ?? x.id) !== (u.userId ?? u.id));
+                    return [...filtered, u];
+                });
             },
             user_offline: (u) => {
-                // console.log('User went offline:', u);
-                setOnlineUsers((prev) => prev.filter((x) => x.userId !== u.userId));
+                console.log('Inbox: User went offline:', u);
+                setOnlineUsers((prev) => prev.filter((x) => (x.userId ?? x.id) !== (u.userId ?? u.id)));
             },
             online_users_list: (users) => {
-                // console.log('Online users list:', users);
-                setOnlineUsers(users.filter((u) => u.userId !== user.id));
+                console.log('Inbox: Online users list received:', users);
+                const filtered = users.filter((u) => (u.userId ?? u.id) !== user.id);
+                console.log('Inbox: Filtered online users (excluding self):', filtered);
+                setOnlineUsers(filtered);
             },
             messages: handleIncomingMessage,
             message_delivered: handleMessageDelivered,
             message_read: handleMessageRead,
         });
 
-        return () => disconnectSocket();
+        // Request online users list if socket is already connected
+        if (s && s.connected) {
+            s.emit('get_online_users');
+        }
+
+        // Don't disconnect socket on cleanup - it's shared with other parts of the app
+        // Just remove event listeners
+        return () => {
+            if (s) {
+                s.off('user_online');
+                s.off('user_offline');
+                s.off('online_users_list');
+                s.off('messages', handleIncomingMessage);
+                s.off('message_delivered', handleMessageDelivered);
+                s.off('message_read', handleMessageRead);
+            }
+        };
     }, [accessToken, user.id, handleIncomingMessage, handleMessageDelivered, handleMessageRead]);
 
     // Join conversations automatically

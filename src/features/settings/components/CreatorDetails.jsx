@@ -122,7 +122,8 @@ const CreatorDetails = ({ details = {} }) => {
                         label="FIRST NAME"
                         placeholder="First Name"
                         value={firstNameValue}
-                        readOnly
+                        onChange={(e) => setFirstNameValue(e.target.value)}
+                        // readOnly
                     />
                 </Grid.Col>
                 <Grid.Col span={6}>
@@ -130,7 +131,8 @@ const CreatorDetails = ({ details = {} }) => {
                         label="LAST NAME"
                         placeholder="Last Name"
                         value={lastNameValue}
-                        readOnly
+                        onChange={(e) => setLastNameValue(e.target.value)}
+                        // readOnly
                     />
                 </Grid.Col>
                 <Grid.Col span={6}>

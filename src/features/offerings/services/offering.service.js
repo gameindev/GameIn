@@ -70,10 +70,28 @@ export const offeringService = {
         }, []);
     },
 
+    getAllPrices(prices = []) {
+        return prices;
+    },
+
+    getLatestPrice(prices = []) {
+        return prices.reduce((latest, curr) => {
+            if (!latest) return curr;
+            const latestVersion = Number(latest.version ?? -Infinity);
+            const currVersion = Number(curr.version ?? -Infinity);
+            if (currVersion > latestVersion) return curr;
+            return latest;
+        }, null);
+    },
+
     processOfferingLatest(offering) {
+        const latestPrice = this.getLatestPrice(offering.offering_prices || []);
+
         return {
             ...offering,
             offering_offers: this.getLatestOffers(offering.offering_offers),
+            offering_prices: this.getAllPrices(offering.offering_prices || []),
+            offering_price: latestPrice || offering.offering_price || null,
         };
     },
 };

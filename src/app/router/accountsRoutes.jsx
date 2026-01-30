@@ -13,6 +13,7 @@ const StatsPage = lazy(() => import("../../features/stats-page/pages/StatsPage")
 const NewsFeed = lazy(() => import("../../features/newsfeed/pages/NewsFeed"))
 const Inbox = lazy(() => import("../../features/inbox/pages/Inbox"))
 const EditBio = lazy(() => import("../../features/account/profile/pages/edit-profile/EditBio"))
+const Faq = lazy(() => import("../../features/account/profile/pages/faq/Faq"))
 const CreateOpportunity = lazy(() => import("../../features/offerings/pages/CreateOpportunity"))
 const EditOpportunity = lazy(() => import("../../features/offerings/pages/EditOpportunity"))
 
@@ -30,7 +31,7 @@ const accountsdRoutes = [
     { path: PROFILE.ROOT, element: <ProfilePage /> },
     { path: PROFILE.VIEW, element: <ProfilePage /> },
     { path: PROFILE.BIO, element: <EditBio /> },
-    // { path: PROFILE.FAQ, element: <Faq /> },
+    { path: PROFILE.FAQ, element: <Faq /> },
 
     // Sponsorships
     { path: SPONSORSHIPS.ROOT, element: <SponsorShips /> },

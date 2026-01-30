@@ -21,6 +21,7 @@ import VisibleRows from "../../../shared/components/VisibleRows";
 import { SearchContext } from "../../../shared/context/searchContext";
 import GridView from "../components/GridView";
 import { Tableview } from "../components/TableView";
+import SearchAll from "./SearchAll";
 
 
 
@@ -75,16 +76,26 @@ export default function SearchByUserType() {
         }
     }, [userType, user, get]);
 
+    // Handle 'all' view: delegate to SearchAll
+    if (userType?.toLowerCase() === 'all') {
+        return <SearchAll />;
+    }
+
     if (
         userType?.toUpperCase() !== USERTYPES.BRAND &&
         userType?.toUpperCase() !== USERTYPES.CREATOR
     ) {
-        return;
+        return null;
     }
 
     const onSubmit = async (formData) => {        
         await useSearchSubmit(formData, userType, lastQueryRef, setSearchData, user, get);
     }
+
+    const handleClearFilters = async () => {
+        reset(defaultValues);
+        await useSearchSubmit(defaultValues, userType, lastQueryRef, setSearchData, user, get);
+    };
 
     return (
         <SearchStyles>
@@ -149,7 +160,10 @@ export default function SearchByUserType() {
                         <VisibleRows size="sm" />
                     </Group>
 
-                    <Group flex="0 0 100%" justify="end">
+                    <Group flex="0 0 100%" justify="end" className="action-buttons">
+                        <Button variant="secondary" type="button" onClick={handleClearFilters}>
+                            Clear Filters
+                        </Button>
                         <Button variant="primary" type="submit">
                             Search
                         </Button>

@@ -55,9 +55,14 @@ export const GlobalStyles = createGlobalStyle`
     .wrapper{
         display: flex;
         width: 100%;
+        max-width: none;
+        margin: 0;
+        gap: 1.5em;
+        align-items: flex-start;
 
         .ad-banner{
             min-width: 14.875em;
+            flex: 0 0 14.875em;
             position: sticky;
             top: 5em;
             height: calc(100vh - 5em);
@@ -70,8 +75,13 @@ export const GlobalStyles = createGlobalStyle`
             flex: 1;
         }
         &.logged-in{
-            padding: 2.5em;
-            min-width: calc(100% - 35.5em);
+            flex: 1 1 auto;
+            padding: 2em;
+            max-width: 90rem;
+            width: 100%;
+            margin: 0 auto;
+            min-width: 0;
+
         }
     }
     
@@ -189,4 +199,17 @@ export const GlobalStyles = createGlobalStyle`
         color: ${({ theme }) => theme.colors.skyblue[0]} !important;
         background: ${({ theme }) => theme.colors.skyblue[0]} !important;
     }
+
+    .faq_accordion .mantine-Accordion-control[data-active],
+    .faq_accordion .mantine-Accordion-control:hover {
+        background-color: ${({ theme }) => theme.colors.inputBgColor[0]} !important;
+        border-radius: ${({ theme }) => theme.radius.md} !important;
+    }
+
+    .showmore_logo img{
+            transform: scale(0.8);
+        object-fit: contain !important;
+        clip-path: initial !important;
+    }
+    
 `;

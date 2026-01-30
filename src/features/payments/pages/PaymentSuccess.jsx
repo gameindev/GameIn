@@ -132,7 +132,7 @@ const PaymentSuccess = () => {
                         </Button>
                         <Button
                             variant="primary"
-                            onClick={() => navigate("/sponsorships")}
+                            onClick={() => navigate("/stats")}
                             style={{ flex: 1 }}
                         >
                             View Sponsorships

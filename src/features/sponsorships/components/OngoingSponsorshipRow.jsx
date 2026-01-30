@@ -23,6 +23,9 @@ import { formatStyledPrice } from "../utils/formatPrice";
 import { getTimeRemaining } from "../utils/date.helper";
 import { useNavigate, useOutletContext } from "react-router";
 import routePaths from "../../../app/router/routes";
+import routeService from "../../../app/services/route/routeService";
+import { useAppSelector } from "../../../app/store/hooks";
+import { currentUser } from "../../auth/store/selector";
 
 const OngoingSponsorshipRow = ({
   sponsorship,
@@ -32,6 +35,7 @@ const OngoingSponsorshipRow = ({
 }) => {
   const navigate = useNavigate();
   const { userProfile, isSelf } = useOutletContext();
+  const user = useAppSelector(currentUser);
   return (
     <Box>
       <Flex
@@ -129,6 +133,13 @@ const OngoingSponsorshipRow = ({
               iconSize={18}
               Icon={IconMessage}
               hoverClass="hoverGrey"
+              onClick={() =>
+                routeService.messageRoute(
+                  sponsorship?.last_adjusted_by?.id,
+                  navigate,
+                  user
+                )
+              }
             />
             <IconButton iconSize={18} Icon={IconX} hoverClass="hoverRed" />
             <ActionIcon

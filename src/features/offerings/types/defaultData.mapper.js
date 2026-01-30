@@ -38,6 +38,7 @@ export const createDefaultData = (overrides = {}) => ({
         choosePrice: "",
         gameinFee: "00.00",
         gameinTax: "00.00",
+        gameinTotal: "00.00",
         paymentType: "PAYPAL",
     },
     terms: { acknowledgement: false },

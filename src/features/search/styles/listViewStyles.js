@@ -14,7 +14,7 @@ export const ListviewStyles = styled.div`
     .progress,
     .social_info,
     .action_btns {
-        flex: 1;
+        flex: 0.75;
         text-align: center;
     }
 
@@ -23,18 +23,18 @@ export const ListviewStyles = styled.div`
     }
 
     .levels {
-        border-left: 1px dashed ${theme.colors.inputBgColor[0]};
+        // border-left: 1px dashed ${theme.colors.inputBgColor[0]};
     }
 
     .progress {
-        border-left: 1px dashed ${theme.colors.inputBgColor[0]};
-        border-right: 1px dashed ${theme.colors.inputBgColor[0]};
+        // border-left: 1px dashed ${theme.colors.inputBgColor[0]};
+        // border-right: 1px dashed ${theme.colors.inputBgColor[0]};
         display: flex;
         justify-content: center;
     }
 
     .social_info {
-        border-right: 1px dashed ${theme.colors.inputBgColor[0]};
+        // border-right: 1px dashed ${theme.colors.inputBgColor[0]};
         display: flex;
         padding: 0 ${theme.gap.xs} 0 0;
         flex-direction: column;

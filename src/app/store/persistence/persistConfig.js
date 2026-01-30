@@ -20,4 +20,30 @@ export const bioPersistConfig = createPersistConfig("bio");
 
 export const followPersistConfig = createPersistConfig("follow");
 
+export const favoriteUsersConfig = createPersistConfig("favUsers");
+
 export const socialIntegrationPersistConfig = createPersistConfig("socialIntegration", ["integrations"]);
+
+// FAQ persistence (per-user map)
+export const faqPersistConfig = createPersistConfig("faq");
+
+// Newsfeed persistence
+// Only persist posts and pagination state, exclude temporary states (loading, error, likingPosts)
+// Note: Posts are persisted for offline viewing, but fresh data is always fetched on mount
+export const feedPersistConfig = {
+    key: "feed",
+    storage,
+    whitelist: [
+        "posts",
+        "total",
+        "hasMore",
+        "offset",
+        "limit",
+    ],
+    // Exclude temporary states that shouldn't persist
+    blacklist: [
+        "loading",
+        "error",
+        "likingPosts", // Temporary state for preventing duplicate likes
+    ],
+};

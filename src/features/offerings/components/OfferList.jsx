@@ -42,7 +42,7 @@ const OfferList = ({
                     (o) => o.offer_type === offer.offer_type && o.version < offer.version
                 )
                 .sort((a, b) => b.version - a.version);
-
+                
             const previousSize = previousVersions[0]?.size;
             const sizeChanged = previousSize && previousSize !== offer.size;
 

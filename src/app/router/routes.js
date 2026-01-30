@@ -18,8 +18,8 @@
             VIEW: "/:username/profile",
         },
         SPONSORSHIPS: {
-            ROOT: "/sponsorships",
-            VIEW: "/:username/sponsorships",
+            ROOT: "/stats",
+            VIEW: "/:username/stats",
         },
         OFFERINGS: {
             ROOT: "/offerings",
@@ -62,7 +62,7 @@
 
     helpers: {
         profile: (username) => `/${username}/profile`,
-        sponsorship: (username) => `/${username}/sponsorships`,
+        sponsorship: (username) => `/${username}/stats`,
         offering: (username) => `/${username}/offerings`,
         inbox: (username) => `/${username}/inbox`,
         profileTab: (username, tab) => `/profile/${username}/${tab}`,

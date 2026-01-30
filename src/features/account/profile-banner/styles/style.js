@@ -37,7 +37,7 @@ export const ProfileWrapper = styled.div`
     margin-left: 12em;
     flex: 1;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     gap: 1.5em;
 
     .personal_info {
@@ -103,9 +103,6 @@ export const ProfileStats = styled.div`
 `;
 
 export const BadgeSection = styled.div`
-    border-left: 0.063em dotted #4a5568;
-    border-right: 0.063em dotted #4a5568;
-
     .levels {
         /* flex: 1; */
         display: flex;
@@ -120,14 +117,15 @@ export const BadgeSection = styled.div`
 
 export const SponsorShip = styled.div`
     display: flex;
-    align-items: end;
+    position: relative;
+    flex-direction: column;
+    align-items: flex-start;
     width: 100%;
     height: 100%;
-    gap: 2.5em;
+    gap: 0.5em;
     font-size: 0.875em;
     color: #a0aec0;
-    padding: 0.5em;
-    border-right: 0.063em dotted #4a5568;
+    padding: 0.5em 0.75em;
     margin-right: auto;
 
     .sponsorship_text {
@@ -136,12 +134,33 @@ export const SponsorShip = styled.div`
         text-transform: uppercase;
     }
 
+    .sponsorship_tracker {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+        flex-wrap: wrap;
+    }
+
+    .sponsor_logo {
+        height: 1.75em;
+        width: auto;
+        object-fit: contain;
+    }
+
     .sponsorship_badge {
         background-color: #2b6cb0;
         color: white;
         padding: 0.25em 0.5em;
         border-radius: 0.25em;
         font-size: 0.75em;
+    }
+    
+    .sponsorslogo {
+    img{
+        transform: scale(0.8);
+    object-fit: contain !important;
+    clip-path: initial !important;
+    }
     }
 `;
 
@@ -155,4 +174,10 @@ export const ActionWrapper = styled.div`
         flex-direction: column;
         gap: 0.5em;
     }
+`;
+
+export const ModalStyle = styled.div`
+.modal_sponsorslogo{
+background: red;
+}
 `;

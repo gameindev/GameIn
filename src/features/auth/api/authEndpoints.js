@@ -5,5 +5,6 @@ export const AUTH_ENDPOINTS = {
     FORGOT_PASSWORD: "/auth/forgot-password",
     REFRESH_TOKENS: "/auth/refresh-tokens",
     GOOGLE_OAUTH: "/auth/google-authentication",
+    LOGOUT: "/auth/logout",
 }
 

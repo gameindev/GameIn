@@ -9,6 +9,8 @@ import StepCalculator from "./StepCalculator";
 import { statusStep } from "../utils/step.helper";
 import SponsorshipActions from "./SponsorshipActions";
 import { OfferingStatus } from "../../../shared/enums/offeringStatusEnum";
+import { useAppSelector } from "../../../app/store/hooks";
+import { currentUser } from "../../auth/store/selector";
 
 const SponsorshipRow = ({
   sponsorship,
@@ -20,8 +22,12 @@ const SponsorshipRow = ({
   handleNegotiateOffering,
   handleResetOffering,
 }) => {
-  console.log(sponsorship);
+
   const step = statusStep[sponsorship.status];
+
+  const creator = useAppSelector(currentUser);
+  console.log(creator);
+  
 
   return (
     <Paper
@@ -55,7 +61,7 @@ const SponsorshipRow = ({
                 />
               </HexContainer>
               <Text fz={theme.fontSizes.sm}>
-                {sponsorship?.last_adjusted_by?.username || "Unknown User"}
+                {sponsorship?.last_adjusted_by?.username || creator?.username || "Unknown User"}
               </Text>
             </Group>
           </Box>

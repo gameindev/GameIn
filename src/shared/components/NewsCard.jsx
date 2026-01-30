@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Box, Flex, Text, ActionIcon, Image } from "@mantine/core";
 import { IconHeart, IconHeartFilled } from "@tabler/icons-react";
 import { theme } from "../styles/theme/customTheme";
@@ -15,16 +15,27 @@ const NewsCard = ({
   likesPlacement = "media",
   background,
   children,
+  likeDisabled = false,
   ...props
 }) => {
+  // Sync with props to reflect Redux state updates (Facebook-like behavior)
   const [liked, setLiked] = useState(initiallyLiked);
   const [likes, setLikes] = useState(initialLikes);
 
+  // Update local state when props change (from Redux updates)
+  useEffect(() => {
+    setLiked(initiallyLiked);
+  }, [initiallyLiked]);
+
+  useEffect(() => {
+    setLikes(initialLikes);
+  }, [initialLikes]);
+
   const toggleLike = () => {
-    const nextLiked = !liked;
-    setLiked(nextLiked);
-    setLikes((n) => (nextLiked ? n + 1 : Math.max(0, n - 1)));
-    if (onLikeChange) onLikeChange(nextLiked);
+    if (likeDisabled) return; // Prevent clicks while processing
+    // Don't update local state here - let Redux handle it
+    // Just trigger the action
+    if (onLikeChange) onLikeChange();
   };
 
   const LikeCluster = (
@@ -39,6 +50,8 @@ const NewsCard = ({
         color={liked ? "red" : "white"}
         aria-label="Like"
         onClick={toggleLike}
+        disabled={likeDisabled}
+        style={{ opacity: likeDisabled ? 0.5 : 1, cursor: likeDisabled ? 'not-allowed' : 'pointer' }}
       >
         {liked ? <IconHeartFilled color="red" size={16} /> : <IconHeart size={16} />}
       </ActionIcon>
@@ -70,8 +83,7 @@ const NewsCard = ({
               <Text
                 c={theme.colors.white[0]}
                 fw={600}
-                tt="lowercase"
-                style={{ textTransform: "none" }}
+                tt="capitalize"
               >
                 {title}
               </Text>
@@ -125,7 +137,7 @@ const NewsCard = ({
       )}
 
       {/* Content body */}
-      <Box>
+      <Box h={"100%"}>
         {content && (
           <Text size="sm" c={theme.colors.text[0]}>
             {content}

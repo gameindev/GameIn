@@ -15,6 +15,7 @@ import StripeCheckout from "../../payments/components/StripeCheckout";
 import RazorpayCheckout from "../../payments/components/RazorpayCheckout";
 import { PaymentProvider } from "../../../shared/enums/paymentProviderEnum";
 import { calculatePriceBreakdown } from "../../../shared/utils/helpers/opportunityForm.helper";
+import { offeringService } from "../services";
 
 const CheckoutModal = ({
   opened,
@@ -25,12 +26,15 @@ const CheckoutModal = ({
   loading = false,
   paymentData = null, // Contains clientSecret, razorpayOrderId, etc.
 }) => {
+  const latestPrice = offeringService.getLatestPrice(offerings?.data?.offering_prices);
+  console.log(latestPrice);
+  
   const paymentProvider =
-    offerings?.data?.offering_price?.payment_provider || PaymentProvider.STRIPE;
+    latestPrice?.payment_provider || PaymentProvider.STRIPE;
   const showPaymentForm =
     paymentData && (paymentData.clientSecret || paymentData.razorpayOrderId);
   const { tax } = calculatePriceBreakdown(
-    offerings?.data?.offering_price?.price
+    latestPrice?.price
   );
 
   return (
@@ -75,7 +79,7 @@ const CheckoutModal = ({
                 </Text>
               </Box>
               <Text fw={700} c={theme.colors.primary[0]}>
-                ${offerings?.data?.offering_price?.price || "0.00"}
+                ${latestPrice?.price || "0.00"}
               </Text>
             </Flex>
           </Box>
@@ -94,6 +98,7 @@ const CheckoutModal = ({
             autosize: true,
             minRows: 3,
             maxRows: 6,
+            disabled: false
           }}
         />
 
@@ -105,7 +110,7 @@ const CheckoutModal = ({
             <Text c="dimmed">Subtotal</Text>
             <Text>
               ${" "}
-              {parseFloat(offerings?.data?.offering_price?.price || 0).toFixed(
+              {parseFloat(latestPrice?.price || 0).toFixed(
                 2
               )}
             </Text>
@@ -115,7 +120,7 @@ const CheckoutModal = ({
             <Text>
               ${" "}
               {parseFloat(
-                offerings?.data?.offering_price?.platform_fee || 0
+                latestPrice?.platform_fee || 0
               ).toFixed(2)}
             </Text>
           </Flex>
@@ -124,7 +129,7 @@ const CheckoutModal = ({
             <Text>
               ${" "}
               {
-                calculatePriceBreakdown(offerings?.data?.offering_price?.price)
+                calculatePriceBreakdown(latestPrice?.price)
                   ?.tax
               }
             </Text>
@@ -140,7 +145,7 @@ const CheckoutModal = ({
             </Text>
             <Text fw={700} fz="lg" c={theme.colors.primary[0]}>
               ${" "}
-              {parseFloat(offerings?.data?.offering_price?.total || 0).toFixed(
+              {parseFloat(latestPrice?.tax || 0).toFixed(
                 2
               )}
             </Text>
@@ -181,10 +186,10 @@ const CheckoutModal = ({
                   <RazorpayCheckout
                     razorpayOrderId={paymentData.razorpayOrderId}
                     amount={parseFloat(
-                      offerings?.data?.offering_price?.total || 0
+                      latestPrice?.total || 0
                     )}
                     currency={
-                      offerings?.data?.offering_price?.currency || "USD"
+                      latestPrice?.currency || "USD"
                     }
                     customerName={offerings?.data?.user?.username || ""}
                     customerEmail={offerings?.data?.user?.email || ""}

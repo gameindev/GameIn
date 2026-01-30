@@ -37,8 +37,9 @@ export const useSocialIntegrations = () => {
         try {
             await dispatch(connectPlatform(platform)).unwrap();
         } catch (err) {
-            console.error(`Failed to connect ${platform}:`, err);
-            throw err;
+            const msg = err?.message ?? (typeof err === 'string' ? err : 'Connection failed');
+            console.error(`Failed to connect ${platform}:`, msg);
+            // Error is already stored in Redux (normalized to string); do not rethrow object
         }
     }, [dispatch]);
 

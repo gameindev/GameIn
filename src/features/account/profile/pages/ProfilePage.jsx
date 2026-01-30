@@ -6,6 +6,7 @@ import { theme } from "../../../../shared/styles/theme/customTheme";
 import VideoPreview from "../components/VideoPreview";
 import routePaths from "../../../../app/router/routes";
 import ProfileBioCard from "../components/ProfileBioCard";
+import FaqList from "../components/FaqList";
 import { useViewCount } from "../hooks/useViewCount";
 
 
@@ -53,7 +54,9 @@ const ProfilePage = () => {
                             />
                         )
                     }
-                />
+                >
+                    <FaqList userId={userProfile.id} isSelf={isSelf} compact />
+                </StatBox>
             </Grid.Col>
 
             {/* Welcome Section */}

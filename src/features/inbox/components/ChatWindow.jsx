@@ -53,14 +53,37 @@ const ChatWindow = ({
 
     // Online check
     useEffect(() => {
+        if (!conversation || !onlineUsers || onlineUsers.length === 0) {
+            setOnline(false);
+            return;
+        }
+
         const participants =
             conversation?.participants || conversation?.users || [];
-        const isOnline = participants.some((p) => {
-            const id = p.user ? p.user.id : p.id;
-            return (
-                id !== user.id && onlineUsers.some((u) => (u.userId ?? u.id) === id)
-            );
+        
+        console.log('ChatWindow: Checking online status', {
+            participants,
+            onlineUsers,
+            currentUserId: user.id
         });
+
+        const isOnline = participants.some((p) => {
+            const participantId = p.user ? p.user.id : p.id;
+            if (participantId === user.id) return false; // Skip current user
+            
+            const found = onlineUsers.some((u) => {
+                const onlineUserId = u.userId ?? u.id;
+                const match = onlineUserId === participantId;
+                if (match) {
+                    console.log('ChatWindow: Found online user match', { participantId, onlineUserId, user: u });
+                }
+                return match;
+            });
+            
+            return found;
+        });
+        
+        console.log('ChatWindow: Online status result', { isOnline, conversationId: conversation?.id });
         setOnline(isOnline);
     }, [conversation, onlineUsers, user.id]);
 
@@ -100,6 +123,7 @@ const ChatWindow = ({
                 setShowDocumentView={setShowDocumentView}
                 onSend={onSend}
                 acknowledgeMessage={acknowledgeMessage}
+                onlineUsers={onlineUsers}
             />
 
             <ChatInput onSend={onSend} />

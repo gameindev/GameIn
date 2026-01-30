@@ -1,105 +1,96 @@
-import { USERTYPES } from "../../../shared/enums/userTypesEnum";
+﻿import { USERTYPES } from "../../../shared/enums/userTypesEnum";
 import { OFFERINGS_ENDPOINTS } from "../../offerings/api/offering_endpoints";
 import { OFFERINGS_ORDER_ENDPOINTS } from "../../offerings/api/offering_order_endpoint";
 
+const isBrand = (type) => type === USERTYPES.BRAND;
+const isCreator = (type) => type === USERTYPES.CREATOR;
 
+async function fetchBrandOfferings(get, brandId, page, limit) {
+  const orderResponse = await get({
+    url: OFFERINGS_ORDER_ENDPOINTS.LIST({ page, limit, brand_id: brandId }),
+  });
 
-export async function fetchSponsorships({ get, user, page = 1, limit = 20 }) {
-    // If user is BRAND: fetch orders first, then fetch offerings by IDs from those orders
-    if (user.user_type === USERTYPES.BRAND) {
-        // Fetch all offering orders for this brand
-        // Note: backend automatically filters by authenticated user's brand
-        // Note: 'brand', 'offering', 'creator' relations are included by default
-        const orderResponse = await get({
-            url: OFFERINGS_ORDER_ENDPOINTS.LIST({
-                page,
-                limit,
-                // No brand_id needed - backend uses authenticated user's brand automatically
-                // No relations needed - 'offering' is included by default along with 'brand' and 'creator'
-            })
-        });
-        const orders = orderResponse?.data?.data ?? [];
-        // Extract all offering IDs from the orders
-        const offeringIds = orders.map(order => order.offering?.id).filter(Boolean);
+  const offeringIds = (orderResponse?.data?.data ?? [])
+    .map((o) => o.offering?.id)
+    .filter(Boolean);
 
-        // If there are no offerings, return empty array
-        if (offeringIds.length === 0) {
-            return [];
-        }
+  if (offeringIds.length === 0) return [];
 
-        // Now fetch all offerings with the collected IDs
-        // When using ids, we don't need userId
-        // Note: Backend limit max is 100, so if we have more IDs, we need to handle pagination
-        // For now, we'll fetch in chunks if needed
-        const allOfferings = [];
-        const chunkSize = 100; // Backend max limit per request
-        
-        for (let i = 0; i < offeringIds.length; i += chunkSize) {
-            const idsChunk = offeringIds.slice(i, i + chunkSize);
-            const offeringsResponse = await get({
-                url: OFFERINGS_ENDPOINTS.DISPLAY_OFFERINGS({
-                    page: 1,
-                    limit: chunkSize,
-                    ids: idsChunk,
-                    relations: [
-                        "user",
-                        "offering_offers",
-                        "offering_price",
-                        "last_adjusted_by",
-                        "logo"
-                    ]
-                })
-            });
-            
-            const chunkData = offeringsResponse?.data?.data ?? [];
-            allOfferings.push(...chunkData);
-        }
+  const CHUNK = 100;
+  const result = [];
 
-        // Return all collected offerings
-        return allOfferings;
-    }
+  for (let i = 0; i < offeringIds.length; i += CHUNK) {
+    const chunkIds = offeringIds.slice(i, i + CHUNK);
 
-    // If user is CREATOR: fetch offerings directly by userId
-    if (user.user_type === USERTYPES.CREATOR) {
-        const params = {
-            page,
-            limit,
-            userId: user?.id,
-            relations: [
-                "user",
-                "offering_offers",
-                "offering_price",
-                "last_adjusted_by",
-                "logo"
-            ],
-        };
+    const offeringsResponse = await get({
+      url: OFFERINGS_ENDPOINTS.DISPLAY_OFFERINGS({
+        page: 1,
+        limit: CHUNK,
+        ids: chunkIds,
+        relations: [
+          "user",
+          "offering_offers",
+          "offering_prices",
+          "last_adjusted_by",
+          "logo",
+        ],
+      }),
+    });
 
-        const response = await get({ url: OFFERINGS_ENDPOINTS.DISPLAY_OFFERINGS(params) });
-        return response?.data?.data ?? [];
-    }
+    result.push(...(offeringsResponse?.data?.data ?? []));
+  }
 
-    // Default: return empty array for unknown user types
-    return [];
+  return result;
 }
 
+async function fetchCreatorOfferings(get, creatorId, page, limit) {
+  const response = await get({
+    url: OFFERINGS_ENDPOINTS.DISPLAY_OFFERINGS({
+      page,
+      limit,
+      userId: creatorId,
+      relations: [
+        "user",
+        "offering_offers",
+        "offering_prices",
+        "last_adjusted_by",
+        "logo",
+      ],
+    }),
+  });
+  return response?.data?.data ?? [];
+}
+
+export async function fetchSponsorships({
+  get,
+  user,
+  userId,
+  profileUserType,
+  page = 1,
+  limit = 20,
+}) {
+  const id = userId || user?.id;
+  const type = profileUserType || user?.user_type;
+
+  if (isBrand(type)) return fetchBrandOfferings(get, id, page, limit);
+  if (isCreator(type)) return fetchCreatorOfferings(get, id, page, limit);
+
+  return [];
+}
 
 export async function acceptOffering({ patch, offeringId }) {
-    const response = await patch({
-        url: OFFERINGS_ENDPOINTS.ACCEPT(offeringId),
-    });
-    return response?.data ?? null;
+  const response = await patch({ url: OFFERINGS_ENDPOINTS.ACCEPT(offeringId) });
+  return response?.data ?? null;
 }
 
 export async function negotiateOffering({ patch, offeringId }) {
-    const response = await patch({
-        url: OFFERINGS_ENDPOINTS.NEGOTIATE(offeringId),
-    });
-    return response?.data ?? null;
+  const response = await patch({
+    url: OFFERINGS_ENDPOINTS.NEGOTIATE(offeringId),
+  });
+  return response?.data ?? null;
 }
 
 export async function resetOffering({ patch, offeringId }) {
-    const response = await patch({
-        url: OFFERINGS_ENDPOINTS.RESET(offeringId),
-    });
-    return response?.data ?? null;
+  const response = await patch({ url: OFFERINGS_ENDPOINTS.RESET(offeringId) });
+  return response?.data ?? null;
 }

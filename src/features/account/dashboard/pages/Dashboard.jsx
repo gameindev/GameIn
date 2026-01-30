@@ -22,7 +22,7 @@ const Dashboard = () => {
             action={
               <IconButton
                 hoverClass="hoverYellow"
-                onClick={() => navigate("/sponsorships")}
+                onClick={() => navigate("/stats")}
               />
             }
           >
@@ -36,7 +36,7 @@ const Dashboard = () => {
             action={
               <IconButton
                 hoverClass="hoverYellow"
-                onClick={() => navigate("/sponsorships")}
+                onClick={() => navigate("/stats")}
               />
             }
           >

@@ -25,13 +25,19 @@ import {
 import { theme } from "../../../shared/styles/theme/customTheme";
 import HexContainer from "../../../shared/components/HexContainer";
 import { inboxAvatar } from "../utils/inboxAvatar";
+import getInitials from "../../../shared/utils/helpers/getInitials.helper";
 
 const MessageBubble = React.memo(function MessageBubble({
   message,
   onViewDocument,
+  onlineUsers = [],
 }) {
   const isBot = message.isBot || false;
   const isCurrentUser = message.senderId === message.currentUserId;
+  const senderId = message.senderId;
+  
+  // Use inbox's onlineUsers (from useSocketManagement), not global Redux state
+  const isSenderOnline = onlineUsers.some((u) => (u.userId ?? u.id) === senderId);
 
   // Helper function to get profile picture URL
   const getProfilePicUrl = (profilePic) => {
@@ -61,7 +67,7 @@ const MessageBubble = React.memo(function MessageBubble({
             size="sm"
             src={getProfilePicUrl(message.senderProfilePic)}
           >
-            {message.sender ? message.sender.charAt(0) : "B"}
+            {getInitials({ displayName: message.sender }) || "B"}
           </Avatar>
         </Group>
         <Paper
@@ -149,7 +155,9 @@ const MessageBubble = React.memo(function MessageBubble({
                     </HexContainer> */}
           {inboxAvatar(
             getProfilePicUrl(message.senderProfilePic),
-            message.sender
+            message.sender,
+            isSenderOnline,
+            !isCurrentUser // Show online status only for other users
           )}
           <Text size="xs" color={theme.colors.inputBgColor[0]}>
             {message.sender || "User"}

@@ -9,14 +9,12 @@ export const LOGO_SIZES_CONFIG = {
         { value: "250px", label: "250px" },
         { value: "300px", label: "300px" },
         { value: "fullwidth", label: "Full Width" },
-        { value: "custom", label: "Custom" },
     ],
     [OfferingCategory.VIDEO_COMMERCIAL]: [
         { value: "small", label: "Small" },
         { value: "medium", label: "Medium" },
         { value: "wide", label: "Wide" },
         { value: "fullscreen", label: "Full Screen" },
-        { value: "custom", label: "Custom" },
     ],
     [OfferingCategory.SOCIAL_POST]: [
         { value: "portrait", label: "Portrait" },
@@ -24,7 +22,6 @@ export const LOGO_SIZES_CONFIG = {
         { value: "landscape", label: "Landscape" },
         { value: "smallbadge", label: "Small Badge" },
         { value: "fulltakeover", label: "FullScreen Takeover" },
-        { value: "custom", label: "Custom" },
     ],
     [OfferingCategory.MERCHANDISE]: [],
     default: [

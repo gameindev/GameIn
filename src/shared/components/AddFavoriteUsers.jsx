@@ -6,13 +6,18 @@ import {
   Group,
   Text,
   Tabs,
-  Checkbox,
   ScrollArea,
   Divider,
   Loader,
   Center,
+  ActionIcon,
 } from "@mantine/core";
-import { IconSearch } from "@tabler/icons-react";
+import {
+  IconSearch,
+  IconStar,
+  IconStarFilled,
+  IconTrash,
+} from "@tabler/icons-react";
 import { followersService } from "../../features/inbox/services/followers.service";
 import HexContainer from "./HexContainer";
 
@@ -31,41 +36,34 @@ function AddFavoriteModal({
   const [following, setFollowing] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch followers
   const fetchFollowers = async () => {
     try {
       setLoading(true);
       const res = await followersService.fetchFollowers(user.id);
       setFollowers(res || []);
-    } catch (err) {
-      console.error("Error fetching followers:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch following
   const fetchFollowing = async () => {
     try {
       setLoading(true);
       const res = await followersService.fetchFollowing(user.id);
       setFollowing(res || []);
-    } catch (err) {
-      console.error("Error fetching following:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  // Load data when modal opens
   useEffect(() => {
     if (!opened || !user?.id) return;
+
     if (activeTab === "followers") fetchFollowers();
     else if (activeTab === "following") fetchFollowing();
     else Promise.all([fetchFollowers(), fetchFollowing()]);
   }, [opened, activeTab, user?.id]);
 
-  // Combine followers + following
   const combinedUsers = useMemo(() => {
     if (activeTab === "followers") return followers;
     if (activeTab === "following") return following;
@@ -74,7 +72,6 @@ function AddFavoriteModal({
     return Array.from(new Map(all.map((u) => [u.id, u])).values());
   }, [followers, following, activeTab]);
 
-  // Filter by search
   const filteredUsers = useMemo(() => {
     if (!searchQuery.trim()) return combinedUsers;
     const q = searchQuery.toLowerCase();
@@ -85,41 +82,36 @@ function AddFavoriteModal({
     );
   }, [combinedUsers, searchQuery]);
 
-  // Toggle selection (for adding)
-  const toggleUser = (userId) => {
+  const toggleSelect = (id) => {
     setSelectedUsers((prev) =>
-      prev.includes(userId)
-        ? prev.filter((id) => id !== userId)
-        : [...prev, userId]
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
   };
 
-  // Add new selected users
-  const handleAddFavorites = () => {
-    const selected = combinedUsers.filter((u) => selectedUsers.includes(u.id));
-    onAddFavorites(selected);
-    setSelectedUsers([]);
-    onClose();
+  const handleRemove = async (id) => {
+    await onRemoveFavorite(id);
   };
 
-  // Handle toggle of already favorite user (remove instantly)
-  const handleFavoriteToggle = (user) => {
-    const isFavorite = favoriteUsers.some((fav) => fav.id === user.id);
-    if (isFavorite) {
-      onRemoveFavorite(user.id);
-    } else {
-      toggleUser(user.id);
+  const handleAddFavorites = async () => {
+    const usersToAdd = combinedUsers.filter((u) =>
+      selectedUsers.includes(u.id)
+    );
+
+    if (usersToAdd.length) {
+      await onAddFavorites(usersToAdd);
     }
+
+    setSelectedUsers([]);
+    onClose();
   };
 
   return (
     <Modal
       opened={opened}
       onClose={onClose}
-      title="Add or Remove Favorite Users"
+      title="Manage Favorite Users"
       size="md"
     >
-      {/* Search */}
       <TextInput
         placeholder="Search users..."
         icon={<IconSearch size={16} />}
@@ -128,7 +120,6 @@ function AddFavoriteModal({
         mb="md"
       />
 
-      {/* Tabs */}
       <Tabs value={activeTab} onChange={setActiveTab} mb="md">
         <Tabs.List>
           <Tabs.Tab value="all">All</Tabs.Tab>
@@ -137,45 +128,78 @@ function AddFavoriteModal({
         </Tabs.List>
       </Tabs>
 
-      {/* User List */}
-      <ScrollArea style={{ height: 300 }} offsetScrollbars scrollbarSize={8}>
+      <ScrollArea h={300}>
         {loading ? (
           <Center mt="md">
             <Loader size="sm" />
           </Center>
-        ) : filteredUsers.length > 0 ? (
+        ) : filteredUsers.length ? (
           filteredUsers.map((u) => {
-            const isFavorite = favoriteUsers.some((fav) => fav.id === u.id);
+            const isFavorite = favoriteUsers.some((f) => f.id === u.id);
             const isSelected = selectedUsers.includes(u.id);
+
             return (
               <Group
                 key={u.id}
                 justify="space-between"
                 p="xs"
+                mb={6}
                 style={{
-                  borderRadius: "4px",
+                  borderRadius: 8,
                   backgroundColor:
-                    isFavorite || isSelected ? "#1A1D2088" : "transparent",
-                  cursor: "pointer",
+                    isFavorite || isSelected ? "#1A1D20" : "transparent",
                 }}
-                onClick={() => handleFavoriteToggle(u)}
               >
                 <Group>
-                  <HexContainer size={50}>
+                  <HexContainer size={48}>
                     {u.username?.[0]?.toUpperCase() || "?"}
                   </HexContainer>
+
                   <div>
                     <Text size="sm">{u.name}</Text>
-                    <Text size="xs" c="dimmed">
+                    <Text size="sm" fw={600}>
                       {u.username}
                     </Text>
                   </div>
                 </Group>
-                <Checkbox
-                  checked={isFavorite || isSelected}
-                  onChange={() => handleFavoriteToggle(u)}
-                  transitionDuration={0}
-                />
+
+                <Group gap="xs">
+                  {isFavorite ? (
+                    <IconStarFilled size={18} color="#facc15" />
+                  ) : null}
+
+                  {!isFavorite && (
+                    // <Checkbox
+                    //   checked={isSelected}
+                    //   onChange={() => toggleSelect(u.id)}
+                    // />
+
+                    <ActionIcon
+                      variant="subtle"
+                      color={isFavorite ? "yellow" : "gray"}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleSelect(u.id);
+                      }}
+                    >
+                      {isFavorite || isSelected ? (
+                        <IconStarFilled size={18} />
+                      ) : (
+                        <IconStar size={18} />
+                      )}
+                    </ActionIcon>
+                  )}
+
+                  {isFavorite && (
+                    <ActionIcon
+                      color="red"
+                      variant="subtle"
+                      onClick={() => handleRemove(u.id)}
+                    >
+                      <IconTrash size={16} />
+                    </ActionIcon>
+                  )}
+                </Group>
               </Group>
             );
           })
@@ -186,14 +210,13 @@ function AddFavoriteModal({
         )}
       </ScrollArea>
 
-      <Group justify="flex-end" mt="md">
+      <Divider my="md" />
+
+      <Group justify="flex-end">
         <Button variant="outline" onClick={onClose}>
           Cancel
         </Button>
-        <Button
-          onClick={handleAddFavorites}
-          disabled={selectedUsers.length === 0}
-        >
+        <Button onClick={handleAddFavorites} disabled={!selectedUsers.length}>
           Add to Favorites
         </Button>
       </Group>

@@ -35,10 +35,17 @@ export const connectPlatform = createAsyncThunk(
             window.location.href = url;
             return { platform, url };
         } catch (error) {
-            return rejectWithValue(error.response?.data || error.message);
+            const payload = error.response?.data ?? error.message;
+            return rejectWithValue(payload);
         }
     }
 );
+
+function errorMessage(payload) {
+    if (payload == null) return 'Something went wrong';
+    if (typeof payload === 'string') return payload;
+    return payload?.message ?? payload?.error ?? 'Something went wrong';
+}
 
 export const fetchPlatformStats = createAsyncThunk(
     'socialIntegration/fetchPlatformStats',
@@ -95,7 +102,7 @@ const socialIntegrationSlice = createSlice({
             })
             .addCase(fetchAllStatuses.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload;
+                state.error = errorMessage(action.payload);
             });
 
         // Fetch single status
@@ -113,7 +120,7 @@ const socialIntegrationSlice = createSlice({
             })
             .addCase(fetchStatus.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload;
+                state.error = errorMessage(action.payload);
             });
 
         // Connect platform
@@ -127,7 +134,7 @@ const socialIntegrationSlice = createSlice({
             })
             .addCase(connectPlatform.rejected, (state, action) => {
                 state.connecting = null;
-                state.error = action.payload;
+                state.error = errorMessage(action.payload);
             });
 
         // Fetch stats

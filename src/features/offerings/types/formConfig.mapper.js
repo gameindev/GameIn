@@ -21,7 +21,6 @@ export const FORM_CONFIG = {
         { value: "30s", label: "30s" },
         { value: "60s", label: "60s" },
         { value: "90s", label: "90s" },
-        { value: "custom", label: "Custom" },
     ],
     postTypes: [
         { value: "clothing", label: "Clothing" },
@@ -31,7 +30,6 @@ export const FORM_CONFIG = {
         { value: "beautyWellness", label: "Beauty & Wellness" },
         { value: "collectibles", label: "Collectibles" },
         { value: "digitalProducts", label: "Digital Products" },
-        { value: "custom", label: "Custom" },
     ],
     paymentTypes: [
         { value: "stripe", label: "Stripe" },

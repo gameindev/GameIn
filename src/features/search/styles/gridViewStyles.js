@@ -24,9 +24,9 @@ export const GridStyles = styled.div`
     .information {
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-between;
+        // justify-content: space-between;
         align-items: center;
-        gap: ${theme.gap.xs};
+        gap: ${theme.gap.md};
 
         .social_info {
         display: flex;
@@ -44,8 +44,8 @@ export const GridStyles = styled.div`
         }
 
         .progress {
-        border-left: 1px dashed ${theme.colors.inputBgColor[0]};
-        border-right: 1px dashed ${theme.colors.inputBgColor[0]};
+        // border-left: 1px dashed ${theme.colors.inputBgColor[0]};
+        // border-right: 1px dashed ${theme.colors.inputBgColor[0]};
         display: flex;
         justify-content: center;
         }

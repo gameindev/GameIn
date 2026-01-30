@@ -70,7 +70,7 @@ export const searchFilterFieldsMapper = [
         rightSection: <IconChevronDown size="1em" />,
         component: NativeSelect,
         componentType: "",
-        options: ["level", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+        options: ["level", "1", "2", "3", "4", "5", "6"],
     },
     {
         name: "sortBy",

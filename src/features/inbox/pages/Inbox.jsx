@@ -6,13 +6,16 @@ import { useConversationManagement } from "../hooks/useConversationManagement";
 import { useSocketManagement } from "../hooks/useSocketManagement";
 import ConversationSidebar from "../components/ConversationSidebar";
 import ChatArea from "../components/ChatArea";
-import { useSearchParams } from "react-router";
+import { useSearchParams, useParams, useNavigate } from "react-router";
+import routePaths from "../../../app/router/routes";
 import { useEffect } from "react";
 
 const Inbox = () => {
     const user = useAppSelector(currentUser);
+    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    const conversationIdParam = searchParams.get('conversationId');
+    const { conversationId: conversationIdFromRoute } = useParams();
+    const conversationIdParam = conversationIdFromRoute || searchParams.get('conversationId');
     
     const {
         conversations,
@@ -26,7 +29,7 @@ const Inbox = () => {
 
     const { onlineUsers } = useSocketManagement(user, conversations, handleNewMessage);
 
-    // Auto-select conversation from URL query parameter
+
     useEffect(() => {
         if (conversationIdParam && conversations.length > 0 && !conversationsLoading) {
             const conversationToSelect = conversations.find(
@@ -70,7 +73,17 @@ const Inbox = () => {
                     selectedConversation={selectedConversation}
                     conversationsLoading={conversationsLoading}
                     onlineUsers={onlineUsers}
-                    onSelectConversation={handleSelectConversation}
+                    onSelectConversation={(conv) => {
+                        handleSelectConversation(conv);
+                        if (conv?.id) {
+                            navigate(
+                                routePaths.ACCOUNTS.INBOX.CONVERSATION.replace(
+                                    ':conversationId',
+                                    conv.id
+                                )
+                            );
+                        }
+                    }}
                     onCreateChat={handleCreateChat}
                     user={user}
                     onMarkAsRead={markConversationAsRead}

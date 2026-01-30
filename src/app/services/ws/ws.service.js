@@ -9,8 +9,18 @@ let socket = null;
  * @param {function} onEvents - object with event handlers
  */
 export function initSocket(token, onEvents = {}) {
-    if (socket) return socket; // reuse existing connection
+    // If socket exists, just add event listeners to it
+    if (socket) {
+        // Bind provided event handlers to existing socket
+        Object.entries(onEvents).forEach(([event, handler]) => {
+            if (typeof handler === "function") {
+                socket.on(event, handler);
+            }
+        });
+        return socket;
+    }
 
+    // Create new socket connection
     socket = io(import.meta.env.VITE_CHAT_SOCKET_URL || "http://localhost:3000", {
         auth: { token: `Bearer ${token}` },
         transports: ["websocket", "polling"],
@@ -18,7 +28,9 @@ export function initSocket(token, onEvents = {}) {
 
     // Bind provided event handlers dynamically
     Object.entries(onEvents).forEach(([event, handler]) => {
-        if (typeof handler === "function") socket.on(event, handler);
+        if (typeof handler === "function") {
+            socket.on(event, handler);
+        }
     });
 
     return socket;

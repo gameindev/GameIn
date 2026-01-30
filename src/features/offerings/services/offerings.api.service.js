@@ -15,7 +15,7 @@ export const fetchOfferingsService = async (userId) => {
             relations: [
                 "user",
                 "offering_offers",
-                "offering_price",
+                "offering_prices",
                 "last_adjusted_by",
             ],
         }));
@@ -42,7 +42,7 @@ export const fetchOfferingByIdService = async (userId, offeringId) => {
                 relations: [
                     "user",
                     "offering_offers",
-                    "offering_price",
+                    "offering_prices",
                     "last_adjusted_by",
                     "logo"
                 ],

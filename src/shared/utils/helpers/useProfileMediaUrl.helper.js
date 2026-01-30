@@ -7,8 +7,8 @@ export default function profileMediaUrlsHelper(userProfile) {
     
     if (!userProfile) {
         return {
-            avatarUrl: "/images/default-avatar.png",
-            coverImageUrl: "/images/default-cover.png",
+            avatarUrl: null,
+            coverImageUrl: null,
         };
     }
 

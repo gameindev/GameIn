@@ -15,7 +15,6 @@ export const TIME_MODE_CONFIG = {
         { value: "productreview", label: "Product Review" },
         { value: "visualOverlay", label: "Visual Overlay" },
         { value: "sponsored", label: "Sponsor Intro/Outro" },
-        { value: "custom", label: "custom" },
     ],
     [OfferingCategory.SOCIAL_POST]: [
         { value: "timespan", label: "Time span" },
@@ -24,7 +23,6 @@ export const TIME_MODE_CONFIG = {
         { value: "flashmention", label: "Flash Mention" },
         { value: "pinnedoverlay", label: "Pinned Overlay" },
         { value: "hashtagonly", label: "Hashtag Only" },
-        { value: "custom", label: "custom" },
     ],
     [OfferingCategory.MERCHANDISE]: [
         { value: "timespan", label: "Time span" },
@@ -33,7 +31,6 @@ export const TIME_MODE_CONFIG = {
         { value: "singleappr", label: "Single Appearance" },
         { value: "highlightmom", label: "Highlight Moment" },
         { value: "pinnedpost", label: "Pinned Post/Tag" },
-        { value: "custom", label: "custom" },
     ],
     default: [
         { value: "live", label: "Live" },

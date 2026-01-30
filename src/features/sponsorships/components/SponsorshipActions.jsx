@@ -29,25 +29,32 @@ const SponsorshipActions = ({
   const navigate = useNavigate();
   const { userProfile, isSelf } = useOutletContext();
   const user = useAppSelector(currentUser);
+
+  const isOwner = !isSelf && sponsorship.offering_offers.some(
+    (owner) =>
+      owner.updated_by_user_id !== null && owner.updated_by_user_id !== user.id,
+  );
+
   return (
     <Group justify="space-between" align="center" w="100%" wrap="nowrap">
       <Group gap="0.4em" wrap="nowrap">
         <IconButton
           iconSize={18}
+          disabled={isOwner}
           Icon={IconFile}
           onClick={() =>
             isSelf
               ? navigate(
                   routePaths.ACCOUNTS.OFFERINGS.FPP_EDIT_OFFERING.replace(
                     ":offeringId",
-                    sponsorship.id
-                  )
+                    sponsorship.id,
+                  ),
                 )
               : navigate(
                   routePaths.ACCOUNTS.OFFERINGS.TPP_EDIT_OFFERING.replace(
                     ":username",
-                    userProfile?.username
-                  ).replace(":offeringId", sponsorship.id)
+                    userProfile?.username,
+                  ).replace(":offeringId", sponsorship.id),
                 )
           }
         />

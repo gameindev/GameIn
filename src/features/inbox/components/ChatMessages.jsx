@@ -17,6 +17,7 @@ const ChatMessages = memo(
         setShowDocumentView,
         onSend,
         acknowledgeMessage,
+        onlineUsers = [],
     }) => {
         const viewportRef = useRef(null);
 
@@ -59,6 +60,7 @@ const ChatMessages = memo(
                             onSend={onSend}
                             acknowledgeMessage={acknowledgeMessage}
                             offeringId={m.json_data?.offering_id}
+                            onlineUsers={onlineUsers}
                         />
                     );
                 }
@@ -68,6 +70,7 @@ const ChatMessages = memo(
                         key={m.id}
                         message={m}
                         onViewDocument={() => setShowDocumentView(true)}
+                        onlineUsers={onlineUsers}
                     />
                 );
             });
@@ -78,6 +81,7 @@ const ChatMessages = memo(
             onSend,
             acknowledgeMessage,
             userId,
+            onlineUsers,
         ]);
 
         return (

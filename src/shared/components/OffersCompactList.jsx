@@ -22,12 +22,14 @@ import routePaths from "../../app/router/routes";
 import { useMemo, useCallback } from "react";
 
 export default function OffersCompactList({ limit = 4 }) {
-  const { sponsorships, loading, handleAcceptOffering, handleResetOffering } =
-    useSponsorships({ page: 1, limit: 10 });
-
   const navigate = useNavigate();
   const user = useAppSelector(currentUser);
   const { isSelf, userProfile } = useOutletContext();
+  const { sponsorships, loading, handleAcceptOffering, handleResetOffering } =
+    useSponsorships({
+      userId: userProfile?.id,
+      profileUserType: userProfile?.user_type,
+    });
 
   const offers = useMemo(() => {
     return (sponsorships || []).filter(
@@ -189,27 +191,27 @@ export default function OffersCompactList({ limit = 4 }) {
                   )} */}
 
                   <Box flex={0.5} ta="center">
-                      <IconButton
-                        size="md"
-                        iconSize={16}
-                        Icon={IconFile}
-                        onClick={() =>
-                          isSelf
-                            ? navigate(
-                                routePaths.ACCOUNTS.OFFERINGS.FPP_EDIT_OFFERING.replace(
-                                  ":offeringId",
-                                  s.id
-                                )
+                    <IconButton
+                      size="md"
+                      iconSize={16}
+                      Icon={IconFile}
+                      onClick={() =>
+                        isSelf
+                          ? navigate(
+                              routePaths.ACCOUNTS.OFFERINGS.FPP_EDIT_OFFERING.replace(
+                                ":offeringId",
+                                s.id
                               )
-                            : navigate(
-                                routePaths.ACCOUNTS.OFFERINGS.TPP_EDIT_OFFERING.replace(
-                                  ":username",
-                                  userProfile?.username
-                                ).replace(":offeringId", s.id)
-                              )
-                        }
-                      />
-                    </Box>
+                            )
+                          : navigate(
+                              routePaths.ACCOUNTS.OFFERINGS.TPP_EDIT_OFFERING.replace(
+                                ":username",
+                                userProfile?.username
+                              ).replace(":offeringId", s.id)
+                            )
+                      }
+                    />
+                  </Box>
                 </Flex>
               </Paper>
             );

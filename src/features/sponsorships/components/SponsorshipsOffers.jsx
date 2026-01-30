@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate, useOutletContext } from "react-router";
 import useSponsorships from "../hooks/useSponsorships";
 import { OfferingStatus } from "../../../shared/enums/offeringStatusEnum";
@@ -16,10 +16,8 @@ const SponsorshipsOffers = () => {
     const { userProfile, isSelf } = useOutletContext();
     const user = useAppSelector(currentUser);
     const { sponsorships, handleAcceptOffering, handleNegotiateOffering, handleResetOffering } =
-        useSponsorships({ userId: userProfile?.id });
-    
-    
-    
+        useSponsorships({ userId: userProfile?.id, profileUserType: userProfile?.user_type });
+
     const navigate = useNavigate();
     
    

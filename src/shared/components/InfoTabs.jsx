@@ -45,7 +45,7 @@ export default function InfoTabs({ tabLists }) {
   const activeTab = location.pathname.startsWith("/offerings")
     ? hasOffering
       ? "/offerings"
-      : "/sponsorships"
+      : "/stats"
     : matchedTab || tabLists[0]?.value;
 
   return (

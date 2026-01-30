@@ -20,7 +20,7 @@ export function withRoleAccess(Component) {
                 case USERTYPES.BRAND.toLowerCase():
                     return {
                         canEdit: true,
-                        overrideDisabledFields: ["repetation", "size", "duration",],
+                        overrideDisabledFields: ["repetation", "size", "duration","choosePrice", "startDate", "endDate"],
                     };
                 case USERTYPES.COMMUNITY.toLowerCase():
                     return {

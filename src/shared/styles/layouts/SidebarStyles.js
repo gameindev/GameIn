@@ -4,10 +4,12 @@ export const SidebarStyles = styled.aside`
   display: flex;
   width: 100%;
   min-width: 20.625em;
+  max-width: 16em;
   background: ${({ theme }) => theme.colors.secondaryGrey[1]};
   position: sticky;
   top: 5em;
   height: calc(100vh - 5em);
+  align-self: flex-start;
 
   .profile-icons {
     background: ${({ theme }) => theme.colors.textSecondary[0]};
@@ -39,6 +41,7 @@ export const SidebarStyles = styled.aside`
     .profile-links{
       padding: 1.5em 1em;
       flex-basis: calc(100% - 4.375em);
+      width: 75%;
 
       ul{
         display: flex;
@@ -54,6 +57,7 @@ export const SidebarStyles = styled.aside`
             .mantine-Accordion-label{
               color: ${({ theme }) => theme.colors.text[0]};
               text-transform: uppercase;
+              padding: 0.5rem 0;
             }
 
             & .mantine-Accordion-control:hover{
@@ -74,7 +78,7 @@ export const SidebarStyles = styled.aside`
             .mantine-Accordion-panel a{
               display: flex;
               align-items: center;
-              padding: 1em 1.5em;
+              padding: 0.5em 1.5em;
               gap: 0.75em;
               border-radius: 0.313em;
               text-decoration: none;
@@ -121,7 +125,7 @@ export const SidebarStyles = styled.aside`
       li > a {
         display: flex;
         align-items: center;
-        padding: 1em 1.5em;
+        padding: 0.5em 1.5em;
         gap: 0.75em;
         border-radius: 0.313em;
         text-decoration: none;
@@ -147,5 +151,6 @@ export const SidebarStyles = styled.aside`
       }
     }
   }
+    
 `;
 

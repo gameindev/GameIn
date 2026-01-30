@@ -15,9 +15,16 @@ const SponsorshipDetails = ({
   onNegotiate,
   onReject
 }) => {
-  const offers = offeringService.getLatestOffers(
-    sponsorship.offering_offers || []
+  const latestPrice = offeringService.getLatestPrice(
+    sponsorship.offering_prices || []
   );
+  const previousPrice = (sponsorship.offering_prices || [])
+    .filter((price) => price.version < (latestPrice?.version ?? 0))
+    .sort((a, b) => b.version - a.version)[0];
+  const priceChanged =
+    previousPrice?.price &&
+    latestPrice?.price &&
+    previousPrice.price !== latestPrice.price;
 
   return (
     <Box py={rem(72)} px={rem(70)}>
@@ -31,8 +38,17 @@ const SponsorshipDetails = ({
             {sponsorship.description}
           </Text>
 
-          <Text size="2.5em" fw={700}>
-            ${sponsorship.offering_price?.price}
+          <Text
+            size="2.5em"
+            fw={700}
+            c={priceChanged ? theme.colors.yellow[0] : theme.colors.white[0]}
+          >
+            ${latestPrice?.price}
+            {priceChanged && (
+              <Text span c="dimmed" ml={8} fw={400} size="1rem">
+                (updated)
+              </Text>
+            )}
           </Text>
 
           <Text size="sm" my={20}>

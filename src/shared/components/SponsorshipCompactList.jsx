@@ -18,10 +18,13 @@ export default function SponsorshipCompactList({
   emptyText = "No ongoing sponsorships",
   limit = 4,
 }) {
-  const { sponsorships, loading } = useSponsorships({ page: 1, limit: 10 });
   const navigate = useNavigate();
   const { isSelf, userProfile } = useOutletContext();
-
+  const { sponsorships, loading } = useSponsorships({
+    userId: userProfile?.id,
+    profileUserType: userProfile?.user_type,
+  });
+  
   const derived =
     items && items.length
       ? items
@@ -44,7 +47,7 @@ export default function SponsorshipCompactList({
 
   const visible = (derived || []).slice(0, limit);
   const resolvedEmptyText = emptyText;
-
+  
   return (
     <Box>
       {/* Header */}

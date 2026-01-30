@@ -14,15 +14,20 @@ import StatsSection from "./components/StatsSection";
 import LevelBadge from "./components/LevelBadge";
 import SponsorshipSection from "./components/SponsorshipSection";
 import { Button } from "@mantine/core";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import IconButton from "../../../shared/components/IconButton";
 import { IconMessage } from "@tabler/icons-react";
 import FollowButton from "../../../shared/components/FollowButton";
+import Separator from "../../../shared/components/Separator";
 import routePaths from "../../../app/router/routes";
+import routeService from "../../../app/services/route/routeService";
+import { useAppSelector } from "../../../app/store/hooks";
+import { currentUser } from "../../auth/store/selector";
 
 export default function ProfileBanner({ userProfile, isSelf }) {
   if (!userProfile) return null;
   const navigate = useNavigate();
+  const user = useAppSelector(currentUser);
 
   const { avatarUrl, coverImageUrl } = profileMediaUrlsHelper(userProfile);
   // console.log(userProfile)
@@ -33,8 +38,12 @@ export default function ProfileBanner({ userProfile, isSelf }) {
     user_type === USERTYPES.CREATOR
       ? creator_profile
       : user_type === USERTYPES.BRAND
-      ? brand_profile
-      : community_profile;
+        ? brand_profile
+        : community_profile;
+  const displayName =
+    profile?.first_name || profile?.last_name
+      ? `${profile?.first_name || ""} ${profile?.last_name || ""}`.trim()
+      : profile?.brand_name || userProfile?.username || "";
 
   const stats = {
     views: profile?.views || "0",
@@ -56,6 +65,9 @@ export default function ProfileBanner({ userProfile, isSelf }) {
             radius={0.35}
             size="180"
             controls={isSelf}
+            displayName={displayName}
+            firstName={profile?.first_name}
+            lastName={profile?.last_name}
           />
         </UserAvatar>
 
@@ -64,8 +76,15 @@ export default function ProfileBanner({ userProfile, isSelf }) {
             <UserInfo user={userProfile} />
             <StatsSection stats={stats} />
           </div>
+          <Separator size="3.5em" />
           <LevelBadge level={profile?.rank || 1} />
-          <SponsorshipSection sponsors={userProfile?.sponsors || []} />
+          <Separator size="3.5em" />
+          <SponsorshipSection
+            sponsors={userProfile?.sponsors || []}
+            userProfile={userProfile}
+            isSelf={isSelf}
+          />
+          <Separator size="3.5em" />
 
           <ActionWrapper>
             {isSelf ? (
@@ -82,11 +101,15 @@ export default function ProfileBanner({ userProfile, isSelf }) {
               </div>
             ) : (
               <>
-                {/* <div className="interaction">
-                                    <Link to={`/inbox`}>
-                                        <IconButton Icon={IconMessage} hoverClass="hoverGrey" />
-                                    </Link>
-                                </div> */}
+                <div className="interaction">
+                  <IconButton
+                    Icon={IconMessage}
+                    hoverClass="hoverGrey"
+                    onClick={() =>
+                      routeService.messageRoute(userProfile.id, navigate, user)
+                    }
+                  />
+                </div>
                 <div className="actions">
                   <FollowButton targetUserId={userProfile.id} />
                   <Button variant="primary" size="xs">

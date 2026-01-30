@@ -18,6 +18,12 @@ export const HeaderSection = styled.header`
     .logo {
       width: 11.5em;
     }
+
+    .searchbar {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+    }
   }
 
   nav {

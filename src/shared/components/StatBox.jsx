@@ -24,6 +24,7 @@ const StatBox = ({
         }
     };
 
+    const shouldShowSpacer = !accordion;
 
     return (
         <Box
@@ -65,7 +66,7 @@ const StatBox = ({
                 </Flex>
 
                 {accordion ? (
-                    <Collapse h={"100%"} in={opened}>
+                    <Collapse in={opened}>
                         <Box mt="sm">{children}</Box>
                     </Collapse>
                 ) : (
@@ -75,7 +76,7 @@ const StatBox = ({
                 )}
             </Box>
 
-            <Box style={{ flexGrow: 1 }} />
+            {shouldShowSpacer && <Box style={{ flexGrow: 1 }} />}
 
             {actionCTA && (
                 <Button

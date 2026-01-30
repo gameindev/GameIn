@@ -1,3 +1,5 @@
+import { offeringService } from "../services";
+
 export const FIELD_MAPPERS = {
     dateTitle: {
         fromApi: (api = {}) => ({
@@ -21,14 +23,14 @@ export const FIELD_MAPPERS = {
         toApi: (form = {}) =>
             form?.acknowledgement ? { is_terms_signed: form.acknowledgement } : {},
     },
-
+    
     price: {
         fromApi: (api = {}) => ({
-            choosePrice: api?.offering_price?.price || "",
-            gameinFee: api?.offering_price?.platform_fee || "",
-            gameinTax: api?.offering_price?.tax || "",
+            choosePrice: offeringService.getLatestPrice(api?.offering_prices)?.price || "",
+            gameinFee: offeringService.getLatestPrice(api?.offering_prices)?.platform_fee || "",
+            gameinTax: offeringService.getLatestPrice(api?.offering_prices)?.tax || "",
             paymentType:
-                api?.offering_price?.payment_provider?.toLowerCase() || "manual",
+                offeringService.getLatestPrice(api?.offering_prices)?.payment_provider?.toLowerCase() || "manual",
         }),
         toApi: (form = {}) => ({
             ...(form?.choosePrice && { price: form.choosePrice }),
