@@ -9,7 +9,7 @@ const NewsFeed = () => {
   return (
     <Grid gutter={20}>
       <Grid.Col span={{ base: 12 }}>
-        <UserPosts showAddBox />
+        <UserPosts showAddBox={true} />
       </Grid.Col>
     </Grid>
   );

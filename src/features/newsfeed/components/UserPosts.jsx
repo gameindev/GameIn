@@ -87,7 +87,7 @@ function PostMedia({ media = [] }) {
     return null;
 }
 
-export default function UserPosts({ showAddBox = false }) {
+export default function UserPosts({ showAddBox = true }) {
     const dispatch = useAppDispatch();
     const feedState = useAppSelector((state) => state.feed);
     const posts = feedState?.posts || [];
@@ -155,21 +155,19 @@ export default function UserPosts({ showAddBox = false }) {
         );
     }
 
-    // Show empty state only if not loading and no posts
-    if (!loading && safePosts.length === 0) {
-        return (
-            <Center p="xl">
-                <Text c="dimmed">No posts yet. Be the first to post!</Text>
-            </Center>
-        );
-    }
-
     return (
         <Box>
             <Grid gutter={20} mb="md">
                 {showAddBox && (
                     <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
                         <AddPostBox />
+                    </Grid.Col>
+                )}
+                {!loading && safePosts.length === 0 && (
+                    <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+                        <Center p="xl" style={{ minHeight: 120 }}>
+                            <Text c="dimmed" size="sm">No posts yet. Be the first to post!</Text>
+                        </Center>
                     </Grid.Col>
                 )}
                 {safePosts.map((post) => {
