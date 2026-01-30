@@ -160,8 +160,11 @@ const ENV = process.env.NODE_ENV || 'development';
                     namingStrategy: new SnakeNamingStrategy(),
                     // logging: isProduction ? ['error', 'warn'] : ['error', 'warn', 'query'],
                     ssl: configService.get<boolean>('database.ssl') || process.env.DATABASE_SSL === 'true'
-                        ? false
-                        : false,
+                        ? {
+                        rejectUnauthorized: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false',
+                        ca: process.env.DATABASE_SSL_CA ? fs.readFileSync(process.env.DATABASE_SSL_CA).toString() : undefined
+                    }
+                    : false,
 
                     // TODO: Need to replace in Production
                     // ? {
