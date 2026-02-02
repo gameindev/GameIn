@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "../../../app/store/hooks";
-import { fetchFeed, toggleLikePost } from "../store/feedSlice";
+import { fetchFeed, toggleLikePost, deletePost } from "../store/feedSlice";
+import { currentUser } from "../../auth/store/selector";
 import NewsCard from "../../../shared/components/NewsCard";
-import { Box, Grid, Image, Loader, Center, Text, Button, Badge } from "@mantine/core";
+import { Box, Grid, Image, Loader, Center, Text, Button, Badge, Menu, ActionIcon } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
-import { IconHeart, IconHeartFilled, IconInfoCircle } from "@tabler/icons-react";
+import { IconHeart, IconHeartFilled, IconInfoCircle, IconDotsVertical, IconTrash } from "@tabler/icons-react";
 import AddPostBox from "./AddPostBox";
 
 // Helper to get media URL
@@ -89,6 +90,7 @@ function PostMedia({ media = [] }) {
 
 export default function UserPosts({ showAddBox = true }) {
     const dispatch = useAppDispatch();
+    const user = useAppSelector(currentUser);
     const feedState = useAppSelector((state) => state.feed);
     const posts = feedState?.posts || [];
     const loading = feedState?.loading || false;
@@ -122,6 +124,17 @@ export default function UserPosts({ showAddBox = true }) {
             postId: post.id,
             isLiked: post.is_liked || false
         }));
+    };
+
+    const handleDeletePost = async (post) => {
+        if (!window.confirm('Are you sure you want to delete this post?')) return;
+        await dispatch(deletePost(post.id));
+    };
+
+    const isPostOwner = (post) => {
+        if (post.source === 'system') return false;
+        const ownerId = post.user?.id ?? post.user_id;
+        return ownerId != null && user?.id != null && Number(ownerId) === Number(user.id);
     };
 
     if (nothingToShow) return null;
@@ -173,61 +186,91 @@ export default function UserPosts({ showAddBox = true }) {
                 {safePosts.map((post) => {
                     const media = post.media || [];
                     const isSystemPost = post.source === 'system';
+                    const isOwner = isPostOwner(post);
                     const postTitle = isSystemPost
                         ? (post.system_category ? post.system_category.charAt(0).toUpperCase() + post.system_category.slice(1) : 'System')
                         : (post.user?.username || post.title || "User");
 
                     return (
                         <Grid.Col key={post.id} span={{ base: 12, md: 6, lg: 4 }}>
-                            <NewsCard
-                                title={postTitle}
-                                date={formatDate(post.created_at)}
-                                initialLikes={post.like_count || 0}
-                                initiallyLiked={post.is_liked || false}
-                                showLikes={!isSystemPost}
-                                onLikeChange={() => !isSystemPost && handleLike(post)}
-                                likeDisabled={!!likingPosts[post.id]}
-                            >
-                                {isSystemPost && (
-                                    <Badge
-                                        color="blue"
-                                        variant="light"
-                                        leftSection={<IconInfoCircle size={14} />}
-                                        mb="sm"
-                                    >
-                                        System Update
-                                    </Badge>
-                                )}
-                                {post.content && (
-                                    <Box mb="sm">
-                                        <Text size="sm" lineClamp={4}>
-                                            {post.content}
-                                        </Text>
-                                    </Box>
-                                )}
-                                <PostMedia media={media} />
-                                {post.location && (
-                                    <Text size="xs" c="dimmed" mt="xs">
-                                        📍 {post.location}
-                                    </Text>
-                                )}
-                                {post.hashtags && post.hashtags.length > 0 && (
-                                    <Box mt="xs">
-                                        {post.hashtags.map((tag, idx) => (
-                                            <Text
-                                                key={idx}
-                                                component="span"
-                                                size="xs"
-                                                c="blue"
-                                                mr="xs"
-                                                style={{ cursor: 'pointer' }}
+                            <Box pos="relative">
+                                {isOwner && (
+                                    <Menu position="bottom-end" shadow="md" width={160}>
+                                        <Menu.Target>
+                                            <ActionIcon
+                                                variant="subtle"
+                                                color="gray"
+                                                size="sm"
+                                                pos="absolute"
+                                                top={8}
+                                                right={8}
+                                                style={{ zIndex: 10 }}
+                                                aria-label="Post options"
                                             >
-                                                #{tag}
-                                            </Text>
-                                        ))}
-                                    </Box>
+                                                <IconDotsVertical size={18} />
+                                            </ActionIcon>
+                                        </Menu.Target>
+                                        <Menu.Dropdown>
+                                            <Menu.Item
+                                                leftSection={<IconTrash size={14} />}
+                                                color="red"
+                                                onClick={() => handleDeletePost(post)}
+                                            >
+                                                Delete post
+                                            </Menu.Item>
+                                        </Menu.Dropdown>
+                                    </Menu>
                                 )}
-                            </NewsCard>
+                                <NewsCard
+                                    title={postTitle}
+                                    date={formatDate(post.created_at)}
+                                    initialLikes={post.like_count || 0}
+                                    initiallyLiked={post.is_liked || false}
+                                    showLikes={!isSystemPost}
+                                    onLikeChange={() => !isSystemPost && handleLike(post)}
+                                    likeDisabled={!!likingPosts[post.id]}
+                                >
+                                    {isSystemPost && (
+                                        <Badge
+                                            color="blue"
+                                            variant="light"
+                                            leftSection={<IconInfoCircle size={14} />}
+                                            mb="sm"
+                                        >
+                                            System Update
+                                        </Badge>
+                                    )}
+                                    {post.content && (
+                                        <Box mb="sm">
+                                            <Text size="sm" lineClamp={4}>
+                                                {post.content}
+                                            </Text>
+                                        </Box>
+                                    )}
+                                    <PostMedia media={media} />
+                                    {post.location && (
+                                        <Text size="xs" c="dimmed" mt="xs">
+                                            📍 {post.location}
+                                        </Text>
+                                    )}
+                                    {post.hashtags && post.hashtags.length > 0 && (
+                                        <Box mt="xs">
+                                            {post.hashtags.map((tag, idx) => (
+                                                <Text
+                                                    key={idx}
+                                                    component="span"
+                                                    size="xs"
+                                                    c="blue"
+                                                    mr="xs"
+                                                    style={{ cursor: 'pointer' }}
+                                                >
+                                                    #{tag}
+                                                </Text>
+                                            ))}
+                                        </Box>
+                                    )}
+                                </NewsCard>
+                            </Box>
                         </Grid.Col>
                     );
                 })}
