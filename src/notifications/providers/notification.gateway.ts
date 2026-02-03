@@ -20,6 +20,7 @@ import { ConfigType } from '@nestjs/config';
     cors: {
         origin: [
             'https://gamein.gg',
+            'https://dev.gamein.gg',
             'https://www.gamein.gg',
             'https://frontend-app-vn9qp.ondigitalocean.app',
         ],
