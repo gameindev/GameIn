@@ -124,6 +124,8 @@ export class OfferingsOrderService {
                 return; // Don't send notification for other status changes
         }
 
+        const dashboardUrl = process.env.FRONTEND_HOST || process.env.FRONTEND_URL || 'https://gamein.gg';
+
         await this.notificationEvents.publishNotification({
             userId: notifyUser.id,
             type: notificationType,
@@ -143,6 +145,13 @@ export class OfferingsOrderService {
                 email: notifyUser.email,
                 emailTemplate: 'order-status-update',
                 emailSubject: title,
+                emailData: {
+                    username: notifyUser?.username || notifyUser?.email || 'there',
+                    orderTitle: order.title,
+                    newStatus: String(newStatus),
+                    orderIdString: order.order_id,
+                    dashboardUrl,
+                },
             },
             priority: 'normal',
         });

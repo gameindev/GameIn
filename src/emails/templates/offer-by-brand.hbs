@@ -1,0 +1,17 @@
+<p>Hi {{username}},</p>
+<p>A brand has sent you an offer.</p>
+{{#if offerTitle}}
+<p><strong>Offering:</strong> {{offerTitle}}</p>
+{{/if}}
+{{#if brandName}}
+<p><strong>From:</strong> {{brandName}}</p>
+{{/if}}
+<p>Review and respond to the offer in your dashboard.</p>
+<p>
+    <a href="{{dashboardUrl}}"
+        style="display:inline-block; padding:10px 16px; border-radius:6px; background:#24292e; color:#fff; text-decoration:none;">
+        View Offer
+    </a>
+</p>
+<p>If the button doesn't work, copy this link:</p>
+<p><a href="{{dashboardUrl}}">{{dashboardUrl}}</a></p>

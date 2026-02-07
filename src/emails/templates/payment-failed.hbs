@@ -1,0 +1,18 @@
+<p>Hi {{username}},</p>
+<p>We were unable to process your payment.</p>
+{{#if orderTitle}}
+<p><strong>Order:</strong> {{orderTitle}}</p>
+{{/if}}
+{{#if amount}}
+<p><strong>Amount:</strong> {{currency}} {{amount}}</p>
+{{/if}}
+<p>Please check your payment method and try again, or use a different card.</p>
+<p>
+    <a href="{{dashboardUrl}}"
+        style="display:inline-block; padding:10px 16px; border-radius:6px; background:#24292e; color:#fff; text-decoration:none;">
+        Try Again
+    </a>
+</p>
+<p>If the button doesn't work, copy this link:</p>
+<p><a href="{{dashboardUrl}}">{{dashboardUrl}}</a></p>
+<p>If the problem continues, please contact support.</p>

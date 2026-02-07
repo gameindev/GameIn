@@ -1,0 +1,20 @@
+<p>Hi {{username}},</p>
+<p>Payment was successful. Thank you!</p>
+{{#if orderTitle}}
+<p><strong>Order:</strong> {{orderTitle}}</p>
+{{/if}}
+{{#if orderIdString}}
+<p><strong>Order ID:</strong> {{orderIdString}}</p>
+{{/if}}
+{{#if amount}}
+<p><strong>Amount received:</strong> {{currency}} {{amount}}</p>
+{{/if}}
+<p>You can view the order details in your dashboard.</p>
+<p>
+    <a href="{{dashboardUrl}}"
+        style="display:inline-block; padding:10px 16px; border-radius:6px; background:#24292e; color:#fff; text-decoration:none;">
+        View Order
+    </a>
+</p>
+<p>If the button doesn't work, copy this link:</p>
+<p><a href="{{dashboardUrl}}">{{dashboardUrl}}</a></p>

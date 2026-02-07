@@ -1,0 +1,17 @@
+<p>Hi {{username}},</p>
+<p>The creator has declined your offer.</p>
+{{#if offerTitle}}
+<p><strong>Offering:</strong> {{offerTitle}}</p>
+{{/if}}
+{{#if creatorName}}
+<p><strong>Declined by:</strong> {{creatorName}}</p>
+{{/if}}
+<p>You can submit a new or adjusted offer from your dashboard.</p>
+<p>
+    <a href="{{dashboardUrl}}"
+        style="display:inline-block; padding:10px 16px; border-radius:6px; background:#24292e; color:#fff; text-decoration:none;">
+        View Dashboard
+    </a>
+</p>
+<p>If the button doesn't work, copy this link:</p>
+<p><a href="{{dashboardUrl}}">{{dashboardUrl}}</a></p>

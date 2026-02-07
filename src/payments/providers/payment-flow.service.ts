@@ -264,6 +264,10 @@ export class PaymentFlowService {
             return;
         }
 
+        const dashboardUrl = process.env.FRONTEND_HOST || process.env.FRONTEND_URL || 'https://gamein.gg';
+        const amountStr = paymentIntent.amount != null ? String(paymentIntent.amount) : '';
+        const currencyStr = paymentIntent.currency || 'USD';
+
         if (success) {
             // Notify creator about payment received
             await this.notificationEvents.publishNotification({
@@ -284,6 +288,14 @@ export class PaymentFlowService {
                     email: order.creator.email,
                     emailTemplate: 'payment-received',
                     emailSubject: `Payment Received: ${paymentIntent.currency} ${paymentIntent.amount}`,
+                    emailData: {
+                        username: order.creator?.username || order.creator?.email || 'there',
+                        orderTitle: order.title,
+                        orderIdString: order.order_id,
+                        amount: amountStr,
+                        currency: currencyStr,
+                        dashboardUrl,
+                    },
                 },
                 priority: 'high',
             });
@@ -307,6 +319,13 @@ export class PaymentFlowService {
                     email: order.brand.email,
                     emailTemplate: 'payment-failed',
                     emailSubject: `Payment Failed: ${order.title}`,
+                    emailData: {
+                        username: order.brand?.username || order.brand?.email || 'there',
+                        orderTitle: order.title,
+                        amount: amountStr,
+                        currency: currencyStr,
+                        dashboardUrl,
+                    },
                 },
                 priority: 'high',
             });

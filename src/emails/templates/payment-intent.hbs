@@ -1,0 +1,17 @@
+<p>Hi {{username}},</p>
+<p>A payment has been initiated for your order.</p>
+{{#if orderTitle}}
+<p><strong>Order:</strong> {{orderTitle}}</p>
+{{/if}}
+{{#if amount}}
+<p><strong>Amount:</strong> {{currency}} {{amount}}</p>
+{{/if}}
+<p>Complete the payment in your dashboard to confirm the order.</p>
+<p>
+    <a href="{{dashboardUrl}}"
+        style="display:inline-block; padding:10px 16px; border-radius:6px; background:#24292e; color:#fff; text-decoration:none;">
+        Complete Payment
+    </a>
+</p>
+<p>If the button doesn't work, copy this link:</p>
+<p><a href="{{dashboardUrl}}">{{dashboardUrl}}</a></p>

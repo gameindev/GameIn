@@ -276,6 +276,8 @@ export class OfferingsService {
             ? (offering.offering_price as any).currency
             : 'USD';
 
+        const dashboardUrl = process.env.FRONTEND_HOST || process.env.FRONTEND_URL || 'https://gamein.gg';
+
         // Notify brand (who adjusted the offering) that creator accepted and they need to proceed with payment
         await this.notificationEvents.publishNotification({
             userId: brand.id, // Brand who adjusted - they need to pay
@@ -298,6 +300,14 @@ export class OfferingsService {
                 email: brand.email,
                 emailTemplate: 'offer-accepted',
                 emailSubject: `Offering Accepted: ${offeringTitle}`,
+                emailData: {
+                    username: brand?.username || brand?.email || 'there',
+                    offerTitle: offeringTitle,
+                    creatorName,
+                    price: String(price),
+                    currency,
+                    dashboardUrl,
+                },
             },
             priority: 'high',
         }).catch((error) => {

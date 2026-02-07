@@ -82,7 +82,8 @@ export class PostOfferingOrderProvider {
         offering: any,
     ) {
         const brandName = brand.username || brand.email || 'A brand';
-        
+        const dashboardUrl = process.env.FRONTEND_HOST || process.env.FRONTEND_URL || 'https://gamein.gg';
+
         await this.notificationEvents.publishNotification({
             userId: creator.id,
             type: NotificationType.ORDER_CREATED,
@@ -103,6 +104,14 @@ export class PostOfferingOrderProvider {
                 email: creator.email,
                 emailTemplate: 'order-created',
                 emailSubject: `New Order: ${order.title}`,
+                emailData: {
+                    username: creator?.username || creator?.email || 'there',
+                    orderTitle: order.title,
+                    brandName,
+                    total: String(order.total),
+                    currency: order.currency,
+                    dashboardUrl,
+                },
             },
             priority: 'high',
         });
