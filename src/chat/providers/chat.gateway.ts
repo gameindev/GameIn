@@ -17,7 +17,7 @@ import { ChatService } from './chat.service';
     cors: {
         origin: [
             'https://gamein.gg',
-            'https://dev.gamein.gg',
+            'https://dev.gamein.gg',            
             'https://www.gamein.gg',
             'https://frontend-app-vn9qp.ondigitalocean.app',
         ],
@@ -50,7 +50,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         try {
             await this.kafkaService.subscribeToTopic('chat.message.read', async (payload) => {
                 const readData = JSON.parse(payload.message.value.toString());
-                console.log('Received read event from Kafka:', readData);
+                // console.log('Received read event from Kafka:', readData); //TODO Console
                 await this.handleMessageReadEvent(readData);
             });
             console.log('Read event consumer set up successfully');
@@ -96,7 +96,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
                 issuer: this.jwtConfiguration.issuer,
             });
 
-            console.log('Authenticated user:', user);
+            // console.log('Authenticated user:', user); //TODO Console
 
             // Store in client data for later use
             client.data.user_id = user.sub; // JWT sub field contains user ID
@@ -105,13 +105,13 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
             client.data.user_type = user.user_type;
             client.data.socket_id = client.id;
 
-            console.log('Authenticated client connected:', {
-                userId: user.sub,
-                username: user.username,
-                email: user.email,
-                userType: user.user_type,
-                socketId: client.id
-            });
+            // console.log('Authenticated client connected:', {
+            //     userId: user.sub,
+            //     username: user.username,
+            //     email: user.email,
+            //     userType: user.user_type,
+            //     socketId: client.id
+            // }); //TODO Console
 
             // Join global online users room (for inbox page)
             client.join('online_users');
@@ -138,7 +138,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
 
     handleDisconnect(client: Socket) {
-        console.log('Client disconnected:', client.data);
+        // console.log('Client disconnected:', client.data); //TODO Console
 
         // Leave global online users room
         client.leave('online_users');
@@ -165,16 +165,16 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     async joinConversation(client: Socket, conversationId: number): Promise<void> {
         client.join(`conv:${conversationId}`);
         client.data.conversation_id = conversationId;
-        console.log(client.data.email);
+        // console.log(client.data.email); //TODO Console
         try {
             await this.subscribeToConversation(conversationId);
             const messages = await this.chatService.getConversationMessages(conversationId);
-            console.log(messages);
+            // console.log(messages); //TODO Console
             this.server.to(`conv:${conversationId}`).emit('messages', messages);
         } catch (err) {
             console.error('❌ Redis subscription failed:', err);
         }
-        console.log(`✅ ${client.data.email} joined conv:${conversationId}`);
+        // console.log(`✅ ${client.data.email} joined conv:${conversationId}`); //TODO Console
     }
 
 
@@ -185,7 +185,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         client.leave(`conv:${conversationId}`);
         client.data.conversation_id = null;
 
-        console.log(`User ${client.data.email} left conversation ${conversationId}`);
+        // console.log(`User ${client.data.email} left conversation ${conversationId}`); //TODO Console
 
         // Notify others in the conversation
         client.to(`conv:${conversationId}`).emit('user_left_conversation', {
@@ -250,7 +250,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
      */
     broadcastOnlineUsers(): void {
         const onlineUsers = this.getOnlineUsers();
-        console.log(onlineUsers);
+        // console.log(onlineUsers); //TODO Console
         this.server.emit('online_users_list', onlineUsers);
     }
 
@@ -273,7 +273,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         @MessageBody() data: { conversationId: number }
     ): Promise<void> {
         const conversationId = data.conversationId;
-        console.log('🚀 Joining conversation:', conversationId);
+        // console.log('🚀 Joining conversation:', conversationId); //TODO Console
         if (conversationId) {
             await this.joinConversation(client, conversationId);
             this.broadcastConversationUsers(conversationId);
@@ -411,7 +411,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
     // Method to handle Kafka read events and broadcast via WebSocket
     async handleMessageReadEvent(readData: any) {
-        console.log('Handling message read event:', readData);
+        // console.log('Handling message read event:', readData); //TODO Console    
 
         const broadcastData = {
             messageId: readData.messageId,

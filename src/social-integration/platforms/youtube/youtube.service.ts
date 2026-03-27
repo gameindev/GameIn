@@ -9,12 +9,26 @@ import { SocialIntegration } from '../../entities/social-integration.entity';
 import { ActiveUserData } from '../../../auth/interfaces/active-user-data.interface';
 import { SocialPlatform } from '../../enums/social-platform.enums';
 import youtubeConfig from './youtube.config';
+import { User } from '../../../users/user.entity';
+import { signOAuthState, verifyOAuthState } from '../../utils/oauth-state.util';
+import { postFormForJson } from '../../utils/form-http.util';
+import { maskClientId, socialDebugLog, socialErrorLog } from '../../utils/social-oauth-debug.util';
+
+const GOOGLE_AUTH = 'https://accounts.google.com/o/oauth2/v2/auth';
+const GOOGLE_TOKEN = 'https://oauth2.googleapis.com/token';
 
 const SCOPES = [
     'https://www.googleapis.com/auth/userinfo.profile',
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/youtube.readonly',
 ].join(' ');
+
+type GoogleTokenResponse = {
+    access_token: string;
+    refresh_token?: string;
+    expires_in?: number;
+    scope?: string;
+};
 
 @Injectable()
 export class YoutubeService implements SocialIntegrationServiceInterface {
@@ -26,153 +40,239 @@ export class YoutubeService implements SocialIntegrationServiceInterface {
         private readonly config: ConfigType<typeof youtubeConfig>,
         @InjectRepository(SocialIntegration)
         private readonly integrationRepo: Repository<SocialIntegration>,
-    ) {}
+    ) { }
 
-    async probeProfile(accessToken: string): Promise<any> {
-        const { data } = await firstValueFrom(
-            this.httpService.get('https://www.googleapis.com/oauth2/v2/userinfo', {
-                headers: { Authorization: `Bearer ${accessToken}` },
-            }),
-        );
-        if (!data?.id) throw new Error('YouTube probe failed');
-        return data;
-    }
-
-    profileSummary(profile: any): { id?: string; name?: string; username?: string } | undefined {
-        if (!profile) return undefined;
+    getCapabilities() {
         return {
-            id: profile.id,
-            name: profile.name,
-            username: profile.email ?? profile.name,
+            supportsLikes: true,
+            supportsViews: true,
+            viewsDefinition: 'YouTube video statistics.viewCount / likeCount',
         };
     }
 
+    async probeProfile(accessToken: string): Promise<any> {
+        const url = `https://www.googleapis.com/youtube/v3/channels?part=id,snippet&mine=true`;
+        socialDebugLog(this.logger, 'YouTube', 'probeProfile channels.list mine=true');
+        try {
+            const { data } = await firstValueFrom(
+                this.httpService.get(url, { headers: { Authorization: `Bearer ${accessToken}` } }),
+            );
+            socialDebugLog(this.logger, 'YouTube', 'probeProfile ok', { channelId: data?.items?.[0]?.id });
+            return data;
+        } catch (e) {
+            socialErrorLog(this.logger, 'YouTube', 'probeProfile', e);
+            throw e;
+        }
+    }
+
+    profileSummary(profile: any) {
+        const ch = profile?.items?.[0];
+        if (!ch) return undefined;
+        return { id: ch.id, name: ch.snippet?.title, username: ch.snippet?.customUrl ?? ch.snippet?.title };
+    }
+
     getAuthUrl(user: ActiveUserData): string {
-        const baseCallback = (this.config.youtubeCallbackUrl || '').trim().replace(/\/$/, '');
-        const redirectUri = baseCallback.includes('?') ? baseCallback : `${baseCallback}?platform=YOUTUBE`;
-        const params = new URLSearchParams({
-            client_id: (this.config.youtubeClientId || '').trim(),
-            redirect_uri: redirectUri,
-            response_type: 'code',
-            scope: SCOPES,
-            access_type: 'offline',
-            prompt: 'consent',
-            state: `${user.sub}`,
+        const state = signOAuthState({ sub: user.sub, platform: SocialPlatform.YOUTUBE });
+        const u = new URL(GOOGLE_AUTH);
+        u.searchParams.set('client_id', this.config.youtubeClientId);
+        u.searchParams.set('redirect_uri', this.config.youtubeCallbackUrl);
+        u.searchParams.set('response_type', 'code');
+        u.searchParams.set('scope', SCOPES);
+        u.searchParams.set('state', state);
+        u.searchParams.set('access_type', 'offline');
+        u.searchParams.set('prompt', 'consent');
+        socialDebugLog(this.logger, 'YouTube', 'getAuthUrl built', {
+            redirect_uri: this.config.youtubeCallbackUrl,
+            client_id: maskClientId(this.config.youtubeClientId),
         });
-        return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+        return u.toString();
     }
 
-    async handleCallback(code: string, state: string): Promise<void> {
-        const userId = parseInt(state, 10);
-        if (Number.isNaN(userId)) {
-            this.logger.error(`Invalid state: "${state}"`);
-            throw new Error('Invalid state: User ID not found.');
+    async handleCallback(code: string, state: string): Promise<number> {
+        socialDebugLog(this.logger, 'YouTube', 'handleCallback start', { codeLen: code?.length });
+        let payload;
+        try {
+            payload = verifyOAuthState(state, SocialPlatform.YOUTUBE);
+        } catch (e) {
+            socialErrorLog(this.logger, 'YouTube', 'verifyOAuthState', e);
+            throw e;
         }
-
-        const baseCallback = (this.config.youtubeCallbackUrl || '').trim().replace(/\/$/, '');
-        const redirectUri = baseCallback.includes('?') ? baseCallback : `${baseCallback}?platform=YOUTUBE`;
-        const clientId = (this.config.youtubeClientId || '').trim();
-        const clientSecret = (this.config.youtubeClientSecret || '').trim();
-        if (!redirectUri || !clientId || !clientSecret) {
-            throw new Error('YouTube OAuth is not configured.');
-        }
-
-        const tokenUrl = 'https://oauth2.googleapis.com/token';
-        const body = new URLSearchParams({
-            code: (code || '').trim(),
-            client_id: clientId,
-            client_secret: clientSecret,
-            redirect_uri: redirectUri,
-            grant_type: 'authorization_code',
-        });
-
-        const response = await firstValueFrom(
-            this.httpService.post(tokenUrl, body.toString(), {
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            }),
-        );
-        const { access_token, refresh_token } = response.data;
-
-        const profile = await this.probeProfile(access_token);
-
-        let integration = await this.integrationRepo.findOne({
-            where: { user: { id: userId }, platform: SocialPlatform.YOUTUBE },
-        });
-        if (integration) {
-            integration.access_token = access_token;
-            integration.refresh_token = refresh_token ?? integration.refresh_token;
-            integration.social_id = profile.id;
-            await this.integrationRepo.save(integration);
-        } else {
-            const newIntegration = this.integrationRepo.create({
-                user: { id: userId },
-                platform: SocialPlatform.YOUTUBE,
-                access_token,
-                refresh_token: refresh_token ?? undefined,
-                social_id: profile.id,
+        let token: GoogleTokenResponse;
+        try {
+            token = await postFormForJson<GoogleTokenResponse>(GOOGLE_TOKEN, {
+                code,
+                client_id: this.config.youtubeClientId,
+                client_secret: this.config.youtubeClientSecret ?? '',
+                redirect_uri: this.config.youtubeCallbackUrl,
+                grant_type: 'authorization_code',
             });
-            await this.integrationRepo.save(newIntegration);
+        } catch (e) {
+            socialErrorLog(this.logger, 'YouTube', 'handleCallback token exchange', e);
+            throw e;
         }
+        socialDebugLog(this.logger, 'YouTube', 'handleCallback token ok', { scope: token.scope });
+
+        let ch;
+        try {
+            ch = await firstValueFrom(
+                this.httpService.get(`https://www.googleapis.com/youtube/v3/channels?part=id&mine=true`, {
+                    headers: { Authorization: `Bearer ${token.access_token}` },
+                }),
+            );
+        } catch (e) {
+            socialErrorLog(this.logger, 'YouTube', 'handleCallback channels.list', e);
+            throw e;
+        }
+        const channelId = ch.data?.items?.[0]?.id;
+        if (!channelId) throw new Error('YouTube channel not found for authenticated user');
+
+        const userEntity = await this.integrationRepo.manager.getRepository(User).findOneBy({ id: payload.sub });
+        if (!userEntity) throw new Error('User not found');
+
+        const expiresAt = token.expires_in ? new Date(Date.now() + token.expires_in * 1000) : undefined;
+
+        let row = await this.integrationRepo.findOne({ where: { user: { id: payload.sub }, platform: SocialPlatform.YOUTUBE } });
+        if (!row) {
+            row = this.integrationRepo.create({
+                user: userEntity,
+                platform: SocialPlatform.YOUTUBE,
+                social_id: channelId,
+                access_token: token.access_token,
+                refresh_token: token.refresh_token,
+                token_expires_at: expiresAt,
+                scope_granted: token.scope,
+            });
+        } else {
+            row.social_id = channelId;
+            row.access_token = token.access_token;
+            if (token.refresh_token) row.refresh_token = token.refresh_token;
+            row.token_expires_at = expiresAt;
+            row.scope_granted = token.scope;
+        }
+        row = await this.integrationRepo.save(row);
+        socialDebugLog(this.logger, 'YouTube', 'handleCallback saved', { integrationId: row.id, channelId });
+        return row.id;
     }
 
-    async refreshTokenIfNeeded(integrationId: number): Promise<{ access_token: string; refresh_token?: string } | null | undefined> {
-        const integration = await this.integrationRepo.findOne({
-            where: { id: integrationId },
-            relations: ['user'],
-        });
-        if (!integration?.refresh_token) return null;
+    async refreshTokenIfNeeded(
+        integrationId: number,
+        refreshToken?: string,
+    ): Promise<{ access_token: string; refresh_token?: string } | null | undefined> {
+        if (!refreshToken) return null;
+        socialDebugLog(this.logger, 'YouTube', 'refreshTokenIfNeeded', { integrationId });
+        let token: GoogleTokenResponse;
+        try {
+            token = await postFormForJson<GoogleTokenResponse>(GOOGLE_TOKEN, {
+                client_id: this.config.youtubeClientId,
+                client_secret: this.config.youtubeClientSecret ?? '',
+                grant_type: 'refresh_token',
+                refresh_token: refreshToken,
+            });
+        } catch (e) {
+            socialErrorLog(this.logger, 'YouTube', 'refreshTokenIfNeeded', e);
+            throw e;
+        }
+        const row = await this.integrationRepo.findOne({ where: { id: integrationId } });
+        if (row) {
+            row.access_token = token.access_token;
+            if (token.refresh_token) row.refresh_token = token.refresh_token;
+            if (token.expires_in) row.token_expires_at = new Date(Date.now() + token.expires_in * 1000);
+            await this.integrationRepo.save(row);
+        }
+        return { access_token: token.access_token, refresh_token: token.refresh_token };
+    }
 
-        const tokenUrl = 'https://oauth2.googleapis.com/token';
-        const body = new URLSearchParams({
-            client_id: (this.config.youtubeClientId || '').trim(),
-            client_secret: (this.config.youtubeClientSecret || '').trim(),
-            refresh_token: integration.refresh_token,
-            grant_type: 'refresh_token',
-        });
-        const response = await firstValueFrom(
-            this.httpService.post(tokenUrl, body.toString(), {
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            }),
-        );
-        const { access_token, refresh_token } = response.data;
-        integration.access_token = access_token;
-        if (refresh_token) integration.refresh_token = refresh_token;
-        await this.integrationRepo.save(integration);
-        return { access_token, refresh_token };
+    async revokeToken(accessToken: string): Promise<void> {
+        try {
+            await postFormForJson('https://oauth2.googleapis.com/revoke', { token: accessToken });
+        } catch (e) {
+            this.logger.warn(`YouTube revoke: ${(e as Error).message}`);
+        }
     }
 
     async fetchAndStoreStats(integrationId: number): Promise<any> {
-        const integration = await this.integrationRepo.findOne({
-            where: { id: integrationId },
-            relations: ['user'],
-        });
-        if (!integration) throw new Error('Integration not found');
+        socialDebugLog(this.logger, 'YouTube', 'fetchAndStoreStats start', { integrationId });
+        const row = await this.integrationRepo.findOne({ where: { id: integrationId } });
+        if (!row?.access_token) throw new Error('YouTube integration missing token');
+        const auth = { Authorization: `Bearer ${row.access_token}` };
 
-        const tokens = await this.refreshTokenIfNeeded(integrationId);
-        const accessToken = tokens?.access_token ?? integration.access_token;
-        if (tokens?.access_token) integration.access_token = tokens.access_token;
-
-        const channelsUrl = 'https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet&mine=true';
-        const { data } = await firstValueFrom(
-            this.httpService.get(channelsUrl, {
-                headers: { Authorization: `Bearer ${accessToken}` },
-            }),
-        );
-        const items = data?.items ?? [];
-        const channel = items[0];
-        if (!channel) {
-            this.logger.warn(`No YouTube channel for integration ${integrationId}`);
-            return { followers: 0, views: 0, likes: null };
+        let chResp;
+        try {
+            chResp = await firstValueFrom(
+                this.httpService.get(
+                    `https://www.googleapis.com/youtube/v3/channels?part=statistics,contentDetails&mine=true`,
+                    { headers: auth },
+                ),
+            );
+        } catch (e) {
+            socialErrorLog(this.logger, 'YouTube', 'fetchAndStoreStats channels.list', e);
+            throw e;
         }
-        const stats = channel.statistics ?? {};
-        const subscriberCount = parseInt(String(stats.subscriberCount || 0), 10) || 0;
-        const viewCount = parseInt(String(stats.viewCount || 0), 10) || 0;
-        const videoCount = parseInt(String(stats.videoCount || 0), 10) || 0;
+        const ch = chResp.data?.items?.[0];
+        const subscribers = Number(ch?.statistics?.subscriberCount ?? 0);
+        const uploads = ch?.contentDetails?.relatedPlaylists?.uploads;
+        if (!uploads) {
+            socialDebugLog(this.logger, 'YouTube', 'fetchAndStoreStats no uploads playlist');
+            return { followers_total: subscribers, posts: [], views_definition: 'video_statistics' };
+        }
+
+        const videoIds: string[] = [];
+        let pageToken: string | undefined;
+        for (let p = 0; p < 200; p++) {
+            const params = new URLSearchParams({
+                part: 'snippet',
+                playlistId: uploads,
+                maxResults: '50',
+            });
+            if (pageToken) params.set('pageToken', pageToken);
+            let pl;
+            try {
+                pl = await firstValueFrom(
+                    this.httpService.get(`https://www.googleapis.com/youtube/v3/playlistItems?${params}`, { headers: auth }),
+                );
+            } catch (e) {
+                socialErrorLog(this.logger, 'YouTube', `fetchAndStoreStats playlistItems p=${p}`, e);
+                throw e;
+            }
+            for (const it of pl.data?.items ?? []) {
+                const vid = it?.snippet?.resourceId?.videoId;
+                if (vid) videoIds.push(vid);
+            }
+            pageToken = pl.data?.nextPageToken;
+            if (!pageToken) break;
+        }
+
+        const posts: Array<{ id: string; like_count: number; view_count: number }> = [];
+        const batchSize = 50;
+        for (let i = 0; i < videoIds.length; i += batchSize) {
+            const batch = videoIds.slice(i, i + batchSize);
+            let v;
+            try {
+                v = await firstValueFrom(
+                    this.httpService.get(
+                        `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${batch.map(encodeURIComponent).join(',')}`,
+                        { headers: auth },
+                    ),
+                );
+            } catch (e) {
+                socialErrorLog(this.logger, 'YouTube', 'fetchAndStoreStats videos.list batch', e);
+                throw e;
+            }
+            for (const item of v.data?.items ?? []) {
+                posts.push({
+                    id: item.id,
+                    like_count: Number(item.statistics?.likeCount ?? 0),
+                    view_count: Number(item.statistics?.viewCount ?? 0),
+                });
+            }
+        }
+
+        socialDebugLog(this.logger, 'YouTube', 'fetchAndStoreStats done', { videos: posts.length, subscribers });
         return {
-            followers: subscriberCount,
-            views: viewCount,
-            likes: null,
-            videoCount,
+            followers_total: subscribers,
+            posts,
+            views_definition: 'video_statistics',
+            sampled_posts_count: posts.length,
         };
     }
 }

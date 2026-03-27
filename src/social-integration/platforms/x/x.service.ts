@@ -5,18 +5,27 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import xConfig from './x.config';
 import { firstValueFrom } from 'rxjs';
-import { createHash, randomBytes } from 'crypto';
 import { SocialIntegrationServiceInterface } from '../../interfaces/social-integration-service.interface';
 import { SocialIntegration } from '../../entities/social-integration.entity';
-import { UsersService } from '../../../users/providers/users.service';
 import { ActiveUserData } from '../../../auth/interfaces/active-user-data.interface';
 import { SocialPlatform } from '../../enums/social-platform.enums';
+import { User } from '../../../users/user.entity';
+import { signOAuthState, verifyOAuthState, newPkceVerifier, pkceChallengeS256 } from '../../utils/oauth-state.util';
+import { postFormForJson } from '../../utils/form-http.util';
+import { maskClientId, socialDebugLog, socialErrorLog } from '../../utils/social-oauth-debug.util';
 
-const pkceStore = new Map<string, { verifier: string; userId: number; ts: number }>();
+const X_AUTH = 'https://x.com/i/oauth2/authorize';
+const X_API = 'https://api.x.com/2';
+
+type XTokenResponse = {
+    access_token: string;
+    refresh_token?: string;
+    expires_in?: number;
+    scope?: string;
+};
 
 @Injectable()
 export class XService implements SocialIntegrationServiceInterface {
-    private readonly baseUrl = 'https://api.twitter.com/2';
     private readonly logger = new Logger(XService.name);
 
     constructor(
@@ -25,305 +34,278 @@ export class XService implements SocialIntegrationServiceInterface {
         private readonly config: ConfigType<typeof xConfig>,
         @InjectRepository(SocialIntegration)
         private readonly integrationRepo: Repository<SocialIntegration>,
-
-        private readonly userService: UsersService// Inject the UserRep
     ) { }
 
-
-    /** Helpers */
-    private makeVerifier(len = 64) {
-        return randomBytes(len).toString('base64url'); // URL-safe, no padding
-    }
-    private makeChallenge(verifier: string) {
-        return createHash('sha256').update(verifier).digest('base64url');
-    }
-    private makeState(userId: number) {
-        return `${userId}.${randomBytes(16).toString('hex')}`;
-    }
-    private scopesString() {
-        // allow env as "a b c" or array
-        const s = this.config.xScopes;
-        return Array.isArray(s) ? s.join(' ') : `${s}`.trim();
+    getCapabilities() {
+        return {
+            supportsLikes: true,
+            supportsViews: true,
+            viewsDefinition: 'tweet public_metrics (likes); views/impressions depend on API product (may be 0 without non_public_metrics)',
+        };
     }
 
     async probeProfile(accessToken: string): Promise<any> {
-        return {}
+        const url = `${X_API}/users/me?user.fields=public_metrics`;
+        socialDebugLog(this.logger, 'X', 'probeProfile GET /users/me');
+        try {
+            const { data } = await firstValueFrom(
+                this.httpService.get(url, { headers: { Authorization: `Bearer ${accessToken}` } }),
+            );
+            socialDebugLog(this.logger, 'X', 'probeProfile ok', { userId: data?.data?.id });
+            return data;
+        } catch (err) {
+            socialErrorLog(this.logger, 'X', 'probeProfile', err);
+            throw err;
+        }
     }
 
-    /** redirect_uri must match exactly in authorize URL and token exchange and in X Developer Portal */
-    private getRedirectUri(): string {
-        return (this.config.xCallbackUrl || '').trim().replace(/\/$/, '');
+    profileSummary(profile: any) {
+        const d = profile?.data;
+        if (!d) return undefined;
+        return { id: d.id, name: d.name, username: d.username };
     }
 
     getAuthUrl(user: ActiveUserData): string {
-        const verifier = this.makeVerifier();
-        const challenge = this.makeChallenge(verifier);
-
-        const state = this.makeState(user.sub);
-        pkceStore.set(state, { verifier, userId: user.sub, ts: Date.now() });
-
-        const redirectUri = this.getRedirectUri();
-        if (!redirectUri) {
-            this.logger.warn('X_REDIRECT_URI is not set; OAuth will fail at callback');
-        }
-
-        const params = new URLSearchParams({
-            client_id: (this.config.xClientId || '').trim(),
-            redirect_uri: redirectUri,
-            response_type: 'code',
-            code_challenge: challenge,
-            code_challenge_method: 'S256',
-            scope: this.scopesString(),
-            state,
+        const verifier = newPkceVerifier();
+        const state = signOAuthState({
+            sub: user.sub,
+            platform: SocialPlatform.X,
+            pkce_verifier: verifier,
         });
-
-        return `https://x.com/i/oauth2/authorize?${params.toString()}`;
+        const u = new URL(X_AUTH);
+        u.searchParams.set('response_type', 'code');
+        u.searchParams.set('client_id', this.config.xClientId);
+        u.searchParams.set('redirect_uri', this.config.xCallbackUrl);
+        u.searchParams.set('scope', this.config.xScopes.replace(/,/g, ' '));
+        u.searchParams.set('state', state);
+        u.searchParams.set('code_challenge', pkceChallengeS256(verifier));
+        u.searchParams.set('code_challenge_method', 'S256');
+        const out = u.toString();
+        socialDebugLog(this.logger, 'X', 'getAuthUrl built', {
+            redirect_uri: this.config.xCallbackUrl,
+            client_id: maskClientId(this.config.xClientId),
+            scope: this.config.xScopes.replace(/,/g, ' ').slice(0, 120),
+        });
+        return out;
     }
 
-
-
-    async handleCallback(code: string, state: string): Promise<void> {
-        // 1) Look up PKCE verifier & user
-        const entry = pkceStore.get(state);
-        pkceStore.delete(state); // one-time use
-        if (!entry) {
-            this.logger.error(`Invalid/expired state: ${state}`);
-            throw new Error('Invalid or expired state');
+    async handleCallback(code: string, state: string): Promise<number> {
+        socialDebugLog(this.logger, 'X', 'handleCallback start', { codeLen: code?.length, stateLen: state?.length });
+        let payload;
+        try {
+            payload = verifyOAuthState(state, SocialPlatform.X);
+        } catch (e) {
+            socialErrorLog(this.logger, 'X', 'handleCallback verifyOAuthState', e);
+            throw e;
         }
-        const { verifier, userId } = entry;
+        const verifier = payload.pkce_verifier;
+        if (!verifier) throw new Error('Missing PKCE verifier in OAuth state');
+        socialDebugLog(this.logger, 'X', 'handleCallback state ok', { userId: payload.sub });
 
-        const redirectUri = this.getRedirectUri();
-        if (!redirectUri) {
-            this.logger.error('X_REDIRECT_URI is not set');
-            throw new Error('X callback URL is not configured');
-        }
-
-        // 2) Exchange code -> tokens (form-url-encoded)
-        const tokenUrl = 'https://api.twitter.com/2/oauth2/token';
-        const clientId = (this.config.xClientId || '').trim();
-        const clientSecret = (this.config.xClientSecret || '').trim();
-        if (!clientId || !clientSecret) {
-            this.logger.error('X_CLIENT_ID or X_CLIENT_SECRET is not set');
-            throw new Error('X OAuth credentials are not configured');
-        }
-        const body = new URLSearchParams({
+        const form: Record<string, string> = {
             grant_type: 'authorization_code',
-            code: (code || '').trim(),
-            redirect_uri: redirectUri,
+            code,
+            redirect_uri: this.config.xCallbackUrl,
             code_verifier: verifier,
+        };
+
+        const headers: Record<string, string> = {};
+        if (this.config.xClientSecret) {
+            const basic = Buffer.from(`${this.config.xClientId}:${this.config.xClientSecret}`).toString('base64');
+            headers['Authorization'] = `Basic ${basic}`;
+        } else {
+            form.client_id = this.config.xClientId;
+        }
+
+        socialDebugLog(this.logger, 'X', 'handleCallback POST oauth2/token', {
+            redirect_uri: this.config.xCallbackUrl,
+            client_id: maskClientId(this.config.xClientId),
+            authMode: this.config.xClientSecret ? 'Basic+secret' : 'public+client_id',
+        });
+        let token: XTokenResponse;
+        try {
+            token = await postFormForJson<XTokenResponse>(`${X_API}/oauth2/token`, form, headers);
+        } catch (e) {
+            socialErrorLog(this.logger, 'X', 'handleCallback token exchange', e);
+            throw e;
+        }
+        socialDebugLog(this.logger, 'X', 'handleCallback token ok', {
+            expires_in: token.expires_in,
+            scope: token.scope,
+            has_refresh: !!token.refresh_token,
         });
 
-        // Use axios auth option so Basic header is set correctly (avoids encoding issues)
-        let response: any;
+        let me;
         try {
-            response = await firstValueFrom(
-                this.httpService.post(tokenUrl, body.toString(), {
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                    },
-                    auth: {
-                        username: clientId,
-                        password: clientSecret,
-                    },
+            me = await firstValueFrom(
+                this.httpService.get(`${X_API}/users/me?user.fields=public_metrics,username,name`, {
+                    headers: { Authorization: `Bearer ${token.access_token}` },
                 }),
             );
-        } catch (error: any) {
-            const status = error?.response?.status;
-            const data = error?.response?.data;
-            this.logger.error(
-                `X token exchange failed: ${status} - ${JSON.stringify(data || error.message)}`,
-            );
-            if (status === 401) {
-                const hint = data?.error_description || data?.error || '';
-                if (/redirect_uri|callback/i.test(String(hint))) {
-                    throw new Error(
-                        `X OAuth redirect_uri rejected. Ensure X_REDIRECT_URI matches exactly the Callback URL in your X Developer Portal (App → User authentication settings). Current value: ${redirectUri}`,
-                    );
-                }
-                throw new Error(
-                    `X OAuth credentials rejected. Check X_CLIENT_ID and X_CLIENT_SECRET (use OAuth 2.0 Client ID and Secret from X Developer Portal). ${hint}`,
-                );
-            }
-            throw error;
+        } catch (e) {
+            socialErrorLog(this.logger, 'X', 'handleCallback GET /users/me (after token)', e);
+            throw e;
         }
+        const userId = me.data?.data?.id;
+        if (!userId) throw new Error('X /users/me missing id');
+        socialDebugLog(this.logger, 'X', 'handleCallback profile', { xUserId: userId, username: me.data?.data?.username });
 
-        const { access_token, refresh_token } = response.data;
+        const userEntity = await this.integrationRepo.manager.getRepository(User).findOneBy({ id: payload.sub });
+        if (!userEntity) throw new Error('User not found');
 
-        const userProfile = await this.getUserProfile(access_token);
+        const expiresAt = token.expires_in
+            ? new Date(Date.now() + token.expires_in * 1000)
+            : undefined;
 
-        let integration = await this.integrationRepo.findOne({
-            where: { user: { id: userId }, platform: SocialPlatform.X },
-        });
-
-        if (integration) {
-            integration.access_token = access_token;
-            integration.refresh_token = refresh_token;
-            integration.social_id = userProfile.id;
-            await this.integrationRepo.save(integration);
-        } else {
-            const newIntegration = this.integrationRepo.create({
-                user: { id: userId },
+        let row = await this.integrationRepo.findOne({ where: { user: { id: payload.sub }, platform: SocialPlatform.X } });
+        if (!row) {
+            row = this.integrationRepo.create({
+                user: userEntity,
                 platform: SocialPlatform.X,
-                access_token,
-                refresh_token,
-                social_id: userProfile.id,
+                social_id: userId,
+                access_token: token.access_token,
+                refresh_token: token.refresh_token,
+                token_expires_at: expiresAt,
+                scope_granted: token.scope,
             });
-            await this.integrationRepo.save(newIntegration);
+        } else {
+            row.social_id = userId;
+            row.access_token = token.access_token;
+            if (token.refresh_token) row.refresh_token = token.refresh_token;
+            row.token_expires_at = expiresAt;
+            row.scope_granted = token.scope;
         }
+        row = await this.integrationRepo.save(row);
+        socialDebugLog(this.logger, 'X', 'handleCallback saved integration', { integrationId: row.id });
+        return row.id;
     }
 
-    async getUserProfile(accessToken: string): Promise<any> {
-        const url = `${this.baseUrl}/users/me`;
-        const response = await firstValueFrom(
-            this.httpService.get(url, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            }),
-        );
-        return response.data.data;
-    }
-
-    async refreshTokenIfNeeded(integrationId: number): Promise<{ access_token: string; refresh_token?: string }> {
-        const integration = await this.integrationRepo.findOne({
-            where: { id: integrationId },
-            relations: ['user']
-        });
-
-        if (!integration) {
-            throw new Error('Integration not found');
-        }
-
-        if (!integration.refresh_token) {
-            throw new Error('No refresh token available');
-        }
-
-        const tokenUrl = 'https://api.twitter.com/2/oauth2/token';
-        const params = new URLSearchParams({
-            client_id: this.config.xClientId,
+    async refreshTokenIfNeeded(
+        integrationId: number,
+        refreshToken?: string,
+    ): Promise<{ access_token: string; refresh_token?: string } | null | undefined> {
+        if (!refreshToken) return null;
+        socialDebugLog(this.logger, 'X', 'refreshTokenIfNeeded', { integrationId });
+        const form: Record<string, string> = {
             grant_type: 'refresh_token',
-            refresh_token: integration.refresh_token
-        });
-
-        const response = await firstValueFrom(
-            this.httpService.post(tokenUrl, params.toString(), {
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-            })
-        );
-
-        const { access_token, refresh_token } = response.data;
-
-        // Update stored tokens
-        integration.access_token = access_token;
-        integration.refresh_token = refresh_token;
-
-        await this.integrationRepo.save(integration);
-
-        return { access_token, refresh_token }
+            refresh_token: refreshToken,
+        };
+        const headers: Record<string, string> = {};
+        if (this.config.xClientSecret) {
+            const basic = Buffer.from(`${this.config.xClientId}:${this.config.xClientSecret}`).toString('base64');
+            headers['Authorization'] = `Basic ${basic}`;
+        } else {
+            form.client_id = this.config.xClientId;
+        }
+        let token: XTokenResponse;
+        try {
+            token = await postFormForJson<XTokenResponse>(`${X_API}/oauth2/token`, form, headers);
+        } catch (e) {
+            socialErrorLog(this.logger, 'X', 'refreshTokenIfNeeded', e);
+            throw e;
+        }
+        const row = await this.integrationRepo.findOne({ where: { id: integrationId } });
+        if (row) {
+            row.access_token = token.access_token;
+            if (token.refresh_token) row.refresh_token = token.refresh_token;
+            if (token.expires_in) row.token_expires_at = new Date(Date.now() + token.expires_in * 1000);
+            await this.integrationRepo.save(row);
+        }
+        return { access_token: token.access_token, refresh_token: token.refresh_token };
     }
 
-
+    async revokeToken(accessToken: string): Promise<void> {
+        const form: Record<string, string> = { token: accessToken };
+        const headers: Record<string, string> = {};
+        if (this.config.xClientSecret) {
+            const basic = Buffer.from(`${this.config.xClientId}:${this.config.xClientSecret}`).toString('base64');
+            headers['Authorization'] = `Basic ${basic}`;
+        } else {
+            form.client_id = this.config.xClientId;
+        }
+        try {
+            await postFormForJson(`${X_API}/oauth2/revoke`, form, headers);
+        } catch (e) {
+            this.logger.warn(`X token revoke: ${(e as Error).message}`);
+        }
+    }
 
     async fetchAndStoreStats(integrationId: number): Promise<any> {
-        const integration = await this.integrationRepo.findOne({
-            where: { id: integrationId },
-            relations: ['user'],
-        });
+        socialDebugLog(this.logger, 'X', 'fetchAndStoreStats start', { integrationId });
+        const row = await this.integrationRepo.findOne({ where: { id: integrationId } });
+        if (!row?.access_token) throw new Error('X integration not found or missing token');
+        const token = row.access_token;
 
-        if (!integration) {
-            throw new Error('Integration not found');
-        }
-
-        // ✅ Correct base URL for Twitter
-        const baseUrl = 'https://api.twitter.com/2';
-
-        // 1️⃣ Refresh token if needed and use fresh token
-        const tokens = await this.refreshTokenIfNeeded(integrationId);
-        const access_token = tokens?.access_token ?? integration.access_token;
-        if (tokens?.access_token) integration.access_token = tokens.access_token;
-
+        let me;
         try {
-            // 2️⃣ Fetch user with public_metrics for followers_count (v2 API)
-            const userUrl = `${baseUrl}/users/${integration.social_id}?user.fields=public_metrics`;
-            const userRes = await firstValueFrom(
-                this.httpService.get(userUrl, {
-                    headers: {
-                        Authorization: `Bearer ${access_token}`,
-                    },
+            me = await firstValueFrom(
+                this.httpService.get(`${X_API}/users/me?user.fields=public_metrics`, {
+                    headers: { Authorization: `Bearer ${token}` },
                 }),
             );
-            const followersCount = userRes.data?.data?.public_metrics?.followers_count ?? 0;
-
-            // 3️⃣ Fetch latest tweets with metrics
-            const tweetsUrl = `${baseUrl}/users/${integration.social_id}/tweets?max_results=50&tweet.fields=public_metrics`;
-            const tweetsRes = await firstValueFrom(
-                this.httpService.get(tweetsUrl, {
-                    headers: {
-                        Authorization: `Bearer ${access_token}`,
-                    },
-                }),
-            );
-
-            const tweets = tweetsRes.data?.data ?? [];
-
-            // 4️⃣ Determine top liked & top viewed tweets
-            let topLiked = null;
-            let topViewed = null;
-
-            if (tweets.length > 0) {
-                topLiked = tweets.reduce((max, t) =>
-                    (t.public_metrics?.like_count ?? 0) >
-                        (max.public_metrics?.like_count ?? 0)
-                        ? t
-                        : max,
-                );
-
-                topViewed = tweets.reduce((max, t) =>
-                    (t.public_metrics?.impression_count ?? 0) >
-                        (max.public_metrics?.impression_count ?? 0)
-                        ? t
-                        : max,
-                );
-            }
-
-            const topLikeSummary = topLiked
-                ? {
-                    id: topLiked.id,
-                    text: topLiked.text,
-                    likes: topLiked.public_metrics?.like_count ?? 0,
-                }
-                : null;
-
-            const topViewSummary = topViewed
-                ? {
-                    id: topViewed.id,
-                    text: topViewed.text,
-                    views: topViewed.public_metrics?.impression_count ?? 0,
-                }
-                : null;
-
-            // 5️⃣ Log for verification
-            this.logger.log(`[X Stats] User ${integration.user.id}`, {
-                followers: followersCount,
-                topLiked: topLikeSummary,
-                topViewed: topViewSummary,
-            });
-
-            // 6️⃣ Return summary (followers from public_metrics; likes/views from top tweet)
-            return {
-                followers: followersCount,
-                topLiked: topLikeSummary,
-                topViewed: topViewSummary,
-            };
-        } catch (error) {
-            this.logger.error(`Error fetching X stats: ${error.response?.data?.error || error.message}`);
-            if (error.response?.status === 401) {
-                throw new Error('Invalid or expired access token. Please reconnect X account.');
-            }
-            throw error;
+        } catch (e) {
+            socialErrorLog(this.logger, 'X', 'fetchAndStoreStats GET /users/me', e);
+            throw e;
         }
+        const uid = me.data?.data?.id;
+        const followers = me.data?.data?.public_metrics?.followers_count ?? 0;
+
+        const posts: Array<{ id: string; like_count: number; view_count: number; posted_at?: string; raw?: any }> = [];
+        let pagination_token: string | undefined;
+        const maxPages = 40;
+
+        for (let page = 0; page < maxPages; page++) {
+            const params = new URLSearchParams({
+                max_results: '100',
+                'tweet.fields': 'public_metrics,non_public_metrics,created_at',
+            });
+            if (pagination_token) params.set('pagination_token', pagination_token);
+            const url = `${X_API}/users/${uid}/tweets?${params.toString()}`;
+            let resp: any;
+            try {
+                resp = await firstValueFrom(
+                    this.httpService.get(url, { headers: { Authorization: `Bearer ${token}` } }),
+                );
+            } catch (err: any) {
+                if (err?.response?.status === 403 || err?.response?.status === 400) {
+                    const params2 = new URLSearchParams({
+                        max_results: '100',
+                        'tweet.fields': 'public_metrics,created_at',
+                    });
+                    if (pagination_token) params2.set('pagination_token', pagination_token);
+                    resp = await firstValueFrom(
+                        this.httpService.get(`${X_API}/users/${uid}/tweets?${params2.toString()}`, {
+                            headers: { Authorization: `Bearer ${token}` },
+                        }),
+                    );
+                } else {
+                    throw err;
+                }
+            }
+
+            const data = resp.data?.data ?? [];
+            for (const t of data) {
+                const pm = t.public_metrics ?? {};
+                const npm = t.non_public_metrics ?? {};
+                const impressions = npm.impression_count ?? pm.impression_count ?? 0;
+                posts.push({
+                    id: t.id,
+                    like_count: Number(pm.like_count ?? 0),
+                    view_count: Number(impressions),
+                    posted_at: t.created_at,
+                    raw: t,
+                });
+            }
+            pagination_token = resp.data?.meta?.next_token;
+            if (!pagination_token) break;
+        }
+
+        socialDebugLog(this.logger, 'X', 'fetchAndStoreStats done', { posts: posts.length, followers });
+        return {
+            followers_total: followers,
+            posts,
+            views_definition: 'impressions (non_public_metrics when permitted; else public_metrics only)',
+            sampled_posts_count: posts.length,
+        };
     }
-
-
-
 }

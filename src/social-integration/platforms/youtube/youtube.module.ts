@@ -5,15 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import youtubeConfig from './youtube.config';
 import { YoutubeService } from './youtube.service';
 import { SocialIntegration } from '../../entities/social-integration.entity';
-import { User } from '../../../users/user.entity';
-import { UsersModule } from '../../../users/users.module';
 
 @Module({
     imports: [
         HttpModule,
         ConfigModule.forFeature(youtubeConfig),
-        TypeOrmModule.forFeature([SocialIntegration, User]),
-        UsersModule,
+        TypeOrmModule.forFeature([SocialIntegration]),
     ],
     providers: [YoutubeService],
     exports: [YoutubeService],

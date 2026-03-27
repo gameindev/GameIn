@@ -8,12 +8,28 @@ import { SocialIntegration } from '../../entities/social-integration.entity';
 import { SocialPlatform } from '../../enums/social-platform.enums';
 import { SocialIntegrationServiceInterface } from '../../interfaces/social-integration-service.interface';
 import twitchConfig from './twitch.config';
-import { UsersService } from '../../../users/providers/users.service';
 import { ActiveUserData } from '../../../auth/interfaces/active-user-data.interface';
+import { User } from '../../../users/user.entity';
+import { signOAuthState, verifyOAuthState } from '../../utils/oauth-state.util';
+import { postFormForJson } from '../../utils/form-http.util';
+import { maskClientId, socialDebugLog, socialErrorLog } from '../../utils/social-oauth-debug.util';
+
+const TWITCH_AUTH = 'https://id.twitch.tv/oauth2/authorize';
+const TWITCH_TOKEN = 'https://id.twitch.tv/oauth2/token';
+const TWITCH_REVOKE = 'https://id.twitch.tv/oauth2/revoke';
+const HELIX = 'https://api.twitch.tv/helix';
+
+const TWITCH_SCOPES = 'user:read:email';
+
+type TwitchTokenResponse = {
+    access_token: string;
+    refresh_token?: string;
+    expires_in?: number;
+    scope?: string;
+};
 
 @Injectable()
 export class TwitchService implements SocialIntegrationServiceInterface {
-    private readonly baseUrl = 'https://api.twitch.tv/helix';
     private readonly logger = new Logger(TwitchService.name);
 
     constructor(
@@ -22,261 +38,219 @@ export class TwitchService implements SocialIntegrationServiceInterface {
         private readonly config: ConfigType<typeof twitchConfig>,
         @InjectRepository(SocialIntegration)
         private readonly integrationRepo: Repository<SocialIntegration>,
-
-        private readonly userService: UsersService// Inject the UserRep
     ) { }
 
-    async probeProfile(accessToken: string): Promise<any>{
-        return {}
+    getCapabilities() {
+        return {
+            supportsLikes: false,
+            supportsViews: true,
+            viewsDefinition: 'VOD view_count (Helix Get Videos)',
+        };
     }
 
-    getAuthUrl(user: ActiveUserData): string {
-        const params = new URLSearchParams({
-            client_id: this.config.twitchClientId,
-            redirect_uri: this.config.twitchCallbackUrl,
-            response_type: 'code',
-            scope: 'user:read:email user:read:follows',
-            state: `${user.sub}`  // 👈 here user.sub is your userId from JWT payload
-        });
-        return `https://id.twitch.tv/oauth2/authorize?${params.toString()}`;
-    }
-
-
-
-    // async handleCallback(code: string, state: string): Promise<void> {
-    //     const tokenUrl = 'https://id.twitch.tv/oauth2/token';
-    //     const params = new URLSearchParams({
-    //         client_id: this.config.twitchClientId,
-    //         client_secret: this.config.twitchClientSecret,
-    //         code,
-    //         grant_type: 'authorization_code',
-    //         redirect_uri: this.config.twitchCallbackUrl
-    //     });
-
-    //     const response = await firstValueFrom(
-    //         this.httpService.post(tokenUrl, params.toString(), {
-    //             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-    //         })
-    //     );
-
-    //     const { access_token, refresh_token } = response.data;
-
-    //     const userProfile = await this.getUserProfile(access_token);
-
-    //     const user = await this.userRepo.findOne({ where: { id: parseInt(state) } });
-
-    //     const integration = await this.integrationRepo.findOne({
-    //         where: { user: { id: parseInt(state) }, platform: SocialPlatform.TWITCH }
-    //     });
-
-    //     if (integration) {
-    //         integration.access_token = access_token;
-    //         integration.refresh_token = refresh_token;
-    //         integration.social_id = userProfile.id;
-    //         await this.integrationRepo.save(integration);
-    //     } else {
-    //         const newIntegration = this.integrationRepo.create({
-    //             user,
-    //             platform: SocialPlatform.TWITCH,
-    //             access_token,
-    //             refresh_token,
-    //             social_id: userProfile.id,
-    //         });
-    //         await this.integrationRepo.save(newIntegration);
-    //     }
-    // }
-
-    async handleCallback(code: string, state: string): Promise<void> {
-        // <-- CHANGE 2: Parse userId from state
-        const userId = parseInt(state); // Assuming state contains just the user ID
-
-        if (isNaN(userId)) {
-            this.logger.error(`Invalid state parameter received: "${state}". Expected a number.`);
-            throw new Error('Invalid state parameter: User ID not found.');
-        }
-
-        const tokenUrl = 'https://id.twitch.tv/oauth2/token';
-        const params = new URLSearchParams({
-            client_id: this.config.twitchClientId,
-            client_secret: this.config.twitchClientSecret,
-            code,
-            grant_type: 'authorization_code',
-            redirect_uri: this.config.twitchCallbackUrl
-        });
-
-        try { // Added try-catch for better error handling
-            const response = await firstValueFrom(
-                this.httpService.post(tokenUrl, params.toString(), {
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-                })
-            );
-
-            const { access_token, refresh_token } = response.data;
-
-            const userProfile = await this.getUserProfile(access_token);
-
-            // <-- CHANGE 3: Use userId to find integration
-            let integration = await this.integrationRepo.findOne({
-                where: { user: { id: userId }, platform: SocialPlatform.TWITCH }
-            });
-
-            if (integration) {
-                integration.access_token = access_token;
-                integration.refresh_token = refresh_token;
-                integration.social_id = userProfile.id;
-                await this.integrationRepo.save(integration);
-            } else {
-                // <-- CHANGE 4: Create new integration with user ID
-                const newIntegration = this.integrationRepo.create({
-                    user: { id: userId }, // Associate by ID
-                    platform: SocialPlatform.TWITCH,
-                    access_token,
-                    refresh_token,
-                    social_id: userProfile.id,
-                });
-                await this.integrationRepo.save(newIntegration);
-            }
-        } catch (error) {
-            this.logger.error(`Error in Twitch callback: ${error.message}`);
-            // Re-throw the error to be caught by the NestJS exception filter
-            throw error;
-        }
-    }
-
-    async getUserProfile(accessToken: string): Promise<any> {
-        const url = `${this.baseUrl}/users`;
-        const response = await firstValueFrom(
-            this.httpService.get(url, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Client-Id': this.config.twitchClientId,
-                },
-            }),
-        );
-        return response.data.data[0];
-    }
-
-    async refreshTokenIfNeeded(integrationId: number): Promise<{ access_token: string; refresh_token?: string }> {
-		const integration = await this.integrationRepo.findOne({
-			where: { id: integrationId },
-			relations: ['user']
-		});
-
-        if (!integration) {
-            throw new Error('Integration not found');
-        }
-
-        if (!integration.refresh_token) {
-            throw new Error('No refresh token available');
-        }
-
-        const tokenUrl = 'https://id.twitch.tv/oauth2/token';
-        const params = new URLSearchParams({
-            client_id: this.config.twitchClientId,
-            client_secret: this.config.twitchClientSecret,
-            grant_type: 'refresh_token',
-            refresh_token: integration.refresh_token
-        });
-
-        const response = await firstValueFrom(
-            this.httpService.post(tokenUrl, params.toString(), {
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-            })
-        );
-
-        const { access_token, refresh_token } = response.data;
-
-        // Update stored tokens
-        integration.access_token = access_token;
-        integration.refresh_token = refresh_token;
-
-        await this.integrationRepo.save(integration);
-
-        return {access_token, refresh_token}
-    }
-
-    async fetchAndStoreStats(integrationId: number): Promise<any> {
-		const integration = await this.integrationRepo.findOne({
-			where: { id: integrationId },
-			relations: ['user'],
-		});
-
-        if (!integration) {
-            throw new Error('Integration not found');
-        }
-
-        // 1. Refresh access token if needed and use fresh token
-        const tokens = await this.refreshTokenIfNeeded(integrationId);
-        if (tokens?.access_token) integration.access_token = tokens.access_token;
-
-        // 2. Fetch followers count
-        const followersUrl = `${this.baseUrl}/channels/followers?broadcaster_id=${integration.social_id}`;
-        const followersResponse = await firstValueFrom(
-            this.httpService.get(followersUrl, {
-                headers: {
-                    Authorization: `Bearer ${integration.access_token}`,
-                    'Client-Id': this.config.twitchClientId,
-                },
-            }),
-        );
-
-        const followersCount = followersResponse.data.total ?? 0;
-
-        // 2b. Fetch channel info for total view count (Get Channel Information)
-        let viewCount: number | null = null;
+    async probeProfile(accessToken: string): Promise<any> {
+        socialDebugLog(this.logger, 'Twitch', 'probeProfile GET /helix/users');
         try {
-            const channelUrl = `${this.baseUrl}/channels?broadcaster_id=${integration.social_id}`;
-            const channelResponse = await firstValueFrom(
-                this.httpService.get(channelUrl, {
+            const { data } = await firstValueFrom(
+                this.httpService.get(`${HELIX}/users`, {
                     headers: {
-                        Authorization: `Bearer ${integration.access_token}`,
+                        Authorization: `Bearer ${accessToken}`,
                         'Client-Id': this.config.twitchClientId,
                     },
                 }),
             );
-            const channel = channelResponse.data?.data?.[0];
-            if (channel?.view_count != null) viewCount = Number(channel.view_count);
+            socialDebugLog(this.logger, 'Twitch', 'probeProfile ok', { login: data?.data?.[0]?.login });
+            return data;
         } catch (e) {
-            this.logger.warn(`Twitch channel view count failed: ${e?.message ?? e}`);
+            socialErrorLog(this.logger, 'Twitch', 'probeProfile', e);
+            throw e;
+        }
+    }
+
+    profileSummary(profile: any) {
+        const u = profile?.data?.[0];
+        if (!u) return undefined;
+        return { id: u.id, name: u.display_name, username: u.login };
+    }
+
+    getAuthUrl(user: ActiveUserData): string {
+        const state = signOAuthState({ sub: user.sub, platform: SocialPlatform.TWITCH });
+        const u = new URL(TWITCH_AUTH);
+        u.searchParams.set('client_id', this.config.twitchClientId);
+        u.searchParams.set('redirect_uri', this.config.twitchCallbackUrl);
+        u.searchParams.set('response_type', 'code');
+        u.searchParams.set('scope', TWITCH_SCOPES);
+        u.searchParams.set('state', state);
+        socialDebugLog(this.logger, 'Twitch', 'getAuthUrl built', {
+            redirect_uri: this.config.twitchCallbackUrl,
+            client_id: maskClientId(this.config.twitchClientId),
+        });
+        return u.toString();
+    }
+
+    async handleCallback(code: string, state: string): Promise<number> {
+        socialDebugLog(this.logger, 'Twitch', 'handleCallback start', { codeLen: code?.length });
+        let payload;
+        try {
+            payload = verifyOAuthState(state, SocialPlatform.TWITCH);
+        } catch (e) {
+            socialErrorLog(this.logger, 'Twitch', 'verifyOAuthState', e);
+            throw e;
+        }
+        let token: TwitchTokenResponse;
+        try {
+            token = await postFormForJson<TwitchTokenResponse>(TWITCH_TOKEN, {
+                client_id: this.config.twitchClientId,
+                client_secret: this.config.twitchClientSecret,
+                code,
+                grant_type: 'authorization_code',
+                redirect_uri: this.config.twitchCallbackUrl,
+            });
+        } catch (e) {
+            socialErrorLog(this.logger, 'Twitch', 'handleCallback token exchange', e);
+            throw e;
+        }
+        socialDebugLog(this.logger, 'Twitch', 'handleCallback token ok', { scope: token.scope });
+
+        let prof;
+        try {
+            prof = await firstValueFrom(
+                this.httpService.get(`${HELIX}/users`, {
+                    headers: {
+                        Authorization: `Bearer ${token.access_token}`,
+                        'Client-Id': this.config.twitchClientId,
+                    },
+                }),
+            );
+        } catch (e) {
+            socialErrorLog(this.logger, 'Twitch', 'handleCallback GET /users', e);
+            throw e;
+        }
+        const broadcasterId = prof.data?.data?.[0]?.id;
+        if (!broadcasterId) throw new Error('Twitch users missing id');
+
+        const userEntity = await this.integrationRepo.manager.getRepository(User).findOneBy({ id: payload.sub });
+        if (!userEntity) throw new Error('User not found');
+
+        const expiresAt = token.expires_in ? new Date(Date.now() + token.expires_in * 1000) : undefined;
+
+        let row = await this.integrationRepo.findOne({ where: { user: { id: payload.sub }, platform: SocialPlatform.TWITCH } });
+        if (!row) {
+            row = this.integrationRepo.create({
+                user: userEntity,
+                platform: SocialPlatform.TWITCH,
+                social_id: broadcasterId,
+                access_token: token.access_token,
+                refresh_token: token.refresh_token,
+                token_expires_at: expiresAt,
+                scope_granted: token.scope,
+            });
+        } else {
+            row.social_id = broadcasterId;
+            row.access_token = token.access_token;
+            if (token.refresh_token) row.refresh_token = token.refresh_token;
+            row.token_expires_at = expiresAt;
+            row.scope_granted = token.scope;
+        }
+        row = await this.integrationRepo.save(row);
+        socialDebugLog(this.logger, 'Twitch', 'handleCallback saved', { integrationId: row.id, broadcasterId });
+        return row.id;
+    }
+
+    async refreshTokenIfNeeded(
+        integrationId: number,
+        refreshToken?: string,
+    ): Promise<{ access_token: string; refresh_token?: string } | null | undefined> {
+        if (!refreshToken) return null;
+        socialDebugLog(this.logger, 'Twitch', 'refreshTokenIfNeeded', { integrationId });
+        let token: TwitchTokenResponse;
+        try {
+            token = await postFormForJson<TwitchTokenResponse>(TWITCH_TOKEN, {
+                client_id: this.config.twitchClientId,
+                client_secret: this.config.twitchClientSecret,
+                grant_type: 'refresh_token',
+                refresh_token: refreshToken,
+            });
+        } catch (e) {
+            socialErrorLog(this.logger, 'Twitch', 'refreshTokenIfNeeded', e);
+            throw e;
+        }
+        const row = await this.integrationRepo.findOne({ where: { id: integrationId } });
+        if (row) {
+            row.access_token = token.access_token;
+            if (token.refresh_token) row.refresh_token = token.refresh_token;
+            if (token.expires_in) row.token_expires_at = new Date(Date.now() + token.expires_in * 1000);
+            await this.integrationRepo.save(row);
+        }
+        return { access_token: token.access_token, refresh_token: token.refresh_token };
+    }
+
+    async revokeToken(accessToken: string): Promise<void> {
+        try {
+            await postFormForJson(TWITCH_REVOKE, {
+                client_id: this.config.twitchClientId,
+                client_secret: this.config.twitchClientSecret,
+                token: accessToken,
+            });
+        } catch (e) {
+            this.logger.warn(`Twitch revoke: ${(e as Error).message}`);
+        }
+    }
+
+    async fetchAndStoreStats(integrationId: number): Promise<any> {
+        socialDebugLog(this.logger, 'Twitch', 'fetchAndStoreStats start', { integrationId });
+        const row = await this.integrationRepo.findOne({ where: { id: integrationId } });
+        if (!row?.access_token || !row.social_id) throw new Error('Twitch integration incomplete');
+        const headers = {
+            Authorization: `Bearer ${row.access_token}`,
+            'Client-Id': this.config.twitchClientId,
+        };
+
+        let fol;
+        try {
+            fol = await firstValueFrom(
+                this.httpService.get(`${HELIX}/channels/followers?broadcaster_id=${encodeURIComponent(row.social_id)}&first=1`, {
+                    headers,
+                }),
+            );
+        } catch (e) {
+            socialErrorLog(this.logger, 'Twitch', 'fetchAndStoreStats followers', e);
+            throw e;
+        }
+        const followersTotal = Number(fol.data?.total ?? 0);
+
+        const posts: Array<{ id: string; like_count: number; view_count: number }> = [];
+        let cursor: string | undefined;
+        for (let page = 0; page < 30; page++) {
+            const u = new URL(`${HELIX}/videos`);
+            u.searchParams.set('user_id', row.social_id);
+            u.searchParams.set('first', '100');
+            if (cursor) u.searchParams.set('after', cursor);
+            let resp;
+            try {
+                resp = await firstValueFrom(this.httpService.get(u.toString(), { headers }));
+            } catch (e) {
+                socialErrorLog(this.logger, 'Twitch', `fetchAndStoreStats videos page=${page}`, e);
+                throw e;
+            }
+            const data = resp.data?.data ?? [];
+            for (const v of data) {
+                posts.push({
+                    id: v.id,
+                    like_count: 0,
+                    view_count: Number(v.view_count ?? 0),
+                });
+            }
+            cursor = resp.data?.pagination?.cursor;
+            if (!cursor) break;
         }
 
-        // 3. Fetch most viewed video (fallback for views if channel view_count not available)
-        const videosUrl = `${this.baseUrl}/videos?user_id=${integration.social_id}&sort=views`;
-        const videosResponse = await firstValueFrom(
-            this.httpService.get(videosUrl, {
-                headers: {
-                    Authorization: `Bearer ${integration.access_token}`,
-                    'Client-Id': this.config.twitchClientId,
-                },
-            }),
-        );
-
-        const videos = videosResponse.data.data ?? [];
-        const mostViewedVideo = videos.length > 0 ? videos[0] : null;
-
-        const mostViewed = mostViewedVideo
-            ? {
-                title: mostViewedVideo.title,
-                views: mostViewedVideo.view_count,
-                url: mostViewedVideo.url,
-            }
-            : null;
-
-        // Use channel total view_count if available, else top video views
-        const views = viewCount ?? mostViewed?.views ?? null;
-
-        // 4. Log or store as needed
-        this.logger.log(`[Twitch Stats] User ${integration.user.id}`, {
-            followersCount,
-            viewCount: views,
-            mostViewed,
-        });
-
-        // 5. Return the stats (normalized for frontend)
+        socialDebugLog(this.logger, 'Twitch', 'fetchAndStoreStats done', { videos: posts.length, followers: followersTotal });
         return {
-            followersCount,
-            viewCount: views,
-            mostViewed,
+            followers_total: followersTotal,
+            posts,
+            views_definition: 'vod_views',
+            sampled_posts_count: posts.length,
         };
     }
 }

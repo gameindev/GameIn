@@ -28,7 +28,7 @@ export class ChatController {
     async createConversation(
         @Body() createConversationDto: CreateConversationDto
     ) {
-        console.log(createConversationDto);
+        // console.log(createConversationDto); //TODO Console
         return this.chatService.createConversation(createConversationDto);
     }
 

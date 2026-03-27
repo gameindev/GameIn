@@ -5,15 +5,11 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SocialIntegration } from '../../entities/social-integration.entity';
 import twitchConfig from './twitch.config';
-import { UsersModule } from '../../../users/users.module';
-import { User } from '../../../users/user.entity';
-
 @Module({
     imports: [
         HttpModule,
         ConfigModule.forFeature(twitchConfig),
-        TypeOrmModule.forFeature([SocialIntegration, User]),
-        UsersModule
+        TypeOrmModule.forFeature([SocialIntegration]),
     ],
     providers: [TwitchService],
     exports: [TwitchService],

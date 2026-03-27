@@ -6,6 +6,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
+import { ScheduleModule } from "@nestjs/schedule";
 import * as dotenvFlow from "dotenv-flow";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import * as fs from 'fs';
@@ -50,7 +51,6 @@ import databaseConfig from "./config/database.config";
 import jwtConfig from "./auth/config/jwt.config";
 import environmentValidation from "./config/environment.validation";
 import twitchConfig from "./social-integration/platforms/twitch/twitch.config";
-import discordConfig from "./social-integration/platforms/discord/discord.config";
 import xConfig from "./social-integration/platforms/x/x.config";
 import youtubeConfig from "./social-integration/platforms/youtube/youtube.config";
 import sesConfig from "./emails/config/ses.config";
@@ -92,6 +92,11 @@ import { PostMedia } from './newsfeed/entities/post-media.entity';
 import { PostLike } from './newsfeed/entities/post-like.entity';
 import { PostComment } from './newsfeed/entities/post-comment.entity';
 import { PostShare } from './newsfeed/entities/post-share.entity';
+import { SocialPostMetric } from "./social-integration/entities/social-post-metric.entity";
+import { SocialAccountRollup } from "./social-integration/entities/social-account-rollup.entity";
+import { SocialSyncJob } from "./social-integration/entities/social-sync-job.entity";
+import tiktokConfig from "./social-integration/platforms/tiktok/tiktok.config";
+import instagramConfig from "./social-integration/platforms/instagram/instagram.config";
 
 dotenvFlow.config(); // ✅ Loads .env only in local/dev
 
@@ -103,7 +108,7 @@ const ENV = process.env.NODE_ENV || 'development';
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: [`.env.${ENV}`, '.env'],
-            load: [appConfig, databaseConfig, jwtConfig, twitchConfig, xConfig, youtubeConfig, sesConfig, smtpConfig, sendgridConfig, discordConfig, kafkaConfig, stripeConfig, paypalConfig, razorpayConfig, paymentsConfig],
+            load: [appConfig, databaseConfig, jwtConfig, twitchConfig, xConfig, youtubeConfig, tiktokConfig, instagramConfig, sesConfig, smtpConfig, sendgridConfig, kafkaConfig, stripeConfig, paypalConfig, razorpayConfig, paymentsConfig],
             validationSchema: environmentValidation,
         }),
 
@@ -155,6 +160,9 @@ const ENV = process.env.NODE_ENV || 'development';
                         PostLike,
                         PostComment,
                         PostShare,
+                        SocialPostMetric,
+                        SocialAccountRollup,
+                        SocialSyncJob,
                     ],
                     synchronize: false, // 🚫 Always false in production
                     namingStrategy: new SnakeNamingStrategy(),
@@ -165,13 +173,7 @@ const ENV = process.env.NODE_ENV || 'development';
                         ca: process.env.DATABASE_SSL_CA ? fs.readFileSync(process.env.DATABASE_SSL_CA).toString() : undefined
                     }
                     : false,
-
-                    // TODO: Need to replace in Production
-                    // ? {
-                    //     rejectUnauthorized: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false',
-                    //     ca: process.env.DATABASE_SSL_CA ? fs.readFileSync(process.env.DATABASE_SSL_CA).toString() : undefined
-                    // }
-                    // : false,
+                    
                     extra: {
                         max: Number(process.env.TYPEORM_POOL_MAX ?? 20),
                         min: Number(process.env.TYPEORM_POOL_MIN ?? 2),

@@ -27,7 +27,7 @@ export class OfferingOffers {
     @Column({ type: 'enum', enum: OfferingCategory, name: 'offer_type' })
     offer_type!: OfferingCategory;
 
-    /** Platform: TWITCH | INSTAGRAM | X | YOUTUBE | TIKTOK | DISCORD | FACEBOOK */
+    /** SocialPlatform enum value */
     @Column({
         type: 'enum',
         enum: SocialPlatform,

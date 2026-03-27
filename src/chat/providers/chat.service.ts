@@ -40,7 +40,7 @@ export class ChatService {
 
 
     async createConversation(createConversationDto: CreateConversationDto) {
-        console.log(createConversationDto);
+        // console.log(createConversationDto); //TODO Console
         const { participant_ids, admin_ids = [], ...rest } = createConversationDto;
 
         // Validate that admin_ids are subset of participant_ids
@@ -84,7 +84,7 @@ export class ChatService {
 
     async getConversations(userId: number) {
         try {
-            console.log(`Fetching conversations for user: ${userId}`);
+            // console.log(`Fetching conversations for user: ${userId}`); //TODO Console
 
             const conversations = await this.conversationParticipantRepository.find({
                 where: { user: { id: userId } },
@@ -99,22 +99,22 @@ export class ChatService {
                 ],
             });
 
-            console.log(`Found ${conversations.length} conversation participants`);
+            // console.log(`Found ${conversations.length} conversation participants`); //TODO Console
 
             // Debug: Log conversation data structure
-            conversations.forEach((conv, index) => {
-                console.log(`Conversation ${index}:`, {
-                    hasConversation: !!conv.conversation,
-                    conversationId: conv.conversation?.id,
-                    conversationTitle: conv.conversation?.title,
-                    participantCount: conv.conversation?.participants?.length || 0
-                });
-            });
+            // conversations.forEach((conv, index) => {
+            //     console.log(`Conversation ${index}:`, {
+            //         hasConversation: !!conv.conversation,
+            //         conversationId: conv.conversation?.id,
+            //         conversationTitle: conv.conversation?.title,
+            //         participantCount: conv.conversation?.participants?.length || 0
+            //     }); 
+            // }); //TODO Console
 
             // Filter out conversations with null conversation data
             const validConversations = conversations.filter(c => c.conversation && c.conversation.id);
 
-            console.log(`Valid conversations: ${validConversations.length} out of ${conversations.length}`);
+            // console.log(`Valid conversations: ${validConversations.length} out of ${conversations.length}`); //TODO Console
 
             if (validConversations.length === 0) {
                 console.log('No valid conversations found, returning empty array');

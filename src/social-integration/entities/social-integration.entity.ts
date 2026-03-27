@@ -1,6 +1,8 @@
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { SocialPlatform } from "../enums/social-platform.enums";
 import { User } from "../../users/user.entity";
+import { Exclude } from "class-transformer";
+import { tokenEncryptionTransformer } from "../utils/token-encryption.transformer";
 
 
 
@@ -30,11 +32,19 @@ export class SocialIntegration {
     @Column({ type: 'text', nullable: true })
     social_id?: string;
 
-    @Column({ type: 'text', nullable: true })
+    @Exclude()
+    @Column({ type: 'text', nullable: true, transformer: tokenEncryptionTransformer })
     access_token?: string;
 
-    @Column({ type: 'text', nullable: true })
+    @Exclude()
+    @Column({ type: 'text', nullable: true, transformer: tokenEncryptionTransformer })
     refresh_token?: string;
+
+    @Column({ type: 'timestamptz', nullable: true })
+    token_expires_at?: Date;
+
+    @Column({ type: 'text', nullable: true })
+    scope_granted?: string;
 
     @CreateDateColumn()
     created_at?: Date;

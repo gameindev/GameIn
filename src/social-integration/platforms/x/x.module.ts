@@ -4,18 +4,14 @@ import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 import xConfig from './x.config';
 import { SocialIntegration } from '../../entities/social-integration.entity';
-import { User } from '../../../users/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from '../../../users/users.module';
-
 @Module({
     providers: [XService],
     exports: [XService],
     imports: [
         HttpModule,
         ConfigModule.forFeature(xConfig),
-        TypeOrmModule.forFeature([SocialIntegration, User]),
-        UsersModule
+        TypeOrmModule.forFeature([SocialIntegration]),
     ],
 })
 export class XModule {}

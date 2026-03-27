@@ -6,8 +6,12 @@ import { SocialIntegrationProvider } from './social-integration.provider';
 import { ConnectionState, SocialPlatform } from '../enums/social-platform.enums';
 import { ConnectionCheckResult, SocialIntegrationServiceInterface } from '../interfaces/social-integration-service.interface';
 import { ActiveUserData } from '../../auth/interfaces/active-user-data.interface';
+import { SocialAccountRollup } from '../entities/social-account-rollup.entity';
+import { SocialPostMetric } from '../entities/social-post-metric.entity';
+import { SocialSyncJob } from '../entities/social-sync-job.entity';
 
-type ProviderMap = Record<SocialPlatform, SocialIntegrationServiceInterface>;
+type ProviderMap = Partial<Record<SocialPlatform, SocialIntegrationServiceInterface>>;
+const MAX_RECENT_POSTS = 40;
 
 @Injectable()
 export class SocialIntegrationService {
@@ -16,6 +20,12 @@ export class SocialIntegrationService {
     constructor(
         @InjectRepository(SocialIntegration)
         private readonly integrationRepo: Repository<SocialIntegration>,
+        @InjectRepository(SocialAccountRollup)
+        private readonly rollupRepo: Repository<SocialAccountRollup>,
+        @InjectRepository(SocialPostMetric)
+        private readonly metricRepo: Repository<SocialPostMetric>,
+        @InjectRepository(SocialSyncJob)
+        private readonly syncRepo: Repository<SocialSyncJob>,
         private readonly integrationProvider: SocialIntegrationProvider,
         @Inject('SOCIAL_PROVIDER_MAP')
         private readonly providers: ProviderMap,
@@ -30,10 +40,12 @@ export class SocialIntegrationService {
     }
 
     private isUnauthorized(err: unknown): boolean {
-        // Covers 401/403 and common "invalid_grant" 400 shapes
+        // Covers 401/403 and common "invalid_grant" 400 shapes (axios + native fetch errors)
         const anyErr = err as any;
         const status = anyErr?.response?.status;
         const code = anyErr?.response?.data?.error;
+        const msg = String(anyErr?.message ?? '');
+        if (/\b401\b/.test(msg) || /\b403\b/.test(msg)) return true;
         return status === 401 || status === 403 || (status === 400 && code === 'invalid_grant');
     }
 
@@ -63,9 +75,9 @@ export class SocialIntegrationService {
             return { user_id: userId, platform, state: 'CONNECTED', label: this.labelFor('CONNECTED'), summary, integration_id: row.id };
         } catch (err) {
             // 4) Try refresh on auth failure (if refresh_token + provider supports refresh)
-            if (this.isUnauthorized(err) && row.refresh_token && provider.refreshTokenIfNeeded(userId, row.refresh_token)) {
+            if (this.isUnauthorized(err) && row.refresh_token && typeof provider.refreshTokenIfNeeded === 'function') {
                 try {
-                    const refreshed = await provider.refreshTokenIfNeeded(userId, row.refresh_token);
+                    const refreshed = await provider.refreshTokenIfNeeded(row.id, row.refresh_token);
                     if (refreshed?.access_token) {
                         row.access_token = refreshed.access_token;
                         if (refreshed.refresh_token) row.refresh_token = refreshed.refresh_token;
@@ -87,7 +99,14 @@ export class SocialIntegrationService {
 
             // 5) Rate limited => token likely valid; keep "CONNECTED" but warn UI (e.g., grey tooltip)
             if (this.isRateLimited(err)) {
-                return { user_id: userId, platform, state: 'CONNECTED', label: this.labelFor('CONNECTED'), warning: 'RATE_LIMIT' };
+                return {
+                    user_id: userId,
+                    platform,
+                    state: 'CONNECTED',
+                    label: this.labelFor('CONNECTED'),
+                    integration_id: row.id,
+                    warning: 'RATE_LIMIT',
+                };
             }
 
             // 6) Anything else => we have a row but it’s not usable => "CONNECT" (re-auth)
@@ -106,45 +125,283 @@ export class SocialIntegrationService {
         return provider.getAuthUrl(user);
     }
 
-    handleCallback(platform: SocialPlatform, code: string, state: string) {
+    /**
+     * OAuth redirect callback: exchange code, persist integration, run initial stats sync (best-effort).
+     */
+    async handleOAuthCallback(platform: SocialPlatform, code: string, state: string): Promise<number> {
         const provider = this.integrationProvider.getProvider(platform);
-        return provider.handleCallback(code, state);
+        const integrationId = await provider.handleCallback(code, state);
+        try {
+            await this.fetchStats(platform, integrationId);
+        } catch (e) {
+            this.logger.warn(`Initial sync after OAuth failed (${platform}): ${(e as Error)?.message ?? e}`);
+        }
+        return integrationId;
     }
 
-    fetchStats(platform: SocialPlatform, integrationId: number) {
+    private normalizeRollup(platform: SocialPlatform, raw: any) {
+        const posts = Array.isArray(raw?.posts) ? raw.posts : [];
+        const totalLikes = posts.reduce((sum, p) => sum + Number(p?.like_count ?? 0), 0);
+        const totalViews = posts.reduce((sum, p) => sum + Number(p?.view_count ?? 0), 0);
+        const maxLikes = posts.length ? Math.max(...posts.map((p) => Number(p?.like_count ?? 0))) : 0;
+        const maxViews = posts.length ? Math.max(...posts.map((p) => Number(p?.view_count ?? 0))) : 0;
+
+        return {
+            followers: Number(raw?.followers_total ?? raw?.followers ?? raw?.followersCount ?? 0),
+            totalLikes: Number(raw?.accumulated_likes ?? raw?.totalLikes ?? totalLikes ?? 0),
+            maxLikes: Number(raw?.highest_likes ?? raw?.maxLikes ?? raw?.topLiked?.likes ?? maxLikes ?? 0),
+            totalViews: Number(raw?.accumulated_views ?? raw?.totalViews ?? totalViews ?? 0),
+            maxViews: Number(raw?.highest_views ?? raw?.maxViews ?? raw?.topViewed?.views ?? maxViews ?? 0),
+            sampledPostsCount: Number(raw?.sampled_posts_count ?? posts.length ?? 0),
+            viewsDefinition: raw?.views_definition || (platform === SocialPlatform.X ? 'impressions' : 'views'),
+            posts,
+            nextCursor: raw?.next_cursor ?? null,
+        };
+    }
+
+    private keepRecentPosts(posts: any[], limit = MAX_RECENT_POSTS): any[] {
+        if (!Array.isArray(posts) || posts.length <= limit) return Array.isArray(posts) ? posts : [];
+        const withIndex = posts.map((p, idx) => ({ p, idx }));
+        withIndex.sort((a, b) => {
+            const at = a.p?.posted_at ? new Date(a.p.posted_at).getTime() : 0;
+            const bt = b.p?.posted_at ? new Date(b.p.posted_at).getTime() : 0;
+            if (bt !== at) return bt - at;
+            return a.idx - b.idx;
+        });
+        return withIndex.slice(0, limit).map(x => x.p);
+    }
+
+    private async persistPostMetrics(integration: SocialIntegration, platform: SocialPlatform, posts: any[]) {
+        for (const post of posts) {
+            const socialPostId = String(post?.id ?? post?.post_id ?? '');
+            if (!socialPostId) continue;
+            const existing = await this.metricRepo.findOne({
+                where: { integration: { id: integration.id }, social_post_id: socialPostId },
+            });
+            if (existing) {
+                existing.like_count = Number(post?.like_count ?? existing.like_count ?? 0);
+                existing.view_count = Number(post?.view_count ?? existing.view_count ?? 0);
+                existing.posted_at = post?.posted_at ? new Date(post.posted_at) : existing.posted_at;
+                existing.raw_payload = post?.raw ?? post ?? existing.raw_payload;
+                await this.metricRepo.save(existing);
+                continue;
+            }
+            const record = this.metricRepo.create({
+                integration,
+                platform,
+                social_post_id: socialPostId,
+                posted_at: post?.posted_at ? new Date(post.posted_at) : null,
+                like_count: Number(post?.like_count ?? 0),
+                view_count: Number(post?.view_count ?? 0),
+                raw_payload: post?.raw ?? post ?? null,
+            });
+            await this.metricRepo.save(record);
+        }
+
+        // Keep metric table bounded to the latest N posts per integration.
+        const all = await this.metricRepo.find({
+            where: { integration: { id: integration.id } },
+            order: { posted_at: 'DESC', updated_at: 'DESC', id: 'DESC' },
+        });
+        if (all.length > MAX_RECENT_POSTS) {
+            const remove = all.slice(MAX_RECENT_POSTS);
+            if (remove.length) {
+                await this.metricRepo.remove(remove);
+            }
+        }
+    }
+
+    private async upsertRollup(integration: SocialIntegration, normalized: ReturnType<SocialIntegrationService['normalizeRollup']>) {
+        let rollup = await this.rollupRepo.findOne({ where: { integration: { id: integration.id } } });
+        if (!rollup) {
+            rollup = this.rollupRepo.create({
+                integration,
+                aggregation_window: 'all_fetched',
+            });
+        }
+        rollup.followers_or_subscribers = normalized.followers;
+        rollup.total_likes = normalized.totalLikes;
+        rollup.max_likes = normalized.maxLikes;
+        rollup.total_views = normalized.totalViews;
+        rollup.max_views = normalized.maxViews;
+        rollup.sampled_posts_count = normalized.sampledPostsCount;
+        rollup.views_definition = normalized.viewsDefinition;
+        rollup.last_synced_at = new Date();
+        return this.rollupRepo.save(rollup);
+    }
+
+    async fetchStats(platform: SocialPlatform, integrationId: number, userId?: number) {
         const provider = this.integrationProvider.getProvider(platform);
-        return provider.fetchAndStoreStats(integrationId);
+        const integration = await this.integrationRepo.findOne({ where: { id: integrationId }, relations: ['user'] });
+        if (!integration) throw new Error('Integration not found');
+        if (userId && integration.user?.id !== userId) throw new Error('Integration does not belong to user');
+        try {
+            const raw = await provider.fetchAndStoreStats(integrationId);
+            const limitedRaw = {
+                ...raw,
+                posts: this.keepRecentPosts(Array.isArray(raw?.posts) ? raw.posts : []),
+                sampled_posts_count: Math.min(
+                    Number(raw?.sampled_posts_count ?? (Array.isArray(raw?.posts) ? raw.posts.length : 0) ?? 0),
+                    MAX_RECENT_POSTS,
+                ),
+            };
+            const normalized = this.normalizeRollup(platform, limitedRaw);
+            if (normalized.posts.length) {
+                await this.persistPostMetrics(integration, platform, normalized.posts);
+            }
+            await this.upsertRollup(integration, normalized);
+            await this.syncRepo.save(this.syncRepo.create({
+                integration,
+                platform,
+                status: 'SUCCESS',
+                cursor: normalized.nextCursor ? String(normalized.nextCursor) : null,
+                last_success_at: new Date(),
+                last_error: null,
+                retry_count: 0,
+            }));
+            return {
+                followers: normalized.followers,
+                accumulated_likes: normalized.totalLikes,
+                highest_likes: normalized.maxLikes,
+                accumulated_views: normalized.totalViews,
+                highest_views: normalized.maxViews,
+                sampled_posts_count: normalized.sampledPostsCount,
+                aggregation_window: 'all_fetched',
+                views_definition: normalized.viewsDefinition,
+                sync_status: 'SUCCESS',
+                lifetime_likes: limitedRaw?.lifetime_likes ?? null,
+            };
+        } catch (err) {
+            this.logger.warn(`Live stats fetch failed (${platform}, integration=${integrationId}); trying cached rollup: ${(err as Error)?.message ?? err}`);
+            const cachedRollup = await this.rollupRepo.findOne({
+                where: { integration: { id: integrationId } },
+            });
+            if (!cachedRollup) throw err;
+            return {
+                followers: cachedRollup.followers_or_subscribers ?? 0,
+                accumulated_likes: cachedRollup.total_likes ?? 0,
+                highest_likes: cachedRollup.max_likes ?? 0,
+                accumulated_views: cachedRollup.total_views ?? 0,
+                highest_views: cachedRollup.max_views ?? 0,
+                sampled_posts_count: cachedRollup.sampled_posts_count ?? 0,
+                aggregation_window: cachedRollup.aggregation_window ?? 'all_fetched',
+                views_definition: cachedRollup.views_definition ?? (platform === SocialPlatform.X ? 'impressions' : 'views'),
+                sync_status: 'CACHED_FALLBACK',
+                lifetime_likes: null,
+            };
+        }
+    }
+
+    async syncPlatform(userId: number, platform: SocialPlatform) {
+        const integration = await this.integrationRepo.findOne({
+            where: { user: { id: userId }, platform },
+            relations: ['user'],
+        });
+        if (!integration) {
+            throw new Error('Platform not connected');
+        }
+        const raw = await this.fetchStats(platform, integration.id, userId);
+        return this.normalizeStats(platform, raw);
+    }
+
+    async disconnect(userId: number, platform: SocialPlatform) {
+        const integration = await this.integrationRepo.findOne({
+            where: { user: { id: userId }, platform },
+        });
+        if (!integration) return { ok: true };
+
+        const provider = this.providers[platform];
+        if (provider?.revokeToken) {
+            try {
+                await provider.revokeToken(integration.access_token);
+            } catch (error) {
+                this.logger.warn(`Token revoke failed for ${platform}: ${(error as Error)?.message}`);
+            }
+        }
+
+        await this.integrationRepo.remove(integration);
+        return { ok: true };
     }
 
     /**
-     * Normalize platform-specific stats to a consistent shape for the frontend.
-     * { followers?, likes?, views?, connectionsCount? } - null/undefined means N/A for that platform.
+     * Normalize platform-specific stats for the frontend (accumulated + highest where available).
      */
-    normalizeStats(platform: SocialPlatform, raw: any): { followers?: number | null; likes?: number | null; views?: number | null; connectionsCount?: number | null } {
+    normalizeStats(platform: SocialPlatform, raw: any): {
+        followers?: number | null;
+        likes?: number | null;
+        views?: number | null;
+        highestLikes?: number | null;
+        highestViews?: number | null;
+        lifetimeLikes?: number | null;
+        sampledPostsCount?: number | null;
+        viewsDefinition?: string | null;
+        syncStatus?: string | null;
+        connectionsCount?: number | null;
+    } {
         if (raw == null) return {};
+
+        const base = {
+            highestLikes: raw.highest_likes ?? raw.maxLikes ?? null,
+            highestViews: raw.highest_views ?? raw.maxViews ?? null,
+            lifetimeLikes: raw.lifetime_likes ?? null,
+            sampledPostsCount: raw.sampled_posts_count ?? null,
+            viewsDefinition: raw.views_definition ?? null,
+            syncStatus: raw.sync_status ?? null,
+        };
 
         switch (platform) {
             case SocialPlatform.TWITCH: {
-                const followers = raw.followersCount ?? raw.followers ?? null;
-                const views = raw.viewCount ?? raw.mostViewed?.views ?? null;
-                return { followers, likes: null, views };
+                const followers = raw.followers ?? raw.followersCount ?? null;
+                const views = raw.accumulated_views ?? raw.viewCount ?? raw.mostViewed?.views ?? null;
+                return { ...base, followers, likes: null, views };
             }
             case SocialPlatform.X: {
-                const followers = raw.followers ?? raw.public_metrics?.followers_count ?? null;
-                const likes = raw.topLiked?.likes ?? raw.totalLikes ?? null;
-                const views = raw.topViewed?.views ?? raw.totalViews ?? null;
-                return { followers, likes: likes ?? null, views: views ?? null };
-            }
-            case SocialPlatform.DISCORD: {
-                return { followers: null, likes: null, views: null, connectionsCount: raw.connectionsCount ?? null };
+                const followers = raw.followers ?? raw.followers_total ?? raw.public_metrics?.followers_count ?? null;
+                const likes = raw.accumulated_likes ?? raw.topLiked?.likes ?? raw.totalLikes ?? null;
+                const views = raw.accumulated_views ?? raw.topViewed?.views ?? raw.totalViews ?? null;
+                return { ...base, followers, likes: likes ?? null, views: views ?? null };
             }
             case SocialPlatform.YOUTUBE: {
-                const followers = raw.followers ?? null;
-                const views = raw.views ?? null;
-                return { followers, likes: raw.likes ?? null, views };
+                const followers = raw.followers ?? raw.followers_total ?? null;
+                const views = raw.accumulated_views ?? raw.views ?? null;
+                return { ...base, followers, likes: raw.accumulated_likes ?? raw.likes ?? null, views };
+            }
+            case SocialPlatform.TIKTOK:
+            case SocialPlatform.INSTAGRAM: {
+                return {
+                    ...base,
+                    followers: raw.followers ?? raw.followers_total ?? null,
+                    likes: raw.accumulated_likes ?? raw.totalLikes ?? null,
+                    views: raw.accumulated_views ?? raw.totalViews ?? null,
+                };
             }
             default:
-                return {};
+                return { ...base };
         }
+    }
+
+    async getPublicStatsByUser(userId: number) {
+        const rows = await this.rollupRepo.find({
+            where: { integration: { user: { id: userId } } },
+            relations: ['integration', 'integration.user'],
+        });
+
+        const result: Record<string, ReturnType<SocialIntegrationService['normalizeStats']>> = {};
+        for (const row of rows) {
+            const platform = row.integration?.platform as SocialPlatform | undefined;
+            if (!platform) continue;
+            const raw = {
+                followers: Number(row.followers_or_subscribers ?? 0),
+                accumulated_likes: Number(row.total_likes ?? 0),
+                highest_likes: Number(row.max_likes ?? 0),
+                accumulated_views: Number(row.total_views ?? 0),
+                highest_views: Number(row.max_views ?? 0),
+                sampled_posts_count: Number(row.sampled_posts_count ?? 0),
+                views_definition: row.views_definition ?? null,
+                sync_status: row.last_synced_at ? 'CACHED_PUBLIC' : null,
+            };
+            result[platform] = this.normalizeStats(platform, raw);
+        }
+        return result;
     }
 }

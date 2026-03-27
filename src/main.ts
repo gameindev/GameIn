@@ -56,13 +56,13 @@ async function bootstrap() {
     }
 
     /** ------------------ 🔐 CORS ------------------ */
-    const defaultOrigins = ['https://gamein.gg','https://dev.gamein.gg','https://www.gamein.gg','https://frontend-app-vn9qp.ondigitalocean.app'];
+    const defaultOrigins = ['http://localhost:5173', 'http://localhost:5174', 'https://frontend-app-vn9qp.ondigitalocean.app'];
     const allowedOrigins =
         process.env.CORS_ORIGINS?.split(',').map((o) => o.trim()).filter(Boolean) || defaultOrigins;
 
 
     app.enableCors({
-        origin: allowedOrigins,
+        origin: defaultOrigins,
         methods: process.env.CORS_METHODS ?? 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
         credentials: true,
         allowedHeaders: [
@@ -93,7 +93,10 @@ async function bootstrap() {
     const port = process.env.PORT ?? 3000;
     await app.listen(port);
 
-    console.log(`🚀 Server is running on: http://localhost:${port}`);
-    console.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
+    const host = process.env.HOST ?? (isProduction ? 'https://gamein.gg' : `http://localhost:${port}`);
+    console.log(`🚀 Server is running on: ${host}`);
+    if (!isProduction || process.env.ENABLE_SWAGGER === 'true') {
+        console.log(`📚 API Documentation: ${host}/api/docs`);
+    }
 }
 bootstrap();

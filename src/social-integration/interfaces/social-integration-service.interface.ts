@@ -9,9 +9,17 @@ export interface SocialIntegrationServiceInterface {
     profileSummary?(profile: any): { id?: string; name?: string; username?: string } | undefined;
 
     getAuthUrl(user: ActiveUserData): string;
-    handleCallback(code: string, state: string): Promise<void>;
+    /** Persist tokens and return integration row id for the connected user. */
+    handleCallback(code: string, state: string): Promise<number>;
     refreshTokenIfNeeded(integrationId: number, refreshToken?: string): Promise<{ access_token: string; refresh_token?: string } | null | undefined>;
     fetchAndStoreStats(integrationId: number): Promise<any>;
+    revokeToken?(accessToken: string): Promise<void>;
+    getCapabilities?(): {
+        supportsLikes: boolean;
+        supportsViews: boolean;
+        supportsLifetimeLikes?: boolean;
+        viewsDefinition: string;
+    };
 }
 
 export interface ConnectionCheckResult {
