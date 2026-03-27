@@ -49,7 +49,7 @@ export class DiscordService implements SocialIntegrationServiceInterface {
         return `https://discord.com/oauth2/authorize?${params.toString()}`
     }
 
-    async handleCallback(code: string, state: string): Promise<void> {
+    async handleCallback(code: string, state: string): Promise<number> {
         const userId = parseInt(state);
 
         if (isNaN(userId)) {
@@ -86,7 +86,8 @@ export class DiscordService implements SocialIntegrationServiceInterface {
                 integration.access_token = access_token;
                 integration.refresh_token = refresh_token;
                 integration.social_id = userProfile.id;
-                await this.integrationRepo.save(integration);
+                const saved = await this.integrationRepo.save(integration);
+                return saved.id;
             } else {
                 // <-- CHANGE 4: Create new integration with user ID
                 const newIntegration = this.integrationRepo.create({
@@ -96,7 +97,8 @@ export class DiscordService implements SocialIntegrationServiceInterface {
                     refresh_token,
                     social_id: userProfile.id,
                 });
-                await this.integrationRepo.save(newIntegration);
+                const saved = await this.integrationRepo.save(newIntegration);
+                return saved.id;
             }
         } catch (error) {
             this.logger.error(`Error in Discord callback: ${error.message}`);
