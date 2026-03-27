@@ -90,7 +90,8 @@ export const socialIntegrationService = {
     },
 
     syncPlatform: async (platform) => {
-        const response = await socialApi.post(SOCIAL_INTEGRATION_ENDPOINTS.SYNC, null, {
+        // Avoid sending literal JSON `null` with application/json.
+        const response = await socialApi.post(SOCIAL_INTEGRATION_ENDPOINTS.SYNC, {}, {
             params: { platform },
         });
         return socialIntegrationService.unwrap(response);
