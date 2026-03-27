@@ -1,4 +1,4 @@
-import { IconBrandInstagram, IconBrandTwitch, IconBrandTwitter, IconBrandYoutube, IconDeviceGamepad, IconMusic } from "@tabler/icons-react";
+import { IconBrandInstagram, IconBrandTwitch, IconBrandTwitter, IconBrandYoutube, IconMusic } from "@tabler/icons-react";
 import {theme} from "../../../shared/styles/theme/customTheme"
 
 export const SocialInfo = [
@@ -29,12 +29,6 @@ export const SocialInfo = [
     {
         text: "Tiktok",
         icon: <IconMusic size={theme.spacing.xs} />,
-        followers: "35K",
-        color: "secondary",
-    },
-    {
-        text: "Discord",
-        icon: <IconDeviceGamepad size={theme.spacing.xs} />,
         followers: "35K",
         color: "secondary",
     },

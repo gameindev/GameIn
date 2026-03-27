@@ -1,11 +1,13 @@
-import { Text, Button, Modal, Group } from "@mantine/core";
+import { Text, Button, Modal, Group, Tooltip } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "@mantine/hooks";
 import { SponsorShip } from "../styles/style";
 import { useAppSelector } from "../../../../app/store/hooks";
 import { currentUser } from "../../../auth/store/selector";
+import { useUserOnlineStatus } from "../../../notifications/hooks/useUserOnlineStatus";
 import { USERTYPES } from "../../../../shared/enums/userTypesEnum";
 import AvatarSection from "../../../../shared/components/AvatarSection";
+import useProfileSponsorships from "../hooks/useProfileSponsorships";
 
 // export const mockSponsors = {
 //   sponsorship: [
@@ -112,19 +114,64 @@ import AvatarSection from "../../../../shared/components/AvatarSection";
 //   ],
 // };
 
-export default function SponsorshipSection({ sponsors, userProfile }) {
+const SponsorAvatar = ({
+  sponsor,
+  size,
+  className,
+  isSelf,
+  showName = false,
+}) => {
+  const isOnline = useUserOnlineStatus(sponsor?.id);
+  
+  return (
+    <div
+      style={{
+        display: "inline-flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: "1rem"
+      }}
+    >
+      <AvatarSection
+        avatar={sponsor?.logo}
+        size={size}
+        isOnline={isOnline}
+        showOnlineStatus
+        className={className}
+        displayName={sponsor?.name}
+        profileUsername={isSelf ? sponsor?.userProfile?.username : null}
+      />
+
+      {showName && (
+        <Text style={{ pointerEvents: "none" }} size="sm" fw={600}>
+          {sponsor?.name || "Sponsor"}
+        </Text>
+      )}
+    </div>
+  );
+};
+
+export default function SponsorshipSection({ sponsors, userProfile, isSelf }) {
   const user = useAppSelector(currentUser) || {};
   const [showMoreOpen, setShowMoreOpen] = useState(false);
   const [modalVisibleCount, setModalVisibleCount] = useState(10);
+
+  const { sponsors: sponsorProfiles, loading } = useProfileSponsorships({
+    userProfile,
+  });
 
   const isMobile = useMediaQuery("(max-width: 639px)");
   const isTablet = useMediaQuery("(max-width: 1023px)");
 
   const initialCount = isMobile ? 1 : isTablet ? 2 : 3;
 
-  const sponsorList = Array.isArray(sponsors)
+  const fallbackSponsors = Array.isArray(sponsors)
     ? sponsors
     : sponsors?.sponsorship || [];
+
+  const sponsorList = sponsorProfiles?.length
+    ? sponsorProfiles
+    : fallbackSponsors;
 
   const visibleSponsors = sponsorList.slice(0, initialCount);
   const extraSponsors = sponsorList.slice(initialCount);
@@ -143,7 +190,6 @@ export default function SponsorshipSection({ sponsors, userProfile }) {
       setModalVisibleCount((prev) => Math.min(prev + 10, extraSponsors.length));
     }
   };
-
   return (
     <SponsorShip>
       <Text component="span" size="sm" className="sponsorship_text">
@@ -167,18 +213,37 @@ export default function SponsorshipSection({ sponsors, userProfile }) {
           //     objectFit: "contain",
           //   }}
           // />
-          <AvatarSection
+          <Tooltip
+            label={sponsor?.name}
             key={`${sponsor?.name || "sponsor"}-${index}`}
-            avatar={sponsor.logo}
-            size={60}
-            isOnline
-            className="sponsorslogo"
-          />
+          >
+            <span style={{ display: "inline-block" }}>
+              <SponsorAvatar
+                sponsor={sponsor}
+                size={60}
+                className="sponsorslogo"
+                isSelf={isSelf}
+              />
+            </span>
+          </Tooltip>
         ))}
+        {!sponsorList.length && loading && (
+          <Text size="sm" c="dimmed">
+            Loading sponsors...
+          </Text>
+        )}
+        {!sponsorList.length && !loading && (
+          <Text size="sm" c="dimmed">
+            {user.user_type === USERTYPES.BRAND ||
+            userProfile.user_type === USERTYPES.BRAND
+              ? "Not Sponsored Yet"
+              : "No Sponsors found"}
+          </Text>
+        )}
       </div>
 
       {extraSponsors.length > 0 && (
-        <Group pos={"absolute"} bottom={"0"} right={"0"}>
+        <Group pos={"absolute"} bottom={"0"} right={"-1rem"}>
           <Button
             variant="none"
             size="xs"
@@ -210,15 +275,13 @@ export default function SponsorshipSection({ sponsors, userProfile }) {
                   padding: "0.5rem 0",
                 }}
               >
-                <AvatarSection
-                  avatar={sponsor.logo}
+                <SponsorAvatar
+                  sponsor={sponsor}
                   size={52}
-                  isOnline
                   className="showmore_logo"
+                  showName
+                  isSelf={isSelf}
                 />
-                <Text size="sm" fw={600}>
-                  {sponsor?.name || "Sponsor"}
-                </Text>
               </div>
             ))}
           </div>

@@ -7,8 +7,6 @@ const favoriteUserslice = createSlice({
   },
   reducers: {
     setFavoriteUsers: (state, action) => {
-        console.log(state,action);
-        
       state.favoriteUsers = action.payload;
     },
   },

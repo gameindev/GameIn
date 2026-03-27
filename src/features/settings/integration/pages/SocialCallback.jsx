@@ -1,49 +1,61 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { Box, Center, Loader, Text, Title } from "@mantine/core";
-import { useSocialIntegrations } from "../hooks/useSocialIntegrations";
-
-const getQueryParams = () => {
-    const params = new URLSearchParams(window.location.search);
-    return {
-        status: params.get("status") || "",
-        message: params.get("message") || "",
-    };
-};
+import { useAppDispatch } from "../../../../app/store/hooks";
+import { fetchAllStatuses, clearSocialStats } from "../store/socialIntegrationSlice";
+import { getOAuthCallbackQuery } from "../utils/parseHashOrSearchQuery";
 
 const SocialCallback = () => {
-    const { handleFetchStats, integrations } = useSocialIntegrations();
+    const dispatch = useAppDispatch();
+    const [qp, setQp] = useState(() => getOAuthCallbackQuery());
 
-    const qp = useMemo(() => getQueryParams(), []);
+    useEffect(() => {
+        const refresh = () => setQp(getOAuthCallbackQuery());
+        refresh();
+        window.addEventListener("hashchange", refresh);
+        return () => window.removeEventListener("hashchange", refresh);
+    }, []);
 
     useEffect(() => {
         const redirectToIntegrations = () => {
-            // Prefer hash routing default
             const target = "#/settings/integrations";
             if (window.location.hash !== target) {
                 window.location.hash = target;
             } else {
-                // Fallback full navigation (in case router not initialized yet)
                 window.location.assign(`${window.location.origin}/#/settings/integrations`);
             }
         };
 
-        // Small delay to let any backend persistence settle and UI to read status
-        const timeout = setTimeout(async () => {
+        let cancelled = false;
+        const run = async () => {
             try {
                 if (qp.status === "success") {
-                    redirectToIntegrations();
-                } else {
-                    redirectToIntegrations();
+                    dispatch(clearSocialStats());
+                    await dispatch(fetchAllStatuses()).unwrap();
                 }
-            } catch (error) {
-                console.error(error);
-                redirectToIntegrations();
+            } catch (e) {
+                console.error(e);
+            } finally {
+                if (!cancelled) {
+                    setTimeout(redirectToIntegrations, qp.status === "success" ? 400 : 900);
+                }
             }
-        }, 1000);
+        };
 
-        return () => clearTimeout(timeout);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [qp.status]);
+        run();
+        return () => {
+            cancelled = true;
+        };
+    }, [dispatch, qp.status]);
+
+    const failMessage = qp.message
+        ? (() => {
+              try {
+                  return decodeURIComponent(qp.message);
+              } catch {
+                  return qp.message;
+              }
+          })()
+        : "Something went wrong during connection.";
 
     return (
         <Center style={{ width: "100%", height: "70vh" }}>
@@ -52,10 +64,12 @@ const SocialCallback = () => {
                     <Loader size="md" />
                 </Center>
                 <Title order={4} ta="center">
-                        {qp.status === "success" ? "Social connect successful" : "Social connect failed"}
+                    {qp.status === "success" ? "Social connect successful" : "Social connect failed"}
                 </Title>
                 <Text size="sm" c="dimmed" ta="center" mt={6}>
-                    {qp.status === "success" ? "Please wait while we complete the connection and update your integrations." : decodeURIComponent(qp.message)}
+                    {qp.status === "success"
+                        ? "Updating your integrations — redirecting to Settings."
+                        : failMessage}
                 </Text>
             </Box>
         </Center>
@@ -63,5 +77,3 @@ const SocialCallback = () => {
 };
 
 export default SocialCallback;
-
-

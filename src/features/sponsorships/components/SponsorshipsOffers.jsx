@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router";
 import useSponsorships from "../hooks/useSponsorships";
 import { OfferingStatus } from "../../../shared/enums/offeringStatusEnum";
@@ -9,45 +9,58 @@ import { Box, Flex, Text } from "@mantine/core";
 import SponsorshipRow from "./SponsorshipRow";
 import { theme } from "../../../shared/styles/theme/customTheme";
 import routeService from "../../../app/services/route/routeService";
-
+import { usePagination } from "../../../shared/utils/pagination";
+import PaginationBar from "../../../shared/components/PaginationBar";
 
 const SponsorshipsOffers = () => {
     const [openedRow, setOpenedRow] = useState(null);
     const { userProfile, isSelf } = useOutletContext();
     const user = useAppSelector(currentUser);
-    const { sponsorships, handleAcceptOffering, handleNegotiateOffering, handleResetOffering } =
-        useSponsorships({ userId: userProfile?.id, profileUserType: userProfile?.user_type });
+    const {
+        sponsorships,
+        handleAcceptOffering,
+        handleNegotiateOffering,
+        handleResetOffering,
+    } = useSponsorships({
+        userId: userProfile?.id,
+        profileUserType: userProfile?.user_type,
+    });
 
     const navigate = useNavigate();
-    
-   
-    const negotiateOffering = (sponsorship) => { 
-       
-        const offering = sponsorships.find(s => s.id === sponsorship);
+
+    const negotiateOffering = (sponsorship) => {
+        const offering = sponsorships.find((s) => s.id === sponsorship);
         if (offering) {
-            // console.log(offering);
-            routeService.messageRoute(
-                offering.user.id,
-                navigate,
-                user,
-            )
+            routeService.messageRoute(offering.user.id, navigate, user);
         }
-    }
-    
+    };
 
     const toggleRow = (index) =>
         setOpenedRow((prev) => (prev === index ? null : index));
-    
-    const filteredSponsorships = sponsorships?.filter((s) => {
-        const hiddenStatuses = [
-            OfferingStatus.DISMISSED,
-        ];
-        const isHiddenStatus = hiddenStatuses.includes(s?.status);
-        // const isSelfAdjusted = s?.last_adjusted_by?.id === user?.id;        
-        // console.log(isHiddenStatus);
-        const shouldShow = !isHiddenStatus;
-         
-        return shouldShow;
+
+    const filteredSponsorships = useMemo(
+        () =>
+            sponsorships?.filter((s) => {
+                const hiddenStatuses = [OfferingStatus.DISMISSED];
+                const isHiddenStatus = hiddenStatuses.includes(s?.status);
+                const shouldShow = !isHiddenStatus;
+
+                return shouldShow;
+            }),
+        [sponsorships],
+    );
+
+    const {
+        page,
+        setPage,
+        totalRecords,
+        totalPages,
+        pageRangeText,
+        pagedRecords,
+        recordsPerPage,
+    } = usePagination({
+        records: filteredSponsorships || [],
+        recordsPerPage: 7,
     });
 
     return (
@@ -73,7 +86,7 @@ const SponsorshipsOffers = () => {
                     </Text>
                 </Flex>
             ) : (
-                filteredSponsorships?.map((sponsorship, index) => (
+                pagedRecords?.map((sponsorship, index) => (
                     <SponsorshipRow
                         key={sponsorship.id}
                         sponsorship={sponsorship}
@@ -87,8 +100,20 @@ const SponsorshipsOffers = () => {
                     />
                 ))
             )}
+            {totalRecords > recordsPerPage && (
+                <PaginationBar
+                    page={page}
+                    totalPages={totalPages}
+                    totalRecords={totalRecords}
+                    pageRangeText={pageRangeText}
+                    onPageChange={(nextPage) => {
+                        setOpenedRow(null);
+                        setPage(nextPage);
+                    }}
+                />
+            )}
         </Box>
-    )
-}
+    );
+};
 
 export default SponsorshipsOffers;

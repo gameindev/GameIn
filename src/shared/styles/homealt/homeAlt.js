@@ -271,6 +271,9 @@ export const SponsorshipMarketplace = styled.section`
     text-align: center;
     margin-bottom: 4rem;
   }
+    .image_block img{
+      margin: 0 auto;
+    }
 `;
 
 export const MileStoneStyles = styled.section`

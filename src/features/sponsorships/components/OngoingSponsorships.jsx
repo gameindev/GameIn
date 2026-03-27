@@ -6,11 +6,15 @@ import { Box, Flex, Paper, Text } from "@mantine/core";
 import OngoingSponsorshipHeader from "./OngoingSponsorshipHeader";
 import { theme } from "../../../shared/styles/theme/customTheme";
 import OngoingSponsorshipRow from "./OngoingSponsorshipRow";
+import { usePagination } from "../../../shared/utils/pagination";
 
 const OngoingSponsorships = () => {
   const [openedRow, setOpenedRow] = useState(null);
   const { userProfile, isSelf } = useOutletContext();
-  const { sponsorships } = useSponsorships({ userId: userProfile?.id });
+  const { sponsorships } = useSponsorships({
+    userId: userProfile?.id,
+    profileUserType: userProfile?.user_type,
+  });
   // console.log(sponsorships);
   const toggleRow = (index) =>
     setOpenedRow((prev) => (prev === index ? null : index));
@@ -19,12 +23,27 @@ const OngoingSponsorships = () => {
     if (s?.status !== OfferingStatus.SPONSORED) return false;
 
     const startDate = new Date(s?.start_date);
+    const endDate = new Date(s?.end_date);
     const today = new Date();
 
     startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(0, 0, 0, 0);
     today.setHours(0, 0, 0, 0);
 
-    return startDate <= today;
+    return startDate <= today && endDate >= today;
+  });
+
+  const {
+    page,
+    setPage,
+    totalRecords,
+    totalPages,
+    pageRangeText,
+    pagedRecords,
+    recordsPerPage,
+  } = usePagination({
+    records: filteredSponsorships || [],
+    recordsPerPage: 10,
   });
 
   return (
@@ -63,6 +82,18 @@ const OngoingSponsorships = () => {
             />
           </Paper>
         ))
+      )}
+      {totalRecords > recordsPerPage && (
+        <PaginationBar
+          page={page}
+          totalPages={totalPages}
+          totalRecords={totalRecords}
+          pageRangeText={pageRangeText}
+          onPageChange={(nextPage) => {
+            setOpenedRow(null);
+            setPage(nextPage);
+          }}
+        />
       )}
     </Box>
   );

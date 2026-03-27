@@ -38,10 +38,11 @@ export const SettingsWrap = styled.div`
 export const IntegrationsCard = styled.div`
     display: flex;
     gap: ${theme.spacing.md};
-    align-items: center;
+    align-items: flex-start;
     background: #6a6d7436;
     border-radius: ${theme.radius.md};
     padding: ${theme.spacing.sm} ;
+    height: 100%;
 
     .connect_btn{
         margin-left: auto;

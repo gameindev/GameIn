@@ -1,15 +1,19 @@
 export const OFFERINGS_ORDER_ENDPOINTS = {
-    LIST: ({ page = 1, limit = 20, userId = undefined, brand_id = undefined, relations = [] }) => {
+    LIST: ({ page = 1, limit = 20, creator_id = undefined, brand_id = undefined, status = undefined, relations = [] }) => {
         const params = new URLSearchParams();
         params.append('page', page.toString());
         params.append('limit', limit.toString());
         
-        if (userId) {
-            params.append('user_id', userId.toString());
+        if (creator_id) {
+            params.append('creator_id', creator_id.toString());
         }
         
         if (brand_id) {
             params.append('brand_id', brand_id.toString());
+        }
+
+        if(status){
+            params.append('status', status.toString());
         }
         
         if (relations.length > 0) {

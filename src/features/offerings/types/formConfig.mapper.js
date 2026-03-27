@@ -7,7 +7,6 @@ export const FORM_CONFIG = {
         { value: "x", label: "X (Twitter)" },
         { value: "youtube", label: "YouTube" },
         { value: "tiktok", label: "TikTok" },
-        { value: "discord", label: "Discord" },
         { value: "kick", label: "Kick" },
         { value: "facebook", label: "Facebook" },
         { value: "snapchat", label: "Snapchat" },

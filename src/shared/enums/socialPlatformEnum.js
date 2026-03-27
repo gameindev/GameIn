@@ -4,7 +4,6 @@ export const SocialPlatform = {
     X: "X",
     YOUTUBE: "YOUTUBE",
     TIKTOK: "TIKTOK",
-    DISCORD: "DISCORD",
     KICK: "KICK",
     FACEBOOK: "FACEBOOK",
     SNAPCHAT: "SNAPCHAT",

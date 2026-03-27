@@ -3,9 +3,13 @@ import { SOCIAL_INTEGRATION_ENDPOINTS } from "../api/social_endpoints";
 
 
 export const socialIntegrationService = {
+    unwrap: (response) => {
+        const body = response?.data;
+        return body?.data ?? body ?? null;
+    },
     /**
      * Get connection status for a single platform
-     * @param {string} platform - Platform name (TWITCH, INSTAGRAM, X, YOUTUBE, TIKTOK, DISCORD)
+     * @param {string} platform - Platform name (TWITCH, INSTAGRAM, X, YOUTUBE, TIKTOK)
      * @returns {Promise<Object>} Connection status with state and label
      */
     getStatus: async (platform) => {
@@ -66,10 +70,36 @@ export const socialIntegrationService = {
             const response = await socialApi.get(SOCIAL_INTEGRATION_ENDPOINTS.STATS, {
                 params: { platform, integrationId }
             });
-            return response?.data || null;
+            return socialIntegrationService.unwrap(response);
         } catch (error) {
             console.error(`Error fetching stats for ${platform}:`, error);
             throw error;
         }
+    },
+
+    fetchPublicStats: async (userId) => {
+        try {
+            const response = await socialApi.get(SOCIAL_INTEGRATION_ENDPOINTS.STATS_PUBLIC, {
+                params: { userId },
+            });
+            return socialIntegrationService.unwrap(response) || {};
+        } catch (error) {
+            console.error(`Error fetching public stats for user ${userId}:`, error);
+            throw error;
+        }
+    },
+
+    syncPlatform: async (platform) => {
+        const response = await socialApi.post(SOCIAL_INTEGRATION_ENDPOINTS.SYNC, null, {
+            params: { platform },
+        });
+        return socialIntegrationService.unwrap(response);
+    },
+
+    disconnectPlatform: async (platform) => {
+        const response = await socialApi.delete(SOCIAL_INTEGRATION_ENDPOINTS.DISCONNECT, {
+            params: { platform },
+        });
+        return response?.data || null;
     },
 };

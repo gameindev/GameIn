@@ -4,34 +4,22 @@ import {
     fetchAllStatuses, 
     fetchStatus, 
     connectPlatform, 
-    fetchPlatformStats 
+    fetchPlatformStats,
+    syncPlatform,
+    disconnectPlatform,
 } from '../store/socialIntegrationSlice';
 
 export const useSocialIntegrations = () => {
     const dispatch = useAppDispatch();
-    const { integrations, loading, error, connecting, stats } = useAppSelector(
+    const { integrations, loading, error, connecting, syncing, disconnecting, stats } = useAppSelector(
         (state) => state.socialIntegration
     );
 
-    // Fetch all statuses on mount and check for OAuth callback
     useEffect(() => {
         dispatch(fetchAllStatuses());
-        
-        // Check if we're returning from OAuth callback
-        const urlParams = new URLSearchParams(window.location.search);
-        const platform = urlParams.get('platform');
-        const code = urlParams.get('code');
-        
-        if (platform && code) {
-            // OAuth callback detected - refresh statuses after a short delay
-            setTimeout(() => {
-                dispatch(fetchAllStatuses());
-                // Clean up URL params
-                window.history.replaceState({}, '', window.location.pathname);
-            }, 1000);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        // OAuth code is consumed by the backend; return URL uses ?status= on the hash.
+        // SocialCallback page dispatches fetchAllStatuses + clearSocialStats after success.
+    }, [dispatch]);
 
     const handleConnect = useCallback(async (platform) => {
         try {
@@ -62,6 +50,14 @@ export const useSocialIntegrations = () => {
         }
     }, [dispatch]);
 
+    const handleSync = useCallback(async (platform) => {
+        return dispatch(syncPlatform(platform)).unwrap();
+    }, [dispatch]);
+
+    const handleDisconnect = useCallback(async (platform) => {
+        return dispatch(disconnectPlatform(platform)).unwrap();
+    }, [dispatch]);
+
     const getStatus = useCallback((platform) => {
         return integrations[platform] || { state: 'ADD', label: 'Not Set' };
     }, [integrations]);
@@ -71,10 +67,14 @@ export const useSocialIntegrations = () => {
         loading,
         error,
         connecting,
+        syncing,
+        disconnecting,
         stats,
         handleConnect,
         handleRefreshStatus,
         handleFetchStats,
+        handleSync,
+        handleDisconnect,
         getStatus,
     };
 };

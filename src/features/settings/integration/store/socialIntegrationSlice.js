@@ -59,18 +59,49 @@ export const fetchPlatformStats = createAsyncThunk(
     }
 );
 
+export const syncPlatform = createAsyncThunk(
+    'socialIntegration/syncPlatform',
+    async (platform, { rejectWithValue }) => {
+        try {
+            const data = await socialIntegrationService.syncPlatform(platform);
+            return { platform, data };
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const disconnectPlatform = createAsyncThunk(
+    'socialIntegration/disconnectPlatform',
+    async (platform, { rejectWithValue }) => {
+        try {
+            await socialIntegrationService.disconnectPlatform(platform);
+            return platform;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
 const initialState = {
     integrations: {}, // { [platform]: { state, label, summary, integration_id, ... } }
     loading: false,
     error: null,
     connecting: null, // Currently connecting platform
+    syncing: null,
+    disconnecting: null,
     stats: {}, // { [platform]: stats data }
+    statsErrors: {}, // { [platform]: error message }
 };
 
 const socialIntegrationSlice = createSlice({
     name: 'socialIntegration',
     initialState,
     reducers: {
+        /** After OAuth, drop cached stats so UIs refetch with new integration data. */
+        clearSocialStats: (state) => {
+            state.stats = {};
+        },
         clearError: (state) => {
             state.error = null;
         },
@@ -139,12 +170,60 @@ const socialIntegrationSlice = createSlice({
 
         // Fetch stats
         builder
+            .addCase(fetchPlatformStats.pending, (state, action) => {
+                const platform = action.meta.arg?.platform;
+                if (platform) {
+                    delete state.statsErrors[platform];
+                }
+            })
             .addCase(fetchPlatformStats.fulfilled, (state, action) => {
                 const { platform, data } = action.payload;
                 state.stats[platform] = data;
+                if (platform) delete state.statsErrors[platform];
+            })
+            .addCase(fetchPlatformStats.rejected, (state, action) => {
+                const platform = action.meta.arg?.platform;
+                const message = errorMessage(action.payload);
+                if (platform) {
+                    // Mark as attempted so UI does not infinitely retry on every render.
+                    if (state.stats[platform] == null) state.stats[platform] = {};
+                    state.statsErrors[platform] = message;
+                }
+                state.error = message;
+            });
+
+        builder
+            .addCase(syncPlatform.pending, (state, action) => {
+                state.syncing = action.meta.arg;
+            })
+            .addCase(syncPlatform.fulfilled, (state, action) => {
+                state.syncing = null;
+                const { platform, data } = action.payload;
+                state.stats[platform] = data;
+                if (platform) delete state.statsErrors[platform];
+            })
+            .addCase(syncPlatform.rejected, (state, action) => {
+                state.syncing = null;
+                state.error = errorMessage(action.payload);
+            });
+
+        builder
+            .addCase(disconnectPlatform.pending, (state, action) => {
+                state.disconnecting = action.meta.arg;
+            })
+            .addCase(disconnectPlatform.fulfilled, (state, action) => {
+                state.disconnecting = null;
+                const platform = action.payload;
+                delete state.integrations[platform];
+                delete state.stats[platform];
+                delete state.statsErrors[platform];
+            })
+            .addCase(disconnectPlatform.rejected, (state, action) => {
+                state.disconnecting = null;
+                state.error = errorMessage(action.payload);
             });
     },
 });
 
-export const { clearError, setConnecting, updateIntegration } = socialIntegrationSlice.actions;
+export const { clearError, clearSocialStats, setConnecting, updateIntegration } = socialIntegrationSlice.actions;
 export default socialIntegrationSlice.reducer;

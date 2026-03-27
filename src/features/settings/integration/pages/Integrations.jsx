@@ -8,25 +8,39 @@ import { PLATFORMS } from "../types/platform.mapper";
 
 
 
+/** API returns `summary` as `{ id?, name?, username? }`; React children must be strings. */
+function summaryToDisplayString(summary) {
+    if (summary == null) return "";
+    if (typeof summary === "string") return summary;
+    if (typeof summary !== "object") return String(summary);
+    const handle = summary.username || summary.name;
+    if (handle) return handle.startsWith("@") ? handle : `@${handle}`;
+    if (summary.id) return `Connected (id: ${summary.id})`;
+    return "";
+}
+
 const Integrations = () => {
     const { 
         integrations, 
         loading, 
         error, 
         connecting, 
+        syncing,
+        disconnecting,
         stats,
         handleConnect, 
         handleRefreshStatus,
         handleFetchStats,
+        handleSync,
+        handleDisconnect,
         getStatus 
     } = useSocialIntegrations();
 
-    // Fetch stats for connected platforms on mount and when integrations change
     useEffect(() => {
         Object.entries(integrations).forEach(([platform, data]) => {
-            // if (data?.state === 'CONNECTED' && data?.integration_id && !stats[platform]) {
-            //     handleFetchStats(platform, data.integration_id);
-            // }
+            if (data?.state === "CONNECTED" && data?.integration_id != null && stats[platform] == null) {
+                handleFetchStats(platform, data.integration_id);
+            }
         });
     }, [integrations, stats, handleFetchStats]);
 
@@ -36,10 +50,7 @@ const Integrations = () => {
         if (status.state === 'ADD' || status.state === 'CONNECT') {
             await handleConnect(platform);
         } else if (status.state === 'CONNECTED') {
-            // Refresh stats
-            if (status.integration_id) {
-                await handleFetchStats(platform, status.integration_id);
-            }
+            await handleSync(platform);
             await handleRefreshStatus(platform);
         }
     };
@@ -51,20 +62,17 @@ const Integrations = () => {
             case 'CONNECT':
                 return 'CONNECT';
             case 'CONNECTED':
-                return 'REFRESH';
+                return 'SYNC';
             default:
                 return 'ADD';
         }
     };
 
     const getPillContent = (status, statsData) => {
-        if (status.state === 'CONNECTED') {
-            if (statsData?.followers) {
-                return `${formatNumber(statsData.followers)} followers`;
-            }
-            return status.summary || 'Connected';
+        if (status.state === "CONNECTED") {
+            return summaryToDisplayString(status.summary) || "Connected";
         }
-        return status.label || 'Not Set';
+        return status.label || "Not Set";
     };
 
     const formatNumber = (num) => {
@@ -123,16 +131,16 @@ const Integrations = () => {
                             return (
                                 <Grid.Col span={6} key={platform.key}>
                                     <IntegrationsCard>
-                                        <Icon size={24} />
+                                        <Icon size={32} />
                                         <div>
                                             <Title order={4}>{platform.displayName}</Title>
-                                            <Space h="xs" />
-                                            <Pill color={getPillColor(status)}>
+                                            <Space h="5" />
+                                            <Pill color={getPillColor(status)} style={{ fontSize: "0.75rem" }}>
                                                 {getPillContent(status, statsData)}
                                             </Pill>
-                                            {status.summary && status.state === 'CONNECTED' && (
-                                                <Text size="xs" c="dimmed" mt={4}>
-                                                    {status.summary}
+                                            {platform.key === 'INSTAGRAM' && status.state !== 'CONNECTED' && (
+                                                <Text size="xs" c="yellow" mt={4}>
+                                                    Instagram requires a Professional account.
                                                 </Text>
                                             )}
                                         </div>
@@ -140,11 +148,21 @@ const Integrations = () => {
                                             className='connect_btn' 
                                             variant="primary"
                                             onClick={() => handleButtonClick(platform.key)}
-                                            loading={isConnecting}
-                                            disabled={isConnecting || loading}
+                                            loading={isConnecting || syncing === platform.key}
+                                            disabled={isConnecting || loading || syncing === platform.key}
                                         >
-                                            {isConnecting ? 'Connecting...' : getButtonText(status)}
+                                            {isConnecting ? 'Connecting...' : syncing === platform.key ? 'Syncing...' : getButtonText(status)}
                                         </Button>
+                                        {status.state === 'CONNECTED' && (
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => handleDisconnect(platform.key)}
+                                                loading={disconnecting === platform.key}
+                                            >
+                                                DISCONNECT
+                                            </Button>
+                                        )}
                                     </IntegrationsCard>
                                 </Grid.Col>
                             );

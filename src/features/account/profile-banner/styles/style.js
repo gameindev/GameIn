@@ -157,9 +157,9 @@ export const SponsorShip = styled.div`
     
     .sponsorslogo {
     img{
-        transform: scale(0.8);
-    object-fit: contain !important;
-    clip-path: initial !important;
+    //     transform: scale(0.8);
+    // object-fit: contain !important;
+    // clip-path: initial !important;
     }
     }
 `;
