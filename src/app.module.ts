@@ -173,6 +173,7 @@ const ENV = process.env.NODE_ENV || 'development';
                         ca: process.env.DATABASE_SSL_CA ? fs.readFileSync(process.env.DATABASE_SSL_CA).toString() : undefined
                     }
                     : false,
+
                     
                     extra: {
                         max: Number(process.env.TYPEORM_POOL_MAX ?? 20),

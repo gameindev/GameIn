@@ -56,13 +56,20 @@ async function bootstrap() {
     }
 
     /** ------------------ 🔐 CORS ------------------ */
-    const defaultOrigins = ['http://localhost:5173', 'http://localhost:5174', 'https://frontend-app-vn9qp.ondigitalocean.app'];
+    const defaultOrigins = [
+        'https://gamein.gg',
+        'https://www.gamein.gg',
+        'https://dev.gamein.gg',
+        'https://frontend-app-vn9qp.ondigitalocean.app',
+        'http://localhost:5173',
+        'http://localhost:5174',
+    ];
     const allowedOrigins =
         process.env.CORS_ORIGINS?.split(',').map((o) => o.trim()).filter(Boolean) || defaultOrigins;
 
 
     app.enableCors({
-        origin: defaultOrigins,
+        origin: allowedOrigins,
         methods: process.env.CORS_METHODS ?? 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
         credentials: true,
         allowedHeaders: [

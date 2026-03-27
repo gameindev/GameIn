@@ -66,12 +66,17 @@ export class InstagramService implements SocialIntegrationServiceInterface {
 
     getAuthUrl(user: ActiveUserData): string {
         const state = signOAuthState({ sub: user.sub, platform: SocialPlatform.INSTAGRAM });
-        const v = this.config.instagramGraphVersion;
-        const u = new URL(`https://www.facebook.com/${v}/dialog/oauth`);
+        const normalizedScopes = this.config.instagramScopes
+            .split(/[,\s]+/)
+            .map((s) => s.trim())
+            .filter(Boolean)
+            .join(',');
+        const u = new URL('https://www.instagram.com/oauth/authorize');
+        u.searchParams.set('force_reauth', 'true');
         u.searchParams.set('client_id', this.config.instagramAppId);
         u.searchParams.set('redirect_uri', this.config.instagramCallbackUrl);
         u.searchParams.set('response_type', 'code');
-        u.searchParams.set('scope', this.config.instagramScopes.replace(/,/g, ' '));
+        u.searchParams.set('scope', normalizedScopes);
         u.searchParams.set('state', state);
         socialDebugLog(this.logger, 'Instagram', 'getAuthUrl built', {
             redirect_uri: this.config.instagramCallbackUrl,
