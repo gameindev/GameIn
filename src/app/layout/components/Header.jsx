@@ -5,12 +5,9 @@ import GameInLogo from "../../../assets/homepage/gamein-logo.svg";
 import { HeaderSection } from "../../../shared/styles/layouts";
 import routePaths from "../../router/routes";
 import { Link, useNavigate } from "react-router";
-import AvatarSection from "../../../shared/components/AvatarSection";
-import profileMediaUrlsHelper from "../../../shared/utils/helpers/useProfileMediaUrl.helper";
-import { persistor, store } from "../../store";
+import ProfileAvatar from "../../../shared/components/ProfileAvatar";
+import { store } from "../../store";
 import { useAppDispatch } from "../../store/hooks";
-import { clearUser } from "../../../features/auth/store/userSlice";
-import { logout } from "../../../features/auth/store/authSlice";
 import { performLogout } from "../../../features/auth/store/logoutThunk";
 import { showNotificationHelper } from "../../../shared/utils/helpers/showNotification.helper";
 import { NOTIFICATION_TYPES } from "../../../shared/enums/notificationTypesEnum";
@@ -23,15 +20,6 @@ const Header = () => {
     const navigate = useNavigate();
     const isLoggedInUser = store.getState().auth.accessToken ? true : false;
     const profile = store.getState().user?.profile || {};
-    const { avatarUrl } = profileMediaUrlsHelper(profile);
-    const profileDetails =
-        profile?.creator_profile ||
-        profile?.brand_profile ||
-        profile?.community_profile;
-    const avatarDisplayName =
-        profileDetails?.first_name || profileDetails?.last_name
-            ? `${profileDetails?.first_name || ""} ${profileDetails?.last_name || ""}`.trim()
-            : profileDetails?.brand_name || profile?.username || "";
     // console.log(store.getState().user?.profile);
 
     const handleLogout = () => {
@@ -119,13 +107,10 @@ const Header = () => {
                                     <Menu shadow="md" width={180} position="bottom-end">
                                         <Menu.Target>
                                             <UnstyledButton>
-                                                <AvatarSection
+                                                <ProfileAvatar
+                                                    user={profile}
                                                     className="avatar-icon-small"
                                                     size="55"
-                                                    avatar={avatarUrl}
-                                                    displayName={avatarDisplayName}
-                                                    firstName={profileDetails?.first_name}
-                                                    lastName={profileDetails?.last_name}
                                                 />
                                             </UnstyledButton>
                                         </Menu.Target>

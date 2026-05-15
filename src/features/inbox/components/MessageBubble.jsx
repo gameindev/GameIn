@@ -23,15 +23,16 @@ import {
   IconChecks,
 } from "@tabler/icons-react";
 import { theme } from "../../../shared/styles/theme/customTheme";
-import HexContainer from "../../../shared/components/HexContainer";
 import { inboxAvatar } from "../utils/inboxAvatar";
 import getInitials from "../../../shared/utils/helpers/getInitials.helper";
+import { useNavigate } from "react-router";
 
 const MessageBubble = React.memo(function MessageBubble({
   message,
   onViewDocument,
   onlineUsers = [],
 }) {
+  const navigate = useNavigate();
   const isBot = message.isBot || false;
   const isCurrentUser = message.senderId === message.currentUserId;
   const senderId = message.senderId;
@@ -274,6 +275,21 @@ const MessageBubble = React.memo(function MessageBubble({
               styles={{ root: { color: "#4DABF7" } }}
             >
               view / edit document
+            </Button>
+          )}
+          {message.showRatingPrompt && message.json_data?.orderId && (
+            <Button
+              variant="light"
+              size="xs"
+              mt="xs"
+              onClick={() =>
+                navigate(
+                  message.json_data?.feedbackPath ||
+                    `/feedback?orderId=${message.json_data.orderId}`
+                )
+              }
+            >
+              Rate creator
             </Button>
           )}
         </Box>

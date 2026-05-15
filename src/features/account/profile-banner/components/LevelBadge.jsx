@@ -1,26 +1,15 @@
 import BadgeLevels from "../../../../shared/components/svg-icons/LevelBadge";
 import { BadgeSection } from "../styles/style";
 
-
-
-const levelColors = {
-    1: "#9D7FEF",
-    2: "#76A2EE",
-    3: "#65C3D6",
-    4: "#5CE5B0",
-    5: "#AAD980",
-    6: "#E2BB63",
-};
-
+/** Original badge accent; stars + shield use one color for all levels. */
+const BADGE_FILL = "#E2BB63";
 
 const LevelBadge = ({ level }) => {
-    const colors = levelColors[level] || "#E2BB63";
-
     return (
         <BadgeSection>
             <div className="levels">
                 <div className="badge_info">
-                    <BadgeLevels fill={colors} number={level} />
+                    <BadgeLevels fill={BADGE_FILL} number={level} />
                 </div>
             </div>
         </BadgeSection>

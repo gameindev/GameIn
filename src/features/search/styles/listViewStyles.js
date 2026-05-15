@@ -9,37 +9,66 @@ export const ListviewStyles = styled.div`
     background-color: ${theme.colors.secondaryGrey[0]};
     gap: ${theme.gap.xs};
 
-    .avatar,
-    .levels,
-    .progress,
-    .social_info,
-    .offerings_panel,
-    .action_btns {
-        flex: 0.75;
+    .avatar {
+        flex: 0 0 7.5rem;
         text-align: center;
     }
 
     .list_content {
-        flex: 1 0 25%;
+        flex: 1 1 24rem;
+        min-width: 0;
+    }
+
+    .list_metrics {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: ${theme.gap.xs};
+        margin-left: auto;
+        min-width: 0;
+        flex-wrap: nowrap;
+    }
+
+    .list_metrics > span {
+        flex: 0 0 auto;
     }
 
     .levels {
         // border-left: 1px dashed ${theme.colors.inputBgColor[0]};
+        flex: 0 0 5.75rem;
+        min-width: 5rem;
+        gap: 0.1rem;
+        text-align: center;
     }
 
-    .progress {
-        // border-left: 1px dashed ${theme.colors.inputBgColor[0]};
-        // border-right: 1px dashed ${theme.colors.inputBgColor[0]};
-        display: flex;
-        justify-content: center;
+    .level_label {
+        color: #9aa3aa;
+        letter-spacing: 0.08em;
+        line-height: 1;
+    }
+
+    .followers_count {
+        margin-top: 0.2rem;
+        line-height: 1;
+        letter-spacing: 0.02em;
+    }
+
+    .followers_label {
+        color: #cfd5da;
+        letter-spacing: 0.08em;
+        line-height: 1;
     }
 
     .social_info {
         // border-right: 1px dashed ${theme.colors.inputBgColor[0]};
+        flex: 0 0 8.75rem;
         display: flex;
         padding: 0 ${theme.gap.xs} 0 0;
         flex-direction: column;
-        gap: ${theme.gap.xxs};
+        gap: ${theme.gap.sm};
+        min-width: 8.75rem;
+        text-align: center;
 
         .follwers_list {
         display: flex;
@@ -50,8 +79,8 @@ export const ListviewStyles = styled.div`
     }
 
     .offerings_panel {
-        flex: 1.4;
-        min-width: 17rem;
+        flex: 0 0 18rem;
+        min-width: 18rem;
         text-align: left;
         padding-right: ${theme.gap.xs};
     }
@@ -233,10 +262,98 @@ export const ListviewStyles = styled.div`
     }
 
     .action_btns {
+        flex: 0 0 6.5rem;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         align-items: end;
         gap: 1em;
+    }
+
+    @media (max-width: 1280px) {
+        flex-wrap: wrap;
+        align-items: flex-start;
+
+        .list_content {
+            flex: 1 1 calc(100% - 9rem);
+        }
+
+        .list_metrics {
+            flex: 1 0 100%;
+            justify-content: flex-end;
+        }
+    }
+
+    @media (max-width: 920px) {
+        .list_metrics {
+            align-items: stretch;
+            justify-content: space-between;
+            gap: ${theme.gap.sm};
+            flex-wrap: wrap;
+        }
+
+        .list_metrics > span {
+            display: none;
+        }
+
+        .levels,
+        .social_info,
+        .action_btns {
+            flex: 1 1 0;
+        }
+
+        .offerings_panel {
+            flex: 1 1 100%;
+            min-width: 0;
+            padding-right: 0;
+        }
+
+        .action_btns {
+            align-items: flex-end;
+        }
+    }
+
+    @media (max-width: 640px) {
+        flex-direction: column;
+        align-items: stretch;
+
+        .avatar {
+            flex: 0 0 auto;
+            align-self: center;
+        }
+
+        .list_content {
+            flex: 0 0 auto;
+            text-align: center;
+        }
+
+        .list_content .mantine-Group-root {
+            justify-content: center;
+        }
+
+        .list_metrics {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .levels,
+        .social_info,
+        .offerings_panel,
+        .action_btns {
+            flex: 0 0 auto;
+            width: 100%;
+            min-width: 0;
+        }
+
+        .social_info {
+            padding-right: 0;
+        }
+
+        .action_btns {
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
     }
 `;

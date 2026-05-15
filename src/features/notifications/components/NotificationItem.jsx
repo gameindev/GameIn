@@ -1,7 +1,8 @@
-import { Group, Text, Stack, ActionIcon, Badge, Box } from '@mantine/core';
+import { Group, Text, Stack, ActionIcon, Badge, Box, Button } from '@mantine/core';
 import { IconX, IconCheck } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { useNavigate } from 'react-router';
 import { useNotifications } from '../hooks/useNotifications';
 
 dayjs.extend(relativeTime);
@@ -11,6 +12,11 @@ dayjs.extend(relativeTime);
  */
 const NotificationItem = ({ notification }) => {
     const { markAsRead, deleteNotification } = useNotifications(false);
+    const navigate = useNavigate();
+
+    const isRatingRequest =
+        notification.type === 'CREATOR_RATING_REQUEST' ||
+        String(notification.type || '').toUpperCase() === 'CREATOR_RATING_REQUEST';
 
     const isUnread = !notification.read_at;
     const timeAgo = notification.created_at 
@@ -56,6 +62,22 @@ const NotificationItem = ({ notification }) => {
                     <Text size="xs" color="dimmed" lineClamp={2}>
                         {notification.message}
                     </Text>
+                    {isRatingRequest && notification.data?.orderId && (
+                        <Button
+                            size="xs"
+                            variant="light"
+                            mt={6}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/feedback?orderId=${notification.data.orderId}`);
+                                if (isUnread) {
+                                    markAsRead(notification.id);
+                                }
+                            }}
+                        >
+                            Rate creator
+                        </Button>
+                    )}
                     {timeAgo && (
                         <Text size="xs" color="dimmed">
                             {timeAgo}

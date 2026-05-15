@@ -6,7 +6,7 @@ import { useContext, useMemo } from "react";
 import { useMediaQuery } from "@mantine/hooks";
 import { getFollowerStats } from "../../../app/services/user/user-follower.service";
 import { GridStyles } from "../styles/gridViewStyles";
-import AvatarSection from "../../../shared/components/AvatarSection";
+import ProfileAvatar from "../../../shared/components/ProfileAvatar";
 import { USERTYPES } from "../../../shared/enums/userTypesEnum";
 import { calculateAge } from "../../../shared/utils/helpers/calculateAge.helper";
 import Verifed from "../../../shared/components/svg-icons/Verifed";
@@ -39,31 +39,20 @@ export default function GridView({ SocialInfo }) {
           userItem.creator_profile ||
           userItem.brand_profile ||
           userItem.community_profile;
-
-        const avatarUrl =
-          userItem.creator_profile?.profile_image?.path ||
-          userItem.brand_profile?.profile_image?.path ||
-          userItem.community_profile?.profile_image?.path;
-        const profileImageUrl = avatarUrl
-          ? `${import.meta.env.VITE_ASSET_URL}/${avatarUrl}`
-          : null;
-        const displayName =
-          profile?.first_name || profile?.last_name
-            ? `${profile?.first_name || ""} ${profile?.last_name || ""}`.trim()
-            : profile?.brand_name || username || "";
+        const certificationLevel = Math.min(
+          6,
+          Math.max(1, Math.round(Number(profile?.rank) || 1)),
+        );
 
         return (
           <div style={{ position: "relative", flexBasis: "calc(33.3% - 0.8em)" }} key={id}>
             <GridStyles>
               <div className="avatar">
-                <AvatarSection
+                <ProfileAvatar
+                  user={userItem}
                   className="avatar"
-                  avatar={profileImageUrl}
                   size="112"
                   profilePath={`/${username}/profile`}
-                  displayName={displayName}
-                  firstName={profile?.first_name}
-                  lastName={profile?.last_name}
                 />
                 <div className="title">
                   <Link
@@ -154,7 +143,12 @@ export default function GridView({ SocialInfo }) {
                   <Text size="sm" ta="center" mb="xs">
                     LEVEL
                   </Text>
-                  <BadgeLevels width="3.125em" height="4.375em" />
+                  <BadgeLevels
+                    fill="#E2BB63"
+                    number={certificationLevel}
+                    width="3.125em"
+                    height="4.375em"
+                  />
                 </div>
               </div>
 

@@ -276,11 +276,11 @@ export default function SocialMediaStats() {
             style={{
                 borderRadius: theme.radius.md,
                 padding: "1.25rem",
-                minHeight: 280,
+                // minHeight: 280,
             }}
         >
             <Grid gutter="lg" align="stretch">
-                <Grid.Col span={{ base: 12, md: 5 }}>
+                <Grid.Col span={{ base: 12, md: 5 }} style={{ minHeight: "unset" }}>
                     <Flex
                         direction="column"
                         align="center"
@@ -310,7 +310,7 @@ export default function SocialMediaStats() {
                         </Flex>
                     </Flex>
                 </Grid.Col>
-                <Grid.Col span={{ base: 12, md: 7 }}>
+                <Grid.Col span={{ base: 12, md: 7 }} style={{ minHeight: "unset" }}>
                     <Table
                         withTableBorder={false}
                         withColumnBorders={false}

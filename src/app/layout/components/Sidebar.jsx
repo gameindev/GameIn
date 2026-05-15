@@ -2,7 +2,7 @@
 import { Hexagon } from "../../../shared/components/Hexagon";
 import { theme } from "../../../shared/styles/theme/customTheme";
 import { IconPlus } from "@tabler/icons-react";
-import AvatarSection from "../../../shared/components/AvatarSection";
+import ProfileAvatar from "../../../shared/components/ProfileAvatar";
 import { useState, useEffect } from "react";
 import { Accordion, Tooltip } from "@mantine/core";
 import { Link, useLocation } from "react-router";
@@ -14,38 +14,22 @@ import { setFavoriteUsers } from "../../store/slice/favoriteUsersSlice";
 import { userFavouriteService } from "../../services/user/user-favourite.service";
 import { useUserOnlineStatus } from "../../../features/notifications/hooks/useUserOnlineStatus";
 import { useOnlineUsers } from "../../../features/notifications/hooks/useOnlineUsers";
-import getInitials from "../../../shared/utils/helpers/getInitials.helper";
 
 // Separate component for favorite user avatar to use hooks properly
-const FavoriteUserAvatar = ({ favoriteUser, onRemove }) => {
+const FavoriteUserAvatar = ({ favoriteUser }) => {
   // Use real-time online status from WebSocket, not cached data
   const isOnline = useUserOnlineStatus(favoriteUser.id);
-
-  const profile =
-    favoriteUser.creator_profile ||
-    favoriteUser.brand_profile ||
-    favoriteUser.community_profile;
-  const avatarPath =
-    favoriteUser.brand_profile?.profile_image?.path ||
-    favoriteUser.creator_profile?.profile_image?.path ||
-    favoriteUser.community_profile?.profile_image?.path;
-  const avatar = avatarPath
-    ? `${import.meta.env.VITE_ASSET_URL}/${avatarPath}`
-    : null;
 
   return (
     <Tooltip label={favoriteUser?.name || favoriteUser?.username}>
       <li>
-        <AvatarSection
+        <ProfileAvatar
+          user={favoriteUser}
           size="50"
-          avatar={avatar}
           // onClick={() => onRemove(favoriteUser.id)}
           isOnline={isOnline}
           showOnlineStatus={true}
-          profileUsername={favoriteUser?.username}
           displayName={favoriteUser?.name || favoriteUser?.username}
-        //   firstName={profile?.first_name}
-        //   lastName={profile?.last_name}
         />
       </li>
     </Tooltip>
@@ -55,7 +39,6 @@ const FavoriteUserAvatar = ({ favoriteUser, onRemove }) => {
 const Sidebar = () => {
   const [menuItems] = useState(sidebarItems);
   const [modalOpen, setModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const user = useAppSelector(currentUser);
   const dispatch = useAppDispatch();
@@ -76,14 +59,10 @@ const Sidebar = () => {
   const fetchFavourites = async () => {
     if (!user?.id) return;
     try {
-      setLoading(true);
       const favourites = await userFavouriteService.listFavourites(user.id);
-      console.log(favourites);
       dispatch(setFavoriteUsers(favourites || []));
     } catch (error) {
       console.error("Error fetching favourites:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -101,28 +80,18 @@ const Sidebar = () => {
     if (!user?.id) return;
 
     try {
-      // Add each user to favourites via API
-      const addPromises = newUsers.map((u) => {
-        // Check if already in local state to avoid duplicates
-        if (!favoriteUsers.some((fav) => fav.id === u.id)) {
-          return userFavouriteService.addFavourite(user.id, u.id);
-        }
-        return Promise.resolve();
-      });
+      const usersToAdd = newUsers.filter(
+        (u) => !favoriteUsers.some((fav) => fav.id === u.id)
+      );
 
-      await Promise.all(addPromises);
+      await Promise.all(
+        usersToAdd.map((u) => userFavouriteService.addFavourite(user.id, u.id))
+      );
 
-      // Update local state
-      const updatedList = [...favoriteUsers];
-      newUsers.forEach((u) => {
-        if (!updatedList.some((x) => x.id === u.id)) {
-          updatedList.push(u);
-        }
-      });
-      dispatch(setFavoriteUsers(updatedList));
+      await fetchFavourites();
     } catch (error) {
       console.error("Error adding favourites:", error);
-      // Still update UI optimistically, but show error
+      await fetchFavourites();
     }
   };
 
@@ -169,7 +138,6 @@ const Sidebar = () => {
             <FavoriteUserAvatar
               key={fav.id}
               favoriteUser={fav}
-              onRemove={handleRemoveFavorite}
             />
           ))}
         </ul>

@@ -29,7 +29,7 @@ export const GlobalStyles = createGlobalStyle`
         }
 
         @media (min-width: 1600px) {
-            font-size: 88%;
+            font-size: 85%;
         }
     }
 

@@ -52,6 +52,10 @@ export const Tableview = () => {
           userItem.creator_profile ||
           userItem.brand_profile ||
           userItem.community_profile;
+    const certificationLevel = Math.min(
+      6,
+      Math.max(1, Math.round(Number(profile?.rank) || 1)),
+    );
 
     return (
       <Table.Tr key={id}>
@@ -78,7 +82,7 @@ export const Tableview = () => {
         </Table.Td>
         <Table.Td>{totalFollowers}</Table.Td>
         <Table.Td>
-          <BadgeLevels number="4" />
+          <BadgeLevels fill="#E2BB63" number={certificationLevel} />
         </Table.Td>
         <Table.Td>
           <Group>

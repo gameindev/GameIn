@@ -61,12 +61,14 @@ export const useMessageManagement = (conversationId, onMarkAsRead = null) => {
             }];
         }
 
+        const jd = apiMessage.json_data || null;
+
        
         return {
             id: apiMessage.id,
             client_msg_id: apiMessage.client_msg_id,
             content: apiMessage.content,
-            json_data: apiMessage.json_data || null,
+            json_data: jd,
             sender: apiMessage.sender?.username || "Unknown",
             senderId: apiMessage.sender?.id,
             senderProfilePic: apiMessage.sender?.profilepic || null,
@@ -75,6 +77,10 @@ export const useMessageManagement = (conversationId, onMarkAsRead = null) => {
             type: apiMessage.type || 'TEXT',
             attachments: attachments,
             showDocumentButton: false, // Can be enhanced later
+            showRatingPrompt:
+                jd?.kind === 'creator_rating_prompt' &&
+                jd?.orderId != null &&
+                !jd?.rating_submitted,
             status: 'delivered', // Default status for loaded messages
         };
     }, [user?.id]);
@@ -282,6 +288,7 @@ export const useMessageManagement = (conversationId, onMarkAsRead = null) => {
             created_at: messageData.timestamp,
             type: messageData.type || 'TEXT',
             attachment: messageData.attachments?.[0] || null, // Handle attachments from messageData
+            json_data: messageData.json_data ?? null,
         });
 
         // Enhanced deduplication logic

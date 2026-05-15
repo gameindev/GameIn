@@ -1,4 +1,4 @@
-﻿import { createHashRouter } from "react-router";
+import { createHashRouter } from "react-router";
 import { lazy, Suspense } from "react";
 import routePaths from "./routes";
 import { USERTYPES } from "../../shared/enums/userTypesEnum";
@@ -70,27 +70,31 @@ const router = createHashRouter([
                 element: withSuspense(<EmailVerificationPage />),
             },
             {
-                path: routePaths.FEEDBACK,
-                element: withSuspense(<FeedbackForm />),
-            },
-            {
                 element: withSuspense(<RequireAuth />),
-                children: [{
-                    element: withSuspense(<RoleGuard allowedRoles={[USERTYPES.CREATOR, USERTYPES.BRAND]} />),
-                    children: [
-                        { element: withSuspense(<Accounts />), children: wrapRoutes(accountsdRoutes) },
-                        { path: routePaths.SEARCH, element: withSuspense(<SearchByUserType />), },
-                        { path: routePaths.SETTINGS.ACCOUNT, element: <SettingsAccount /> },
-                        { path: routePaths.SETTINGS.INTEGRATIONS, element: <SettingsIntegrations /> },
-                        { path: routePaths.SETTINGS.NOTIFICATIONS, element: <SettingsNotifications /> },
-                        { path: routePaths.SETTINGS.SOCIAL_CALLBACK, element: <SocialCallback /> },
-                        { path: routePaths.SETTINGS.PRIVACY, element: <SettingsPrivacy /> },
-                        { path: routePaths.SETTINGS.PAYMENTS, element: <SettingsPayments /> },
-                        // Payment routes
-                        { path: routePaths.PAYMENT.SUCCESS, element: withSuspense(<PaymentSuccess />) },
-                        { path: routePaths.PAYMENT.CANCEL, element: withSuspense(<PaymentCancel />) },
-                    ],
-                }]
+                children: [
+                    {
+                        element: withSuspense(<RoleGuard allowedRoles={[USERTYPES.CREATOR, USERTYPES.BRAND]} />),
+                        children: [
+                            { element: withSuspense(<Accounts />), children: wrapRoutes(accountsdRoutes) },
+                            { path: routePaths.SEARCH, element: withSuspense(<SearchByUserType />), },
+                            { path: routePaths.SETTINGS.ACCOUNT, element: <SettingsAccount /> },
+                            { path: routePaths.SETTINGS.INTEGRATIONS, element: <SettingsIntegrations /> },
+                            { path: routePaths.SETTINGS.NOTIFICATIONS, element: <SettingsNotifications /> },
+                            { path: routePaths.SETTINGS.SOCIAL_CALLBACK, element: <SocialCallback /> },
+                            { path: routePaths.SETTINGS.PRIVACY, element: <SettingsPrivacy /> },
+                            { path: routePaths.SETTINGS.PAYMENTS, element: <SettingsPayments /> },
+                            { path: routePaths.PAYMENT.SUCCESS, element: withSuspense(<PaymentSuccess />) },
+                            { path: routePaths.PAYMENT.CANCEL, element: withSuspense(<PaymentCancel />) },
+                        ],
+                    },
+                    {
+                        path: routePaths.FEEDBACK,
+                        element: withSuspense(<RoleGuard allowedRoles={[USERTYPES.BRAND]} />),
+                        children: [
+                            { index: true, element: withSuspense(<FeedbackForm />) },
+                        ],
+                    },
+                ],
             },
         ],
     },

@@ -1,15 +1,11 @@
 import { useEffect, useState } from "react";
 import {
     Button,
-    FileInput,
     Group,
     Image,
     Modal,
     Textarea,
-    Select,
-    Loader,
     ActionIcon,
-    Avatar,
     Badge,
     Divider,
     FileButton,
@@ -27,21 +23,14 @@ import { NOTIFICATION_TYPES } from "../../../shared/enums/notificationTypesEnum"
 import api from "../../../app/services/api";
 
 import {
-    IconFileUpload,
-    IconBrandWhatsapp,
-    IconColorSwatch,
-    IconDots,
-    IconMapPin,
-    IconMoodSmile,
     IconPhotoFilled,
-    IconUsers,
     IconWorld,
     IconX,
 } from "@tabler/icons-react";
 
-import profileMediaUrlsHelper from "../../../shared/utils/helpers/useProfileMediaUrl.helper";
 import { theme } from "./../../../shared/styles/theme/customTheme";
-import AvatarSection from "../../../shared/components/AvatarSection";
+import ProfileAvatar from "../../../shared/components/ProfileAvatar";
+import { getProfileDisplayName } from "../../../shared/utils/helpers/useProfileMediaUrl.helper";
 
 function readFilesAsDataUrls(files) {
     if (!files || files.length === 0) return Promise.resolve([]);
@@ -91,22 +80,10 @@ function getMediaType(file) {
     return 'document';
 }
 
-// Determine post type from media
-function getPostType(media) {
-    if (!media || media.length === 0) return 'text';
-    const types = new Set(media.map(m => m.media_type));
-    if (types.size > 1) return 'mixed';
-    return Array.from(types)[0];
-}
-
 export default function AddPostModal({ opened, onClose }) {
     const dispatch = useAppDispatch();
     const user = useAppSelector((s) => s.user?.profile);
-    const { avatarUrl } = profileMediaUrlsHelper(user);
-    const displayName =
-        `${user?.first_name || ""} ${user?.last_name || ""}`.trim() ||
-        user?.username ||
-        "You";
+    const displayName = getProfileDisplayName(user) || "You";
     const [content, setContent] = useState("");
     const [title, setTitle] = useState("");
     const [files, setFiles] = useState([]);
@@ -236,12 +213,10 @@ export default function AddPostModal({ opened, onClose }) {
                 <Divider />
 
                 <Group align="center" gap="sm" px="sm">
-                    <AvatarSection
+                    <ProfileAvatar
+                        user={user}
                         size={60}
-                        avatar={avatarUrl}
-                        displayName={displayName}
-                        firstName={user?.first_name}
-                        lastName={user?.last_name}
+                        profilePath=""
                     />
                     <Stack gap={4}>
                         <Text fw={700}>{displayName}</Text>

@@ -14,6 +14,8 @@ const StatBox = ({
     actionCTA = false,
     defaultOpen = true,
     onSponsorClick,
+    style: styleProp,
+    noFlexFill = false,
     ...props
 }) => {
     const [opened, setOpened] = useState(defaultOpen);
@@ -24,7 +26,7 @@ const StatBox = ({
         }
     };
 
-    const shouldShowSpacer = !accordion;
+    const shouldShowSpacer = !accordion && !noFlexFill;
 
     return (
         <Box
@@ -37,6 +39,8 @@ const StatBox = ({
                 borderRadius: theme.radius.md,
                 display: "flex",
                 flexDirection: "column",
+                ...(noFlexFill ? { height: "auto", minHeight: 0 } : null),
+                ...styleProp,
             }}
         >
 
@@ -70,7 +74,7 @@ const StatBox = ({
                         <Box mt="sm">{children}</Box>
                     </Collapse>
                 ) : (
-                    <Box style={{ ...props.style }} mt="sm">
+                    <Box mt="sm">
                         {children}
                     </Box>
                 )}

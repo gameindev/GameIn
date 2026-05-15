@@ -9,7 +9,6 @@ const Dashboard = lazy(() => import("../../features/account/dashboard/pages/Dash
 const ProfilePage = lazy(() => import("../../features/account/profile/pages/ProfilePage"))
 const SponsorShips = lazy(() => import("../../features/sponsorships/pages/Sponsorships"))
 const Offerings = lazy(() => import("../../features/offerings/pages/OfferingsPage"))
-const StatsPage = lazy(() => import("../../features/stats-page/pages/StatsPage"))
 const NewsFeed = lazy(() => import("../../features/newsfeed/pages/NewsFeed"))
 const Inbox = lazy(() => import("../../features/inbox/pages/Inbox"))
 const EditBio = lazy(() => import("../../features/account/profile/pages/edit-profile/EditBio"))
@@ -20,7 +19,7 @@ const EditOpportunity = lazy(() => import("../../features/offerings/pages/EditOp
 const EditOpportunityWithAccess = withRoleAccess(EditOpportunity);
 
 
-const { DASHBOARD, PROFILE, SPONSORSHIPS, OFFERINGS, STATS, NEWSFEED, INBOX } =
+const { DASHBOARD, PROFILE, SPONSORSHIPS, OFFERINGS, NEWSFEED, INBOX } =
     routePaths.ACCOUNTS;
 
 const accountsdRoutes = [
@@ -45,8 +44,7 @@ const accountsdRoutes = [
     // { path: OFFERINGS.EDIT_PRICEPOOLEVENT, element: <EditPricePoolEvent /> },
     { path: OFFERINGS.VIEW, element: <Offerings /> },
 
-    // Others
-    { path: STATS.ROOT, element: <StatsPage /> },
+    // Others (/stats is SPONSORSHIPS.ROOT — analytics live on Sponsorships page)
     { path: NEWSFEED.ROOT, element: <NewsFeed /> },
     { path: INBOX.ROOT, element: <Inbox /> },
     { path: INBOX.CONVERSATION, element: <Inbox /> },

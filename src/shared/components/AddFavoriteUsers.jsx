@@ -19,7 +19,7 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 import { followersService } from "../../features/inbox/services/followers.service";
-import HexContainer from "./HexContainer";
+import ProfileAvatar from "./ProfileAvatar";
 
 function AddFavoriteModal({
   opened,
@@ -137,7 +137,7 @@ function AddFavoriteModal({
           filteredUsers.map((u) => {
             const isFavorite = favoriteUsers.some((f) => f.id === u.id);
             const isSelected = selectedUsers.includes(u.id);
-
+            
             return (
               <Group
                 key={u.id}
@@ -151,9 +151,7 @@ function AddFavoriteModal({
                 }}
               >
                 <Group>
-                  <HexContainer size={48}>
-                    {u.username?.[0]?.toUpperCase() || "?"}
-                  </HexContainer>
+                  <ProfileAvatar user={u} size={48} profilePath="" />
 
                   <div>
                     <Text size="sm">{u.name}</Text>
