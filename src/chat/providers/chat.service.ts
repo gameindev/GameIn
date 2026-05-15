@@ -991,6 +991,29 @@ export class ChatService {
         return this.sendMessage(senderId, conversation.id, content, options);
     }
 
+    /**
+     * After the brand submits sponsorship feedback, hide the "Rate creator" CTA
+     * on the original auto-sent rating prompt (same client_msg_id as delivery prompt).
+     */
+    async markRatingPromptSubmitted(offeringOrderId: number): Promise<void> {
+        const clientMsgId = `rating-prompt-order-${offeringOrderId}`;
+        const message = await this.messageRepository.findOne({
+            where: { client_msg_id: clientMsgId },
+        });
+        if (!message) {
+            return;
+        }
+        const prev = (message.json_data && typeof message.json_data === 'object' ? message.json_data : {}) as Record<
+            string,
+            unknown
+        >;
+        message.json_data = {
+            ...prev,
+            kind: 'creator_rating_prompt',
+            rating_submitted: true,
+        };
+        await this.messageRepository.save(message);
+    }
 
     /**
      * Acknowledge a message

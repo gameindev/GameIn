@@ -1,4 +1,4 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, Param, Post, Query, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, ForbiddenException, Get, Param, Post, Query, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { OfferingsOrderService } from './providers/offerings-order.service';
 import { CreateOfferingOrderDto } from './dtos/post-offering-order.dto';
@@ -16,6 +16,31 @@ export class OfferingsOrderController {
     constructor(
         private readonly offeringsOrderService: OfferingsOrderService
     ) { }
+
+    /**
+     * Manual trigger for the same logic as the daily cron (mark PAID/IN_PROGRESS orders
+     * DELIVERED when linked offering end_date is in the past).
+     *
+     * - Allowed when `NODE_ENV` is not `production`, OR when `ALLOW_RUN_AUTO_DELIVER_NOW=true`.
+     * - Requires a normal Bearer token (any authenticated user).
+     */
+    @Post('run-auto-deliver-now')
+    @ApiOperation({
+        summary: 'Run auto-deliver job now (testing / ops)',
+        description:
+            'Non-production by default. In production set ALLOW_RUN_AUTO_DELIVER_NOW=true. Same rules as the scheduled job.',
+    })
+    @ApiResponse({ status: 200, description: '{ updated, failed } counts' })
+    @ApiResponse({ status: 403, description: 'Blocked in production without opt-in env' })
+    runAutoDeliverNow() {
+        const env = process.env.NODE_ENV || 'development';
+        if (env === 'production' && process.env.ALLOW_RUN_AUTO_DELIVER_NOW !== 'true') {
+            throw new ForbiddenException(
+                'run-auto-deliver-now is disabled in production unless ALLOW_RUN_AUTO_DELIVER_NOW=true',
+            );
+        }
+        return this.offeringsOrderService.autoDeliverOrdersPastOfferingEnd();
+    }
 
 
 

@@ -28,6 +28,24 @@ export class SocialPostMetric {
     @Column({ type: 'bigint', nullable: true })
     view_count?: number;
 
+    @Column({ type: 'bigint', nullable: true })
+    comment_count?: number;
+
+    @Column({ type: 'bigint', nullable: true })
+    share_count?: number;
+
+    @Column({ type: 'bigint', nullable: true })
+    save_count?: number;
+
+    @Column({ type: 'bigint', nullable: true })
+    retweet_count?: number;
+
+    @Column({ type: 'bigint', nullable: true })
+    quote_count?: number;
+
+    @Column({ type: 'bigint', nullable: true })
+    impressions?: number;
+
     @Column({ type: 'varchar', length: 128, nullable: true })
     raw_hash?: string;
 

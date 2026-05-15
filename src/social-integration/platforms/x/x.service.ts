@@ -40,6 +40,9 @@ export class XService implements SocialIntegrationServiceInterface {
         return {
             supportsLikes: true,
             supportsViews: true,
+            supportsComments: true,
+            supportsShares: true,
+            supportsSocialAudienceDemographics: false,
             viewsDefinition: 'tweet public_metrics (likes); views/impressions depend on API product (may be 0 without non_public_metrics)',
         };
     }
@@ -250,7 +253,7 @@ export class XService implements SocialIntegrationServiceInterface {
         const uid = me.data?.data?.id;
         const followers = me.data?.data?.public_metrics?.followers_count ?? 0;
 
-        const posts: Array<{ id: string; like_count: number; view_count: number; posted_at?: string; raw?: any }> = [];
+        const posts: any[] = [];
         let pagination_token: string | undefined;
         const maxPages = 40;
 
@@ -291,6 +294,10 @@ export class XService implements SocialIntegrationServiceInterface {
                 posts.push({
                     id: t.id,
                     like_count: Number(pm.like_count ?? 0),
+                    comment_count: Number(pm.reply_count ?? 0),
+                    retweet_count: Number(pm.retweet_count ?? 0),
+                    quote_count: Number(pm.quote_count ?? 0),
+                    impressions: Number(impressions),
                     view_count: Number(impressions),
                     posted_at: t.created_at,
                     raw: t,

@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 import { SocialIntegration } from '../entities/social-integration.entity';
 import { SocialIntegrationProvider } from './social-integration.provider';
 import { ConnectionState, SocialPlatform } from '../enums/social-platform.enums';
@@ -9,6 +9,7 @@ import { ActiveUserData } from '../../auth/interfaces/active-user-data.interface
 import { SocialAccountRollup } from '../entities/social-account-rollup.entity';
 import { SocialPostMetric } from '../entities/social-post-metric.entity';
 import { SocialSyncJob } from '../entities/social-sync-job.entity';
+import { SocialMetricSnapshot } from '../entities/social-metric-snapshot.entity';
 
 type ProviderMap = Partial<Record<SocialPlatform, SocialIntegrationServiceInterface>>;
 const MAX_RECENT_POSTS = 40;
@@ -26,6 +27,8 @@ export class SocialIntegrationService {
         private readonly metricRepo: Repository<SocialPostMetric>,
         @InjectRepository(SocialSyncJob)
         private readonly syncRepo: Repository<SocialSyncJob>,
+        @InjectRepository(SocialMetricSnapshot)
+        private readonly metricSnapshotRepo: Repository<SocialMetricSnapshot>,
         private readonly integrationProvider: SocialIntegrationProvider,
         @Inject('SOCIAL_PROVIDER_MAP')
         private readonly providers: ProviderMap,
@@ -171,10 +174,23 @@ export class SocialIntegrationService {
         return withIndex.slice(0, limit).map(x => x.p);
     }
 
+    private pickEngagementFromPost(post: any) {
+        const p = post ?? {};
+        return {
+            comment_count: p.comment_count != null ? Number(p.comment_count) : undefined,
+            share_count: p.share_count != null ? Number(p.share_count) : undefined,
+            save_count: p.save_count != null ? Number(p.save_count) : undefined,
+            retweet_count: p.retweet_count != null ? Number(p.retweet_count) : undefined,
+            quote_count: p.quote_count != null ? Number(p.quote_count) : undefined,
+            impressions: p.impressions != null ? Number(p.impressions) : undefined,
+        };
+    }
+
     private async persistPostMetrics(integration: SocialIntegration, platform: SocialPlatform, posts: any[]) {
         for (const post of posts) {
             const socialPostId = String(post?.id ?? post?.post_id ?? '');
             if (!socialPostId) continue;
+            const eng = this.pickEngagementFromPost(post);
             const existing = await this.metricRepo.findOne({
                 where: { integration: { id: integration.id }, social_post_id: socialPostId },
             });
@@ -183,6 +199,12 @@ export class SocialIntegrationService {
                 existing.view_count = Number(post?.view_count ?? existing.view_count ?? 0);
                 existing.posted_at = post?.posted_at ? new Date(post.posted_at) : existing.posted_at;
                 existing.raw_payload = post?.raw ?? post ?? existing.raw_payload;
+                if (eng.comment_count != null) existing.comment_count = eng.comment_count;
+                if (eng.share_count != null) existing.share_count = eng.share_count;
+                if (eng.save_count != null) existing.save_count = eng.save_count;
+                if (eng.retweet_count != null) existing.retweet_count = eng.retweet_count;
+                if (eng.quote_count != null) existing.quote_count = eng.quote_count;
+                if (eng.impressions != null) existing.impressions = eng.impressions;
                 await this.metricRepo.save(existing);
                 continue;
             }
@@ -193,6 +215,12 @@ export class SocialIntegrationService {
                 posted_at: post?.posted_at ? new Date(post.posted_at) : null,
                 like_count: Number(post?.like_count ?? 0),
                 view_count: Number(post?.view_count ?? 0),
+                comment_count: eng.comment_count,
+                share_count: eng.share_count,
+                save_count: eng.save_count,
+                retweet_count: eng.retweet_count,
+                quote_count: eng.quote_count,
+                impressions: eng.impressions,
                 raw_payload: post?.raw ?? post ?? null,
             });
             await this.metricRepo.save(record);
@@ -230,6 +258,52 @@ export class SocialIntegrationService {
         return this.rollupRepo.save(rollup);
     }
 
+    private utcCalendarDate(d = new Date()): Date {
+        return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+    }
+
+    private async upsertDailyMetricSnapshot(
+        integration: SocialIntegration,
+        totals: { followers: number; totalLikes: number; totalViews: number },
+        source: string,
+    ) {
+        const snapshotDate = this.utcCalendarDate();
+        let row = await this.metricSnapshotRepo.findOne({
+            where: {
+                integration: { id: integration.id },
+                snapshotDate: Equal(snapshotDate),
+            },
+        });
+        if (!row) {
+            row = this.metricSnapshotRepo.create({
+                integration,
+                snapshotDate,
+                source,
+            });
+        }
+        row.followers_or_subscribers = totals.followers;
+        row.total_likes = totals.totalLikes;
+        row.total_views = totals.totalViews;
+        row.source = source;
+        await this.metricSnapshotRepo.save(row);
+    }
+
+    /** Used by daily cron: persist rollup into today's snapshot without calling external APIs */
+    async upsertDailySnapshotFromRollup(integrationId: number): Promise<void> {
+        const integration = await this.integrationRepo.findOne({ where: { id: integrationId } });
+        const rollup = await this.rollupRepo.findOne({ where: { integration: { id: integrationId } } });
+        if (!integration || !rollup) return;
+        await this.upsertDailyMetricSnapshot(
+            integration,
+            {
+                followers: Number(rollup.followers_or_subscribers ?? 0),
+                totalLikes: Number(rollup.total_likes ?? 0),
+                totalViews: Number(rollup.total_views ?? 0),
+            },
+            'scheduled_daily',
+        );
+    }
+
     async fetchStats(platform: SocialPlatform, integrationId: number, userId?: number) {
         const provider = this.integrationProvider.getProvider(platform);
         const integration = await this.integrationRepo.findOne({ where: { id: integrationId }, relations: ['user'] });
@@ -250,6 +324,15 @@ export class SocialIntegrationService {
                 await this.persistPostMetrics(integration, platform, normalized.posts);
             }
             await this.upsertRollup(integration, normalized);
+            await this.upsertDailyMetricSnapshot(
+                integration,
+                {
+                    followers: normalized.followers,
+                    totalLikes: normalized.totalLikes,
+                    totalViews: normalized.totalViews,
+                },
+                'sync_success',
+            );
             await this.syncRepo.save(this.syncRepo.create({
                 integration,
                 platform,

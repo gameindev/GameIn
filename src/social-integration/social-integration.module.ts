@@ -13,11 +13,20 @@ import { YoutubeModule } from './platforms/youtube/youtube.module';
 import { SocialPostMetric } from './entities/social-post-metric.entity';
 import { SocialAccountRollup } from './entities/social-account-rollup.entity';
 import { SocialSyncJob } from './entities/social-sync-job.entity';
+import { SocialMetricSnapshot } from './entities/social-metric-snapshot.entity';
+import { SocialAudienceSnapshot } from './entities/social-audience-snapshot.entity';
 import { SocialSyncScheduler } from './providers/social-sync.scheduler';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([SocialIntegration, SocialPostMetric, SocialAccountRollup, SocialSyncJob]),
+        TypeOrmModule.forFeature([
+            SocialIntegration,
+            SocialPostMetric,
+            SocialAccountRollup,
+            SocialSyncJob,
+            SocialMetricSnapshot,
+            SocialAudienceSnapshot,
+        ]),
         TwitchModule,
         InstagramModule,
         XModule,

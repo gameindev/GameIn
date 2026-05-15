@@ -6,13 +6,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/user.entity';
 import { CreatorProfile } from '../creator-profiles/creator-profile.entity';
 import { BrandProfile } from '../brand-profiles/brand-profile.entity';
+import { SocialAccountRollup } from '../social-integration/entities/social-account-rollup.entity';
 
 
 @Module({
     controllers: [UserSearchController],
     providers: [UserSearchService],
     imports: [
-        TypeOrmModule.forFeature([User, CreatorProfile, BrandProfile]),
+        TypeOrmModule.forFeature([User, CreatorProfile, BrandProfile, SocialAccountRollup]),
         UsersModule,
     ],
 })

@@ -46,6 +46,9 @@ export class YoutubeService implements SocialIntegrationServiceInterface {
         return {
             supportsLikes: true,
             supportsViews: true,
+            supportsComments: true,
+            supportsShares: false,
+            supportsSocialAudienceDemographics: false,
             viewsDefinition: 'YouTube video statistics.viewCount / likeCount',
         };
     }
@@ -242,7 +245,7 @@ export class YoutubeService implements SocialIntegrationServiceInterface {
             if (!pageToken) break;
         }
 
-        const posts: Array<{ id: string; like_count: number; view_count: number }> = [];
+        const posts: any[] = [];
         const batchSize = 50;
         for (let i = 0; i < videoIds.length; i += batchSize) {
             const batch = videoIds.slice(i, i + batchSize);
@@ -262,6 +265,7 @@ export class YoutubeService implements SocialIntegrationServiceInterface {
                 posts.push({
                     id: item.id,
                     like_count: Number(item.statistics?.likeCount ?? 0),
+                    comment_count: Number(item.statistics?.commentCount ?? 0),
                     view_count: Number(item.statistics?.viewCount ?? 0),
                 });
             }

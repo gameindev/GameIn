@@ -1,40 +1,38 @@
-
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, LessThan } from 'typeorm';
-import { Offering } from '../offerings.entity';
-import { OfferingStatus } from '../enums/offering-status.enum';
+import { OfferingsOrderService } from '../../offerings-order/providers/offerings-order.service';
 
+/**
+ * Scheduled tasks tied to offerings / sponsorship lifecycle.
+ */
 @Injectable()
 export class OfferingsScheduler {
     private readonly logger = new Logger(OfferingsScheduler.name);
 
-    constructor(
-        @InjectRepository(Offering)
-        private readonly offeringRepo: Repository<Offering>
-    ) { }
+    constructor(private readonly offeringsOrderService: OfferingsOrderService) {}
 
-    // @Cron(CronExpression.EVERY_10_MINUTES)
-    // async expireStaleOffers(): Promise<void> {
-    //     const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000); // 24 hours ago
-
-    //     const expired = await this.offeringRepo.find({
-    //         where: {
-    //             status: OfferingStatus.OFFERED,
-    //             last_adjusted_at: LessThan(cutoff)
-    //         },
-    //     });
-
-    //     if (expired.length > 0) {
-    //         for (const offer of expired) {
-    //             offer.status = OfferingStatus.EXPIRED;
-    //             await this.offeringRepo.save(offer);
-
-    //             // TODO: ADD NOTIFIER
-
-    //             this.logger.log(`Offer ID ${offer.id} marked as expired.`);
-    //         }
-    //     }
-    // }
+    /**
+     * After an offering’s `end_date`, paid or in-progress orders are marked DELIVERED
+     * so the brand rating prompt (notification + inbox) can run.
+     *
+     * Schedule: 03:00 daily (cron timezone = server TZ, usually UTC on DigitalOcean).
+     * Opt out: `AUTO_DELIVER_SPONSORSHIPS=false`
+     */
+    @Cron(CronExpression.EVERY_DAY_AT_3AM)
+    async autoDeliverSponsorshipsPastEndDate(): Promise<void> {
+        try {
+            const { updated, failed } =
+                await this.offeringsOrderService.autoDeliverOrdersPastOfferingEnd();
+            if (updated > 0 || failed > 0) {
+                this.logger.log(
+                    `autoDeliverSponsorshipsPastEndDate: updated=${updated}, failed=${failed}`,
+                );
+            }
+        } catch (err) {
+            this.logger.error(
+                `autoDeliverSponsorshipsPastEndDate failed: ${(err as Error)?.message}`,
+                (err as Error)?.stack,
+            );
+        }
+    }
 }

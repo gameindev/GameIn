@@ -43,6 +43,9 @@ export class TiktokService implements SocialIntegrationServiceInterface {
             supportsLikes: true,
             supportsViews: true,
             supportsLifetimeLikes: true,
+            supportsComments: true,
+            supportsShares: false,
+            supportsSocialAudienceDemographics: false,
             viewsDefinition: 'TikTok video view_count; account likes_count available as lifetime_likes',
         };
     }
@@ -212,11 +215,11 @@ export class TiktokService implements SocialIntegrationServiceInterface {
         const followers = Number(u?.follower_count ?? 0);
         const lifetimeLikes = u?.likes_count != null ? Number(u.likes_count) : undefined;
 
-        const posts: Array<{ id: string; like_count: number; view_count: number; posted_at?: string }> = [];
+        const posts: any[] = [];
         let cursor = 0;
         for (let page = 0; page < 200; page++) {
             const url =
-                'https://open.tiktokapis.com/v2/video/list/?fields=id,create_time,like_count,view_count';
+                'https://open.tiktokapis.com/v2/video/list/?fields=id,create_time,like_count,view_count,comment_count';
             let res;
             try {
                 res = await firstValueFrom(
@@ -240,6 +243,7 @@ export class TiktokService implements SocialIntegrationServiceInterface {
                     id: String(id),
                     like_count: Number(v.like_count ?? 0),
                     view_count: Number(v.view_count ?? 0),
+                    comment_count: Number(v.comment_count ?? 0),
                     posted_at: ct != null ? new Date(Number(ct) * 1000).toISOString() : undefined,
                 });
             }

@@ -23,7 +23,9 @@
         "migration:generate": "npm run typeorm -- migration:generate -d src/data-source.ts",
         "migration:run": "npm run typeorm -- migration:run -d src/data-source.ts",
         "migration:revert": "npm run typeorm -- migration:revert -d src/data-source.ts",
-        "db:drop": "npm run typeorm -- schema:drop -d src/data-source.ts"
+        "db:drop": "npm run typeorm -- schema:drop -d src/data-source.ts",
+        "seed:dummy": "cross-env NODE_ENV=development ts-node -r tsconfig-paths/register src/scripts/seed-creators-brands.ts",
+        "seed:dummy:reset": "cross-env NODE_ENV=development DUMMY_SEED_RESET=1 ts-node -r tsconfig-paths/register src/scripts/seed-creators-brands.ts"
     },
     "dependencies": {
         "@aws-sdk/client-s3": "^3.825.0",

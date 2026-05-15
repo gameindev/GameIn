@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
 import { UserSearchDto } from '../dtos/user-search.dto';
 import { User } from '../../users/user.entity';
+import { SocialAccountRollup } from '../../social-integration/entities/social-account-rollup.entity';
 
 @Injectable()
 export class UserSearchService {
@@ -10,7 +11,41 @@ export class UserSearchService {
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
+        @InjectRepository(SocialAccountRollup)
+        private readonly socialRollupRepository: Repository<SocialAccountRollup>,
     ) { }
+
+    /**
+     * Attach public follower counts per linked social platform (from cached rollups) for search cards.
+     */
+    private async attachSocialFollowerStats(users: User[]): Promise<void> {
+        if (!users.length) return;
+        const ids = [...new Set(users.map((u) => u.id))];
+        const rows = await this.socialRollupRepository
+            .createQueryBuilder('rollup')
+            .innerJoin('rollup.integration', 'integration')
+            .where('integration.user_id IN (:...ids)', { ids })
+            .andWhere('integration.deleted_at IS NULL')
+            .select('integration.user_id', 'user_id')
+            .addSelect('integration.platform', 'platform')
+            .addSelect('COALESCE(rollup.followers_or_subscribers, 0)', 'followers')
+            .getRawMany();
+
+        const map = new Map<number, { platform: string; followers: number }[]>();
+        for (const row of rows) {
+            const uid = Number((row as { user_id?: number }).user_id);
+            const platform = String((row as { platform?: string }).platform ?? '');
+            const followers = Number((row as { followers?: string | number }).followers ?? 0);
+            if (!Number.isFinite(uid)) continue;
+            if (!map.has(uid)) map.set(uid, []);
+            map.get(uid)!.push({ platform, followers });
+        }
+
+        for (const user of users) {
+            (user as User & { social_stats_preview?: { platform: string; followers: number }[] }).social_stats_preview =
+                map.get(user.id) ?? [];
+        }
+    }
 
     async searchUsers(dto: UserSearchDto) {
         const { keyword, user_type, country, page = 1, limit = 20 } = dto;
@@ -59,6 +94,8 @@ export class UserSearchService {
 
         // Execute query and get results
         const [results, total] = await query.getManyAndCount();
+
+        await this.attachSocialFollowerStats(results);
 
         return {
             results,

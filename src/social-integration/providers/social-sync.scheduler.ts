@@ -30,4 +30,18 @@ export class SocialSyncScheduler {
             }
         }
     }
+
+    /** Ensures one snapshot row per integration per UTC day from cached rollups (no external API calls) */
+    @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+    async dailyMetricSnapshotsFromRollups(): Promise<void> {
+        const integrations = await this.integrationRepo.find({ relations: ['user'] });
+        for (const integration of integrations) {
+            if (!oauthPlatformSet.has(integration.platform)) continue;
+            try {
+                await this.socialIntegrationService.upsertDailySnapshotFromRollup(integration.id);
+            } catch (error) {
+                this.logger.warn(`Daily snapshot failed for integration ${integration.id}: ${(error as Error)?.message}`);
+            }
+        }
+    }
 }

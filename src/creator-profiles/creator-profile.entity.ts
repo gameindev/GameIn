@@ -91,6 +91,13 @@ export class CreatorProfile {
     })
     rank: number;
 
+    /** Cumulative GameIn certification points from brand sponsorship feedback (max ~60 per reviewed order). */
+    @Column({
+        type: 'bigint',
+        nullable: true,
+        default: 0,
+    })
+    certification_points: number;
 
     @CreateDateColumn()
     created_at: Date;

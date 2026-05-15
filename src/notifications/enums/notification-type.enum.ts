@@ -20,6 +20,8 @@ export enum NotificationType {
     ORDER_CREATED = 'ORDER_CREATED',
     ORDER_COMPLETED = 'ORDER_COMPLETED',
     ORDER_CANCELLED = 'ORDER_CANCELLED',
+    /** Brand is prompted to rate the creator after a sponsored order is delivered */
+    CREATOR_RATING_REQUEST = 'CREATOR_RATING_REQUEST',
     
     // Payment events
     PAYMENT_RECEIVED = 'PAYMENT_RECEIVED',

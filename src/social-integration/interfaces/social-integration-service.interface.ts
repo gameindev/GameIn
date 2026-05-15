@@ -18,6 +18,9 @@ export interface SocialIntegrationServiceInterface {
         supportsLikes: boolean;
         supportsViews: boolean;
         supportsLifetimeLikes?: boolean;
+        supportsComments?: boolean;
+        supportsShares?: boolean;
+        supportsSocialAudienceDemographics?: boolean;
         viewsDefinition: string;
     };
 }

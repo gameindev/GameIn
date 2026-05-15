@@ -44,6 +44,9 @@ export class TwitchService implements SocialIntegrationServiceInterface {
         return {
             supportsLikes: false,
             supportsViews: true,
+            supportsComments: false,
+            supportsShares: false,
+            supportsSocialAudienceDemographics: false,
             viewsDefinition: 'VOD view_count (Helix Get Videos)',
         };
     }

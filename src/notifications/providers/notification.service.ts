@@ -265,6 +265,8 @@ export class NotificationService {
             { type: NotificationType.ORDER_COMPLETED, channel: NotificationChannel.EMAIL, enabled: true },
             // { type: NotificationType.ORDER_COMPLETED, channel: NotificationChannel.SMS, enabled: true },
             { type: NotificationType.ORDER_CANCELLED, channel: NotificationChannel.EMAIL, enabled: true },
+
+            { type: NotificationType.CREATOR_RATING_REQUEST, channel: NotificationChannel.EMAIL, enabled: true },
             
             // Offer notifications
             { type: NotificationType.OFFER_RECEIVED, channel: NotificationChannel.EMAIL, enabled: true },

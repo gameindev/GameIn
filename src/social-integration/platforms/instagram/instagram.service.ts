@@ -27,6 +27,9 @@ export class InstagramService implements SocialIntegrationServiceInterface {
         return {
             supportsLikes: true,
             supportsViews: true,
+            supportsComments: true,
+            supportsShares: false,
+            supportsSocialAudienceDemographics: false,
             viewsDefinition: 'IG media like_count; video/reels views via insights metric plays (when available)',
         };
     }
@@ -256,7 +259,7 @@ export class InstagramService implements SocialIntegrationServiceInterface {
             throw err;
         }
 
-        const posts: Array<{ id: string; like_count: number; view_count: number; posted_at?: string; raw?: any }> = [];
+        const posts: any[] = [];
         let after: string | undefined;
         for (let page = 0; page < 40; page++) {
             let url = `https://graph.facebook.com/${v}/${igId}/media?fields=id,media_type,timestamp,like_count,comments_count&limit=50&access_token=${encodeURIComponent(pageToken)}`;
@@ -290,6 +293,7 @@ export class InstagramService implements SocialIntegrationServiceInterface {
                 posts.push({
                     id: it.id,
                     like_count: Number(it.like_count ?? 0),
+                    comment_count: Number(it.comments_count ?? 0),
                     view_count: views,
                     posted_at: it.timestamp,
                     raw: it,

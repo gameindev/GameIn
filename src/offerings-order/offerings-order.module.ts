@@ -8,6 +8,7 @@ import { GetOfferingOrderProvider } from './providers/get-offering-order.provide
 import { UsersModule } from '../users/users.module';
 import { OfferingsModule } from '../offerings/offerings.module';
 import { NotificationsModule } from '../notifications/notifications.module';
+import { SponsorshipFeedbackModule } from '../sponsorship-feedback/sponsorship-feedback.module';
 
 @Module({
     controllers: [OfferingsOrderController],
@@ -18,6 +19,7 @@ import { NotificationsModule } from '../notifications/notifications.module';
         UsersModule,
         forwardRef(() => OfferingsModule),
         NotificationsModule,
+        SponsorshipFeedbackModule,
     ]
 
 })

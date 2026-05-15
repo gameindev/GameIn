@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { OfferingOrder } from '../offering-order.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,9 +12,12 @@ import { ActiveUserData } from '../../auth/interfaces/active-user-data.interface
 import { NotificationEventsService } from '../../notifications/providers/notification-events.service';
 import { NotificationType } from '../../notifications/enums/notification-type.enum';
 import { NotificationChannel } from '../../notifications/enums/notification-channel.enum';
+import { OrderDeliveredRatingPromptService } from '../../sponsorship-feedback/order-delivered-rating-prompt.service';
 
 @Injectable()
 export class OfferingsOrderService {
+    private readonly logger = new Logger(OfferingsOrderService.name);
+
     constructor(
         
         private readonly postOfferingOrderProvider: PostOfferingOrderProvider,
@@ -23,6 +26,7 @@ export class OfferingsOrderService {
         @Inject(forwardRef(() => OfferingsService))
         private readonly offeringsService: OfferingsService,
         private readonly notificationEvents: NotificationEventsService,
+        private readonly orderDeliveredRatingPrompt: OrderDeliveredRatingPromptService,
     ) { }
 
 
@@ -109,11 +113,10 @@ export class OfferingsOrderService {
                 notifyUser = order.creator; // Notify creator
                 break;
             case OrderStatus.DELIVERED:
-                notificationType = NotificationType.ORDER_COMPLETED;
-                title = 'Order Delivered';
-                message = `Order "${orderTitle}" has been delivered`;
-                notifyUser = order.brand; // Notify brand
-                break;
+                await this.orderDeliveredRatingPrompt.notifyBrandOnDelivered(order, previousStatus).catch((error) => {
+                    console.error('Failed to send post-delivery rating prompt:', error);
+                });
+                return;
             case OrderStatus.IN_PROGRESS:
                 notificationType = NotificationType.ORDER_COMPLETED;
                 title = 'Order In Progress';
@@ -169,5 +172,57 @@ export class OfferingsOrderService {
                 status: OrderStatus.PENDING_PAYMENT,
             },
         });
+    }
+
+    /**
+     * Paid / in-progress orders whose linked offering `end_date` is in the past
+     * (sponsorship window ended → eligible for auto-delivered + brand rating flow).
+     */
+    async findOrderIdsEligibleForAutoDeliver(): Promise<number[]> {
+        const repo = this.getOfferingOrderProvider['repo'] as Repository<OfferingOrder>;
+        const now = new Date();
+        const orders = await repo
+            .createQueryBuilder('oo')
+            .innerJoin('oo.offering', 'off')
+            .where('oo.status IN (:...statuses)', {
+                statuses: [OrderStatus.PAID, OrderStatus.IN_PROGRESS],
+            })
+            .andWhere('off.end_date < :now', { now })
+            .select(['oo.id'])
+            .getMany();
+
+        return orders.map((o) => o.id);
+    }
+
+    /**
+     * Mark eligible orders as DELIVERED (runs from scheduler). Idempotent per order.
+     */
+    async autoDeliverOrdersPastOfferingEnd(): Promise<{ updated: number; failed: number }> {
+        if (process.env.AUTO_DELIVER_SPONSORSHIPS === 'false') {
+            this.logger.log('AUTO_DELIVER_SPONSORSHIPS=false — skipping auto-deliver job');
+            return { updated: 0, failed: 0 };
+        }
+
+        const ids = await this.findOrderIdsEligibleForAutoDeliver();
+        let updated = 0;
+        let failed = 0;
+
+        for (const id of ids) {
+            try {
+                await this.update(id, { status: OrderStatus.DELIVERED });
+                updated += 1;
+            } catch (err) {
+                failed += 1;
+                this.logger.warn(
+                    `Auto-deliver failed for offering_order id=${id}: ${(err as Error)?.message}`,
+                );
+            }
+        }
+
+        if (updated > 0 || failed > 0) {
+            this.logger.log(`Auto-deliver job: updated=${updated}, failed=${failed}`);
+        }
+
+        return { updated, failed };
     }
 }

@@ -31,9 +31,14 @@ export class UpdateCreatorProfileProvider {
         // Object.assign(creatorProfile, patchCreatorProfileDto);
 
         try {
+            const { user_id, rank: _rank, certification_points: _cp, ...safePatch } =
+                patchCreatorProfileDto as PatchCreatorProfileDto & {
+                    rank?: number;
+                    certification_points?: number;
+                };
             creatorProfile = await this.creatorProfileRepository.save({
                 ...creatorProfile,
-                ...patchCreatorProfileDto,
+                ...safePatch,
             });
         } catch (error) {
             throw new InternalServerErrorException('Error while trying to update creator profile.');
