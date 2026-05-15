@@ -95,8 +95,13 @@ import { PostShare } from './newsfeed/entities/post-share.entity';
 import { SocialPostMetric } from "./social-integration/entities/social-post-metric.entity";
 import { SocialAccountRollup } from "./social-integration/entities/social-account-rollup.entity";
 import { SocialSyncJob } from "./social-integration/entities/social-sync-job.entity";
+import { SocialMetricSnapshot } from "./social-integration/entities/social-metric-snapshot.entity";
+import { SocialAudienceSnapshot } from "./social-integration/entities/social-audience-snapshot.entity";
 import tiktokConfig from "./social-integration/platforms/tiktok/tiktok.config";
 import instagramConfig from "./social-integration/platforms/instagram/instagram.config";
+import { AnalyticsModule } from "./analytics/analytics.module";
+import { SponsorshipFeedback } from "./sponsorship-feedback/sponsorship-feedback.entity";
+import { SponsorshipFeedbackModule } from "./sponsorship-feedback/sponsorship-feedback.module";
 
 dotenvFlow.config(); // ✅ Loads .env only in local/dev
 
@@ -163,6 +168,9 @@ const ENV = process.env.NODE_ENV || 'development';
                         SocialPostMetric,
                         SocialAccountRollup,
                         SocialSyncJob,
+                         SocialMetricSnapshot,
+                        SocialAudienceSnapshot,
+                        SponsorshipFeedback,
                     ],
                     synchronize: false, // 🚫 Always false in production
                     namingStrategy: new SnakeNamingStrategy(),
@@ -190,6 +198,7 @@ const ENV = process.env.NODE_ENV || 'development';
         /** 🔑 JWT & Auth */
         ConfigModule.forFeature(jwtConfig),
         JwtModule.registerAsync(jwtConfig.asProvider()),
+        ScheduleModule.forRoot(),
 
         /** 📦 Feature Modules */
         AuthModule,
@@ -216,6 +225,8 @@ const ENV = process.env.NODE_ENV || 'development';
         NotificationsModule,
         UserFaqsModule,
         NewsfeedModule,
+        AnalyticsModule,
+        SponsorshipFeedbackModule,
     ],
     controllers: [AppController],
     providers: [

@@ -37,6 +37,11 @@ import { PostMedia } from './newsfeed/entities/post-media.entity';
 import { PostLike } from './newsfeed/entities/post-like.entity';
 import { PostComment } from './newsfeed/entities/post-comment.entity';
 import { PostShare } from './newsfeed/entities/post-share.entity';
+import { SocialPostMetric } from './social-integration/entities/social-post-metric.entity';
+import { SocialAccountRollup } from './social-integration/entities/social-account-rollup.entity';
+import { SocialSyncJob } from './social-integration/entities/social-sync-job.entity';
+import { SocialMetricSnapshot } from './social-integration/entities/social-metric-snapshot.entity';
+import { SocialAudienceSnapshot } from './social-integration/entities/social-audience-snapshot.entity';
 
 // ✅ Load environment variables for local/dev
 if (process.env.NODE_ENV !== 'production') { 
@@ -90,6 +95,11 @@ export const dataSourceOptions: DataSourceOptions = {
         PostLike,
         PostComment,
         PostShare,
+        SocialPostMetric,
+        SocialAccountRollup,
+        SocialSyncJob,
+        SocialMetricSnapshot,
+        SocialAudienceSnapshot,
     ],
 
     // 🧱 Migrations
