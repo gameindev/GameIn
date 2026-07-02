@@ -13,6 +13,10 @@ const ConversationSidebar = ({
     onSelectConversation,
     onCreateChat,
     user,
+    onMarkAllRead,
+    onClearChat,
+    onDeleteConversation,
+    onTogglePin,
 }) => {
     const [showNewChatModal, setShowNewChatModal] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
@@ -70,6 +74,10 @@ const ConversationSidebar = ({
                             onSelectConversation={onSelectConversation}
                             onlineUsers={onlineUsers}
                             searchQuery={searchQuery}
+                            onMarkAllRead={onMarkAllRead}
+                            onClearChat={onClearChat}
+                            onDeleteConversation={onDeleteConversation}
+                            onTogglePin={onTogglePin}
                         />
                     )}
                 </Box>

@@ -1,7 +1,12 @@
 import { useEffect, useState, useMemo } from "react";
-import { Text } from "@mantine/core";
+import { useNavigate } from "react-router";
+import { Box, Button, Flex, Loader, Stack, Text } from "@mantine/core";
 import RatingWidget from "./RatingWidget";
+import CreatorRatingEmptyState from "./CreatorRatingEmptyState";
+import RatingCardSplitLayout from "./RatingCardSplitLayout";
+import RatingEmptyCtaPanel from "./RatingEmptyCtaPanel";
 import { getCreatorRatingSummary } from "../../../feedback/services/sponsorshipFeedback.service";
+import { theme } from "../../../../shared/styles/theme/customTheme";
 
 /** Same keys as backend `SPONSORSHIP_FEEDBACK_CRITERIA` / brand feedback form */
 const CRITERIA_ORDER = [
@@ -22,13 +27,70 @@ const SHORT_LABELS = {
     "Professionalism / Attitude": "PRO",
 };
 
+function ProfileRatingWithData({ data, ratings, activeIndex, onLearnMore }) {
+    const reviewLine = `${data.review_count} brand review${data.review_count !== 1 ? "s" : ""} · overall ${
+        data.overall_average != null ? data.overall_average.toFixed(1) : "—"
+    }/5`;
+
+    return (
+        <RatingCardSplitLayout>
+            <Box className="rating-score-panel rating-score-panel--chart">
+                <Text size="xs" c={theme.colors.white[0]} ta="center" mb={8} opacity={0.9}>
+                    {reviewLine}
+                </Text>
+                <RatingWidget ratings={ratings} activeIndex={activeIndex} compact />
+            </Box>
+
+            <Box className="rating-divider" aria-hidden="true" />
+
+            <Stack className="rating-cta-panel" gap="xs" justify="center">
+                <Text fw={700} size="sm" c={theme.colors.white[0]} lh={1.35}>
+                    Your sponsorship reputation
+                </Text>
+                <Text size="xs" c="dimmed" lh={1.55} maw={260}>
+                    Brands rate you after completed sponsorships. Strong ratings help you win more
+                    deals.
+                </Text>
+                {onLearnMore ? (
+                    <Button
+                        variant="default"
+                        size="sm"
+                        radius="md"
+                        onClick={onLearnMore}
+                        mt={4}
+                        styles={{
+                            root: {
+                                width: "fit-content",
+                                background: "rgba(0, 0, 0, 0.32)",
+                                border: "1px solid rgba(255, 255, 255, 0.14)",
+                                color: theme.colors.white[0],
+                                fontWeight: 500,
+                                height: "2rem",
+                                paddingInline: "1rem",
+                                "&:hover": {
+                                    background: "rgba(255, 255, 255, 0.06)",
+                                },
+                            },
+                        }}
+                    >
+                        Learn More
+                    </Button>
+                ) : null}
+            </Stack>
+        </RatingCardSplitLayout>
+    );
+}
+
 /**
  * Loads aggregated sponsorship ratings from all brands for the logged-in creator.
  */
-export default function CreatorAggregatedRating() {
+export default function CreatorAggregatedRating({ onLearnMore, variant = "default" }) {
+    const navigate = useNavigate();
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+    const isProfile = variant === "profile";
+    const handleLearnMore = onLearnMore ?? (() => navigate("/stats"));
 
     useEffect(() => {
         let cancelled = false;
@@ -41,7 +103,7 @@ export default function CreatorAggregatedRating() {
                     setError(
                         e?.response?.data?.message ||
                             e?.message ||
-                            "Could not load ratings"
+                            "Could not load ratings",
                     );
                 }
             } finally {
@@ -64,33 +126,40 @@ export default function CreatorAggregatedRating() {
 
     if (loading) {
         return (
-            <Text size="sm" c="dimmed" ta="center">
-                Loading ratings…
-            </Text>
+            <Flex justify="center" align="center" mih={200}>
+                <Loader color="primary" size="sm" />
+            </Flex>
         );
     }
 
     if (error) {
         return (
-            <Text size="sm" c="red" ta="center">
-                {error}
-            </Text>
+            <CreatorRatingEmptyState
+                onLearnMore={handleLearnMore}
+                statusText="Ratings unavailable right now"
+            />
         );
     }
 
     if (!data?.review_count || !ratings) {
-        return (
-            <Text size="sm" c="dimmed" ta="center" px="xs">
-                No brand ratings yet. Your average will appear here after brands leave
-                feedback on delivered sponsorships.
-            </Text>
-        );
+        return <CreatorRatingEmptyState onLearnMore={handleLearnMore} />;
     }
 
     const activeIndex = Math.min(
         CRITERIA_ORDER.length - 1,
-        Math.max(0, data.review_count - 1)
+        Math.max(0, data.review_count - 1),
     );
+
+    if (isProfile) {
+        return (
+            <ProfileRatingWithData
+                data={data}
+                ratings={ratings}
+                activeIndex={activeIndex}
+                onLearnMore={handleLearnMore}
+            />
+        );
+    }
 
     return (
         <>

@@ -2,7 +2,6 @@ import React from "react";
 import {
   Paper,
   Text,
-  Avatar,
   Group,
   Box,
   Button,
@@ -24,8 +23,8 @@ import {
 } from "@tabler/icons-react";
 import { theme } from "../../../shared/styles/theme/customTheme";
 import { inboxAvatar } from "../utils/inboxAvatar";
-import getInitials from "../../../shared/utils/helpers/getInitials.helper";
 import { useNavigate } from "react-router";
+import ProfileAvatar from "../../../shared/components/ProfileAvatar";
 
 const MessageBubble = React.memo(function MessageBubble({
   message,
@@ -40,16 +39,6 @@ const MessageBubble = React.memo(function MessageBubble({
   // Use inbox's onlineUsers (from useSocketManagement), not global Redux state
   const isSenderOnline = onlineUsers.some((u) => (u.userId ?? u.id) === senderId);
 
-  // Helper function to get profile picture URL
-  const getProfilePicUrl = (profilePic) => {
-    if (!profilePic) return null;
-    return profilePic.startsWith("http")
-      ? profilePic
-      : import.meta.env.VITE_ASSET_URL
-      ? `${import.meta.env.VITE_ASSET_URL}/${profilePic}`
-      : profilePic;
-  };
-
   // Handle typing indicator
   if (message.isTyping) {
     return (
@@ -62,14 +51,12 @@ const MessageBubble = React.memo(function MessageBubble({
         }}
       >
         <Group spacing="xs" mb={5}>
-          <Avatar
-            color="blue"
-            radius="xl"
-            size="sm"
-            src={getProfilePicUrl(message.senderProfilePic)}
-          >
-            {getInitials({ displayName: message.sender }) || "B"}
-          </Avatar>
+          <ProfileAvatar
+            avatar={message.senderProfilePic}
+            displayName={message.sender || "Bot"}
+            size={32}
+            profilePath=""
+          />
         </Group>
         <Paper
           p="md"
@@ -138,6 +125,7 @@ const MessageBubble = React.memo(function MessageBubble({
 
   return (
     <Box
+      className="message-item"
       mb="lg"
       style={{
         display: "flex",
@@ -147,15 +135,8 @@ const MessageBubble = React.memo(function MessageBubble({
     >
       <Group spacing="xs" mb={5} justify="space-between" w="100%">
         <Group>
-          {/* <HexContainer size={50}>
-                        {getProfilePicUrl(message.senderProfilePic) ? (
-                            <img src={getProfilePicUrl(message.senderProfilePic)} alt={message.sender || "avatar"} />
-                        ) : (
-                            (message.sender?.[0]?.toUpperCase() || "?")
-                        )}
-                    </HexContainer> */}
           {inboxAvatar(
-            getProfilePicUrl(message.senderProfilePic),
+            message.senderProfilePic,
             message.sender,
             isSenderOnline,
             !isCurrentUser // Show online status only for other users
@@ -172,7 +153,7 @@ const MessageBubble = React.memo(function MessageBubble({
         </Group>
       </Group>
 
-      <Box w="100%" ps={50}>
+      <Box className="message-body-offset" w="100%" ps={50}>
         <Box
           p="md"
           // shadow="sm"
@@ -290,6 +271,24 @@ const MessageBubble = React.memo(function MessageBubble({
               }
             >
               Rate creator
+            </Button>
+          )}
+          {message.showPaymentTransaction && (
+            <Button
+              variant="light"
+              size="xs"
+              mt="xs"
+              color="teal"
+              onClick={() => {
+                const path = message.json_data?.paymentsPath;
+                if (path?.startsWith("http")) {
+                  window.location.href = path;
+                  return;
+                }
+                navigate(path || "/settings/payments");
+              }}
+            >
+              View payments
             </Button>
           )}
         </Box>

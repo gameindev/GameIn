@@ -1,10 +1,12 @@
 import { Instagram, MessageCircle, Music, Plug2, Settings, Twitch, Twitter, Youtube } from "lucide-react"
 import SectionHeader from "../../../../shared/components/SectionHeader"
 import { IntegrationsCard, SettingsCard, SettingsWrap } from "../../styles/settingStyles";
-import { Button, Grid, Pill, Space, Title, Text, Tooltip, Group, Badge, Loader } from "@mantine/core";
+import { Button, Grid, Pill, Space, Title, Text, Group, Loader } from "@mantine/core";
 import { useSocialIntegrations } from "../hooks/useSocialIntegrations";
 import { useEffect } from "react";
 import { PLATFORMS } from "../types/platform.mapper";
+import { showNotificationHelper } from "../../../../shared/utils/helpers/showNotification.helper";
+import { NOTIFICATION_TYPES } from "../../../../shared/enums/notificationTypesEnum";
 
 
 
@@ -26,14 +28,14 @@ const Integrations = () => {
         error, 
         connecting, 
         syncing,
+        refreshingStatus,
         disconnecting,
         stats,
-        handleConnect, 
-        handleRefreshStatus,
+        handleConnect,
         handleFetchStats,
         handleSync,
         handleDisconnect,
-        getStatus 
+        getStatus,
     } = useSocialIntegrations();
 
     useEffect(() => {
@@ -46,25 +48,41 @@ const Integrations = () => {
 
     const handleButtonClick = async (platform) => {
         const status = getStatus(platform);
-        
-        if (status.state === 'ADD' || status.state === 'CONNECT') {
+
+        if (status.state === "ADD" || status.state === "CONNECT") {
             await handleConnect(platform);
-        } else if (status.state === 'CONNECTED') {
-            await handleSync(platform);
-            await handleRefreshStatus(platform);
+            return;
+        }
+
+        if (status.state === "CONNECTED") {
+            try {
+                const result = await handleSync(platform);
+                const data = result?.data ?? result;
+                const cached = data?.syncStatus === "CACHED_FALLBACK";
+                showNotificationHelper(
+                    cached ? "Sync used cached stats" : "Sync complete",
+                    cached
+                        ? "Live API fetch failed; showing your last saved stats."
+                        : "Your social stats have been refreshed.",
+                    cached ? NOTIFICATION_TYPES.WARNING : NOTIFICATION_TYPES.SUCCESS
+                );
+            } catch (err) {
+                const message = err?.message ?? (typeof err === "string" ? err : "Sync failed");
+                showNotificationHelper("Sync failed", message, NOTIFICATION_TYPES.ERROR);
+            }
         }
     };
 
     const getButtonText = (status) => {
         switch (status.state) {
-            case 'ADD':
-                return 'ADD';
-            case 'CONNECT':
-                return 'CONNECT';
-            case 'CONNECTED':
-                return 'SYNC';
+            case "ADD":
+                return "ADD";
+            case "CONNECT":
+                return "CONNECT";
+            case "CONNECTED":
+                return "SYNC";
             default:
-                return 'ADD';
+                return status.integration_id ? "SYNC" : "ADD";
         }
     };
 
@@ -125,8 +143,16 @@ const Integrations = () => {
                         {PLATFORMS.map((platform) => {
                             const Icon = platform.icon;
                             const status = getStatus(platform.key);
-                            const statsData = stats[platform.key];
                             const isConnecting = connecting === platform.key;
+                            const isSyncing = syncing === platform.key;
+                            const isRefreshing = refreshingStatus === platform.key;
+                            const statsData = stats[platform.key];
+                            const lastSyncedLabel =
+                                statsData?.syncStatus === "CACHED_FALLBACK"
+                                    ? "Cached stats"
+                                    : statsData?.syncStatus === "SUCCESS"
+                                      ? "Recently synced"
+                                      : null;
 
                             return (
                                 <Grid.Col span={6} key={platform.key}>
@@ -138,22 +164,36 @@ const Integrations = () => {
                                             <Pill color={getPillColor(status)} style={{ fontSize: "0.75rem" }}>
                                                 {getPillContent(status, statsData)}
                                             </Pill>
-                                            {platform.key === 'INSTAGRAM' && status.state !== 'CONNECTED' && (
+                                            {platform.key === "INSTAGRAM" && status.state !== "CONNECTED" && (
                                                 <Text size="xs" c="yellow" mt={4}>
                                                     Instagram requires a Professional account.
                                                 </Text>
                                             )}
+                                            {lastSyncedLabel ? (
+                                                <Text size="xs" c="dimmed" mt={4}>
+                                                    {lastSyncedLabel}
+                                                </Text>
+                                            ) : null}
                                         </div>
-                                        <Button 
-                                            className='connect_btn' 
+                                        <Button
+                                            className="connect_btn"
                                             variant="primary"
                                             onClick={() => handleButtonClick(platform.key)}
-                                            loading={isConnecting || syncing === platform.key}
-                                            disabled={isConnecting || loading || syncing === platform.key}
+                                            loading={isConnecting || isSyncing || isRefreshing}
+                                            disabled={
+                                                isConnecting ||
+                                                isSyncing ||
+                                                isRefreshing ||
+                                                (loading && !status.state)
+                                            }
                                         >
-                                            {isConnecting ? 'Connecting...' : syncing === platform.key ? 'Syncing...' : getButtonText(status)}
+                                            {isConnecting
+                                                ? "Connecting..."
+                                                : isSyncing || isRefreshing
+                                                  ? "Syncing..."
+                                                  : getButtonText(status)}
                                         </Button>
-                                        {status.state === 'CONNECTED' && (
+                                        {status.state === "CONNECTED" && (
                                             <Button
                                                 variant="outline"
                                                 size="sm"

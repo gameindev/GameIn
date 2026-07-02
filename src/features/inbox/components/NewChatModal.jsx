@@ -1,9 +1,16 @@
 import { Button, Center, Checkbox, Divider, Group, Loader, Modal, ScrollArea, Tabs, Text, TextInput } from "@mantine/core"
 import { IconSearch } from "@tabler/icons-react"
-import HexContainer from "../../../shared/components/HexContainer"
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { followersService } from "../services/followers.service";
+import ProfileAvatar from "../../../shared/components/ProfileAvatar";
 
+const normalizeFollowUser = (entry) =>
+    entry?.following_user ||
+    entry?.follower_user ||
+    entry?.following ||
+    entry?.follower ||
+    entry?.user ||
+    entry;
 
 const NewChatModal = ({
     opened,
@@ -65,12 +72,15 @@ const NewChatModal = ({
     // Single-pass unique user merge, with stable order and deduplication
     const combinedUsers = useMemo(() => {
         let userList = [];
-        if (activeTab === "followers") return followers || [];
-        if (activeTab === "following") return following || [];
+        const normalizedFollowers = (followers || []).map(normalizeFollowUser).filter(Boolean);
+        const normalizedFollowing = (following || []).map(normalizeFollowUser).filter(Boolean);
+
+        if (activeTab === "followers") return normalizedFollowers;
+        if (activeTab === "following") return normalizedFollowing;
         // Merge followers and following with deduplication
         const seen = new Set();
         // Prioritize followers, then add following if not in followers
-        [...(followers || []), ...(following || [])].forEach((u) => {
+        [...normalizedFollowers, ...normalizedFollowing].forEach((u) => {
             if (u && !seen.has(u.id)) {
                 seen.add(u.id);
                 userList.push(u);
@@ -196,9 +206,7 @@ const NewChatModal = ({
                             onClick={() => handleUserToggle(user.id)}
                         >
                             <Group>
-                                <HexContainer size={50}>
-                                    {user.username?.[0]?.toUpperCase() || "?"}
-                                </HexContainer>
+                                <ProfileAvatar user={user} size={50} profilePath="" />
                                 <div>
                                     <Text size="sm">{user.name}</Text>
                                     <Text size="xs" c="dimmed">

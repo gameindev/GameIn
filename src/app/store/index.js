@@ -1,9 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { rootReducer } from './root-reducer'
 import logger from 'redux-logger';
-import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-import { combineReducers } from '@reduxjs/toolkit';
+import { persistStore } from 'redux-persist';
+import { setAuth } from '../../features/auth/store/authSlice';
 
 // ✅ Determine environment
 const isProduction = import.meta.env.VITE_NODE_ENV === 'production';
@@ -11,19 +10,25 @@ const isProduction = import.meta.env.VITE_NODE_ENV === 'production';
 // ✅ Conditionally include logger middleware only in development
 const middlewares = [];
 
+const persistResumeMiddleware = (storeApi) => (next) => (action) => {
+    const result = next(action);
+
+    if (setAuth.match(action)) {
+        try {
+            persistor.persist();
+        } catch (error) {
+            console.warn('Error resuming persistence after login:', error);
+        }
+    }
+
+    return result;
+};
+
+middlewares.push(persistResumeMiddleware);
+
 if (!isProduction) {
     middlewares.push(logger);
 }
-
-// Create persist config for the root reducer
-const persistConfig = {
-    key: 'root',
-    storage,
-    whitelist: ['auth'] // Only persist auth state
-};
-
-// Create persisted root reducer
-// const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
     reducer: rootReducer,

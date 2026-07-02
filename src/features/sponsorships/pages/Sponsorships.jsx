@@ -18,12 +18,17 @@ import SponsorshipsOffers from "../components/SponsorshipsOffers";
 import OngoingSponsorships from "../components/OngoingSponsorships";
 import SocialMediaStats from "../components/SocialMediaStats";
 import SponsorshipPrivateTracking from "../components/SponsorshipPrivateTracking";
+import SponsorshipAnalyticsKpis from "../components/SponsorshipAnalyticsKpis";
+import SponsorshipOverviewCard from "../components/SponsorshipOverviewCard";
+import RevenueOverviewCard from "../components/RevenueOverviewCard";
+import CreatorAudienceEngagementCards from "../components/CreatorAudienceEngagementCards";
 import SocialTrendBarCharts from "../components/SocialTrendBarCharts";
 import { FollowerD3BarChart, FollowerD3GenderDonut } from "../components/FollowerDemographicsD3Charts";
 import { useAppSelector } from "../../../app/store/hooks";
 import { USERTYPES } from "../../../shared/enums/userTypesEnum";
 import { analyticsService } from "../services/analytics.service";
 import { theme } from "../../../shared/styles/theme/customTheme";
+import { pickCreatorBuckets, pickBrandBuckets } from "../utils/analyticsBuckets.utils";
 
 /**
  * Explains follower-based chart data (GameIn `user_follow` → subject as following_id).
@@ -55,25 +60,6 @@ function selfDemoCaption(isBrandSubject, isCreatorSubject) {
     if (isBrandSubject) return "Your brand profile (GameIn first-party)";
     if (isCreatorSubject) return "Your creator profile (GameIn first-party)";
     return "Your GameIn profile (first-party)";
-}
-
-/** Normalize API bucket arrays (snake_case from Nest; tolerate camelCase). */
-function pickCreatorBuckets(demo) {
-    const c = demo?.creators;
-    if (!c || typeof c !== "object") return { age_buckets: [], gender: [], countries: [] };
-    return {
-        age_buckets: c.age_buckets ?? c.ageBuckets ?? [],
-        gender: c.gender ?? c.Gender ?? [],
-        countries: c.countries ?? c.Countries ?? [],
-    };
-}
-
-function pickBrandBuckets(demo) {
-    const b = demo?.brands;
-    if (!b || typeof b !== "object") return { countries: [] };
-    return {
-        countries: b.countries ?? b.Countries ?? [],
-    };
 }
 
 /** StatBox uses dark grey; D3 line chart grid token. */
@@ -108,7 +94,6 @@ export default function Sponsorships() {
     const [trends, setTrends] = useState(null);
     const [engagement, setEngagement] = useState(null);
     const [sponsor, setSponsor] = useState(null);
-    const [privateTracking, setPrivateTracking] = useState(null);
 
     const sessionProfile = useAppSelector((s) => s.user?.profile);
     const outlet = useOutletContext() ?? {};
@@ -128,6 +113,11 @@ export default function Sponsorships() {
     /** Revenue, ROI, and invoice-based charts: owner-only (admins may view a subject they support). */
     const showPrivateMoney =
         (isCreatorSubject || isBrandSubject) && (!viewingOthersStats || viewerIsAdmin);
+
+    /** Audience + engagement cards: owner/admin analytics, or brand evaluating a creator. */
+    const showAudienceEngagement =
+        showPrivateMoney ||
+        (viewingOthersStats && viewerIsBrand && isCreatorSubject);
 
     const analyticsSubjectId =
         viewingOthersStats && subjectProfile?.id != null ? Number(subjectProfile.id) : undefined;
@@ -154,10 +144,7 @@ export default function Sponsorships() {
                     analyticsService.getSocialEngagement(scopedParams),
                 ];
                 if (showPrivateMoney) {
-                    calls.push(
-                        analyticsService.getSponsorshipsSummary(365, scopedParams),
-                        analyticsService.getSponsorshipPrivateTracking(scopedParams),
-                    );
+                    calls.push(analyticsService.getSponsorshipsSummary(365, scopedParams));
                 }
 
                 const results = await Promise.all(calls);
@@ -168,17 +155,14 @@ export default function Sponsorships() {
                     setEngagement(results[i++]);
                     if (showPrivateMoney) {
                         setSponsor(results[i++]);
-                        setPrivateTracking(results[i++]);
                     } else {
                         setSponsor(null);
-                        setPrivateTracking(null);
                     }
                 }
             } catch (err) {
                 if (!cancelled) {
                     setAnalyticsError(err?.message ?? "Failed to load analytics");
                     setSponsor(null);
-                    setPrivateTracking(null);
                 }
             } finally {
                 if (!cancelled) setAnalyticsLoading(false);
@@ -253,7 +237,7 @@ export default function Sponsorships() {
 
     return (
         <Grid gutter={20}>
-            <Grid.Col span={{ base: 12 }} style={{ minHeight: "auto" }}>
+            <Grid.Col span={{ base: 12 }} style={{ minHeight: "auto" }} id="sponsorship-ongoing-section">
                 <StatBox title={"Ongoing Sponsorships"} accordion defaultOpen={true}>
                     <OngoingSponsorships />
                 </StatBox>
@@ -265,55 +249,83 @@ export default function Sponsorships() {
                 </StatBox>
             </Grid.Col>
 
-            {/* <Grid.Col span={{ base: 12 }} style={{ minHeight: "auto" }} h="auto">
-                <Title order={3} c={theme.colors.white[0]} mb="xs">
-                    Analytics
-                </Title>
-                <Text size="sm" c="dimmed" mb="sm">
-                    {viewingOthersStats && isCreatorSubject
-                        ? "You are viewing this creator's stats — follower charts reflect GameIn users who follow this account."
-                        : viewingOthersStats && isBrandSubject
-                          ? "You are viewing this brand's stats — follower charts reflect GameIn users who follow this account."
-                          : viewerIsBrand && !viewingOthersStats
-                            ? "Demographics charts count GameIn followers (age, country, gender, and brand accounts that follow you)."
-                            : viewerIsCreator
-                              ? "Demographics charts count GameIn followers of your creator profile."
-                              : "GameIn analytics overview."}
-                </Text>
-            </Grid.Col> */}
-
-            {/* <Grid.Col span={{ base: 12 }}>
-                <StatBox
-                    title="Social Media Stats"
-                    action={<IconButton hoverClass="hoverYellow" />}
-                    background={
-                        "transparent linear-gradient(45deg, #9d7fef3b 0%, #5ce5b03b 100%) 0% 0% no-repeat"
-                    }
-                >
-                    <SocialMediaStats />
-                </StatBox>
-            </Grid.Col> */}
-
-            {showPrivateMoney && (
-                <Grid.Col span={{ base: 12 }}>
-                    <Title order={4} c={theme.colors.white[0]} mb={4}>
-                        Tracking / sponsorship
-                    </Title>
-                    <Text size="sm" c="dimmed" mb="md">
-                        Private: payments, invoice timing, and revenue summaries are shown only on your own account
-                        (or to an admin assisting you), not to visitors viewing your public profile.
-                    </Text>
-                    <SponsorshipPrivateTracking
-                        tracking={privateTracking}
-                        loading={analyticsLoading}
-                        subjectIsBrand={isBrandSubject}
-                    />
-                </Grid.Col>
-            )}
-
             
 
-            {analyticsLoading && (
+            {showPrivateMoney && (
+                <>
+                    <Grid.Col span={{ base: 12 }} style={{ minHeight: "auto" }}>
+                        <Title order={4} c={theme.colors.white[0]} mb={4} mt="xs">
+                            Sponsorship Analytics
+                        </Title>
+                        <Text size="sm" c="dimmed" mb="md">
+                            Track performance, revenue, audience, and engagement from your profile
+                        </Text>
+                        <SponsorshipAnalyticsKpis
+                            forUserId={analyticsSubjectId}
+                            subjectIsBrand={isBrandSubject}
+                            engagement={engagement}
+                            loading={analyticsLoading}
+                        />
+                    </Grid.Col>
+
+                    <Grid.Col span={{ base: 12, md: 12 }} id="sponsorship-performance-tracking">
+                        <SponsorshipPrivateTracking
+                            subjectIsBrand={isBrandSubject}
+                            forUserId={analyticsSubjectId}
+                        />
+                    </Grid.Col>
+
+                    <Grid.Col span={{ base: 12, md: 4 }}>
+                        <SponsorshipOverviewCard
+                            forUserId={analyticsSubjectId}
+                            onManageClick={() => {
+                                document
+                                    .getElementById("sponsorship-ongoing-section")
+                                    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                            }}
+                            onViewAllClick={() => {
+                                document
+                                    .getElementById("sponsorship-ongoing-section")
+                                    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                            }}
+                        />
+                    </Grid.Col>
+
+                    <Grid.Col span={{ base: 12, md: 8 }}>
+                        <RevenueOverviewCard
+                            subjectIsBrand={isBrandSubject}
+                            forUserId={analyticsSubjectId}
+                            onViewDetailsClick={() => {
+                                document
+                                    .getElementById("sponsorship-performance-tracking")
+                                    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                            }}
+                        />
+                    </Grid.Col>
+                </>
+            )}
+
+            {showAudienceEngagement && (
+                <CreatorAudienceEngagementCards
+                    forUserId={analyticsSubjectId}
+                    subjectUsername={subjectUsername}
+                    viewingOthersStats={viewingOthersStats}
+                    enabled={showAudienceEngagement}
+                    demo={demo}
+                    trends={trends}
+                    engagement={engagement}
+                    loading={analyticsLoading}
+                    onViewAllEngagement={() => {
+                        document
+                            .getElementById("sponsorship-engagement-detail")
+                            ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }}
+                />
+            )}
+
+             
+
+            {/* {analyticsLoading && (
                 <Grid.Col span={{ base: 12 }}>
                     <Group justify="center" p="md">
                         <Loader />
@@ -525,6 +537,7 @@ export default function Sponsorships() {
 
                     <Grid.Col
                         span={{ base: 12, md: 4 }}
+                        id="sponsorship-engagement-detail"
                         style={{ display: "flex", alignItems: "flex-start" }}
                     >
                         <StatBox title={engagementTitle} noFlexFill style={{ width: "100%" }}>
@@ -598,99 +611,41 @@ export default function Sponsorships() {
                     </Grid.Col>
 
                     {showPrivateMoney && (
-                        <>
-                            <Grid.Col {...analyticsGridCol}>
-                                <StatBox
-                                    title={
-                                        viewingOthersStats
-                                            ? isBrandSubject
-                                                ? "Paid orders"
-                                                : "Paid sponsorships"
-                                            : viewerIsBrand
-                                              ? "Paid orders · spend"
-                                              : "Paid sponsorships"
-                                    }
-                                    style={statBoxStretch}
-                                >
-                                    <Text size="xs" c="dimmed" mb={4}>
-                                        {viewingOthersStats
-                                            ? isBrandSubject
-                                                ? "Paid invoices in selected window"
-                                                : "Deals paid in period"
-                                            : viewerIsBrand
-                                              ? "Orders you placed (selected window)"
-                                              : "Deals paid in period"}
-                                    </Text>
-                                    <Text fw={700} fz="xl">
-                                        {sponsor?.paid_orders ?? "—"}
-                                    </Text>
-                                </StatBox>
-                            </Grid.Col>
-
-                            <Grid.Col {...analyticsGridCol}>
-                                <StatBox
-                                    title={
-                                        viewingOthersStats
-                                            ? isBrandSubject
-                                                ? "Invoice total"
-                                                : "Earnings"
-                                            : viewerIsBrand
-                                              ? "Spend · revenue out"
-                                              : "Earnings"
-                                    }
-                                    style={statBoxStretch}
-                                >
-                                    <Text size="xs" c="dimmed" mb={4}>
-                                        {viewingOthersStats
-                                            ? isBrandSubject
-                                                ? "Paid invoice total (this brand)"
-                                                : "Paid to this creator (invoice total)"
-                                            : viewerIsBrand
-                                              ? "Paid invoice total (your spend)"
-                                              : "Paid to you (invoice total)"}
-                                    </Text>
-                                    <Text fw={700} fz="xl">
-                                        {formatUsd(sponsor?.total_revenue)}
-                                    </Text>
-                                </StatBox>
-                            </Grid.Col>
-
-                            <Grid.Col {...analyticsGridCol}>
-                                <StatBox
-                                    title={
-                                        viewingOthersStats
-                                            ? isBrandSubject
-                                                ? "ROI proxy · revenue / views"
-                                                : "Efficiency · earnings / views"
-                                            : viewerIsBrand
-                                              ? "ROI proxy · spend / views"
-                                              : "Efficiency · earnings / views"
-                                    }
-                                    style={statBoxStretch}
-                                >
-                                    <Text size="xs" c="dimmed" mb={4}>
-                                        {viewingOthersStats
-                                            ? isBrandSubject
-                                                ? "Invoice total divided by estimated social views"
-                                                : "Earnings divided by estimated social views"
-                                            : viewerIsBrand
-                                              ? "Spend divided by estimated social views"
-                                              : "Earnings divided by estimated social views"}
-                                    </Text>
-                                    <Text fw={700} fz="xl">
-                                        {sponsor?.roi_proxy_revenue_per_view != null
-                                            ? sponsor.roi_proxy_revenue_per_view.toFixed(4)
-                                            : "—"}
-                                    </Text>
-                                    <Text size="xs" c="dimmed" mt="sm">
-                                        {sponsor?.metric_definitions?.roi_proxy}
-                                    </Text>
-                                </StatBox>
-                            </Grid.Col>
-                        </>
+                        <Grid.Col {...analyticsGridCol}>
+                            <StatBox
+                                title={
+                                    viewingOthersStats
+                                        ? isBrandSubject
+                                            ? "ROI proxy · spend / views"
+                                            : "Efficiency · earnings / views"
+                                        : viewerIsBrand
+                                          ? "ROI proxy · spend / views"
+                                          : "Efficiency · earnings / views"
+                                }
+                                style={statBoxStretch}
+                            >
+                                <Text size="xs" c="dimmed" mb={4}>
+                                    {viewingOthersStats
+                                        ? isBrandSubject
+                                            ? "Invoice total divided by estimated social views"
+                                            : "Earnings divided by estimated social views"
+                                        : viewerIsBrand
+                                          ? "Spend divided by estimated social views"
+                                          : "Earnings divided by estimated social views"}
+                                </Text>
+                                <Text fw={700} fz="xl">
+                                    {sponsor?.roi_proxy_revenue_per_view != null
+                                        ? sponsor.roi_proxy_revenue_per_view.toFixed(4)
+                                        : "—"}
+                                </Text>
+                                <Text size="xs" c="dimmed" mt="sm">
+                                    {sponsor?.metric_definitions?.roi_proxy}
+                                </Text>
+                            </StatBox>
+                        </Grid.Col>
                     )}
                 </>
-            )}
+            )} */}
             
         </Grid>
     );

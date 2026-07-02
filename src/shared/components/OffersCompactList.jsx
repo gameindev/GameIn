@@ -1,4 +1,5 @@
 import { Box, Flex, Group, Image, Paper, Text } from "@mantine/core";
+import styled from "styled-components";
 import HexContainer from "./HexContainer";
 import {
   Separator,
@@ -62,9 +63,10 @@ export default function OffersCompactList({ limit = 4 }) {
   );
 
   return (
-    <Box>
+    <CompactListShell>
       {/* Header */}
       <Flex
+        className="compact-list-head"
         p="sm"
         tt="uppercase"
         fz={theme.fontSizes.xs}
@@ -105,6 +107,7 @@ export default function OffersCompactList({ limit = 4 }) {
 
             return (
               <Paper
+                className="compact-list-row"
                 key={s.id}
                 radius="md"
                 mb="8px"
@@ -112,9 +115,9 @@ export default function OffersCompactList({ limit = 4 }) {
                 p="0.5em"
                 pl="1.25em"
               >
-                <Flex align="center" gap="sm" wrap="nowrap">
+                <Flex className="compact-row-flex" align="center" gap="sm" wrap="nowrap">
                   {/* Sponsor */}
-                  <Box flex={0.5}>
+                  <Box className="compact-logo" flex={0.5}>
                     <Group>
                       <HexContainer size={40}>
                         <Image
@@ -131,14 +134,14 @@ export default function OffersCompactList({ limit = 4 }) {
                   <Separator />
 
                   {/* Type */}
-                  <Box flex={1} ta="center">
+                  <Box className="compact-title" flex={1} ta="center">
                     <Text fz={theme.fontSizes.sm}>{s?.title}</Text>
                   </Box>
 
                   <Separator />
 
                   {/* Stage */}
-                  <Flex flex={0.5} justify="center">
+                  <Flex className="compact-status" flex={0.5} justify="center">
                     <HexContainer
                       size={28}
                       background={stepColors[stage] || stepColors[0]}
@@ -190,7 +193,7 @@ export default function OffersCompactList({ limit = 4 }) {
                     
                   )} */}
 
-                  <Box flex={0.5} ta="center">
+                  <Box className="compact-action" flex={0.5} ta="center">
                     <IconButton
                       size="md"
                       iconSize={16}
@@ -216,6 +219,52 @@ export default function OffersCompactList({ limit = 4 }) {
               </Paper>
             );
           })}
-    </Box>
+    </CompactListShell>
   );
 }
+
+const CompactListShell = styled(Box)`
+  min-width: 0;
+
+  @media (max-width: 768px) {
+    .compact-list-head {
+      display: none;
+    }
+
+    .compact-list-row {
+      padding: 0.75em !important;
+    }
+
+    .compact-row-flex {
+      display: grid !important;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      grid-template-areas:
+        "logo title action"
+        "logo status action";
+      gap: 0.2em 0.75em !important;
+    }
+
+    .compact-row-flex > [style*="border-left"] {
+      display: none;
+    }
+
+    .compact-logo {
+      grid-area: logo;
+    }
+
+    .compact-title {
+      grid-area: title;
+      text-align: left !important;
+      min-width: 0;
+    }
+
+    .compact-status {
+      grid-area: status;
+      justify-content: flex-start !important;
+    }
+
+    .compact-action {
+      grid-area: action;
+    }
+  }
+`;

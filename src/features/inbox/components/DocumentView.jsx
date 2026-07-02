@@ -43,18 +43,6 @@ const DocumentView = ({
     // Use inbox's onlineUsers (from useSocketManagement), not global Redux state
     const isSenderOnline = onlineUsers.some((u) => (u.userId ?? u.id) === senderId);
 
-    console.log("message", message);
-
-    // Helper function to get profile picture URL
-    const getProfilePicUrl = (profilePic) => {
-        if (!profilePic) return null;
-        return profilePic.startsWith("http")
-            ? profilePic
-            : import.meta.env.VITE_ASSET_URL
-            ? `${import.meta.env.VITE_ASSET_URL}/${profilePic}`
-            : profilePic;
-    };
-
     // Format timestamp like MessageBubble
     const formatTimestamp = (timestamp) => {
         if (!timestamp) return "";
@@ -131,6 +119,7 @@ const DocumentView = ({
 
     return (
         <Box
+            className="document-message"
             mb="lg"
             style={{
                 display: "flex",
@@ -142,7 +131,7 @@ const DocumentView = ({
             <Group spacing="xs" mb={5} justify="space-between" w="100%">
                 <Group>
                     {inboxAvatar(
-                        getProfilePicUrl(message.senderProfilePic || message.senderProfilePicUrl),
+                        message.senderProfilePic || message.senderProfilePicUrl,
                         message.sender || message.senderName || "User",
                         isSenderOnline,
                         true // Show online status for document view
@@ -159,8 +148,9 @@ const DocumentView = ({
             </Group>
 
             {/* Document Content */}
-            <Box w="100%" ps={50}>
+            <Box className="document-message-offset" w="100%" ps={50}>
                 <Paper
+                    className="document-message-card"
                     p="md"
                     py={20}
                     px={40}
@@ -184,7 +174,7 @@ const DocumentView = ({
                     <Space h="md" />
 
             <Center>
-                <Flex justify="center" align="center" w="100%" gap={20}>
+                <Flex className="document-message-content" justify="center" align="center" w="100%" gap={20}>
                     <Group justify="center" align="center" direction="column">
                         <Flex
                             w={100}
@@ -214,7 +204,7 @@ const DocumentView = ({
                         </Flex>
                     </Group>
 
-                    <Group justify="start" align="center" direction="column">
+                    <Group className="document-message-copy" justify="start" align="center" direction="column">
                         <Flex spacing={5} direction="row" align="center" gap={5}>
                             <IconFileDescription size={16} color={theme.colors.primary[0]} />
                             <Text size="sm" fw={800} color={theme.colors.white[0]}>
@@ -226,7 +216,7 @@ const DocumentView = ({
                             agreement and activate the deal?
                         </Text>
 
-                        <Flex gap={20} direction="row" justify="space-between">
+                        <Flex className="document-message-actions" gap={20} direction="row" justify="space-between">
                             <Group justify="center" align="center" gap={5}>
                                 <Text size="sm" weight={500} color={theme.colors.white[0]}>
                                     accept:

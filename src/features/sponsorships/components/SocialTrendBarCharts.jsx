@@ -1,6 +1,6 @@
 import { Box, SimpleGrid, Stack, Text } from "@mantine/core";
 import StatBox from "../../../shared/components/StatBox";
-import IconButton from "../../../shared/components/IconButton";
+// import IconButton from "../../../shared/components/IconButton"; // Reserved for future chart actions.
 import D3BarChart from "../../../shared/components/d3/D3BarChart";
 import { theme } from "../../../shared/styles/theme/customTheme";
 
@@ -79,7 +79,8 @@ export default function SocialTrendBarCharts({ series }) {
 
     return (
         <SimpleGrid cols={{ base: 1, md: 3 }} spacing="md">
-            <StatBox title="Social · views by year (UTC)" action={<IconButton hoverClass="hoverYellow" />} style={{ minHeight: "100%" }}>
+            {/* action={<IconButton hoverClass="hoverYellow" />} retained for future use */}
+            <StatBox title="Social · views by year (UTC)" style={{ minHeight: "100%" }}>
                 <Stack gap="xs">
                     <Text size="xs" c="dimmed">
                         Totals from linked account snapshots in your history.
@@ -106,7 +107,8 @@ export default function SocialTrendBarCharts({ series }) {
                 </Stack>
             </StatBox>
 
-            <StatBox title="Social · followers (last 30 days)" action={<IconButton hoverClass="hoverYellow" />} style={{ minHeight: "100%" }}>
+            {/* action={<IconButton hoverClass="hoverYellow" />} retained for future use */}
+            <StatBox title="Social · followers (last 30 days)" style={{ minHeight: "100%" }}>
                 <Stack gap="xs">
                     <Text size="xs" c="dimmed">
                         End-of-day follower totals summed across linked platforms.
@@ -136,7 +138,8 @@ export default function SocialTrendBarCharts({ series }) {
                 </Stack>
             </StatBox>
 
-            <StatBox title="Social · views by weekday (UTC)" action={<IconButton hoverClass="hoverYellow" />} style={{ minHeight: "100%" }}>
+            {/* action={<IconButton hoverClass="hoverYellow" />} retained for future use */}
+            <StatBox title="Social · views by weekday (UTC)" style={{ minHeight: "100%" }}>
                 <Stack gap="xs">
                     <Text size="xs" c="dimmed">
                         Sums snapshot views grouped by weekday in UTC.

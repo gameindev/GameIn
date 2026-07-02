@@ -28,10 +28,34 @@ const conversationsApi = {
         // console.log('Create conversation API response:', response?.data);
         return response?.data?.data || null;
     },
+
+    markConversationAsRead: async (conversationId) => {
+        const response = await api.post(CHAT_ENDPOINTS.MARK_CONVERSATION_READ(conversationId));
+        return response?.data;
+    },
+
+    clearConversation: async (conversationId) => {
+        const response = await api.post(CHAT_ENDPOINTS.CLEAR_CONVERSATION(conversationId));
+        return response?.data;
+    },
+
+    deleteConversation: async (conversationId) => {
+        const response = await api.delete(CHAT_ENDPOINTS.DELETE_CONVERSATION(conversationId));
+        return response?.data;
+    },
+
+    togglePinConversation: async (conversationId) => {
+        const response = await api.put(CHAT_ENDPOINTS.PIN_CONVERSATION(conversationId));
+        return response?.data;
+    },
 }
 
 
 export const conversationsService = {
     getConversations: (userId) => conversationsApi.fetchConversations(userId),
     createConversation: (conversationData) => conversationsApi.createConversation(conversationData),
+    markConversationAsRead: (conversationId) => conversationsApi.markConversationAsRead(conversationId),
+    clearConversation: (conversationId) => conversationsApi.clearConversation(conversationId),
+    deleteConversation: (conversationId) => conversationsApi.deleteConversation(conversationId),
+    togglePinConversation: (conversationId) => conversationsApi.togglePinConversation(conversationId),
 };

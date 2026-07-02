@@ -1,13 +1,13 @@
 import { Box, Group, Text, ActionIcon, Divider } from "@mantine/core";
-import { IconDotsVertical } from "@tabler/icons-react";
+import { IconArrowLeft, IconDotsVertical } from "@tabler/icons-react";
 import { inboxAvatar } from "../utils/inboxAvatar";
 import { theme } from "../../../shared/styles/theme/customTheme";
 import React, { memo } from "react";
 
-const ChatHeader = memo(({ displayName, avatarUrl, online }) => {
+const ChatHeader = memo(({ displayName, avatarUrl, online, onBack, showBack = false }) => {
     return (
         <>
-            <Box p="md">
+            <Box className="chat-header" p="md">
                 <Group
                     position="apart"
                     style={{ flexDirection: "column", alignItems: "flex-start" }}
@@ -18,6 +18,17 @@ const ChatHeader = memo(({ displayName, avatarUrl, online }) => {
 
                     <Group style={{ justifyContent: "space-between", width: "100%" }}>
                         <Group>
+                            {showBack && (
+                                <ActionIcon
+                                    className="inbox-back-btn"
+                                    variant="subtle"
+                                    color="gray"
+                                    onClick={onBack}
+                                    aria-label="Back to conversations"
+                                >
+                                    <IconArrowLeft size={20} />
+                                </ActionIcon>
+                            )}
                             <Box style={{ position: "relative" }}>
                                 {inboxAvatar(avatarUrl, displayName)}
                                 {online && (

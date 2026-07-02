@@ -2,6 +2,7 @@ import { ActionIcon, Box, Button, Collapse, Flex, Text } from "@mantine/core";
 import { useState } from "react";
 import { theme } from "../styles/theme/customTheme";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
+import styled from "styled-components";
 
 
 
@@ -29,7 +30,7 @@ const StatBox = ({
     const shouldShowSpacer = !accordion && !noFlexFill;
 
     return (
-        <Box
+        <StatBoxShell
             w="100%"
             h="100%"
             p="md"
@@ -97,9 +98,29 @@ const StatBox = ({
                 </Button>
             )}
 
-        </Box>
+        </StatBoxShell>
     )
 }
 
+const StatBoxShell = styled(Box)`
+    @media (max-width: 768px) {
+        .box_header {
+            gap: 0.75rem;
+        }
+
+        .box_header .action_cta .mantine-ActionIcon-root,
+        .box_header > .mantine-Flex-root > .mantine-ActionIcon-root {
+            width: 2rem;
+            height: 2rem;
+            min-width: 2rem;
+        }
+
+        .box_header .action_cta .mantine-ActionIcon-root svg,
+        .box_header > .mantine-Flex-root > .mantine-ActionIcon-root svg {
+            width: 0.95rem;
+            height: 0.95rem;
+        }
+    }
+`;
 
 export default StatBox;

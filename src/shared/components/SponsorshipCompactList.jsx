@@ -1,4 +1,5 @@
 import { Box, Flex, Group, Image, Paper, Text } from "@mantine/core";
+import styled from "styled-components";
 import HexContainer from "./HexContainer";
 import {
   Separator,
@@ -49,9 +50,10 @@ export default function SponsorshipCompactList({
   const resolvedEmptyText = emptyText;
   
   return (
-    <Box>
+    <CompactListShell>
       {/* Header */}
       <Flex
+        className="compact-list-head"
         p="sm"
         tt="uppercase"
         fz={theme.fontSizes.xs}
@@ -103,6 +105,7 @@ export default function SponsorshipCompactList({
       {!loading &&
         visible.map((item) => (
           <Paper
+            className="compact-list-row"
             key={item.id}
             radius="md"
             mb="8px"
@@ -110,9 +113,9 @@ export default function SponsorshipCompactList({
             p="0.5em"
             pl="1.25em"
           >
-            <Flex align="center" gap="sm" wrap="nowrap">
+            <Flex className="compact-row-flex" align="center" gap="sm" wrap="nowrap">
               {/* Sponsor */}
-              <Box flex={0.5}>
+              <Box className="compact-logo" flex={0.5}>
                 <Group>
                   <HexContainer size={40}>
                     <Image
@@ -133,13 +136,13 @@ export default function SponsorshipCompactList({
               <Separator />
 
               {/* Type */}
-              <Box flex={1} ta="center">
+              <Box className="compact-title" flex={1} ta="center">
                 <Text fz={theme.fontSizes.sm}>{item.type}</Text>
               </Box>
               <Separator />
 
               {/* Payment in */}
-              <Box flex={1} ta="center">
+              <Box className="compact-status" flex={1} ta="center">
                 <Text
                   fz={theme.fontSizes.sm}
                   fw={700}
@@ -155,7 +158,7 @@ export default function SponsorshipCompactList({
               <Separator />
 
               {/* Interact */}
-              <Box flex={1} ta="center">
+              <Box className="compact-action" flex={1} ta="center">
                 <IconButton
                   size="md"
                   iconSize={16}
@@ -180,6 +183,52 @@ export default function SponsorshipCompactList({
             </Flex>
           </Paper>
         ))}
-    </Box>
+    </CompactListShell>
   );
 }
+
+const CompactListShell = styled(Box)`
+  min-width: 0;
+
+  @media (max-width: 768px) {
+    .compact-list-head {
+      display: none;
+    }
+
+    .compact-list-row {
+      padding: 0.75em !important;
+    }
+
+    .compact-row-flex {
+      display: grid !important;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      grid-template-areas:
+        "logo title action"
+        "logo status action";
+      gap: 0.2em 0.75em !important;
+    }
+
+    .compact-row-flex > [style*="border-left"] {
+      display: none;
+    }
+
+    .compact-logo {
+      grid-area: logo;
+    }
+
+    .compact-title {
+      grid-area: title;
+      text-align: left !important;
+      min-width: 0;
+    }
+
+    .compact-status {
+      grid-area: status;
+      text-align: left !important;
+    }
+
+    .compact-action {
+      grid-area: action;
+    }
+  }
+`;

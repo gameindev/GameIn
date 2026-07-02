@@ -4,6 +4,8 @@ import { PaymentProvider } from "../../../shared/enums/paymentProviderEnum";
 import { showNotificationHelper } from "../../../shared/utils/helpers/showNotification.helper";
 import { NOTIFICATION_TYPES } from "../../../shared/enums/notificationTypesEnum";
 
+import walletService from "../../settings/payment/services/wallet.service";
+
 /**
  * Hook for handling payment flow
  */
@@ -109,11 +111,34 @@ export const usePayment = () => {
         }
     }, []);
 
+    const payFromWallet = useCallback(async (orderId) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await walletService.payFromWallet(orderId);
+            showNotificationHelper(
+                "Payment Successful",
+                "Order paid from your wallet balance.",
+                NOTIFICATION_TYPES.SUCCESS
+            );
+            return { success: true, ...response };
+        } catch (err) {
+            const errorMessage = err?.response?.data?.message || err?.message || "Failed to pay from wallet";
+            setError(errorMessage);
+            showNotificationHelper("Wallet Payment Error", errorMessage, NOTIFICATION_TYPES.ERROR);
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
     return {
         loading,
         error,
         initiatePayment,
         verifyPayment,
+        payFromWallet,
     };
 };
 

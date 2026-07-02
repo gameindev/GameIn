@@ -8,6 +8,9 @@ import D3BarChart from "../../../../shared/components/d3/D3BarChart";
 import IconButton from "../../../../shared/components/IconButton";
 import { theme } from "../../../../shared/styles/theme/customTheme";
 import { analyticsService } from "../../../sponsorships/services/analytics.service";
+import walletService from "../../../settings/payment/services/wallet.service";
+import { buildWalletSummaryPills, formatUsd } from "../../../settings/payment/utils/paymentAnalytics.utils";
+import styled from "styled-components";
 
 const CHART_H = 108;
 const GRID_TOKEN = "dark.5";
@@ -86,6 +89,7 @@ export default function DashboardIncomeStats() {
     const [tracking, setTracking] = useState(null);
     const [summary365, setSummary365] = useState(null);
     const [summary30, setSummary30] = useState(null);
+    const [walletAnalytics, setWalletAnalytics] = useState(null);
 
     useEffect(() => {
         if (!canLoadMoney) {
@@ -97,15 +101,17 @@ export default function DashboardIncomeStats() {
             setLoading(true);
             setError(null);
             try {
-                const [tr, s365, s30] = await Promise.all([
+                const [tr, s365, s30, wallet] = await Promise.all([
                     analyticsService.getSponsorshipPrivateTracking({}),
                     analyticsService.getSponsorshipsSummary(365, {}),
                     analyticsService.getSponsorshipsSummary(30, {}),
+                    walletService.getAnalytics(30).catch(() => null),
                 ]);
                 if (!cancelled) {
                     setTracking(tr);
                     setSummary365(s365);
                     setSummary30(s30);
+                    setWalletAnalytics(wallet);
                 }
             } catch (e) {
                 if (!cancelled) {
@@ -113,6 +119,7 @@ export default function DashboardIncomeStats() {
                     setTracking(null);
                     setSummary365(null);
                     setSummary30(null);
+                    setWalletAnalytics(null);
                 }
             } finally {
                 if (!cancelled) setLoading(false);
@@ -129,7 +136,7 @@ export default function DashboardIncomeStats() {
     const todayVerb = isBrand ? "SPEND" : "INCOME";
 
     const seriesDaily = useMemo(
-        () => tracking?.series_30d ?? tracking?.series_14d ?? [],
+        () => tracking?.series_daily ?? tracking?.series_30d ?? tracking?.series_14d ?? [],
         [tracking],
     );
 
@@ -175,6 +182,11 @@ export default function DashboardIncomeStats() {
     }, [tracking]);
 
     const nfInt = (v) => new Intl.NumberFormat("de-DE", { maximumFractionDigits: 0 }).format(v);
+
+    const walletPills = useMemo(
+        () => buildWalletSummaryPills({ isBrand, walletAnalytics }),
+        [isBrand, walletAnalytics],
+    );
 
     if (!canLoadMoney) {
         return (
@@ -239,7 +251,7 @@ export default function DashboardIncomeStats() {
     const dayLen = dayBars.length;
 
     return (
-        <Box
+        <IncomeStatsShell
             w="100%"
             h="100%"
             p="md"
@@ -262,8 +274,44 @@ export default function DashboardIncomeStats() {
                 >
                     Stats
                 </Text>
-                <IconButton hoverClass="hoverYellow" onClick={() => navigate("/stats")} />
+                <Flex align="center" gap="xs">
+                    {walletPills.length ? (
+                        <Text
+                            size="xs"
+                            c="primary"
+                            style={{ cursor: "pointer" }}
+                            onClick={() => navigate("/settings/payments")}
+                        >
+                            Wallet · {formatUsd(walletAnalytics?.balances?.available ?? 0)}
+                        </Text>
+                    ) : null}
+                    <IconButton hoverClass="hoverYellow" onClick={() => navigate("/stats")} />
+                </Flex>
             </Flex>
+
+            {walletPills.length ? (
+                <SimpleGrid cols={{ base: 1, xs: 3 }} spacing="xs" mb="sm">
+                    {walletPills.map((pill) => (
+                        <Box
+                            key={pill.label}
+                            px="sm"
+                            py={6}
+                            style={{
+                                background: "rgba(92, 229, 176, 0.08)",
+                                borderRadius: theme.radius.sm,
+                                border: "1px solid rgba(92, 229, 176, 0.15)",
+                            }}
+                        >
+                            <Text size="xs" c="dimmed" tt="uppercase" className="wallet-pill-label">
+                                {pill.label}
+                            </Text>
+                            <Text size="sm" fw={600} c="white" style={{ fontFeatureSettings: '"tnum"' }}>
+                                {pill.value}
+                            </Text>
+                        </Box>
+                    ))}
+                </SimpleGrid>
+            ) : null}
             {/* <Text size="xs" c="dimmed" mb="sm" lh={1.4}>
                 Paid invoice totals (USD). Day = UTC calendar day by invoice update time; bars use UTC daily slices
                 where shown.
@@ -382,7 +430,7 @@ export default function DashboardIncomeStats() {
                     }
                 />
             </SimpleGrid>
-        </Box>
+        </IncomeStatsShell>
     );
 }
 
@@ -398,7 +446,7 @@ function IncomeTile({ title, amount, chart }) {
                 minWidth: 0,
             }}
         >
-            <Text size="xs" c="gray.2" style={{ fontSize: "0.47rem" }} tt="uppercase" fw={600} lh={1.35} lineClamp={3}>
+            <Text size="xs" c="gray.2" className="income-tile-label" tt="uppercase" fw={600} lh={1.35} lineClamp={3}>
                 {title}
             </Text>
             <IncomeMoneyDisplay value={amount} />
@@ -408,3 +456,25 @@ function IncomeTile({ title, amount, chart }) {
         </Box>
     );
 }
+
+const IncomeStatsShell = styled(Box)`
+    // .wallet-pill-label {
+    //     font-size: 0.52rem;
+    //     line-height: 1.25;
+    // }
+
+    // .income-tile-label {
+    //     font-size: 0.58rem;
+    // }
+
+    // @media (max-width: 768px) {
+    //     .wallet-pill-label {
+    //         font-size: 0.78rem;
+    //     }
+
+    //     .income-tile-label {
+    //         font-size: 0.82rem;
+    //         line-height: 1.3;
+    //     }
+    // }
+`;

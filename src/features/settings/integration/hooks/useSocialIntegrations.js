@@ -11,7 +11,7 @@ import {
 
 export const useSocialIntegrations = () => {
     const dispatch = useAppDispatch();
-    const { integrations, loading, error, connecting, syncing, disconnecting, stats } = useAppSelector(
+    const { integrations, loading, error, connecting, syncing, refreshingStatus, disconnecting, stats } = useAppSelector(
         (state) => state.socialIntegration
     );
 
@@ -68,6 +68,7 @@ export const useSocialIntegrations = () => {
         error,
         connecting,
         syncing,
+        refreshingStatus,
         disconnecting,
         stats,
         handleConnect,

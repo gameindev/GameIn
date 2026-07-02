@@ -11,6 +11,7 @@ import { theme } from "../../../shared/styles/theme/customTheme";
 import routeService from "../../../app/services/route/routeService";
 import { usePagination } from "../../../shared/utils/pagination";
 import PaginationBar from "../../../shared/components/PaginationBar";
+import styled from "styled-components";
 
 const SponsorshipsOffers = () => {
     const [openedRow, setOpenedRow] = useState(null);
@@ -64,7 +65,7 @@ const SponsorshipsOffers = () => {
     });
 
     return (
-        <Box>
+        <OffersResponsiveShell>
             <SponsorshipHeader />
             {filteredSponsorships?.length === 0 ? (
                 <Flex
@@ -112,8 +113,18 @@ const SponsorshipsOffers = () => {
                     }}
                 />
             )}
-        </Box>
+        </OffersResponsiveShell>
     );
 };
+
+const OffersResponsiveShell = styled(Box)`
+    min-width: 0;
+
+    @media (max-width: 768px) {
+        .sponsorship-table-head {
+            display: none;
+        }
+    }
+`;
 
 export default SponsorshipsOffers;

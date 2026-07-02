@@ -1,7 +1,7 @@
 ﻿import { SidebarStyles } from "../../../shared/styles/layouts/SidebarStyles";
 import { Hexagon } from "../../../shared/components/Hexagon";
 import { theme } from "../../../shared/styles/theme/customTheme";
-import { IconPlus } from "@tabler/icons-react";
+import { IconPlus, IconX } from "@tabler/icons-react";
 import ProfileAvatar from "../../../shared/components/ProfileAvatar";
 import { useState, useEffect } from "react";
 import { Accordion, Tooltip } from "@mantine/core";
@@ -12,8 +12,11 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { currentUser } from "../../../features/auth/store/selector";
 import { setFavoriteUsers } from "../../store/slice/favoriteUsersSlice";
 import { userFavouriteService } from "../../services/user/user-favourite.service";
+import { clearEnrichedUserProfileCache } from "../../services/user/enrich-user-profile.service";
+import { getProfileAvatarPath } from "../../../shared/utils/helpers/useProfileMediaUrl.helper";
 import { useUserOnlineStatus } from "../../../features/notifications/hooks/useUserOnlineStatus";
 import { useOnlineUsers } from "../../../features/notifications/hooks/useOnlineUsers";
+import GameInLogo from "../../../assets/homepage/gamein-logo.svg";
 
 // Separate component for favorite user avatar to use hooks properly
 const FavoriteUserAvatar = ({ favoriteUser }) => {
@@ -36,13 +39,14 @@ const FavoriteUserAvatar = ({ favoriteUser }) => {
   );
 };
 
-const Sidebar = () => {
+const Sidebar = ({ open = false, onClose }) => {
   const [menuItems] = useState(sidebarItems);
   const [modalOpen, setModalOpen] = useState(false);
 
   const user = useAppSelector(currentUser);
   const dispatch = useAppDispatch();
   const favoriteUsers = useAppSelector((s) => s.favUsers?.favoriteUsers || []);
+  const userAvatarPath = getProfileAvatarPath(user);
 
   const { pathname } = useLocation();
 
@@ -52,9 +56,10 @@ const Sidebar = () => {
   // Fetch favourites on mount
   useEffect(() => {
     if (user?.id) {
+      clearEnrichedUserProfileCache(user.id);
       fetchFavourites();
     }
-  }, [user?.id]);
+  }, [user?.id, userAvatarPath]);
 
   const fetchFavourites = async () => {
     if (!user?.id) return;
@@ -112,7 +117,13 @@ const Sidebar = () => {
   };
 
   return (
-    <SidebarStyles>
+    <SidebarStyles $isOpen={open}>
+      <div className="drawer-head">
+        <img src={GameInLogo} alt="GameIn" />
+        <button type="button" aria-label="Close menu" onClick={onClose}>
+          <IconX size={18} />
+        </button>
+      </div>
       {/* Favorite Icons Section */}
       <div className="profile-icons">
         <ul>
@@ -174,6 +185,7 @@ const Sidebar = () => {
                             <li key={cIndex}>
                               <Link
                                 to={child.link}
+                                onClick={onClose}
                                 className={
                                   pathname.startsWith(child.link)
                                     ? "active"
@@ -192,6 +204,7 @@ const Sidebar = () => {
                 ) : (
                   <Link
                     to={item.defaultLink || item.link}
+                    onClick={onClose}
                     className={active ? "active" : ""}
                   >
                     {item.icon}

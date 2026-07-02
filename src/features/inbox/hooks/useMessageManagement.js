@@ -4,8 +4,9 @@ import { sendMessage as sendWebSocketMessage, getSocket } from "../../../app/ser
 import { useAppSelector } from "../../../app/store/hooks";
 import { currentUser } from "../../auth/store/selector";
 import api from "../../../app/services/api";
+import { getProfileAvatarPath } from "../../../shared/utils/helpers/useProfileMediaUrl.helper";
 
-export const useMessageManagement = (conversationId, onMarkAsRead = null) => {
+export const useMessageManagement = (conversationId, onMarkAsRead = null, conversationClearedAt = null) => {
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [loadingMore, setLoadingMore] = useState(false);
@@ -23,20 +24,7 @@ export const useMessageManagement = (conversationId, onMarkAsRead = null) => {
     const getUserProfilePic = useCallback(() => {
         if (!user) return null;
         
-        // Check for profile picture in various nested structures
-        const userType = user.user_type?.toUpperCase();
-        let profile = null;
-        
-        if (userType === 'CREATOR' && user.creator_profile) {
-            profile = user.creator_profile;
-        } else if (userType === 'BRAND' && user.brand_profile) {
-            profile = user.brand_profile;
-        } else if (userType === 'COMMUNITY' && user.community_profile) {
-            profile = user.community_profile;
-        }
-        
-        // Return profile image path if available
-        return profile?.profile_image?.path || null;
+        return getProfileAvatarPath(user);
     }, [user]);
 
     // Normalize message data from API to frontend format
@@ -71,7 +59,7 @@ export const useMessageManagement = (conversationId, onMarkAsRead = null) => {
             json_data: jd,
             sender: apiMessage.sender?.username || "Unknown",
             senderId: apiMessage.sender?.id,
-            senderProfilePic: apiMessage.sender?.profilepic || null,
+            senderProfilePic: getProfileAvatarPath(apiMessage.sender) || null,
             currentUserId: user?.id,
             timestamp: apiMessage.created_at,
             type: apiMessage.type || 'TEXT',
@@ -81,6 +69,7 @@ export const useMessageManagement = (conversationId, onMarkAsRead = null) => {
                 jd?.kind === 'creator_rating_prompt' &&
                 jd?.orderId != null &&
                 !jd?.rating_submitted,
+            showPaymentTransaction: jd?.kind === 'payment_transaction',
             status: 'delivered', // Default status for loaded messages
         };
     }, [user?.id]);
@@ -94,15 +83,21 @@ export const useMessageManagement = (conversationId, onMarkAsRead = null) => {
             return;
         }
 
-        // Check cache first
+        // Check cache first (skip cache after a clear)
         const cachedMessages = messagesCache.current.get(conversationId);
-        if (cachedMessages) {
+        if (cachedMessages && !conversationClearedAt) {
             setMessages(cachedMessages);
             return;
         }
 
+        if (conversationClearedAt) {
+            messagesCache.current.delete(conversationId);
+            currentOffset.current = 0;
+            setHasMoreMessages(true);
+        }
+
         loadMessages(conversationId, 0, true);
-    }, [conversationId]);
+    }, [conversationId, conversationClearedAt]);
 
     // Load messages from API
     const loadMessages = useCallback(async (convId, offset = 0, isInitial = false) => {

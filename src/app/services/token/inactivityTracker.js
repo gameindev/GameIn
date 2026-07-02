@@ -9,17 +9,17 @@ const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 1 hour in milliseconds
 /**
  * Logs out the user after period of inactivity
  */
-function handleInactivity() {
+async function handleInactivity() {
     console.warn("⏰ User inactive for 1 hour. Logging out...");
-    
-    // Stop token refresh scheduler
+
     stopRefreshScheduler();
-    
-    // Clear tokens (triggers logout)
-    clearTokens();
-    
-    // Remove event listeners
     removeActivityListeners();
+
+    try {
+        await clearTokens({ redirectToLogin: true });
+    } catch (error) {
+        console.error("Auto logout failed:", error);
+    }
 }
 
 /**

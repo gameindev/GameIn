@@ -21,6 +21,16 @@ import {
 import { followersService } from "../../features/inbox/services/followers.service";
 import ProfileAvatar from "./ProfileAvatar";
 
+const normalizeFollowUser = (entry) =>
+  entry?.favourite_user ||
+  entry?.favorite_user ||
+  entry?.following_user ||
+  entry?.follower_user ||
+  entry?.following ||
+  entry?.follower ||
+  entry?.user ||
+  entry;
+
 function AddFavoriteModal({
   opened,
   onClose,
@@ -65,10 +75,13 @@ function AddFavoriteModal({
   }, [opened, activeTab, user?.id]);
 
   const combinedUsers = useMemo(() => {
-    if (activeTab === "followers") return followers;
-    if (activeTab === "following") return following;
+    const normalizedFollowers = (followers || []).map(normalizeFollowUser).filter(Boolean);
+    const normalizedFollowing = (following || []).map(normalizeFollowUser).filter(Boolean);
 
-    const all = [...followers, ...following];
+    if (activeTab === "followers") return normalizedFollowers;
+    if (activeTab === "following") return normalizedFollowing;
+
+    const all = [...normalizedFollowers, ...normalizedFollowing];
     return Array.from(new Map(all.map((u) => [u.id, u])).values());
   }, [followers, following, activeTab]);
 

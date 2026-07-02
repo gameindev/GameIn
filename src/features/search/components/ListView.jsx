@@ -28,6 +28,7 @@ import Separator from "../../../shared/components/Separator";
 import { offeringService } from "../../offerings/services";
 import { useOfferings } from "../../offerings/hooks/useOfferings";
 import routePaths from "../../../app/router/routes";
+import { formatCompactNumber } from "../../../shared/utils/helpers/formatCompactNumber.helper";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -42,16 +43,6 @@ const formatOfferingLabel = (value = "") =>
         .replace(/_/g, " ")
         .replace(/\b\w/g, (char) => char.toUpperCase());
 
-const formatFollowerCount = (value) => {
-    const numberValue = Number(value) || 0;
-
-    return new Intl.NumberFormat("en-US", {
-        notation: "compact",
-        maximumFractionDigits: 1,
-    })
-        .format(numberValue)
-        .toUpperCase();
-};
 
 const getSocialRows = (socials = []) =>
     SocialInfo.map((item) => {
@@ -63,7 +54,7 @@ const getSocialRows = (socials = []) =>
         }
         return {
             ...item,
-            followers: formatFollowerCount(Number(social.followers) || 0),
+            followers: formatCompactNumber(Number(social.followers) || 0, { empty: "0" }),
         };
     });
 
@@ -329,7 +320,7 @@ function ListRow({ userItem, user, userType, bigscreen, navigate }) {
                         fw={700}
                         className="followers_count"
                     >
-                        {formatFollowerCount(totalFollowers)}
+                        {formatCompactNumber(totalFollowers, { empty: "0" })}
                     </Text>
                     <Text size="xs" ta="center" className="followers_label">
                         FOLLOWERS

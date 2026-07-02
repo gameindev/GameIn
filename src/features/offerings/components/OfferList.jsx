@@ -57,6 +57,7 @@ const OfferList = ({
 
     return (
         <List
+            className="offering-list"
             size="sm"
             spacing="xs"
             pl={0}
@@ -64,7 +65,7 @@ const OfferList = ({
         >
             {processedOffers.map((offer) => (
                 <List.Item key={offer.id}>
-                    <Text span c={colorScheme.colors.white[0]}>
+                    <Text span className="offer-type">
                         {offer.offer_type}
                     </Text>{" "}
                     – Logo on {offer.platform} for {offer.time_mode} with{" "}

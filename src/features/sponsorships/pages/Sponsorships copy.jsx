@@ -1,6 +1,6 @@
 import { Grid, Text } from "@mantine/core";
 import StatBox from "../../../shared/components/StatBox";
-import IconButton from "../../../shared/components/IconButton";
+// import IconButton from "../../../shared/components/IconButton"; // Reserved for a future card action.
 import SponsorshipsOffers from "../components/SponsorshipsOffers";
 import OngoingSponsorships from "../components/OngoingSponsorships";
 import SocialMediaStats from "../components/SocialMediaStats";
@@ -46,9 +46,9 @@ export default function Sponsorships() {
             </Grid.Col>
 
             <Grid.Col span={{ base: 12, md: 6, lg: 8 }}>
+                {/* action={<IconButton hoverClass="hoverYellow" />} retained for future use */}
                 <StatBox
                     title="Social Media Stats"
-                    action={<IconButton hoverClass="hoverYellow" />}
                     background={"transparent linear-gradient(45deg, #9d7fef3b 0%, #5ce5b03b 100%) 0% 0% no-repeat"}
                 >
                     <SocialMediaStats />

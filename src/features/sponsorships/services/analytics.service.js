@@ -6,6 +6,7 @@ import {
     buildMockSocialEngagement,
     buildMockSponsorshipsSummary,
     buildMockSponsorshipPrivateTracking,
+    buildMockSponsorshipOverview,
 } from "./analytics.mock";
 
 const unwrap = (response) => response?.data?.data ?? response?.data;
@@ -67,10 +68,20 @@ export const analyticsService = {
     /** Owner-private (and admin); omit when viewing another user’s public stats */
     getSponsorshipPrivateTracking: (opts = {}) => {
         if (MOCK_ENABLED) {
-            return mockDelay().then(() => buildMockSponsorshipPrivateTracking());
+            return mockDelay().then(() => buildMockSponsorshipPrivateTracking(opts.days ?? 30));
         }
         const params = {};
         if (opts.forUserId != null) params.forUserId = opts.forUserId;
+        if (opts.days != null) params.days = opts.days;
         return api.get("/analytics/sponsorship-private-tracking", { params }).then(unwrap);
+    },
+
+    getSponsorshipOverview: (opts = {}) => {
+        if (MOCK_ENABLED) {
+            return mockDelay().then(() => buildMockSponsorshipOverview());
+        }
+        const params = {};
+        if (opts.forUserId != null) params.forUserId = opts.forUserId;
+        return api.get("/analytics/sponsorship-overview", { params }).then(unwrap);
     },
 };

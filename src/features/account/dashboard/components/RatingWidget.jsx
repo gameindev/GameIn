@@ -53,7 +53,7 @@ const getLabelAnchor = (point) => {
   return point.x > CHART_CENTER ? "start" : "end";
 };
 
-const RatingWidget = ({ ratings = DEFAULT_RATINGS, activeIndex = 3 }) => {
+const RatingWidget = ({ ratings = DEFAULT_RATINGS, activeIndex = 3, compact = false }) => {
   const sourceRatings =
     Array.isArray(ratings) && ratings.length ? ratings : DEFAULT_RATINGS;
   const normalizedRatings = sourceRatings.map((item) => ({
@@ -71,7 +71,7 @@ const RatingWidget = ({ ratings = DEFAULT_RATINGS, activeIndex = 3 }) => {
   }));
 
   return (
-    <RatingWidgetStyles>
+    <RatingWidgetStyles className={compact ? "is-compact" : undefined}>
       <div className="rating_chart" aria-label="Creator rating radar chart">
         <svg
           className="rating_chart_svg"

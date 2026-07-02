@@ -1,27 +1,20 @@
-import { Box, Button, Stack, Text } from "@mantine/core";
-import { theme } from "../../../shared/styles/theme/customTheme";
+import { Button, Stack, Text } from "@mantine/core";
 import { Link } from "react-router";
 import routePaths from "../../../app/router/routes";
+import { OpportunityCardContent } from "../styles/offering-card-style";
 
 
 export default function SponsorshipOpportunityCard() {
     return (
-        <Box p="lg">
-            <Stack gap={0} mt={"xl"}>
-                <Text size="sm">add a</Text>
-                <Text
-                    size="xl"
-                    weight={700}
-                    c={theme.colors.primary[0]}
-                    style={{ lineHeight: 1.2, textTransform: "uppercase" }}
-                >
-                    sponsorship <br /> opportunity
-                </Text>
-            </Stack>
-
+        <OpportunityCardContent>
+            <span className="add-symbol" aria-hidden="true">+</span>
             <Stack gap={0}>
+                <Text className="add-label">add a</Text>
+                <span className="opportunity-title">
+                    sponsorship<br />opportunity
+                </span>
                 <Link to={routePaths.ACCOUNTS.OFFERINGS.CREATE_OFFERING}>
-                    <Button variant="primary" mt="md" style={{ alignSelf: "flex-start" }}>
+                    <Button variant="primary" className="start-button">
                         get started
                     </Button>
                 </Link>
@@ -29,6 +22,6 @@ export default function SponsorshipOpportunityCard() {
                     Import Existing
                 </Button> */}
             </Stack>
-        </Box>
+        </OpportunityCardContent>
     )
 }

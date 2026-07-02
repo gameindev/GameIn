@@ -86,6 +86,7 @@ const ChatMessages = memo(
 
         return (
             <ScrollArea
+                className="chat-messages"
                 style={{ flexGrow: 1, padding: 20 }}
                 scrollbarSize={8}
                 px={60}

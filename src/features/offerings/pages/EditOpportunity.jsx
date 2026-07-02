@@ -52,6 +52,7 @@ const EditOpportunity = ({ rolePermissions }) => {
     const {
         initiatePayment,
         verifyPayment,
+        payFromWallet,
         loading: paymentLoading,
     } = usePayment();
 
@@ -61,7 +62,6 @@ const EditOpportunity = ({ rolePermissions }) => {
     });
 
     const handleProceedPayment = async (data) => {
-        // Handle payment verification callback from payment components
         if (
             data?.action === "verify" &&
             data?.paymentIntentId &&
@@ -80,7 +80,6 @@ const EditOpportunity = ({ rolePermissions }) => {
             return;
         }
 
-        // Original payment initiation flow
         try {
             if (!offerings?.data?.id) {
                 showNotificationHelper(
@@ -91,8 +90,6 @@ const EditOpportunity = ({ rolePermissions }) => {
                 return;
             }
 
-            // Step 1: Find or get the order for this offering
-            // The order should have been created when the brand edited the offering
             const ordersResponse = await get({
                 url: OFFERINGS_ORDER_ENDPOINTS.LIST({
                     page: 1,
@@ -116,12 +113,17 @@ const EditOpportunity = ({ rolePermissions }) => {
                 return;
             }
 
-            // Step 2: Get payment provider from offering price (default to STRIPE)
+            if (data?.payMethod === "wallet") {
+                await payFromWallet(order.id);
+                setCheckoutOpen(false);
+                navigate("/payment/success");
+                return;
+            }
+
             const paymentProvider =
                 offerings?.data?.offering_price?.payment_provider ||
                 PaymentProvider.STRIPE;
 
-            // Step 3: Initiate payment flow
             const paymentResponse = await initiatePayment(order.id, paymentProvider);
 
             if (paymentResponse?.redirecting && paymentResponse?.redirectUrl) {
@@ -439,6 +441,7 @@ const EditOpportunity = ({ rolePermissions }) => {
                 onProceedPayment={handleProceedPayment}
                 loading={paymentLoading}
                 paymentData={paymentData}
+                isBrand={user?.user_type?.toUpperCase() === USERTYPES.BRAND}
             />
         </FormDisableProvider>
     );

@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Box, Button, Group, Stack, Text } from "@mantine/core";
+import { Button, rgba, Stack, Text } from "@mantine/core";
 import StatBox from "../../../shared/components/StatBox";
 import { theme } from "../../../shared/styles/theme/customTheme";
 import AddPostModal from "./AddPostModal";
+import { AddPostContent } from "../styles/style";
 
 export default function AddPostBox() {
   const [open, setOpen] = useState(false);
@@ -10,27 +11,25 @@ export default function AddPostBox() {
     <>
       <StatBox
         title="Add Post"
-        background="transparent linear-gradient(45deg,  rgba(157, 127, 239, 0.2) 0%, rgba(105, 179, 231, 0.2) 50%, rgba(92, 229, 176, 0.2) 100%) 0% 0% no-repeat padding-box"
+        background={`linear-gradient(45deg, ${rgba(theme.colors.secondary[0], 0.2)} 0%, ${rgba(theme.colors.skyblue[0], 0.2)} 50%, ${rgba(theme.colors.primary[0], 0.2)} 100%)`}
       >
-        <Box p="lg">
-          <Stack gap={0} mt={"xl"}>
-            <Text size="sm">Add a</Text>
-            <Text
-              size="xl"
-              weight={700}
-              c={theme.colors.primary[0]}
-              style={{ lineHeight: 1.2, textTransform: "uppercase" }}
+        <AddPostContent>
+          <span className="add-symbol" aria-hidden="true">+</span>
+          <Stack gap={0}>
+            {/* <Text className="add-label">add a</Text> */}
+            <span className="post-title">
+              what's on<br />your mind?
+            </span>
+            <Button
+              w="fit-content"
+              variant="primary"
+              className="add-post-button"
+              onClick={() => setOpen(true)}
             >
-              Whats on <br /> your mind?
-            </Text>
-          </Stack>
-
-          <Stack gap={8} mt="md">
-            <Button w={"fit-content"} variant="primary" size="md" onClick={() => setOpen(true)}>
-              Add Post
+              add post
             </Button>
           </Stack>
-        </Box>
+        </AddPostContent>
       </StatBox>
       <AddPostModal opened={open} onClose={() => setOpen(false)} />
     </>

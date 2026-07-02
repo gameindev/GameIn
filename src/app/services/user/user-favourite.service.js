@@ -1,5 +1,6 @@
 import { USER_FAVOURITE_ENDPOINTS } from "../../api/user_favourite_endpoints";
 import api from "../api";
+import { normalizeAndEnrichUsers } from "./enrich-user-profile.service";
 
 const userFavouriteService = {
     /**
@@ -54,7 +55,7 @@ const userFavouriteService = {
             // Extract favourite_user from each item in the response
             const favourites = response?.data?.data || response?.data || [];
             // Map to extract the favourite_user object from each UserFavourite entity
-            return favourites.map((fav) => fav.favourite_user || fav).filter(Boolean);
+            return normalizeAndEnrichUsers(favourites, { forceRefresh: true });
         } catch (error) {
             console.error("Error fetching favourites:", error);
             throw error;

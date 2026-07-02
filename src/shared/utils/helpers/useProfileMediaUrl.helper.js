@@ -9,7 +9,8 @@ export const getImageUrl = (path) => {
     }
 
     const normalizedPath = String(path).replace(/^\/+/, "");
-    return `${import.meta.env.VITE_ASSET_URL}/${normalizedPath}`;
+    const assetUrl = import.meta.env.VITE_ASSET_URL;
+    return assetUrl ? `${assetUrl}/${normalizedPath}` : normalizedPath;
 };
 
 const getPriorityProfileKeys = (userProfile = {}) => {
@@ -40,9 +41,27 @@ export const getOrderedProfiles = (userProfile = {}) =>
 export const getResolvedProfile = (userProfile = {}) =>
     getOrderedProfiles(userProfile)[0] || null;
 
+const getMediaPath = (media) => {
+    if (!media) return null;
+    if (typeof media === "string") return media;
+    return media.path || media.url || null;
+};
+
 export const getProfileAvatarPath = (userProfile = {}) =>
-    getOrderedProfiles(userProfile).find((profile) => profile?.profile_image?.path)
-        ?.profile_image?.path || null;
+    getMediaPath(userProfile?.profilepic) ||
+    getMediaPath(userProfile?.profile_pic) ||
+    getMediaPath(userProfile?.profilePic) ||
+    getMediaPath(userProfile?.profileImage) ||
+    getMediaPath(userProfile?.profile_image_url) ||
+    getMediaPath(userProfile?.profile_picture) ||
+    getMediaPath(userProfile?.profile_image) ||
+    getMediaPath(userProfile?.avatar_url) ||
+    getMediaPath(userProfile?.avatar) ||
+    getMediaPath(
+        getOrderedProfiles(userProfile).find((profile) => getMediaPath(profile?.profile_image))
+            ?.profile_image
+    ) ||
+    null;
 
 export const getProfileCoverImagePath = (userProfile = {}) =>
     getOrderedProfiles(userProfile).find((profile) => profile?.cover_image?.path)

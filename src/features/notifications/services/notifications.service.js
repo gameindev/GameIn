@@ -55,7 +55,7 @@ export const useNotificationService = () => {
      * Mark all notifications as read
      */
     const markAllAsRead = async () => {
-        const response = await api.put(NOTIFICATION_ENDPOINTS.MARK_ALL_AS_READ);
+        const response = await api.put(NOTIFICATION_ENDPOINTS.MARK_ALL_AS_READ, {});
         return response.data;
     };
 

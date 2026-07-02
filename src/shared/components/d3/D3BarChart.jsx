@@ -36,6 +36,8 @@ export default function D3BarChart({
     formatCategoryTick,
     /** Vertical layout: draw dashed value grid but hide the left numeric axis. */
     showValueAxis = true,
+    /** Vertical layout: format left-axis tick labels (e.g. compact currency). */
+    formatValueTick,
     /**
      * Axis tick label `font-size` (SVG). String (`"10px"`, `"0.75rem"`) or number as px.
      * When omitted, defaults stay layout-specific (category vs value).
@@ -171,7 +173,14 @@ export default function D3BarChart({
                 });
 
             if (showValueAxis) {
-                const ya = g.append("g").call(d3.axisLeft(y).ticks(5).tickSizeOuter(0).tickPadding(10));
+                const ya = g.append("g").call(
+                    d3
+                        .axisLeft(y)
+                        .ticks(5)
+                        .tickSizeOuter(0)
+                        .tickPadding(10)
+                        .tickFormat(formatValueTick ? (d) => formatValueTick(d) : undefined),
+                );
                 ya.select(".domain").remove();
                 ya.selectAll("text").attr("fill", labelColor).attr("font-size", axisFs ?? 10);
             }
@@ -290,6 +299,7 @@ export default function D3BarChart({
         xTickIndices,
         formatCategoryTick,
         showValueAxis,
+        formatValueTick,
         labelFontSize,
         barThicknessPx,
     ]);

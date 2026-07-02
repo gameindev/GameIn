@@ -12,7 +12,7 @@ const OfferStatusBox = ({
     sponsorshipId,
 }) => {
     return (
-        <Box flex={1} radius="md">
+        <Box className="offer-status-box" flex={1} radius="md">
             <Flex
                 w={100}
                 h={100}

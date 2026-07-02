@@ -89,6 +89,7 @@ const initialState = {
     error: null,
     connecting: null, // Currently connecting platform
     syncing: null,
+    refreshingStatus: null,
     disconnecting: null,
     stats: {}, // { [platform]: stats data }
     statsErrors: {}, // { [platform]: error message }
@@ -136,21 +137,21 @@ const socialIntegrationSlice = createSlice({
                 state.error = errorMessage(action.payload);
             });
 
-        // Fetch single status
+        // Fetch single status (per-platform refresh — do not flip global loading)
         builder
-            .addCase(fetchStatus.pending, (state) => {
-                state.loading = true;
+            .addCase(fetchStatus.pending, (state, action) => {
+                state.refreshingStatus = action.meta.arg;
                 state.error = null;
             })
             .addCase(fetchStatus.fulfilled, (state, action) => {
-                state.loading = false;
+                state.refreshingStatus = null;
                 const { platform, data } = action.payload;
-                if (platform && data) {
+                if (platform && data?.state) {
                     state.integrations[platform] = data;
                 }
             })
             .addCase(fetchStatus.rejected, (state, action) => {
-                state.loading = false;
+                state.refreshingStatus = null;
                 state.error = errorMessage(action.payload);
             });
 
@@ -201,6 +202,14 @@ const socialIntegrationSlice = createSlice({
                 const { platform, data } = action.payload;
                 state.stats[platform] = data;
                 if (platform) delete state.statsErrors[platform];
+                const existing = state.integrations[platform];
+                if (existing && existing.state !== 'CONNECTED') {
+                    state.integrations[platform] = {
+                        ...existing,
+                        state: 'CONNECTED',
+                        label: 'Connected',
+                    };
+                }
             })
             .addCase(syncPlatform.rejected, (state, action) => {
                 state.syncing = null;

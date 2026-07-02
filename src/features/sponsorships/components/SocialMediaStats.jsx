@@ -3,7 +3,6 @@ import { useOutletContext } from "react-router";
 import {
     Box,
     Flex,
-    Grid,
     RingProgress,
     Table,
     Text,
@@ -28,12 +27,14 @@ import {
 } from "../../settings/integration/store/socialIntegrationSlice";
 import { socialIntegrationService } from "../../settings/integration/services/social-integration.service";
 import { theme } from "../../../shared/styles/theme/customTheme";
+import styled from "styled-components";
+import { formatCompactNumber } from "../../../shared/utils/helpers/formatCompactNumber.helper";
 
 const COLOR_CONFIG = {
     TWITCH: "#5CE5B0",
     INSTAGRAM: "#61D3C4",
     X: "#69B3E7",
-    YOUTUBE: "#69B3E7",
+    YOUTUBE: "#4D8FD9",
     TIKTOK: "#8490F6",
 };
 
@@ -78,11 +79,7 @@ const SUMMARY = [
 ];
 
 function formatStat(value) {
-    if (value == null || value === "") return "—";
-    const num = typeof value === "number" ? value : parseInt(value, 10);
-    if (Number.isNaN(num)) return "—";
-    if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
-    return num.toLocaleString("de-DE");
+    return formatCompactNumber(value);
 }
 
 // const DUMMY_ROWS = [
@@ -94,47 +91,90 @@ function formatStat(value) {
 // ];
 
 
-function StatCircle({ rows, statKey, label, Icon }) {
-    const total = rows.reduce((sum, r) => sum + (r[statKey] || 0), 0);
-    const sections = rows
-        .filter((r) => r[statKey] > 0)
-        .map((r) => ({
-            value: total > 0 ? (r[statKey] / total) * 100 : 0,
-            color: r.color,
-        }));
+function buildRingSections(rows, statKey) {
+    const contributors = rows.filter(
+        (row) =>
+            row.connected &&
+            typeof row[statKey] === "number" &&
+            Number.isFinite(row[statKey]) &&
+            row[statKey] > 0,
+    );
 
-  return (
-    <Box pos="relative" style={{ width: 100, height: 100 }}>
-      <RingProgress
-        size={100}
-        thickness={6}
-        roundCaps
-        rootColor="#333"
-        sections={sections}
-      />
-      <Box
-        pos="absolute"
-        inset={0}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Text fw={700} fz="lg" c="white">
-          {total.toLocaleString()}
-        </Text>
-        <Text fz="xs" c="dimmed" tt="uppercase">
-          {label}
-        </Text>
-        <Icon size={14} />
-      </Box>
-    </Box>
-  );
+    const total = contributors.reduce((sum, row) => sum + row[statKey], 0);
+    if (total <= 0) {
+        return [];
+    }
+
+    const sections = contributors.map((row) => ({
+        value: (row[statKey] / total) * 100,
+        color: row.color,
+    }));
+
+    const sum = sections.reduce((acc, section) => acc + section.value, 0);
+    if (sections.length > 0 && Math.abs(sum - 100) > 0.01) {
+        sections[sections.length - 1].value += 100 - sum;
+    }
+
+    return sections;
 }
 
-export default function SocialMediaStats() {
+function StatCircle({ rows, statKey, label, Icon, total, size = 100 }) {
+    const sections = useMemo(() => buildRingSections(rows, statKey), [rows, statKey]);
+    const ringThickness = Math.max(6, Math.round(size * 0.06));
+
+    return (
+        <Tooltip
+            label={
+                sections.length > 0
+                    ? rows
+                          .filter(
+                              (row) =>
+                                  row.connected &&
+                                  typeof row[statKey] === "number" &&
+                                  row[statKey] > 0,
+                          )
+                          .map((row) => `${row.name}: ${formatCompactNumber(row[statKey])}`)
+                          .join(" · ")
+                    : "No connected platform data"
+            }
+            multiline
+            w={260}
+            withArrow
+            disabled={sections.length === 0}
+        >
+            <Box pos="relative" style={{ width: size, height: size, flexShrink: 0 }}>
+                <RingProgress
+                    size={size}
+                    thickness={ringThickness}
+                    roundCaps
+                    rootColor="#2b2f36"
+                    sections={sections}
+                />
+                <Box
+                    pos="absolute"
+                    inset={0}
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        pointerEvents: "none",
+                    }}
+                >
+                    <Text fw={700} fz={size <= 80 ? "sm" : "lg"} c="white">
+                        {formatCompactNumber(total, { empty: "0" })}
+                    </Text>
+                    <Text fz={size <= 80 ? 9 : "xs"} c="" tt="uppercase">
+                        {label}
+                    </Text>
+                    <Icon size={size <= 80 ? 12 : 14} color={theme.colors.primary[0]} />
+                </Box>
+            </Box>
+        </Tooltip>
+    );
+}
+
+export default function SocialMediaStats({ compact = false }) {
     const dispatch = useAppDispatch();
     const outlet = useOutletContext() || {};
     const userProfile = outlet?.userProfile;
@@ -194,18 +234,6 @@ export default function SocialMediaStats() {
         };
     }, [isSelf, userProfile?.id]);
 
-    useEffect(() => {
-        const snapshot = PLATFORM_CONFIG.map(({ id }) => ({
-            platform: id,
-            state: isSelf ? integrations?.[id]?.state ?? null : "PUBLIC_VIEW",
-            integrationId: isSelf ? integrations?.[id]?.integration_id ?? null : null,
-            stats: isSelf ? stats?.[id] ?? null : publicStats?.[id] ?? null,
-            statsError: statsErrors?.[id] ?? null,
-        }));
-        // Debug visibility for why rows are showing "—" in UI.
-        console.log("[SocialMediaStats] platform snapshot", snapshot);
-    }, [integrations, stats, statsErrors, isSelf, publicStats]);
-
     const { totals, rows } = useMemo(() => {
         let totalFollowers = 0;
         let totalLikes = 0;
@@ -226,7 +254,7 @@ export default function SocialMediaStats() {
             let peakViews = null;
             let lifetimeLikes = null;
             let viewsNote = null;
-            if (data) {
+            if (data && connected) {
                 followers = data.followers ?? null;
                 likes = data.likes ?? null;
                 views = data.views ?? null;
@@ -266,52 +294,69 @@ export default function SocialMediaStats() {
 
     const tableHeaderStyle = {
         color: theme.colors.text[0],
-        fontSize: "0.7rem",
+        fontSize: compact ? "0.68rem" : "0.7rem",
         textTransform: "uppercase",
-        letterSpacing: "0.05em",
+        letterSpacing: "0.04em",
     };
 
+    const ringSize = compact ? 110 : 110;
+    const platformIconSize = compact ? 24 : 26;
+    const platformGlyphSize = compact ? 14 : 16;
+
     return (
-        <Box
+        <SocialStatsShell
+            data-compact={compact ? "true" : "false"}
             style={{
                 borderRadius: theme.radius.md,
-                padding: "1.25rem",
-                // minHeight: 280,
+                padding: compact ? 0 : "1.25rem",
             }}
         >
-            <Grid gutter="lg" align="stretch">
-                <Grid.Col span={{ base: 12, md: 5 }} style={{ minHeight: "unset" }}>
-                    <Flex
-                        direction="column"
-                        align="center"
-                        justify="center"
-                        gap="md"
-                        style={{ minHeight: 240 }}
-                    >
+            <Flex
+                className="social-stats-layout"
+                direction={{ base: "column", sm: "row" }}
+                align={{ base: "center", sm: "stretch" }}
+                gap={compact ? "md" : "lg"}
+                wrap="nowrap"
+            >
+                <Flex
+                    className="social-stats-kpis"
+                    direction="column"
+                    align="center"
+                    justify="center"
+                    gap={compact ? "xs" : "md"}
+                    style={{ minHeight: compact ? 200 : 240, flexShrink: 0 }}
+                >
+                    <StatCircle
+                        rows={rows}
+                        total={totals.followers}
+                        label={SUMMARY[0].label}
+                        Icon={SUMMARY[0].Icon}
+                        statKey="followers"
+                        size={ringSize}
+                    />
+                    <Flex gap={compact ? "xs" : "md"} justify="center" wrap="wrap">
                         <StatCircle
                             rows={rows}
-                            label={SUMMARY[0].label}
-                            Icon={SUMMARY[0].Icon}
-                            statKey="followers"
+                            total={totals.likes}
+                            label={SUMMARY[1].label}
+                            Icon={SUMMARY[1].Icon}
+                            statKey="likes"
+                            size={ringSize}
                         />
-                        <Flex gap="md" justify="center" wrap="wrap">
-                            <StatCircle
-                                rows={rows}
-                                label={SUMMARY[1].label}
-                                Icon={SUMMARY[1].Icon}
-                                statKey="likes"
-                            />
-                            <StatCircle
-                                rows={rows}
-                                label={SUMMARY[2].label}
-                                Icon={SUMMARY[2].Icon}
-                                statKey="views"
-                            />
-                        </Flex>
+                        <StatCircle
+                            rows={rows}
+                            total={totals.views}
+                            label={SUMMARY[2].label}
+                            Icon={SUMMARY[2].Icon}
+                            statKey="views"
+                            size={ringSize}
+                        />
                     </Flex>
-                </Grid.Col>
-                <Grid.Col span={{ base: 12, md: 7 }} style={{ minHeight: "unset" }}>
+                </Flex>
+
+                <Box className="social-stats-table-wrap">
                     <Table
+                        className="social-stats-table"
                         withTableBorder={false}
                         withColumnBorders={false}
                         style={{
@@ -354,26 +399,27 @@ export default function SocialMediaStats() {
                                             w={280}
                                             withArrow
                                         >
-                                            <Flex align="center" gap="sm" style={{ cursor: row.viewsNote ? "help" : undefined }}>
+                                            <Flex align="center" gap={compact ? "xs" : "sm"} style={{ cursor: row.viewsNote ? "help" : undefined }}>
                                                 <Box
                                                     style={{
-                                                        width: 28,
-                                                        height: 28,
+                                                        width: platformIconSize,
+                                                        height: platformIconSize,
                                                         borderRadius: theme.radius.sm,
                                                         backgroundColor: theme.colors.inputBgColor[0],
                                                         display: "flex",
                                                         alignItems: "center",
                                                         justifyContent: "center",
+                                                        flexShrink: 0,
                                                     }}
                                                 >
-                                                    <row.Icon size={16} color={row.color} />
+                                                    <row.Icon size={platformGlyphSize} color={row.color} />
                                                 </Box>
-                                                <Box>
-                                                    <Text size="sm" fw={500} style={{ color: row.color }}>
+                                                <Box style={{ minWidth: 0 }}>
+                                                    <Text size="sm" fw={500} style={{ color: row.color }} lineClamp={compact ? 2 : 1}>
                                                         {row.name}
                                                     </Text>
                                                     {!row.connected && isSelf && (
-                                                        <Text size="xs" c="dimmed">
+                                                        <Text size="xs" c="dimmed" lineClamp={2}>
                                                             (Connect in Settings)
                                                         </Text>
                                                     )}
@@ -407,7 +453,7 @@ export default function SocialMediaStats() {
                                                 <Text inherit ta="right">
                                                     {formatStat(row.likes)}
                                                 </Text>
-                                                {row.lifetimeLikes != null && typeof row.lifetimeLikes === "number" && (
+                                                {row.lifetimeLikes != null && typeof row.lifetimeLikes === "number" && !compact && (
                                                     <Text size="xs" c="dimmed" ta="right">
                                                         Lifetime {formatStat(row.lifetimeLikes)}
                                                     </Text>
@@ -434,8 +480,8 @@ export default function SocialMediaStats() {
                             ))}
                         </Table.Tbody>
                     </Table>
-                </Grid.Col>
-            </Grid>
+                </Box>
+            </Flex>
             {isSelf && loading && Object.keys(integrations).length === 0 && (
                 <Center py="md">
                     <Loader size="sm" />
@@ -444,6 +490,97 @@ export default function SocialMediaStats() {
                     </Text>
                 </Center>
             )}
-        </Box>
+        </SocialStatsShell>
     );
 }
+
+const SocialStatsShell = styled(Box)`
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+
+    .social-stats-layout {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .social-stats-kpis {
+        min-width: 0;
+    }
+
+    .social-stats-table-wrap {
+        flex: 1 1 0;
+        min-width: 0;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .social-stats-table {
+        width: 100%;
+        table-layout: fixed;
+
+        th,
+        td {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding: 0.4rem 0.35rem;
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        th:first-child,
+        td:first-child {
+            white-space: normal;
+            width: 38%;
+            padding-left: 0.25rem;
+        }
+
+        th:not(:first-child),
+        td:not(:first-child) {
+            width: 20.5%;
+        }
+    }
+
+    &[data-compact="true"] {
+        .social-stats-table-wrap {
+            flex: 1 1 0;
+            max-width: 100%;
+        }
+
+        .social-stats-table {
+            font-size: 0.78rem;
+
+            th,
+            td {
+                padding: 0.35rem 0.3rem;
+            }
+
+            th:first-child,
+            td:first-child {
+                width: 38%;
+            }
+
+            th:not(:first-child),
+            td:not(:first-child) {
+                width: 20.5%;
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        &[data-compact="false"] {
+            padding: 0 !important;
+        }
+
+        .social-stats-layout {
+            flex-direction: column;
+        }
+
+        .social-stats-table-wrap {
+            flex: 1 1 auto;
+        }
+    }
+`;

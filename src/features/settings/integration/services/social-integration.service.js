@@ -17,7 +17,7 @@ export const socialIntegrationService = {
             const response = await socialApi.get(SOCIAL_INTEGRATION_ENDPOINTS.STATUS, {
                 params: { platform }
             });
-            return response?.data || null;
+            return socialIntegrationService.unwrap(response);
         } catch (error) {
             console.error(`Error fetching status for ${platform}:`, error);
             throw error;

@@ -5,10 +5,13 @@ import {
   Flex,
   Group,
   Modal,
+  Radio,
+  Stack,
   Text,
   Textarea,
 } from "@mantine/core";
-import { IconCreditCard } from "@tabler/icons-react";
+import { IconCreditCard, IconWallet } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
 import { theme } from "../../../shared/styles/theme/customTheme";
 import FormField from "../../../shared/components/FormField";
 import StripeCheckout from "../../payments/components/StripeCheckout";
@@ -16,6 +19,7 @@ import RazorpayCheckout from "../../payments/components/RazorpayCheckout";
 import { PaymentProvider } from "../../../shared/enums/paymentProviderEnum";
 import { calculatePriceBreakdown } from "../../../shared/utils/helpers/opportunityForm.helper";
 import { offeringService } from "../services";
+import walletService from "../../settings/payment/services/wallet.service";
 
 const CheckoutModal = ({
   opened,
@@ -24,18 +28,29 @@ const CheckoutModal = ({
   control,
   onProceedPayment,
   loading = false,
-  paymentData = null, // Contains clientSecret, razorpayOrderId, etc.
+  paymentData = null,
+  isBrand = false,
 }) => {
   const latestPrice = offeringService.getLatestPrice(offerings?.data?.offering_prices);
-  console.log(latestPrice);
-  
+
   const paymentProvider =
     latestPrice?.payment_provider || PaymentProvider.STRIPE;
   const showPaymentForm =
     paymentData && (paymentData.clientSecret || paymentData.razorpayOrderId);
-  const { tax } = calculatePriceBreakdown(
-    latestPrice?.price
-  );
+  const { tax } = calculatePriceBreakdown(latestPrice?.price);
+  const total = parseFloat(latestPrice?.total || latestPrice?.tax || 0);
+
+  const [payMethod, setPayMethod] = useState("card");
+  const [walletBalance, setWalletBalance] = useState(null);
+
+  useEffect(() => {
+    if (!opened || !isBrand) return;
+    walletService.getMyWallet().then((data) => {
+      setWalletBalance(data?.balances?.available ?? 0);
+    }).catch(() => setWalletBalance(0));
+  }, [opened, isBrand]);
+
+  const canPayFromWallet = isBrand && walletBalance != null && walletBalance >= total;
 
   return (
     <Modal
@@ -152,6 +167,43 @@ const CheckoutModal = ({
           </Flex>
         </Box>
 
+        {isBrand && !showPaymentForm ? (
+          <>
+            <Divider my="md" />
+            <Text fw={600} mb="sm">
+              Payment method
+            </Text>
+            <Radio.Group value={payMethod} onChange={setPayMethod}>
+              <Stack gap="xs">
+                <Radio
+                  value="card"
+                  label={
+                    <Flex align="center" gap="xs">
+                      <IconCreditCard size={16} />
+                      <Text size="sm">Pay with card</Text>
+                    </Flex>
+                  }
+                />
+                <Radio
+                  value="wallet"
+                  disabled={!canPayFromWallet}
+                  label={
+                    <Flex align="center" gap="xs">
+                      <IconWallet size={16} />
+                      <Text size="sm">
+                        Pay from wallet
+                        {walletBalance != null
+                          ? ` ($${walletBalance.toFixed(2)} available)`
+                          : ""}
+                      </Text>
+                    </Flex>
+                  }
+                />
+              </Stack>
+            </Radio.Group>
+          </>
+        ) : null}
+
         {/* Payment Form */}
         {showPaymentForm && (
           <>
@@ -224,10 +276,10 @@ const CheckoutModal = ({
           {!showPaymentForm && (
             <Button
               variant="primary"
-              onClick={onProceedPayment}
+              onClick={() => onProceedPayment({ payMethod })}
               loading={loading}
             >
-              Proceed Payment
+              {payMethod === "wallet" ? "Pay from Wallet" : "Proceed Payment"}
             </Button>
           )}
         </Group>

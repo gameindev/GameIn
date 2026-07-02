@@ -76,6 +76,7 @@ const HexContainer = ({
 }) => {
     return (
         <StyledHexContainer
+            className="hex_container"
             size={size}
             $background={background}
             $radius={radius}

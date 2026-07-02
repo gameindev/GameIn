@@ -15,8 +15,18 @@ export default function StepCalculator({ currentStep }) {
             display="flex"
             align="center"
             justify="center"
-            style={{ gap: "0.5em", flex: 1, alignItems: "center" }}
+            style={{
+                gap: "0.5em",
+                flex: 1,
+                alignItems: "center",
+                // Add responsive style for small screens
+                ...(window.innerWidth < 575 && {
+                    width: "100%",
+                    justifyContent: "space-between",
+                }),
+            }}
         >
+
             {Array.from({ length: totalSteps }).map((_, i) => (
                 <React.Fragment key={i}>
                     <HexContainer size={30} background={getStepColor(i, currentStep)}>

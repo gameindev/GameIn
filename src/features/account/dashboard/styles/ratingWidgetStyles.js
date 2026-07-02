@@ -99,8 +99,9 @@ export const RatingWidgetStyles = styled.div`
 
   .rating_label {
     fill: ${ratingColors.label};
-    font-size: 0.44rem;
-    letter-spacing: 0;
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
     dominant-baseline: middle;
   }
 
@@ -127,6 +128,14 @@ export const RatingWidgetStyles = styled.div`
 
     .rating_chart {
       max-width: 13rem;
+    }
+  }
+
+  &.is-compact {
+    min-height: 11rem;
+
+    .rating_chart {
+      max-width: 11.5rem;
     }
   }
 `;

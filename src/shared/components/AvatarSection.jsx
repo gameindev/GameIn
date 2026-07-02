@@ -17,12 +17,12 @@ const OnlineIndicator = styled.div`
   bottom: 8px;
   right: 1px;
   width: ${({ size }) => {
-        if (size >= 50) return "8px";
+        if (size >= 60) return "8px";
         if (size >= 40) return "6px";
         return "8px";
     }};
   height: ${({ size }) => {
-        if (size >= 50) return "8px";
+        if (size >= 60) return "8px";
         if (size >= 40) return "6px";
         return "8px";
     }};
@@ -50,7 +50,11 @@ const AvatarSection = ({
     const navigate = useNavigate();
     const [hasImageError, setHasImageError] = useState(false);
     const resolvedProfilePath =
-        profilePath || (profileUsername ? `/${profileUsername}/profile` : "");
+        profilePath !== undefined
+            ? profilePath
+            : profileUsername
+                ? `/${profileUsername}/profile`
+                : "";
     const resolvedAvatar =
         typeof avatar === "string" ? avatar.trim() : avatar;
     const initials = useMemo(
@@ -124,7 +128,11 @@ const AvatarSection = ({
                 )}
             </HexContainer>
             {showOnlineStatus && (
-                <OnlineIndicator size={size} $isOnline={isOnline} />
+                <OnlineIndicator
+                    className="online-indicator"
+                    size={size}
+                    $isOnline={isOnline}
+                />
             )}
             {controls && (
                 <div className="action">

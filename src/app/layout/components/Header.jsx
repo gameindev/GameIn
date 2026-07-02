@@ -1,5 +1,5 @@
 import { Button, Card, Menu, UnstyledButton, TextInput } from "@mantine/core";
-import { IconSearch } from "@tabler/icons-react";
+import { IconMenu2, IconSearch, IconX } from "@tabler/icons-react";
 import React, { useState } from "react";
 import GameInLogo from "../../../assets/homepage/gamein-logo.svg";
 import { HeaderSection } from "../../../shared/styles/layouts";
@@ -14,12 +14,13 @@ import { NOTIFICATION_TYPES } from "../../../shared/enums/notificationTypesEnum"
 import NotificationDropdown from "../../../features/notifications/components/NotificationDropdown";
 
 
-const Header = () => {
+const Header = ({ showMenuButton = false, onMenuClick, sidebarOpen = false }) => {
 
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const isLoggedInUser = store.getState().auth.accessToken ? true : false;
     const profile = store.getState().user?.profile || {};
+    const accountProfilePath = routePaths.ACCOUNTS.PROFILE.ROOT;
     // console.log(store.getState().user?.profile);
 
     const handleLogout = () => {
@@ -30,10 +31,12 @@ const Header = () => {
     };
 
     const [searchInput, setSearchInput] = useState("");
+    const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
     const triggerSearchAll = () => {
         const q = (searchInput || "").trim();
         const path = routePaths.SEARCH.replace(":userType", "all");
+        setMobileSearchOpen(false);
         navigate(q ? `${path}?q=${encodeURIComponent(q)}` : path);
     };
 
@@ -69,6 +72,17 @@ const Header = () => {
                 <div className="container-fluid">
                     <div className="headerFlex">
                         <div className="logo">
+                            {showMenuButton && (
+                                <button
+                                    type="button"
+                                    className="menu-toggle"
+                                    aria-label="Open menu"
+                                    aria-expanded={sidebarOpen}
+                                    onClick={onMenuClick}
+                                >
+                                    <IconMenu2 size={22} />
+                                </button>
+                            )}
                             <Link to={routePaths.WELCOMEPAGE}>
                                 <img src={GameInLogo} alt="GameIn Logo" />
                             </Link>
@@ -101,6 +115,16 @@ const Header = () => {
                                 </ul>
                             ) : (
                                 <>
+                                    <button
+                                        type="button"
+                                        className="mobile-search-toggle"
+                                        aria-label={mobileSearchOpen ? "Close search" : "Open search"}
+                                        aria-expanded={mobileSearchOpen}
+                                        onClick={() => setMobileSearchOpen((open) => !open)}
+                                    >
+                                        {mobileSearchOpen ? <IconX size={18} /> : <IconSearch size={18} />}
+                                    </button>
+
                                     {/* Notification Dropdown */}
                                     <NotificationDropdown />
                                     
@@ -111,6 +135,7 @@ const Header = () => {
                                                     user={profile}
                                                     className="avatar-icon-small"
                                                     size="55"
+                                                    profilePath=""
                                                 />
                                             </UnstyledButton>
                                         </Menu.Target>
@@ -119,7 +144,7 @@ const Header = () => {
                                                 Hello,{" "}
                                                 {store.getState().user?.profile?.username?.charAt(0).toUpperCase() + store.getState().user?.profile?.username?.slice(1).toLowerCase() || ""}
                                             </Menu.Label>
-                                            <Menu.Item onClick={() => navigate(routePaths.ACCOUNTS.PROFILE.ROOT || "" || store.getState().user?.profile?.username)}>
+                                            <Menu.Item onClick={() => navigate(accountProfilePath)}>
                                                 Profile
                                             </Menu.Item>
                                             <Menu.Item onClick={() => navigate(routePaths.ACCOUNTS.DASHBOARD.ROOT)}>
@@ -154,6 +179,20 @@ const Header = () => {
                             )}
                         </nav>
                     </div>
+                    {isLoggedInUser && (
+                        <div className={`mobile-search-panel ${mobileSearchOpen ? "open" : ""}`}>
+                            <TextInput
+                                placeholder="Search..."
+                                variant="inputBgColor"
+                                radius="md"
+                                size="sm"
+                                value={searchInput}
+                                onChange={(e) => setSearchInput(e.currentTarget.value)}
+                                onKeyDown={(e) => { if (e.key === 'Enter') triggerSearchAll(); }}
+                                rightSection={<IconSearch size={16} onClick={triggerSearchAll} style={{ cursor: 'pointer' }} />}
+                            />
+                        </div>
+                    )}
                 </div>
             </Card>
         </HeaderSection>

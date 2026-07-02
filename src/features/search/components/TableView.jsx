@@ -18,6 +18,7 @@ import { getFollowerStats } from "../../../app/services/user/user-follower.servi
 import { Link, useNavigate } from "react-router";
 import CountryFlag from "../../../shared/components/CountryFlag";
 import routeService from "../../../app/services/route/routeService";
+import { formatCompactNumber } from "../../../shared/utils/helpers/formatCompactNumber.helper";
 
 export const Tableview = () => {
   const user = useAppSelector(currentUser);
@@ -27,23 +28,6 @@ export const Tableview = () => {
   const filteredSearchData = useMemo(() => {
     return searchData?.filter(({ id }) => id !== user.id);
   }, [searchData, user.id]);
-
-  const socialList = (socialLinks) => {
-    let totalCount = socialLinks?.reduce(
-      (acc, curr) => acc + parseInt(curr.follwers),
-      0
-    );
-    return (
-      <Group>
-        <Text>{totalCount}K</Text>
-        <Group gap={"sm"}>
-          {socialLinks?.map(
-            ({ name, icon }) => icon && <div key={name}>{icon}</div>
-          )}
-        </Group>
-      </Group>
-    );
-  };
 
   const rows = filteredSearchData.map((userItem) => {
     const { id, username, is_verified } = userItem;
@@ -80,7 +64,7 @@ export const Tableview = () => {
             <Badge />
           </Group>
         </Table.Td>
-        <Table.Td>{totalFollowers}</Table.Td>
+        <Table.Td>{formatCompactNumber(totalFollowers, { empty: "0" })}</Table.Td>
         <Table.Td>
           <BadgeLevels fill="#E2BB63" number={certificationLevel} />
         </Table.Td>
@@ -113,7 +97,8 @@ export const Tableview = () => {
   });
 
   return (
-    <Table.ScrollContainer>
+    <div className="search-table-view">
+    <Table.ScrollContainer minWidth={760}>
       <Table withColumnBorders horizontalSpacing="md">
         <Table.Thead>
           <Table.Tr>
@@ -127,5 +112,6 @@ export const Tableview = () => {
         <Table.Tbody>{rows}</Table.Tbody>
       </Table>
     </Table.ScrollContainer>
+    </div>
   );
 };

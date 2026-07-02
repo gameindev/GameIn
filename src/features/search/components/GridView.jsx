@@ -19,6 +19,7 @@ import CountryFlag from "../../../shared/components/CountryFlag";
 import Separator from "../../../shared/components/Separator";
 import IconButton from "../../../shared/components/IconButton";
 import routeService from "../../../app/services/route/routeService";
+import { formatCompactNumber } from "../../../shared/utils/helpers/formatCompactNumber.helper";
 
 export default function GridView({ SocialInfo }) {
   const user = useAppSelector(currentUser);
@@ -31,7 +32,7 @@ export default function GridView({ SocialInfo }) {
   }, [searchData, user.id]);
 
   return (
-    <Group>
+    <Group className="search-grid-results">
       {filteredSearchData?.map((userItem) => {
         const { id, username, date_of_birth, is_verified } = userItem;
         const { totalFollowers } = getFollowerStats(userItem);
@@ -45,7 +46,7 @@ export default function GridView({ SocialInfo }) {
         );
 
         return (
-          <div style={{ position: "relative", flexBasis: "calc(33.3% - 0.8em)" }} key={id}>
+          <div className="search-grid-card" style={{ position: "relative" }} key={id}>
             <GridStyles>
               <div className="avatar">
                 <ProfileAvatar
@@ -120,7 +121,7 @@ export default function GridView({ SocialInfo }) {
                           c="white"
                         >
                           {" "}
-                          {totalFollowers || 0}
+                          {formatCompactNumber(totalFollowers, { empty: "0" })}
                         </Text>
                         <Text size={bigscreen ? "xs" : "xs"} ta="center">
                           FOLLOWERS

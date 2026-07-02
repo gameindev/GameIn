@@ -25,3 +25,22 @@ export const getCreatorRatingSummary = async () => {
     const response = await api.get("/sponsorship-feedback/creator/summary");
     return unwrap(response);
 };
+
+/**
+ * @param {number} creatorUserId
+ */
+export const getCreatorPublicRatingSummary = async (creatorUserId) => {
+    const response = await api.get(`/sponsorship-feedback/creator/${creatorUserId}/summary`);
+    return unwrap(response);
+};
+
+/**
+ * Brand viewing a creator profile: summary + pending feedback order.
+ * @param {number} creatorUserId
+ */
+export const getBrandCreatorRatingContext = async (creatorUserId) => {
+    const response = await api.get(
+        `/sponsorship-feedback/creator/${creatorUserId}/brand-context`,
+    );
+    return unwrap(response);
+};

@@ -4,6 +4,7 @@ import { SettingsCard, SettingsWrap } from "../styles/settingStyles";
 import { Alert, Checkbox, Group, Pill, Table, Title, Button, Loader, Text } from "@mantine/core";
 import { theme } from "../../../shared/styles/theme/customTheme";
 import { useNotificationPreferences } from "../hooks/useNotificationPreferences";
+import styled from "styled-components";
 
 
 
@@ -21,7 +22,7 @@ const Notifications = () => {
     return (
         <>
             <SectionHeader text="Notifications" icon={<Bell />} />
-            <SettingsWrap>
+            <NotificationsWrap>
                 <SettingsCard>
                     <div className="title">
                         <div className="icon">
@@ -32,7 +33,7 @@ const Notifications = () => {
                         </Title>
                     </div>
 
-
+                    <div className="notification-table">
                     <Table.ScrollContainer>
                         <Table
                             withColumnBorders
@@ -113,9 +114,67 @@ const Notifications = () => {
 
                         </Table>
                     </Table.ScrollContainer>
+                    </div>
+
+                    <div className="notification-mobile-list">
+                        {loading ? (
+                            <div className="notification-mobile-empty">
+                                <Loader size="sm" />
+                                <Text size="sm" c="dimmed">
+                                    Loading preferences...
+                                </Text>
+                            </div>
+                        ) : (
+                            prefs.map(({ key, label, email, required }) => (
+                                <div className="notification-mobile-card" key={key}>
+                                    <div className="notification-mobile-head">
+                                        <Text fw={700} c={theme.colors.white[0]}>
+                                            {label}
+                                        </Text>
+                                        {required && (
+                                            <Pill size="xs" color="yellow" variant="filled">
+                                                Required
+                                            </Pill>
+                                        )}
+                                    </div>
+                                    <div className="notification-mobile-row">
+                                        <div>
+                                            <Text size="sm" fw={700} c={theme.colors.white[0]}>
+                                                In-App
+                                            </Text>
+                                            <Text size="xs" c="dimmed">
+                                                Always enabled
+                                            </Text>
+                                        </div>
+                                        <Checkbox
+                                            aria-label={`${label} in-app`}
+                                            checked={true}
+                                            disabled={true}
+                                        />
+                                    </div>
+                                    <div className="notification-mobile-row">
+                                        <div>
+                                            <Text size="sm" fw={700} c={theme.colors.white[0]}>
+                                                Email
+                                            </Text>
+                                            <Text size="xs" c="dimmed">
+                                                Receive email updates
+                                            </Text>
+                                        </div>
+                                        <Checkbox
+                                            aria-label={`${label} email`}
+                                            checked={email}
+                                            onChange={() => toggle(key, "email")}
+                                            disabled={required || saving}
+                                        />
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
 
                     {/* Action Buttons */}
-                    <Group justify="flex-end" mt="md" gap="sm">
+                    <Group className="notification-actions" justify="flex-end" mt="md" gap="sm">
                         <Button
                             variant="subtle"
                             leftSection={<RotateCcw size={16} />}
@@ -152,10 +211,91 @@ const Notifications = () => {
                     order management and platform communication. These include order
                     messages and order updates.
                 </Alert>
-            </SettingsWrap>
+            </NotificationsWrap>
         </>
     )
 }
+
+const NotificationsWrap = styled(SettingsWrap)`
+    min-width: 0;
+
+    .notification-mobile-list {
+        display: none;
+    }
+
+    @media (max-width: 768px) {
+        padding-top: 1rem;
+
+        ${SettingsCard} {
+            padding: 1rem;
+        }
+
+        .title {
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .title .mantine-Title-root {
+            font-size: 1rem;
+            line-height: 1.25;
+        }
+
+        .notification-table {
+            display: none;
+        }
+
+        .notification-mobile-list {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .notification-mobile-empty,
+        .notification-mobile-card {
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: ${theme.radius.md};
+            background: rgba(0,0,0,0.12);
+        }
+
+        .notification-mobile-empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            min-height: 6rem;
+        }
+
+        .notification-mobile-card {
+            padding: 0.9rem;
+        }
+
+        .notification-mobile-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .notification-mobile-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding-top: 0.8rem;
+        }
+
+        .notification-actions {
+            justify-content: stretch !important;
+            align-items: stretch;
+            flex-direction: column-reverse;
+        }
+
+        .notification-actions .mantine-Button-root {
+            width: 100%;
+        }
+    }
+`;
 
 
 export default Notifications;

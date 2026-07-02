@@ -1,4 +1,4 @@
-import { Box, Flex, Grid, Text } from "@mantine/core";
+import { Box, Grid, rgba, Text } from "@mantine/core";
 import { OfferingStatus } from "../../../shared/enums/offeringStatusEnum";
 import { useEditLock } from "../hooks/useEditLock";
 import StatBox from "../../../shared/components/StatBox";
@@ -9,6 +9,7 @@ import OfferList from "./OfferList";
 import ExpiryTimer from "./ExpiryTimer";
 import { USERTYPES } from "../../../shared/enums/userTypesEnum";
 import { offeringService } from "../services";
+import { OfferingCardContent } from "../styles/offering-card-style";
 
 const OfferingCard = ({
   offering,
@@ -35,6 +36,9 @@ const OfferingCard = ({
     previousPrice?.price &&
     latestPrice?.price &&
     previousPrice.price !== latestPrice.price;
+  const [priceMajor = "0", priceMinor = "00"] = String(
+    latestPrice?.price ?? "0",
+  ).split(".");
 
   const canShowSponsorButton =
     isBrand &&
@@ -73,23 +77,24 @@ const OfferingCard = ({
           )
         }
         background={`repeating-linear-gradient(
-          45deg, rgba(255,255,255,0.05), rgba(255,255,255,0.05) 1px,
+          45deg, ${rgba(theme.colors.white[0], 0.05)}, ${rgba(theme.colors.white[0], 0.05)} 1px,
           transparent 1px, transparent 10px
-        ), rgba(92,229,176,0.15)`}
+        ), ${rgba(theme.colors.primary[0], 0.15)}`}
       >
-        <Flex direction="column" h="100%">
-          <Box p="xl">
-            <Text c={priceChanged ? theme.colors.yellow[0] : theme.colors.white[0]} fw={700} size="lg" mb="xs">
-              $ {latestPrice?.price}
-            </Text>
-            <Text fw={600} size="sm" mb={4} lineClamp={1}>
+        <OfferingCardContent>
+          <div className={`offering-price ${priceChanged ? "price-changed" : ""}`}>
+            <span className="currency">$</span>
+            <span className="price-major">{priceMajor}</span>
+            <span className="price-minor">.{priceMinor.padEnd(2, "0").slice(0, 2)}</span>
+          </div>
+            <Text className="offering-title" lineClamp={1}>
               {offering.title}
             </Text>
-            <Text size="xs" c="dimmed" mb="md" lineClamp={2}>
+            <Text className="offering-description" lineClamp={2}>
               {offering.description}
             </Text>
 
-            <Text c={theme.colors.primary[0]} fw={500} size="xs" mb={4}>
+            <Text className="offering-label">
               OFFERING:
             </Text>
             <OfferList
@@ -110,12 +115,8 @@ const OfferingCard = ({
                 </Text>
               </Box>
             )}
-          </Box>
-
-          <Box style={{ flexGrow: 1 }} />
-
           {offering.last_adjusted_by?.id && (
-            <Box px="xl">
+            <Box mt="sm">
               <Text size="xs">
                 {offering.last_adjusted_by?.user_type === USERTYPES.CREATOR
                   ? "Changes made by Creator"
@@ -123,7 +124,7 @@ const OfferingCard = ({
               </Text>
             </Box>
           )}
-        </Flex>
+        </OfferingCardContent>
       </StatBox>
     </Grid.Col>
   );

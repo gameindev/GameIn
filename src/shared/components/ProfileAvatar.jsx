@@ -1,5 +1,6 @@
 import AvatarSection from "./AvatarSection";
 import {
+    getImageUrl,
     getProfileAvatarUrl,
     getProfileDisplayName,
     getProfileNameParts,
@@ -15,7 +16,7 @@ const ProfileAvatar = ({
     profilePath,
     ...props
 }) => {
-    const resolvedAvatar = avatar ?? getProfileAvatarUrl(user);
+    const resolvedAvatar = avatar ? getImageUrl(avatar) : getProfileAvatarUrl(user);
     const resolvedDisplayName = displayName ?? getProfileDisplayName(user);
     const resolvedNameParts = getProfileNameParts(user);
     const resolvedUsername = profileUsername ?? user?.username;

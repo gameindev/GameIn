@@ -229,11 +229,7 @@ const gridStyles = {
       width: "100%",
     },
     col: {
-      width: "25em",
-      minHeight: "25em",
-      Box: {
-        minHeight: "25em",
-      },
+      minWidth: 0,
     },
   }),
 };

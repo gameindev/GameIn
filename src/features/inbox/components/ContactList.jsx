@@ -9,7 +9,11 @@ const ContactList = ({
     selectedConversation,
     onSelectConversation,
     onlineUsers = [],
-    searchQuery = ""
+    searchQuery = "",
+    onMarkAllRead,
+    onClearChat,
+    onDeleteConversation,
+    onTogglePin,
 }) => {
 
     const filteredConversations = useMemo(() => {
@@ -63,6 +67,10 @@ const ContactList = ({
                             conversation={conversation}
                             selected={selectedConversation?.id === conversation.id}
                             onSelect={onSelectConversation}
+                            onMarkAllRead={onMarkAllRead}
+                            onClearChat={onClearChat}
+                            onDeleteConversation={onDeleteConversation}
+                            onTogglePin={onTogglePin}
                         />
                     ))}
                 </Box>

@@ -1,6 +1,7 @@
 import {
     ActionWrapper,
     BannerWrapper,
+    ProfileContextWrapper,
     ProfileWrapper,
     UserAvatar,
     UserInformation,
@@ -69,19 +70,25 @@ export default function ProfileBanner({ userProfile, isSelf }) {
                 </UserAvatar>
 
                 <ProfileWrapper>
-                    <div className="personal_info">
-                        <UserInfo user={userProfile} />
-                        <StatsSection stats={stats} />
-                    </div>
-                    <Separator size="3.5em" />
-                    <LevelBadge level={certificationLevel} />
-                    <Separator size="3.5em" />
-                    <SponsorshipSection
-                        sponsors={userProfile?.sponsors || []}
-                        userProfile={userProfile}
-                        isSelf={isSelf}
-                    />
-                    <Separator size="3.5em" />
+                    <ProfileContextWrapper>
+                        <div className="personal_info">
+                            <UserInfo user={userProfile} />
+                            <StatsSection stats={stats} />
+                        </div>
+                        <Separator classes="separator" size="3.5em" style={{ flex: "0 0 auto" }} />
+                        <div className="level_section">
+                            <LevelBadge level={certificationLevel} />
+                        </div>
+                        <Separator classes="separator" size="3.5em" style={{ flex: "0 0 auto" }} />
+                        <div className="sponsor_section">
+                            <SponsorshipSection
+                                sponsors={userProfile?.sponsors || []}
+                                userProfile={userProfile}
+                                isSelf={isSelf}
+                            />
+                        </div>
+                        <Separator classes="separator" size="3.5em" style={{ flex: "0 0 auto" }} />
+                    </ProfileContextWrapper>
 
                     <ActionWrapper>
                         {isSelf ? (

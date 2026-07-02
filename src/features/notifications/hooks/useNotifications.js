@@ -51,8 +51,8 @@ export const useNotifications = (autoFetch = true) => {
     }, [dispatch]);
 
     // Mark all as read (keeps all notifications, just marks as read)
-    const markAllAsRead = useCallback(() => {
-        dispatch(markAllNotificationsAsRead());
+    const markAllAsRead = useCallback(async () => {
+        return dispatch(markAllNotificationsAsRead()).unwrap();
     }, [dispatch]);
 
     // Delete notification (removes from list)

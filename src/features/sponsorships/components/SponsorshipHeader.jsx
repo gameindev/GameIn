@@ -6,6 +6,7 @@ import { EmptySeparator } from "../utils/separators";
 const SponsorshipHeader = () => {
     return (
         <Flex
+            className="sponsorship-table-head"
             p="sm"
             tt="uppercase"
             fz={theme.fontSizes.xs}

@@ -5,10 +5,45 @@ import { joinConversation } from "../../../app/services/ws/ws.service";
 import { showNotificationHelper } from "../../../shared/utils/helpers/showNotification.helper";
 import { NOTIFICATION_TYPES } from "../../../shared/enums/notificationTypesEnum";
 
+const sortConversations = (items) =>
+    [...items].sort((a, b) => {
+        const aPinned = Boolean(a.pinned);
+        const bPinned = Boolean(b.pinned);
+        if (aPinned !== bPinned) {
+            return aPinned ? -1 : 1;
+        }
+
+        const aTime = a.lastMessage?.timestamp || a.joined_at;
+        const bTime = b.lastMessage?.timestamp || b.joined_at;
+        return new Date(bTime).getTime() - new Date(aTime).getTime();
+    });
+
+const getConversationLabel = (conversation, currentUserId) => {
+    if (!conversation) return "";
+
+    const title =
+        typeof conversation.title === "string" ? conversation.title.trim() : conversation.title;
+    if (title) {
+        return title.charAt(0).toUpperCase() + title.slice(1);
+    }
+
+    const participants = conversation.participants || conversation.users || [];
+    const other = participants.find((p) => {
+        const participantId = p.user ? p.user.id : p.id;
+        return participantId !== currentUserId;
+    });
+    const otherUser = other?.user || other;
+    const name = otherUser?.username || otherUser?.name || "Unknown";
+
+    return name.charAt(0).toUpperCase() + name.slice(1);
+};
+
 export const useConversationManagement = (user) => {
     const { conversations: apiConversations, loading: conversationsLoading } = useConversations(user?.id);
     const [conversations, setConversations] = useState([]);
     const [selectedConversation, setSelectedConversation] = useState(null);
+    const [pendingConfirm, setPendingConfirm] = useState(null);
+    const [confirmLoading, setConfirmLoading] = useState(false);
 
     // Sync API conversations with local state
     useEffect(() => {
@@ -25,13 +60,15 @@ export const useConversationManagement = (user) => {
                         users: participants, // Ensure both properties exist
                         unreadCount: conv.unreadCount || 0,
                         lastMessage: conv.lastMessage || null,
+                        pinned: conv.pinned || false,
+                        cleared_at: conv.cleared_at || null,
                     };
                 }
                 return conv;
             });
             
             // console.log('Normalized conversations:', normalizedConversations);
-            setConversations(normalizedConversations);
+            setConversations(sortConversations(normalizedConversations));
         }
     }, [apiConversations]);
 
@@ -59,7 +96,7 @@ export const useConversationManagement = (user) => {
 
     // Mark conversation as read
     const markConversationAsRead = useCallback((conversationId) => {
-        setConversations(prev => prev.map(conv => {
+        setConversations(prev => sortConversations(prev.map(conv => {
             if (conv.id === conversationId) {
                 return {
                     ...conv,
@@ -68,8 +105,157 @@ export const useConversationManagement = (user) => {
                 };
             }
             return conv;
-        }));
+        })));
+
+        setSelectedConversation(prev =>
+            prev?.id === conversationId
+                ? { ...prev, unreadCount: 0, unread: false }
+                : prev
+        );
     }, []);
+
+    const handleMarkAllRead = useCallback(async (conversationId) => {
+        try {
+            await conversationsService.markConversationAsRead(conversationId);
+            markConversationAsRead(conversationId);
+            showNotificationHelper("Marked as read", "All messages marked as read", NOTIFICATION_TYPES.SUCCESS);
+        } catch (error) {
+            showNotificationHelper(
+                "Could not mark as read",
+                error?.response?.data?.message || error?.message || "Please try again.",
+                NOTIFICATION_TYPES.ERROR
+            );
+        }
+    }, [markConversationAsRead]);
+
+    const performClearChat = useCallback(async (conversationId) => {
+        try {
+            const response = await conversationsService.clearConversation(conversationId);
+            const clearedAt = response?.data?.clearedAt || new Date().toISOString();
+
+            setConversations(prev => sortConversations(prev.map(conv => {
+                if (conv.id !== conversationId) return conv;
+                return {
+                    ...conv,
+                    cleared_at: clearedAt,
+                    lastMessage: null,
+                    unreadCount: 0,
+                    unread: false,
+                };
+            })));
+
+            if (selectedConversation?.id === conversationId) {
+                setSelectedConversation(prev => ({
+                    ...prev,
+                    cleared_at: clearedAt,
+                    lastMessage: null,
+                    unreadCount: 0,
+                    unread: false,
+                }));
+            }
+
+            showNotificationHelper("Chat cleared", "Message history hidden from your inbox", NOTIFICATION_TYPES.SUCCESS);
+        } catch (error) {
+            showNotificationHelper(
+                "Could not clear chat",
+                error?.response?.data?.message || error?.message || "Please try again.",
+                NOTIFICATION_TYPES.ERROR
+            );
+        }
+    }, [selectedConversation?.id]);
+
+    const performDeleteConversation = useCallback(async (conversationId) => {
+        try {
+            await conversationsService.deleteConversation(conversationId);
+            setConversations(prev => prev.filter(conv => conv.id !== conversationId));
+
+            if (selectedConversation?.id === conversationId) {
+                setSelectedConversation(null);
+            }
+
+            showNotificationHelper("Chat deleted", "Conversation removed from your inbox", NOTIFICATION_TYPES.SUCCESS);
+            return true;
+        } catch (error) {
+            showNotificationHelper(
+                "Could not delete chat",
+                error?.response?.data?.message || error?.message || "Please try again.",
+                NOTIFICATION_TYPES.ERROR
+            );
+            return false;
+        }
+    }, [selectedConversation?.id]);
+
+    const handleClearChat = useCallback((conversationId) => {
+        const conversation = conversations.find((conv) => conv.id === conversationId);
+        setPendingConfirm({
+            type: "clear",
+            conversationId,
+            conversationLabel: getConversationLabel(conversation, user?.id),
+        });
+    }, [conversations, user?.id]);
+
+    const handleDeleteConversation = useCallback((conversationId) => {
+        const conversation = conversations.find((conv) => conv.id === conversationId);
+        setPendingConfirm({
+            type: "delete",
+            conversationId,
+            conversationLabel: getConversationLabel(conversation, user?.id),
+        });
+    }, [conversations, user?.id]);
+
+    const cancelPendingConfirm = useCallback(() => {
+        if (!confirmLoading) {
+            setPendingConfirm(null);
+        }
+    }, [confirmLoading]);
+
+    const confirmPendingAction = useCallback(async () => {
+        if (!pendingConfirm || confirmLoading) return null;
+
+        setConfirmLoading(true);
+        let deleted = false;
+
+        try {
+            if (pendingConfirm.type === "clear") {
+                await performClearChat(pendingConfirm.conversationId);
+            } else if (pendingConfirm.type === "delete") {
+                deleted = await performDeleteConversation(pendingConfirm.conversationId);
+            }
+        } finally {
+            setConfirmLoading(false);
+            setPendingConfirm(null);
+        }
+
+        return deleted ? pendingConfirm.conversationId : null;
+    }, [pendingConfirm, confirmLoading, performClearChat, performDeleteConversation]);
+
+    const handleTogglePin = useCallback(async (conversationId) => {
+        try {
+            const response = await conversationsService.togglePinConversation(conversationId);
+            const pinned = Boolean(response?.data?.pinned);
+
+            setConversations(prev => sortConversations(prev.map(conv => {
+                if (conv.id !== conversationId) return conv;
+                return { ...conv, pinned };
+            })));
+
+            if (selectedConversation?.id === conversationId) {
+                setSelectedConversation(prev => ({ ...prev, pinned }));
+            }
+
+            showNotificationHelper(
+                pinned ? "Chat pinned" : "Chat unpinned",
+                pinned ? "Conversation pinned to the top" : "Conversation unpinned",
+                NOTIFICATION_TYPES.SUCCESS
+            );
+        } catch (error) {
+            showNotificationHelper(
+                "Could not update pin",
+                error?.response?.data?.message || error?.message || "Please try again.",
+                NOTIFICATION_TYPES.ERROR
+            );
+        }
+    }, [selectedConversation?.id]);
 
 
 
@@ -222,5 +408,13 @@ export const useConversationManagement = (user) => {
         setConversations,
         handleNewMessage,
         markConversationAsRead,
+        handleMarkAllRead,
+        handleClearChat,
+        handleDeleteConversation,
+        handleTogglePin,
+        pendingConfirm,
+        confirmLoading,
+        cancelPendingConfirm,
+        confirmPendingAction,
     };
 };

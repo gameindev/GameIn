@@ -17,7 +17,7 @@ export const GlobalStyles = createGlobalStyle`
     body{
         background: ${({ theme }) => theme.colors.body[0]};
         font-family: 'Exo2', sans-serif !important;
-        
+        min-width: 0;
         font-size: 75%;
 
         @media (min-width: 1200px) {
@@ -70,6 +70,18 @@ export const GlobalStyles = createGlobalStyle`
         }
     }
 
+    .sidebar-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 98;
+        border: 0;
+        padding: 0;
+        background: rgba(8, 10, 12, 0.62);
+        backdrop-filter: blur(2px);
+        cursor: pointer;
+    }
+
     main{
         &:not(.logged-in){
             flex: 1;
@@ -104,6 +116,74 @@ export const GlobalStyles = createGlobalStyle`
         /* @media (min-width: 1920px){
             max-width: 90em;
         } */
+    }
+
+    @media (max-width: 1280px) {
+        .wrapper {
+            gap: 1.25em;
+
+            .ad-banner {
+                display: none;
+            }
+        }
+
+        main.logged-in {
+            max-width: none;
+            margin: 0;
+        }
+    }
+
+    @media (max-width: 1024px) {
+        .wrapper {
+            display: block;
+        }
+
+        .sidebar-backdrop.show {
+            display: block;
+        }
+
+        main.logged-in {
+            padding: 1.5em;
+        }
+
+        .container {
+            max-width: 88%;
+        }
+
+        .container-fluid {
+            max-width: 94%;
+        }
+    }
+
+    @media (max-width: 768px) {
+        :where(
+            p,
+            label,
+            button,
+            input,
+            textarea,
+            select,
+            td,
+            th,
+            .mantine-Text-root,
+            .mantine-Input-input,
+            .mantine-Button-label,
+            .mantine-Menu-itemLabel,
+            .mantine-Table-td,
+            .mantine-Table-th
+        ) {
+            font-size: max(1em, 0.875rem);
+        }
+
+        main.logged-in {
+            padding: 1em;
+            padding-bottom: calc(1em + env(safe-area-inset-bottom));
+        }
+
+        .container,
+        .container-fluid {
+            max-width: calc(100% - 1.5em);
+        }
     }
 
     ::placeholder {

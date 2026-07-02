@@ -3,7 +3,7 @@ import { Sidebar, Header, Footer } from "./components";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../store/hooks";
 import useApi from "../../shared/hooks/useApi";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { currentUser, isLoggedIn } from "../../features/auth/store/selector";
 import { setUser } from "../../features/auth/store/userSlice";
 import { getUserProfileService } from "../services/user/user-profile.service";
@@ -17,11 +17,16 @@ const Layout = () => {
   const isDashboard = location.pathname === "/";
   const isLoggedInUser = useSelector(isLoggedIn);
   const user = useSelector(currentUser) || {};
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const dispatch = useAppDispatch();
   const { get } = useApi();
 
   const showSidebar = isLoggedInUser && !isDashboard;
+
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
 
   // Start/stop inactivity tracker based on login status
   useEffect(() => {
@@ -71,9 +76,23 @@ const Layout = () => {
 
   return (
     <div>
-      <Header />
+      <Header
+        showMenuButton={showSidebar}
+        onMenuClick={() => setSidebarOpen(true)}
+        sidebarOpen={sidebarOpen}
+      />
+      {showSidebar && (
+        <button
+          className={`sidebar-backdrop ${sidebarOpen ? "show" : ""}`}
+          type="button"
+          aria-label="Close menu"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
       <div className="wrapper">
-        {showSidebar && <Sidebar />}
+        {showSidebar && (
+          <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        )}
         <main className={showSidebar ? "logged-in" : ""}>
           <Outlet />
         </main>

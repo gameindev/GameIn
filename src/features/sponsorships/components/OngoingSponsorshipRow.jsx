@@ -13,8 +13,8 @@ import IconButton from "../../../shared/components/IconButton";
 import {
     IconChevronDown,
     IconChevronUp,
-    IconDeviceFloppy,
     IconFile,
+    // IconDeviceFloppy, // Reserved for a future save action.
     IconMessage,
     IconX,
 } from "@tabler/icons-react";
@@ -130,7 +130,7 @@ const OngoingSponsorshipRow = ({
                                     )
                             }
                         />
-                        <IconButton iconSize={18} Icon={IconDeviceFloppy} />
+                        {/* <IconButton iconSize={18} Icon={IconDeviceFloppy} /> */}
                         <IconButton
                             iconSize={18}
                             Icon={IconMessage}

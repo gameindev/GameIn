@@ -10,8 +10,6 @@ import { Notifications } from "@mantine/notifications";
 import { theme } from './shared/styles/theme/customTheme.js'
 import { GlobalStyles } from './shared/styles/theme/globalTheme.js'
 import StoreProvider from './app/providers/StoreProvider.jsx'
-import { PersistGate } from 'redux-persist/integration/react'
-import { persistor } from './app/store/index.js'
 
 createRoot(document.getElementById('root')).render(
     <>
@@ -27,9 +25,7 @@ createRoot(document.getElementById('root')).render(
                 <ThemeProvider theme={theme}>
                     <GlobalStyles />
                     <StoreProvider>
-                        <PersistGate loading={null} persistor={persistor}>
-                            <App />
-                        </PersistGate>
+                        <App />
                     </StoreProvider>
                 </ThemeProvider>
             </MantineProvider>

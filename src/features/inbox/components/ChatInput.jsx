@@ -75,6 +75,7 @@ const ChatInput = memo(({ onSend }) => {
 
   return (
     <Box
+      className="chat-input"
       p="md"
       px={70}
       style={{ borderTop: `1px solid ${theme.colors.inputBgColor[0]}` }}

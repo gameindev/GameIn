@@ -27,10 +27,10 @@ const SponsorshipDetails = ({
     previousPrice.price !== latestPrice.price;
 
   return (
-    <Box py={rem(72)} px={rem(70)}>
-      <Flex gap="3rem">
+    <Box className="offer-details" py={rem(72)} px={rem(70)}>
+      <Flex className="offer-details-layout" gap="3rem">
         {/* LEFT SIDE */}
-        <Box flex={2}>
+        <Box className="offer-details-summary" flex={2}>
           <Text c={theme.colors.white[0]} size="lg" fw={500} mb="xs">
             {user.username.toUpperCase()} {sponsorship.type} PACKAGE
           </Text>
@@ -39,6 +39,7 @@ const SponsorshipDetails = ({
           </Text>
 
           <Text
+            className="offer-details-price"
             size="2.5em"
             fw={700}
             c={priceChanged ? theme.colors.yellow[0] : theme.colors.white[0]}
@@ -77,7 +78,7 @@ const SponsorshipDetails = ({
         </Box>
 
         {/* MIDDLE SIDE */}
-        <Box flex={2}>
+        <Box className="offer-details-list" flex={2}>
           <Text fw={600} size="sm" mb="sm" c={theme.colors.primary[0]}>
             OFFERING DETAILS
           </Text>

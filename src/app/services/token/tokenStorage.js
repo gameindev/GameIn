@@ -23,17 +23,13 @@ export function storeTokens(accessToken, refreshToken, user) {
     
     // Store tokens in localStorage
     store.dispatch(setAuth({ accessToken, refreshToken, user }));
-    
 }
 
 export function storeTokenExpiry(decodedExpiry) {
     store.dispatch(setAccessTokenExpiry(decodedExpiry * 1000));
 }
 
-export function clearTokens() {
-    // Stop inactivity tracker before logging out
+export function clearTokens(options = {}) {
     stopInactivityTracker();
-    
-    // Dispatch logout action
-    store.dispatch(performLogout());
+    return store.dispatch(performLogout(options));
 }

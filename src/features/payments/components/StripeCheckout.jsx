@@ -49,7 +49,19 @@ const CARD_ELEMENT_OPTIONS = {
     },
 };
 
-const CheckoutForm = ({ clientSecret, paymentIntentId, onSuccess, onError, stripe, Elements, CardElement, useStripe, useElements }) => {
+const CheckoutForm = ({
+    clientSecret,
+    paymentIntentId,
+    savedPaymentMethodId,
+    savedCardLabel,
+    onSuccess,
+    onError,
+    stripe,
+    Elements,
+    CardElement,
+    useStripe,
+    useElements,
+}) => {
     const stripeHook = useStripe ? useStripe() : null;
     const elements = useElements ? useElements() : null;
     const [loading, setLoading] = useState(false);
@@ -68,7 +80,7 @@ const CheckoutForm = ({ clientSecret, paymentIntentId, onSuccess, onError, strip
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        if (!stripeHook || !elements) {
+        if (!stripeHook) {
             return;
         }
 
@@ -76,16 +88,25 @@ const CheckoutForm = ({ clientSecret, paymentIntentId, onSuccess, onError, strip
         setError(null);
 
         try {
-            const cardElement = elements.getElement(CardElement);
+            let stripeError;
+            let paymentIntent;
 
-            const { error: stripeError, paymentIntent } = await stripeHook.confirmCardPayment(
-                clientSecret,
-                {
+            if (savedPaymentMethodId) {
+                ({ error: stripeError, paymentIntent } = await stripeHook.confirmCardPayment(clientSecret, {
+                    payment_method: savedPaymentMethodId,
+                }));
+            } else {
+                if (!elements) {
+                    return;
+                }
+
+                const cardElement = elements.getElement(CardElement);
+                ({ error: stripeError, paymentIntent } = await stripeHook.confirmCardPayment(clientSecret, {
                     payment_method: {
                         card: cardElement,
                     },
-                }
-            );
+                }));
+            }
 
             if (stripeError) {
                 setError(stripeError.message);
@@ -115,14 +136,22 @@ const CheckoutForm = ({ clientSecret, paymentIntentId, onSuccess, onError, strip
 
     return (
         <form onSubmit={handleSubmit}>
-            <Box mb="md">
-                <CardElement options={CARD_ELEMENT_OPTIONS} />
-                {error && (
-                    <Text c="red" size="sm" mt="xs">
-                        {error}
+            {savedPaymentMethodId ? (
+                <Box mb="md" p="sm" style={{ border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8 }}>
+                    <Text size="sm" fw={500}>
+                        {savedCardLabel || "Saved card"}
                     </Text>
-                )}
-            </Box>
+                </Box>
+            ) : (
+                <Box mb="md">
+                    <CardElement options={CARD_ELEMENT_OPTIONS} />
+                </Box>
+            )}
+            {error && (
+                <Text c="red" size="sm" mt="xs" mb="md">
+                    {error}
+                </Text>
+            )}
             <Button
                 type="submit"
                 variant="primary"
@@ -130,13 +159,13 @@ const CheckoutForm = ({ clientSecret, paymentIntentId, onSuccess, onError, strip
                 loading={loading}
                 disabled={!stripeHook || loading}
             >
-                {loading ? "Processing..." : `Pay Now`}
+                {loading ? "Processing..." : savedPaymentMethodId ? "Pay with saved card" : "Pay Now"}
             </Button>
         </form>
     );
 };
 
-const StripeCheckout = ({ clientSecret, paymentIntentId, onSuccess, onError }) => {
+const StripeCheckout = ({ clientSecret, paymentIntentId, savedPaymentMethodId, savedCardLabel, onSuccess, onError }) => {
     const [stripe, setStripe] = useState(null);
     const [stripeModules, setStripeModules] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -222,6 +251,8 @@ const StripeCheckout = ({ clientSecret, paymentIntentId, onSuccess, onError }) =
             <CheckoutForm
                 clientSecret={clientSecret}
                 paymentIntentId={paymentIntentId}
+                savedPaymentMethodId={savedPaymentMethodId}
+                savedCardLabel={savedCardLabel}
                 onSuccess={onSuccess}
                 onError={onError}
                 stripe={stripe}

@@ -1,0 +1,16 @@
+export const WALLET_ENDPOINTS = {
+    ME: "/wallets/me",
+    ANALYTICS: "/wallets/me/analytics",
+    LEDGER: "/wallets/me/ledger",
+    CONNECT_ONBOARD: "/wallets/connect/onboard",
+    CONNECT_STATUS: "/wallets/connect/status",
+    CONNECT_DASHBOARD: "/wallets/connect/dashboard",
+    TOP_UP: "/wallets/top-up",
+    TOP_UP_CONFIRM: "/wallets/top-up/confirm",
+    PAY_ORDER: (orderId) => `/wallets/pay/${orderId}`,
+    PAYMENT_METHODS: "/wallets/payment-methods",
+    PAYMENT_METHODS_SETUP: "/wallets/payment-methods/setup",
+    PAYMENT_METHOD: (id) => `/wallets/payment-methods/${id}`,
+    WITHDRAW: "/wallets/withdraw",
+    PAYOUTS: "/wallets/payouts",
+};

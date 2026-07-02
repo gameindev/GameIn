@@ -4,7 +4,13 @@ import ChatWindow from "./ChatWindow";
 import { useMessageManagement } from "../hooks/useMessageManagement";
 import { useState, useRef, useEffect } from "react";
 
-const ChatArea = ({ selectedConversation, onlineUsers = [], onMarkAsRead = null }) => {
+const ChatArea = ({
+    selectedConversation,
+    onlineUsers = [],
+    onMarkAsRead = null,
+    onBack,
+    showBack = false,
+}) => {
     const [showDocumentView, setShowDocumentView] = useState(false);
     const scrollAreaRef = useRef(null);
 
@@ -21,7 +27,11 @@ const ChatArea = ({ selectedConversation, onlineUsers = [], onMarkAsRead = null 
         addTypingIndicator,
         clearError,
         acknowledgeMessage,
-    } = useMessageManagement(selectedConversation?.id, onMarkAsRead);
+    } = useMessageManagement(
+        selectedConversation?.id,
+        onMarkAsRead,
+        selectedConversation?.cleared_at || null
+    );
 
     // console.log("messages list", messages);
 
@@ -128,6 +138,8 @@ const ChatArea = ({ selectedConversation, onlineUsers = [], onMarkAsRead = null 
             scrollAreaRef={scrollAreaRef}
             sendingMessages={sendingMessages}
             acknowledgeMessage={acknowledgeMessage}
+            onBack={onBack}
+            showBack={showBack}
         />
     );
 };

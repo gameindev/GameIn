@@ -17,6 +17,8 @@ import PaymentPromptModal from "./PaymentPromptModal";
 import { useAppSelector } from "../../../app/store/hooks";
 import { currentUser } from "../../../features/auth/store/selector";
 import { USERTYPES } from "../../../shared/enums/userTypesEnum";
+import { showNotificationHelper } from "../../../shared/utils/helpers/showNotification.helper";
+import { NOTIFICATION_TYPES } from "../../../shared/enums/notificationTypesEnum";
 
 /**
  * Notification Dropdown Component
@@ -39,6 +41,8 @@ const NotificationDropdown = () => {
     loadMore,
     markAsRead,
   } = useNotifications();
+
+  const [markingAll, setMarkingAll] = useState(false);
 
   // Check for payment-required notifications when new notifications arrive
   // Only show payment modal for BRAND users (brands need to pay, creators don't)
@@ -134,8 +138,19 @@ const NotificationDropdown = () => {
     return () => clearTimeout(timer);
   }, [opened, hasMore, loading, loadMore]);
 
-  const handleMarkAllAsRead = () => {
-    markAllAsRead();
+  const handleMarkAllAsRead = async () => {
+    setMarkingAll(true);
+    try {
+      await markAllAsRead();
+    } catch (err) {
+      showNotificationHelper(
+        "Could not mark all as read",
+        typeof err === "string" ? err : err?.message || "Please try again.",
+        NOTIFICATION_TYPES.ERROR
+      );
+    } finally {
+      setMarkingAll(false);
+    }
   };
 
   const handleClosePaymentModal = () => {
@@ -176,7 +191,7 @@ const NotificationDropdown = () => {
         notification={paymentNotification}
       />
       <Popover
-        width={400}
+        width="min(25rem, calc(100vw - 1.5rem))"
         position="bottom"
         shadow="md"
         opened={opened}
@@ -184,10 +199,12 @@ const NotificationDropdown = () => {
         withinPortal
       >
         <Popover.Target>
-          <Button p={0} variant="none"><NotificationIcon onClick={() => setOpened(!opened)} /></Button>
+          <Button p={0} variant="none">
+            <NotificationIcon onClick={() => setOpened(!opened)} />
+          </Button>
         </Popover.Target>
 
-        <Popover.Dropdown>
+        <Popover.Dropdown className="notification-popover">
           <Stack spacing={0} style={{ maxHeight: 500 }}>
             {/* Header */}
             <Group
@@ -208,6 +225,8 @@ const NotificationDropdown = () => {
                   size="xs"
                   variant="subtle"
                   onClick={handleMarkAllAsRead}
+                  loading={markingAll}
+                  disabled={markingAll}
                 >
                   Mark all read
                 </Button>

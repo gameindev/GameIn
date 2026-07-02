@@ -1,9 +1,7 @@
-import { Box, Button, Flex, Grid, Image, rgba, Skeleton, Stack, Text } from "@mantine/core";
-import { Link, useNavigate, useOutletContext } from "react-router";
+import { Grid, Text } from "@mantine/core";
+import { useNavigate, useOutletContext } from "react-router";
 import StatBox from "../../../../shared/components/StatBox";
 import IconButton from "../../../../shared/components/IconButton";
-import { theme } from "../../../../shared/styles/theme/customTheme";
-import VideoPreview from "../components/VideoPreview";
 import routePaths from "../../../../app/router/routes";
 import ProfileBioCard from "../components/ProfileBioCard";
 import FaqList from "../components/FaqList";
@@ -12,14 +10,25 @@ import SocialMediaStats from "../../../sponsorships/components/SocialMediaStats"
 import { useAppSelector } from "../../../../app/store/hooks";
 import { currentUser } from "../../../auth/store/selector";
 import { USERTYPES } from "../../../../shared/enums/userTypesEnum";
-import CreatorAggregatedRating from "../../dashboard/components/CreatorAggregatedRating";
+import CreatorProfileRatingCard from "../components/CreatorProfileRatingCard";
+import CreatorAudienceEngagementCards from "../../../sponsorships/components/CreatorAudienceEngagementCards";
+import { theme } from "../../../../shared/styles/theme/customTheme";
+import FindSponsorCard from "../components/FindSponsorCard";
 
+const CARD_BORDER = "1px solid rgba(255, 255, 255, 0.06)";
 
 const ProfilePage = () => {
     const navigate = useNavigate();
     const { userProfile, isSelf } = useOutletContext();
     const user = useAppSelector(currentUser);
-    const isCreator = user?.user_type?.toUpperCase() === USERTYPES.CREATOR;
+    const viewerType = user?.user_type?.toUpperCase() ?? "";
+    const profileType = userProfile?.user_type?.toUpperCase() ?? "";
+    const viewerIsBrand = viewerType === USERTYPES.BRAND;
+    const profileIsCreator = profileType === USERTYPES.CREATOR;
+    const showRatingCard =
+        profileIsCreator && (isSelf || (viewerIsBrand && !isSelf));
+    const showBrandCreatorAnalytics = viewerIsBrand && !isSelf && profileIsCreator;
+    const isCreator = userProfile?.user_type?.toUpperCase() === USERTYPES.CREATOR;
 
     if (!userProfile) return <Text>Loading profile...</Text>;
 
@@ -43,40 +52,70 @@ const ProfilePage = () => {
             <Grid.Col span={{ base: 12, md: 6, lg: 8 }}>
                 <StatBox
                     title="Social Media Stats"
-                    action={<IconButton hoverClass="hoverYellow" />}
                     background={
                         "transparent linear-gradient(45deg, #9d7fef3b 0%, #5ce5b03b 100%) 0% 0% no-repeat"
                     }
+                    noFlexFill
                 >
-                    <SocialMediaStats />
+                    <SocialMediaStats compact />
                 </StatBox>
             </Grid.Col>
 
-            {isCreator && (
-                    <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-                        <StatBox
-                            title="Rating"
-                            action={
-                                <IconButton
-                                    hoverClass="hoverYellow"
-                                    aria-label="Sponsorship ratings from brands"
-                                />
-                            }
-                        >
-                            <CreatorAggregatedRating />
-                        </StatBox>
-                    </Grid.Col>
-                )}
+            {showRatingCard && (
+                <Grid.Col span={{ base: 12, md: 6, lg: 8 }}>
+                    <StatBox
+                        title="Rating"
+                        action={
+                            <IconButton
+                                hoverClass="hoverYellow"
+                                aria-label={
+                                    viewerIsBrand && !isSelf
+                                        ? "Rate creator sponsorship feedback"
+                                        : "Sponsorship ratings from brands"
+                                }
+                            />
+                        }
+                        noFlexFill
+                        style={{
+                            background: theme.colors.secondaryGrey[0],
+                            border: CARD_BORDER,
+                            minHeight: 220,
+                            overflow: "visible",
+                        }}
+                    >
+                        <CreatorProfileRatingCard
+                            creatorUserId={userProfile.id}
+                            creatorUsername={userProfile.username}
+                            isSelf={isSelf}
+                            viewerIsBrand={viewerIsBrand}
+                        />
+                    </StatBox>
+                </Grid.Col>
+            )}
+
+            {/* {showBrandCreatorAnalytics && (
+                <CreatorAudienceEngagementCards
+                    forUserId={userProfile.id}
+                    subjectUsername={userProfile.username}
+                    viewingOthersStats
+                    enabled={showBrandCreatorAnalytics}
+                    onViewAllEngagement={() =>
+                        navigate(`/${userProfile.username}/stats`)
+                    }
+                />
+            )} */}
 
             {/* FAQ Section */}
-            <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+                    <Grid.Col
+                        span={{ base: 12, md: 6, lg: 4 }}
+                    >
                 <StatBox
                     title="FAQ"
                     action={
                         isSelf && (
                             <IconButton
                                 hoverClass="hoverYellow"
-                                onClick={() => navigate(routePaths.ACCOUNTS.PROFILE.FAQ)}
+                                onClick={() => navigate("/profile/faq")}
                             />
                         )
                     }
@@ -85,29 +124,13 @@ const ProfilePage = () => {
                 </StatBox>
             </Grid.Col>
 
-            
-
-            {/* Sponsorship / Team Creation */}
-            {/* <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
-                <StatBox
-                    title="Sponsorships"
-                    background={rgba(theme.colors.primary[0], 0.3)}
-                    action={<IconButton hoverClass="hoverYellow" />}
-                >
-                    {isSelf ? (
-                        <div className="create_team">
-                            <Link to={routePaths.ACCOUNTS.PROFILE.CREATE_TEAM}>
-                                <Button>Create Team</Button>
-                            </Link>
-                        </div>
-                    ) : (
-                        <Text>No team management available</Text>
-                    )}
-                </StatBox>
-            </Grid.Col> */}
+            {isCreator && isSelf && (
+                <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+                    <FindSponsorCard />
+                </Grid.Col>
+            )}
         </Grid>
-    )
-}
-
+    );
+};
 
 export default ProfilePage;

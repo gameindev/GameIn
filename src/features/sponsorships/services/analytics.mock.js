@@ -203,7 +203,8 @@ export function buildMockSponsorshipsSummary(days) {
     };
 }
 
-export function buildMockSponsorshipPrivateTracking() {
+export function buildMockSponsorshipPrivateTracking(windowDays = 30) {
+    const days = Math.min(Math.max(Math.trunc(windowDays) || 30, 1), 90);
     const hourly = Array.from({ length: 24 }, (_, hour) => ({
         hour,
         amount: hour >= 9 && hour <= 17 ? Math.round(120 + hour * 18 + (hour % 3) * 40) : hour === 20 ? 850 : 0,
@@ -217,14 +218,14 @@ export function buildMockSponsorshipPrivateTracking() {
                     : `${hour - 12}pm`,
     }));
     const incomeTotal = hourly.reduce((s, h) => s + h.amount, 0);
-    const series_30d = [];
+    const series_daily = [];
     const start = new Date();
-    start.setUTCDate(start.getUTCDate() - 29);
+    start.setUTCDate(start.getUTCDate() - (days - 1));
     start.setUTCHours(0, 0, 0, 0);
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < days; i++) {
         const d = new Date(start);
         d.setUTCDate(d.getUTCDate() + i);
-        series_30d.push({
+        series_daily.push({
             date: d.toISOString().slice(0, 10),
             revenue: 400 + i * 95 + (i % 4) * 120,
             paid_orders: i % 3,
@@ -233,15 +234,35 @@ export function buildMockSponsorshipPrivateTracking() {
 
     return {
         subject_user_id: 1,
+        window_days: days,
         income_today: {
             date_utc: new Date().toISOString().slice(0, 10),
             total: incomeTotal,
             hourly,
         },
-        series_30d,
+        series_daily,
+        series_30d: series_daily,
         metric_definitions: {
             income_today: "Mock hourly sponsorship payments for UI preview.",
-            series_30d: "Mock last-30-day revenue and paid invoice counts.",
+            series_daily: "Mock daily revenue and paid invoice counts.",
+        },
+    };
+}
+
+export function buildMockSponsorshipOverview() {
+    return {
+        subject_user_id: 1,
+        counts: {
+            active: 7,
+            pending: 2,
+            completed: 12,
+            cancelled: 1,
+        },
+        metric_definitions: {
+            active: "Paid/in-progress orders within offering start and end dates.",
+            pending: "Awaiting payment or open offers without a paid order.",
+            completed: "Delivered orders or completed offerings.",
+            cancelled: "Cancelled, refunded, dismissed, or expired.",
         },
     };
 }

@@ -313,18 +313,29 @@ export const ListviewStyles = styled.div`
         }
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
         flex-direction: column;
         align-items: stretch;
+        padding: 1rem;
+        border-radius: ${theme.radius.md};
+        gap: 0.85rem;
 
         .avatar {
             flex: 0 0 auto;
             align-self: center;
         }
 
+        .avatar > div > div {
+            width: 5.75rem !important;
+        }
+
         .list_content {
             flex: 0 0 auto;
             text-align: center;
+        }
+
+        .list_content .mantine-Text-root {
+            overflow-wrap: anywhere;
         }
 
         .list_content .mantine-Group-root {
@@ -334,6 +345,9 @@ export const ListviewStyles = styled.div`
         .list_metrics {
             flex-direction: column;
             align-items: stretch;
+            width: 100%;
+            margin-left: 0;
+            gap: 0.85rem;
         }
 
         .levels,
@@ -347,13 +361,74 @@ export const ListviewStyles = styled.div`
 
         .social_info {
             padding-right: 0;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.5rem;
+            text-align: left;
+        }
+
+        .social_info .follwers_list {
+            background: rgba(0,0,0,0.12);
+            border-radius: ${theme.radius.md};
+            padding: 0.55rem;
+            min-width: 0;
+            width: 100%;
+        }
+
+        .social_info .follwers_list > .mantine-Group-root {
+            min-width: 0;
+            gap: 0.35rem;
+        }
+
+        .social_info .follwers_list .mantine-Text-root {
+            overflow-wrap: anywhere;
+        }
+
+        .offering_shell,
+        .offerings_empty {
+            min-height: 0;
+        }
+
+        .offering_slide {
+            min-height: 0;
+            align-items: center;
+        }
+
+        .offering_price {
+            font-size: 1.25rem;
         }
 
         .action_btns {
-            flex-direction: row;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) 2rem;
+            justify-content: stretch;
             align-items: center;
-            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .action_btns .mantine-Button-root {
+            width: 100% !important;
+            min-width: 0;
+        }
+
+        .action_btns .mantine-ActionIcon-root {
+            width: 2rem;
+            height: 2rem;
+            min-width: 2rem;
+        }
+    }
+
+    @media (max-width: 420px) {
+        .social_info {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .action_btns {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .action_btns .mantine-ActionIcon-root {
+            justify-self: end;
         }
     }
 `;

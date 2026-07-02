@@ -5,6 +5,7 @@ import { currentUser } from "../../auth/store/selector";
 import ChatHeader from "./ChatHeader";
 import ChatMessages from "./ChatMessages";
 import ChatInput from "./ChatInput";
+import { getProfileAvatarUrl } from "../../../shared/utils/helpers/useProfileMediaUrl.helper";
 
 const ChatWindow = ({
     conversation,
@@ -19,6 +20,8 @@ const ChatWindow = ({
     acknowledgeMessage,
     showDocumentView,
     setShowDocumentView,
+    onBack,
+    showBack = false,
 }) => {
     const user = useAppSelector(currentUser);
     const [displayName, setDisplayName] = useState("");
@@ -41,14 +44,7 @@ const ChatWindow = ({
             ""
         );
 
-        const picPath = otherUser?.profilepic || otherUser?.profile_pic;
-        setAvatarUrl(
-            picPath?.startsWith("http")
-                ? picPath
-                : import.meta.env.VITE_ASSET_URL
-                    ? `${import.meta.env.VITE_ASSET_URL}/${picPath}`
-                    : picPath
-        );
+        setAvatarUrl(getProfileAvatarUrl(otherUser));
     }, [conversation, user.id]);
 
     // Online check
@@ -61,29 +57,16 @@ const ChatWindow = ({
         const participants =
             conversation?.participants || conversation?.users || [];
         
-        console.log('ChatWindow: Checking online status', {
-            participants,
-            onlineUsers,
-            currentUserId: user.id
-        });
-
         const isOnline = participants.some((p) => {
             const participantId = p.user ? p.user.id : p.id;
             if (participantId === user.id) return false; // Skip current user
             
-            const found = onlineUsers.some((u) => {
+            return onlineUsers.some((u) => {
                 const onlineUserId = u.userId ?? u.id;
-                const match = onlineUserId === participantId;
-                if (match) {
-                    console.log('ChatWindow: Found online user match', { participantId, onlineUserId, user: u });
-                }
-                return match;
+                return onlineUserId === participantId;
             });
-            
-            return found;
         });
         
-        console.log('ChatWindow: Online status result', { isOnline, conversationId: conversation?.id });
         setOnline(isOnline);
     }, [conversation, onlineUsers, user.id]);
 
@@ -104,11 +87,13 @@ const ChatWindow = ({
     }
 
     return (
-        <Box style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+        <Box className="chat-window" style={{ display: "flex", flexDirection: "column", height: "100%" }}>
             <ChatHeader
                 displayName={displayName}
                 avatarUrl={avatarUrl}
                 online={online}
+                onBack={onBack}
+                showBack={showBack}
             />
 
             <ChatMessages

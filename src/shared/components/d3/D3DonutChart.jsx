@@ -9,9 +9,13 @@ export default function D3DonutChart({
     size = 200,
     thickness = 24,
     centerLabel = "",
+    centerSublabel = "",
     strokeColor = "#2c2e33",
+    strokeWidth = 1,
     labelColor = "#c1c2c5",
+    sublabelColor = "#909296",
     minWidth = 200,
+    padAngle = 0.015,
 }) {
     const wrapRef = useRef(null);
     const svgRef = useRef(null);
@@ -48,9 +52,10 @@ export default function D3DonutChart({
         const pie = d3
             .pie()
             .sort(null)
+            .padAngle(segments.length > 1 ? padAngle : 0)
             .value((d) => d.value)(segments);
 
-        const arc = d3.arc().innerRadius(inner).outerRadius(outer).cornerRadius(2);
+        const arc = d3.arc().innerRadius(inner).outerRadius(outer).cornerRadius(3);
 
         const tip = d3
             .select(ttEl)
@@ -72,7 +77,7 @@ export default function D3DonutChart({
             .attr("d", arc)
             .attr("fill", (d) => d.data.color)
             .attr("stroke", strokeColor)
-            .attr("stroke-width", 1)
+            .attr("stroke-width", strokeWidth)
             .style("cursor", "crosshair")
             .on("mouseenter", (event, d) => {
                 tip.html(`<strong>${d.data.name}</strong><br/>${d.data.value.toLocaleString()}`).style(
@@ -90,18 +95,40 @@ export default function D3DonutChart({
 
         g.append("text")
             .attr("text-anchor", "middle")
-            .attr("dy", "0.35em")
+            .attr("dy", centerSublabel ? "-0.2em" : "0.35em")
             .attr("fill", labelColor)
-            .attr("font-size", 18)
+            .attr("font-size", centerSublabel ? 22 : 18)
             .attr("font-weight", 700)
             .text(centerLabel);
+
+        if (centerSublabel) {
+            g.append("text")
+                .attr("text-anchor", "middle")
+                .attr("dy", "1.35em")
+                .attr("fill", sublabelColor)
+                .attr("font-size", 11)
+                .attr("font-weight", 500)
+                .text(centerSublabel);
+        }
 
         return () => {
             tip.style("opacity", 0);
             paths.on(null);
             svg.selectAll("*").remove();
         };
-    }, [segments, width, size, thickness, centerLabel, strokeColor, labelColor]);
+    }, [
+        segments,
+        width,
+        size,
+        thickness,
+        centerLabel,
+        centerSublabel,
+        strokeColor,
+        strokeWidth,
+        labelColor,
+        sublabelColor,
+        padAngle,
+    ]);
 
     return (
         <div ref={wrapRef} style={{ position: "relative", width: "100%", minWidth, display: "flex", justifyContent: "center" }}>

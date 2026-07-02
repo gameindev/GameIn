@@ -1,4 +1,4 @@
-import { Badge, UnstyledButton } from '@mantine/core';
+import { Badge } from '@mantine/core';
 import { IconBell } from '@tabler/icons-react';
 import { useAppSelector } from '../../../app/store/hooks';
 

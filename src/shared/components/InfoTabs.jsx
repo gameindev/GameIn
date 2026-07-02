@@ -30,6 +30,32 @@ const Tabsection = styled.div`
       background: ${theme.colors.primary[0]};
     }
   }
+
+  .mantine-Tabs-list {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mantine-Tabs-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mantine-Tabs-tab {
+    flex: 0 0 auto;
+  }
+
+  @media (max-width: 768px) {
+    margin-top: 0.5em;
+    padding: 0.75em 0.25em 0.5em;
+
+    button span {
+      font-size: 0.8em;
+      white-space: nowrap;
+    }
+  }
 `;
 
 export default function InfoTabs({ tabLists }) {

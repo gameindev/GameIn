@@ -32,10 +32,15 @@ export const markNotificationAsRead = createAsyncThunk(
 
 export const markAllNotificationsAsRead = createAsyncThunk(
     'notifications/markAllAsRead',
-    async (_, { rejectWithValue }) => {
+    async (_, { rejectWithValue, dispatch, getState }) => {
         try {
             const service = useNotificationService();
             await service.markAllAsRead();
+
+            const state = getState().notifications;
+            const reloadLimit = Math.max(state.notifications?.length || 0, state.limit || 5, 5);
+            await dispatch(fetchNotifications({ limit: reloadLimit, offset: 0 })).unwrap();
+
             return true;
         } catch (error) {
             return rejectWithValue(error.message || 'Failed to mark all notifications as read');
@@ -158,17 +163,17 @@ const notificationsSlice = createSlice({
                 // So the array is at response.data and total is at response.total
                 let fetchedNotifications = [];
                 let total = 0;
-                
+                let unreadFromApi = null;
+
                 if (response?.data && Array.isArray(response.data)) {
-                    // Direct array case
                     fetchedNotifications = response.data;
                     total = response.total || response.data.length;
+                    unreadFromApi = response.unreadCount;
                 } else if (response?.data?.data && Array.isArray(response.data.data)) {
-                    // Nested case: { data: { data: [...], total: number } }
                     fetchedNotifications = response.data.data;
                     total = response.data.total || response.total || fetchedNotifications.length;
+                    unreadFromApi = response.data.unreadCount ?? response.unreadCount;
                 } else if (Array.isArray(response)) {
-                    // Response is directly an array
                     fetchedNotifications = response;
                     total = response.length;
                 }
@@ -194,9 +199,12 @@ const notificationsSlice = createSlice({
                 }
 
                 state.total = total || (Array.isArray(state.notifications) ? state.notifications.length : 0);
-                state.unreadCount = Array.isArray(state.notifications) 
-                    ? state.notifications.filter(n => !n.read_at).length 
-                    : 0;
+                state.unreadCount =
+                    unreadFromApi != null
+                        ? unreadFromApi
+                        : Array.isArray(state.notifications)
+                          ? state.notifications.filter((n) => !n.read_at).length
+                          : 0;
                 
                 // hasMore is true if current loaded count is less than total
                 const currentCount = Array.isArray(state.notifications) ? state.notifications.length : 0;
@@ -230,21 +238,26 @@ const notificationsSlice = createSlice({
 
         // Mark all as read
         builder
+            .addCase(markAllNotificationsAsRead.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
             .addCase(markAllNotificationsAsRead.fulfilled, (state) => {
-                // Ensure state.notifications is always an array
+                state.loading = false;
                 if (!Array.isArray(state.notifications)) {
                     state.notifications = [];
-                    state.unreadCount = 0;
-                    return;
                 }
-                
-                state.notifications.forEach(n => {
+                state.notifications.forEach((n) => {
                     if (!n.read_at) {
                         n.read_at = new Date().toISOString();
                         n.status = 'READ';
                     }
                 });
                 state.unreadCount = 0;
+            })
+            .addCase(markAllNotificationsAsRead.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
             });
 
         // Delete notification
