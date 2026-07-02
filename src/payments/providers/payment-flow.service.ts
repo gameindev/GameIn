@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, Inject, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PaymentsService } from './payments.service';
 import { PaymentIntentService } from './payment-intent.service';
@@ -15,6 +15,11 @@ import { OrderStatus } from '../../offerings-order/enums/order-status.enum';
 import { NotificationEventsService } from '../../notifications/providers/notification-events.service';
 import { NotificationType } from '../../notifications/enums/notification-type.enum';
 import { NotificationChannel } from '../../notifications/enums/notification-channel.enum';
+import { WalletsService } from '../../wallets/providers/wallets.service';
+import { WalletLedgerService } from '../../wallets/providers/wallet-ledger.service';
+import { WalletReleaseService } from '../../wallets/providers/wallet-release.service';
+import { PaymentInboxNotificationService } from '../../wallets/providers/payment-inbox-notification.service';
+import { UserType } from '../../users/enums/user-type.enums';
 
 /**
  * Service that orchestrates the complete payment flow from order to payment completion
@@ -31,6 +36,14 @@ export class PaymentFlowService {
         private readonly offeringsService: OfferingsService,
         private readonly configService: ConfigService,
         private readonly notificationEvents: NotificationEventsService,
+        @Inject(forwardRef(() => WalletsService))
+        private readonly walletsService: WalletsService,
+        @Inject(forwardRef(() => WalletLedgerService))
+        private readonly walletLedgerService: WalletLedgerService,
+        @Inject(forwardRef(() => WalletReleaseService))
+        private readonly walletReleaseService: WalletReleaseService,
+        @Inject(forwardRef(() => PaymentInboxNotificationService))
+        private readonly paymentInboxNotifications: PaymentInboxNotificationService,
     ) {}
 
     /**
@@ -159,22 +172,24 @@ export class PaymentFlowService {
         if (verification.success && verification.status === 'succeeded') {
             await this.invoicesService.markAsPaid(paymentIntent.invoice_id);
 
-            // Get order with relations to access offering and brand
-            const order = await this.offeringsOrderService.findOne(paymentIntent.order_id, ['offering', 'brand']);
+            const order = await this.offeringsOrderService.findOne(paymentIntent.order_id, ['offering', 'brand', 'creator']);
 
-            // Update order status (this will trigger order status notification)
             await this.offeringsOrderService.update(paymentIntent.order_id, {
                 status: OrderStatus.PAID,
             });
 
-            // Update offering status to SPONSORED
             if (order && order.offering_id && order.brand) {
                 await this.offeringsService.sponsoreOfferings(order.offering_id, order.brand).catch((error) => {
                     console.error('Failed to update offering status to SPONSORED:', error);
                 });
             }
 
-            // Send payment received notification to creator
+            if (order) {
+                await this.recordWalletLedgerForOrder(order, payment).catch((error) => {
+                    console.error('Failed to record wallet ledger:', error);
+                });
+            }
+
             await this.sendPaymentNotification(paymentIntent, payment, true).catch((error) => {
                 console.error('Failed to send payment success notification:', error);
             });
@@ -229,9 +244,12 @@ export class PaymentFlowService {
         if (totalRefunded >= Number(payment.amount_captured)) {
             await this.invoicesService.markAsRefunded(paymentIntent.invoice_id);
 
-            // Update order status
             await this.offeringsOrderService.update(paymentIntent.order_id, {
                 status: OrderStatus.REFUNDED,
+            });
+
+            await this.walletReleaseService.cancelReleaseForOrder(paymentIntent.order_id).catch((error) => {
+                console.error('Failed to cancel wallet release on refund:', error);
             });
         }
 
@@ -269,13 +287,12 @@ export class PaymentFlowService {
         const currencyStr = paymentIntent.currency || 'USD';
 
         if (success) {
-            // Notify creator about payment received
             await this.notificationEvents.publishNotification({
                 userId: order.creator.id,
-                type: NotificationType.PAYMENT_RECEIVED,
+                type: NotificationType.PAYMENT_SECURED,
                 channels: [NotificationChannel.IN_APP, NotificationChannel.EMAIL],
-                title: 'Payment Received',
-                message: `You received a payment of ${paymentIntent.currency} ${paymentIntent.amount} for order "${order.title}"`,
+                title: 'Payment Secured',
+                message: `A payment of ${paymentIntent.currency} ${paymentIntent.amount} has been secured for order "${order.title}". Funds will be released after delivery.`,
                 data: {
                     orderId: order.id,
                     orderIdString: order.order_id,
@@ -286,8 +303,8 @@ export class PaymentFlowService {
                 },
                 metadata: {
                     email: order.creator.email,
-                    emailTemplate: 'payment-received',
-                    emailSubject: `Payment Received: ${paymentIntent.currency} ${paymentIntent.amount}`,
+                    emailTemplate: 'payment-secured',
+                    emailSubject: `Payment Secured: ${order.title}`,
                     emailData: {
                         username: order.creator?.username || order.creator?.email || 'there',
                         orderTitle: order.title,
@@ -299,6 +316,16 @@ export class PaymentFlowService {
                 },
                 priority: 'high',
             });
+
+            await this.paymentInboxNotifications.notifyOrderPaymentSecured({
+                brandId: order.brand_id ?? order.brand?.id,
+                creatorId: order.creator_id ?? order.creator?.id,
+                orderId: order.id,
+                orderTitle: order.title,
+                amount: Number(paymentIntent.amount),
+                currency: paymentIntent.currency || 'USD',
+                paymentMethod: 'card',
+            }).catch(() => undefined);
         } else {
             // Notify brand about payment failure
             await this.notificationEvents.publishNotification({
@@ -329,7 +356,34 @@ export class PaymentFlowService {
                 },
                 priority: 'high',
             });
+
+            await this.paymentInboxNotifications.notifyOrderPaymentFailed({
+                brandId: order.brand_id ?? order.brand?.id,
+                creatorId: order.creator_id ?? order.creator?.id,
+                orderId: order.id,
+                orderTitle: order.title,
+                amount: Number(paymentIntent.amount),
+                currency: paymentIntent.currency || 'USD',
+            }).catch(() => undefined);
         }
+    }
+
+    private async recordWalletLedgerForOrder(order: any, payment: any) {
+        const brandWallet = await this.walletsService.getOrCreateForUser(order.brand_id, UserType.BRAND);
+        const creatorWallet = await this.walletsService.getOrCreateForUser(order.creator_id, UserType.CREATOR);
+
+        await this.walletLedgerService.recordOrderPayment({
+            brandWalletId: brandWallet.id,
+            creatorWalletId: creatorWallet.id,
+            orderId: order.id,
+            orderTitle: order.title,
+            subTotal: Number(order.sub_total),
+            fee: Number(order.fee),
+            total: Number(order.total),
+            currency: order.currency,
+            paymentMethod: 'card',
+            stripeObjectId: payment.provider_payment_id,
+        });
     }
 }
 

@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, UseGuards, Get, Param, ParseIntPipe, Query, Patch } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards, Get, Param, ParseIntPipe, Query, Patch, Delete, Put } from '@nestjs/common';
 import { ChatService } from './providers/chat.service';
 import { ActiveUser } from '../auth/decorators/active-user.decorator';
 import { AuthGuard } from '@nestjs/passport';
@@ -164,7 +164,8 @@ export class ChatController {
         return this.chatService.getConversationMessages(
             conversationId,
             limit || 50,
-            offset || 0
+            offset || 0,
+            userId
         );
     }
 
@@ -279,5 +280,30 @@ export class ChatController {
         return { conversationId, unreadCount: count };
     }
 
-    
+    @ApiOperation({ summary: 'Clear chat history for the current user' })
+    @Post('conversations/:conversationId/clear')
+    async clearConversation(
+        @Param('conversationId', ParseIntPipe) conversationId: number,
+        @ActiveUser('sub') userId: number
+    ) {
+        return this.chatService.clearConversation(conversationId, userId);
+    }
+
+    @ApiOperation({ summary: 'Leave / delete conversation from inbox' })
+    @Delete('conversations/:conversationId')
+    async leaveConversation(
+        @Param('conversationId', ParseIntPipe) conversationId: number,
+        @ActiveUser('sub') userId: number
+    ) {
+        return this.chatService.leaveConversation(conversationId, userId);
+    }
+
+    @ApiOperation({ summary: 'Pin or unpin a conversation' })
+    @Put('conversations/:conversationId/pin')
+    async togglePinConversation(
+        @Param('conversationId', ParseIntPipe) conversationId: number,
+        @ActiveUser('sub') userId: number
+    ) {
+        return this.chatService.togglePinConversation(conversationId, userId);
+    }
 }

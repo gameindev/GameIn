@@ -61,6 +61,7 @@ import stripeConfig from "./payments/config/stripe.config";
 import paypalConfig from "./payments/config/paypal.config";
 import razorpayConfig from "./payments/config/razorpay.config";
 import paymentsConfig from "./payments/config/payments.config";
+import walletConfig from "./wallets/config/wallet.config";
 import { AccessTokenGuard } from "./auth/guards/access-token/access-token.guard";
 import { AuthenticationGuard } from "./auth/guards/authentication/authentication.guard";
 import { DataResponseInterceptor } from "./common/interceptors/data-response/data-response.interceptor";
@@ -102,6 +103,10 @@ import instagramConfig from "./social-integration/platforms/instagram/instagram.
 import { AnalyticsModule } from "./analytics/analytics.module";
 import { SponsorshipFeedback } from "./sponsorship-feedback/sponsorship-feedback.entity";
 import { SponsorshipFeedbackModule } from "./sponsorship-feedback/sponsorship-feedback.module";
+import { WalletsModule } from './wallets/wallets.module';
+import { Wallet } from './wallets/wallet.entity';
+import { WalletLedgerEntry } from './wallets/wallet-ledger-entry.entity';
+import { WalletRelease } from './wallets/wallet-release.entity';
 
 dotenvFlow.config(); // ✅ Loads .env only in local/dev
 
@@ -171,6 +176,9 @@ const ENV = process.env.NODE_ENV || 'development';
                          SocialMetricSnapshot,
                         SocialAudienceSnapshot,
                         SponsorshipFeedback,
+                        Wallet,
+                        WalletLedgerEntry,
+                        WalletRelease,
                     ],
                     synchronize: false, // 🚫 Always false in production
                     namingStrategy: new SnakeNamingStrategy(),
@@ -227,6 +235,7 @@ const ENV = process.env.NODE_ENV || 'development';
         NewsfeedModule,
         AnalyticsModule,
         SponsorshipFeedbackModule,
+        WalletsModule,
     ],
     controllers: [AppController],
     providers: [

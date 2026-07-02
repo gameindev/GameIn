@@ -1,0 +1,9 @@
+export enum WalletEntryType {
+    TOP_UP = 'TOP_UP',
+    ORDER_PAYMENT = 'ORDER_PAYMENT',
+    ORDER_EARNING = 'ORDER_EARNING',
+    PLATFORM_FEE = 'PLATFORM_FEE',
+    RELEASE = 'RELEASE',
+    WITHDRAW = 'WITHDRAW',
+    REFUND = 'REFUND',
+}

@@ -35,6 +35,7 @@ export interface CreatePaymentRequest {
     customerId?: string;
     customerEmail?: string;
     description?: string;
+    paymentMethodId?: string;
     metadata?: Record<string, any>;
     returnUrl?: string;
     cancelUrl?: string;

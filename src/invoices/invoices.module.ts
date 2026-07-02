@@ -3,12 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { InvoicesController } from './invoices.controller';
 import { InvoicesService } from './providers/invoices.service';
 import { Invoice } from './invoice.entity';
-import { OfferingsOrderModule } from '../offerings-order/offerings-order.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([Invoice]),
-        OfferingsOrderModule,
     ],
     controllers: [InvoicesController],
     providers: [InvoicesService],

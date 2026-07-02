@@ -9,6 +9,7 @@ import { UsersModule } from '../users/users.module';
 import { OfferingsModule } from '../offerings/offerings.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { SponsorshipFeedbackModule } from '../sponsorship-feedback/sponsorship-feedback.module';
+import { WalletsModule } from '../wallets/wallets.module';
 
 @Module({
     controllers: [OfferingsOrderController],
@@ -20,6 +21,7 @@ import { SponsorshipFeedbackModule } from '../sponsorship-feedback/sponsorship-f
         forwardRef(() => OfferingsModule),
         NotificationsModule,
         SponsorshipFeedbackModule,
+        forwardRef(() => WalletsModule),
     ]
 
 })

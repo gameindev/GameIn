@@ -7,6 +7,7 @@ import { PaymentIntentService } from './providers/payment-intent.service';
 import { PaymentService } from './providers/payment.service';
 import { PaymentRefundService } from './providers/payment-refund.service';
 import { PaymentFlowService } from './providers/payment-flow.service';
+import { PaymentWebhookOrchestratorService } from './providers/payment-webhook-orchestrator.service';
 import { StripeAdapter } from './adapters/stripe.adapter';
 import { PayPalAdapter } from './adapters/paypal.adapter';
 import { RazorpayAdapter } from './adapters/razorpay.adapter';
@@ -17,6 +18,7 @@ import { OfferingsOrderModule } from '../offerings-order/offerings-order.module'
 import { InvoicesModule } from '../invoices/invoices.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { OfferingsModule } from '../offerings/offerings.module';
+import { WalletsModule } from '../wallets/wallets.module';
 
 @Module({
     imports: [
@@ -24,6 +26,7 @@ import { OfferingsModule } from '../offerings/offerings.module';
         forwardRef(() => InvoicesModule),
         forwardRef(() => OfferingsOrderModule),
         forwardRef(() => OfferingsModule),
+        forwardRef(() => WalletsModule),
         NotificationsModule,
     ],
     providers: [
@@ -33,6 +36,7 @@ import { OfferingsModule } from '../offerings/offerings.module';
         PaymentService,
         PaymentRefundService,
         PaymentFlowService,
+        PaymentWebhookOrchestratorService,
         StripeAdapter,
         PayPalAdapter,
         RazorpayAdapter,
@@ -43,6 +47,7 @@ import { OfferingsModule } from '../offerings/offerings.module';
         PaymentService,
         PaymentRefundService,
         PaymentFlowService,
+        StripeAdapter,
     ],
     controllers: [PaymentsController],
 })

@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
 import { PaymentGateway, CreatePaymentRequest, VerifyPaymentRequest, RefundPaymentRequest, PaymentResponse, PaymentVerificationResponse } from '../interfaces/payment-gateway.interface';
 import { PaymentProvider } from '../../offerings/enums/payment-provider.enum';
+import { StripeWebhookResult } from '../interfaces/stripe-webhook-result.interface';
 
 @Injectable()
 export class StripeAdapter extends PaymentGateway {
@@ -32,19 +33,31 @@ export class StripeAdapter extends PaymentGateway {
 
     async createPayment(request: CreatePaymentRequest): Promise<PaymentResponse> {
         try {
-            const paymentIntent = await this.stripe.paymentIntents.create({
+            const paymentIntentParams: Stripe.PaymentIntentCreateParams = {
                 amount: Math.round(request.amount * 100), // Convert to cents
                 currency: request.currency.toLowerCase(),
                 description: request.description,
                 metadata: {
-                    orderId: request.orderId,
-                    customerId: request.customerId,
+                    orderId: request.orderId ?? '',
+                    customerId: request.customerId ?? '',
                     ...request.metadata,
                 },
                 ...(request.customerEmail && {
                     receipt_email: request.customerEmail,
                 }),
-            });
+            };
+
+            if (request.metadata?.stripeCustomerId) {
+                paymentIntentParams.customer = request.metadata.stripeCustomerId as string;
+            }
+
+            if (request.paymentMethodId) {
+                paymentIntentParams.payment_method = request.paymentMethodId;
+            } else if (paymentIntentParams.customer) {
+                paymentIntentParams.setup_future_usage = 'off_session';
+            }
+
+            const paymentIntent = await this.stripe.paymentIntents.create(paymentIntentParams);
 
             return {
                 success: true,
@@ -115,6 +128,7 @@ export class StripeAdapter extends PaymentGateway {
                 metadata: {
                     status: paymentIntent.status,
                     chargeId: chargeId,
+                    ...paymentIntent.metadata,
                 },
             };
         } catch (error: any) {
@@ -211,9 +225,27 @@ export class StripeAdapter extends PaymentGateway {
     }
 
     async handleWebhook(payload: any, signature: string): Promise<PaymentVerificationResponse> {
+        const parsed = this.parseWebhook(payload, signature);
+        if (parsed.verification) {
+            return parsed.verification;
+        }
+        return {
+            success: true,
+            paymentId: parsed.eventId,
+            status: 'pending',
+            amount: 0,
+            currency: 'usd',
+            metadata: {
+                eventType: parsed.eventType,
+                handled: true,
+            },
+        };
+    }
+
+    parseWebhook(payload: Buffer | string, signature: string): StripeWebhookResult {
         const stripeConfig = this.configService.get('stripeConfig');
         const webhookSecret = stripeConfig?.webhookSecret || this.configService.get<string>('STRIPE_WEBHOOK_SECRET');
-        
+
         if (!webhookSecret) {
             throw new Error('Stripe webhook secret is not configured. Please set STRIPE_WEBHOOK_SECRET environment variable.');
         }
@@ -226,9 +258,15 @@ export class StripeAdapter extends PaymentGateway {
             throw new Error(`Webhook signature verification failed: ${error.message}`);
         }
 
+        const result: StripeWebhookResult = {
+            eventType: event.type,
+            eventId: event.id,
+            object: event.data.object,
+        };
+
         if (event.type === 'payment_intent.succeeded') {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
-            return {
+            result.verification = {
                 success: true,
                 paymentId: paymentIntent.id,
                 status: 'succeeded',
@@ -236,13 +274,14 @@ export class StripeAdapter extends PaymentGateway {
                 currency: paymentIntent.currency,
                 metadata: {
                     eventType: event.type,
+                    ...paymentIntent.metadata,
                 },
             };
         }
 
         if (event.type === 'payment_intent.payment_failed') {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
-            return {
+            result.verification = {
                 success: false,
                 paymentId: paymentIntent.id,
                 status: 'failed',
@@ -250,11 +289,16 @@ export class StripeAdapter extends PaymentGateway {
                 currency: paymentIntent.currency,
                 metadata: {
                     eventType: event.type,
+                    ...paymentIntent.metadata,
                 },
             };
         }
 
-        throw new Error(`Unhandled event type: ${event.type}`);
+        return result;
+    }
+
+    getStripeClient(): Stripe {
+        return this.stripe;
     }
 
     private mapStripeStatus(status: string): 'succeeded' | 'failed' | 'pending' | 'refunded' {

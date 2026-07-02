@@ -6,12 +6,21 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { RedisIoAdapter } from './redis/redisIOAdaptor.service';
+import * as express from 'express';
 
 async function bootstrap() {
     const isProduction = process.env.NODE_ENV === 'production';
     const app = await NestFactory.create<NestExpressApplication>(AppModule, {
         logger: isProduction ? ['error', 'warn'] : ['log', 'error', 'warn', 'debug'],
+        rawBody: true,
     });
+
+    /** Stripe webhooks require the exact raw body for signature verification */
+    const apiPrefix = process.env.API_PREFIX ?? 'api';
+    app.use(
+        `/${apiPrefix}/payments/webhook/STRIPE`,
+        express.raw({ type: 'application/json' }),
+    );
 
     /** ------------------ 🛡 Global Pipes ------------------ */
     app.useGlobalPipes(

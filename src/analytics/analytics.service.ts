@@ -11,6 +11,9 @@ import { Invoice } from '../invoices/invoice.entity';
 import { InvoiceStatus } from '../invoices/enums/invoice-status.enum';
 import { UserFollow } from '../user-follow/user-follow.entity';
 import { OfferingOrder } from '../offerings-order/offering-order.entity';
+import { OrderStatus } from '../offerings-order/enums/order-status.enum';
+import { Offering } from '../offerings/offerings.entity';
+import { OfferingStatus } from '../offerings/enums/offering-status.enum';
 
 @Injectable()
 export class AnalyticsService {
@@ -27,6 +30,10 @@ export class AnalyticsService {
         private readonly invoiceRepo: Repository<Invoice>,
         @InjectRepository(UserFollow)
         private readonly userFollowRepo: Repository<UserFollow>,
+        @InjectRepository(OfferingOrder)
+        private readonly orderRepo: Repository<OfferingOrder>,
+        @InjectRepository(Offering)
+        private readonly offeringRepo: Repository<Offering>,
     ) {}
 
     private ageFromDob(dob: Date | string | null | undefined): number | null {
@@ -452,10 +459,10 @@ export class AnalyticsService {
     }
 
     /**
-     * Owner-private charts: income marked paid today (UTC), last-30-day paid revenue and order counts.
+     * Owner-private charts: income marked paid today (UTC), daily paid revenue and order counts.
      * Uses `invoice.updated_at` when status is PAID as the payment-time proxy (no separate paid_at column).
      */
-    async getSponsorshipPrivateTracking(user: ActiveUserData, forUserId?: number) {
+    async getSponsorshipPrivateTracking(user: ActiveUserData, forUserId?: number, days = 30) {
         if (
             user.user_type !== UserType.CREATOR &&
             user.user_type !== UserType.BRAND &&
@@ -476,13 +483,15 @@ export class AnalyticsService {
             throw new ForbiddenException('Sponsorship tracking is only available for creator and brand profiles');
         }
 
+        const windowDays = Math.min(Math.max(Math.trunc(days) || 30, 1), 90);
+
         const dayStartUtc = new Date();
         dayStartUtc.setUTCHours(0, 0, 0, 0);
         const dayEndUtc = new Date(dayStartUtc);
         dayEndUtc.setUTCDate(dayEndUtc.getUTCDate() + 1);
 
-        const from30Utc = new Date(dayStartUtc);
-        from30Utc.setUTCDate(from30Utc.getUTCDate() - 29);
+        const fromDailyUtc = new Date(dayStartUtc);
+        fromDailyUtc.setUTCDate(fromDailyUtc.getUTCDate() - (windowDays - 1));
 
         const applySubject = (qb: SelectQueryBuilder<Invoice>) => {
             if (subject.user_type === UserType.CREATOR) {
@@ -533,7 +542,7 @@ export class AnalyticsService {
                 .where('inv.status = :paid', { paid: InvoiceStatus.PAID })
                 .andWhere('inv.deleted_at IS NULL')
                 .andWhere('ord.deleted_at IS NULL')
-                .andWhere('inv.updated_at >= :from30', { from30: from30Utc }),
+                .andWhere('inv.updated_at >= :fromDaily', { fromDaily: fromDailyUtc }),
         )
             .select(dayKeyExpr, 'day')
             .addSelect('COALESCE(SUM(ord.total), 0)', 'revenue')
@@ -550,28 +559,164 @@ export class AnalyticsService {
             });
         }
 
-        const series_30d: { date: string; revenue: number; paid_orders: number }[] = [];
-        for (let i = 0; i < 30; i++) {
-            const d = new Date(from30Utc);
+        const series_daily: { date: string; revenue: number; paid_orders: number }[] = [];
+        for (let i = 0; i < windowDays; i++) {
+            const d = new Date(fromDailyUtc);
             d.setUTCDate(d.getUTCDate() + i);
             const key = d.toISOString().slice(0, 10);
             const row = byDay.get(key) ?? { revenue: 0, paid_orders: 0 };
-            series_30d.push({ date: key, revenue: row.revenue, paid_orders: row.paid_orders });
+            series_daily.push({ date: key, revenue: row.revenue, paid_orders: row.paid_orders });
         }
 
         return {
             subject_user_id: subjectId,
+            window_days: windowDays,
             income_today: {
                 date_utc: dayStartUtc.toISOString().slice(0, 10),
                 total: income_today_total,
                 hourly,
             },
-            series_30d,
+            series_daily,
+            /** @deprecated use series_daily */
+            series_30d: series_daily,
             metric_definitions: {
                 income_today:
                     'Sum of offering_order.total for invoices marked PAID where invoice.updated_at falls on the current UTC calendar day (proxy for payment time).',
-                series_30d:
-                    'Daily sums of paid invoice order totals and paid invoice counts for the last 30 UTC days, grouped by invoice.updated_at date.',
+                series_daily:
+                    'Daily sums of paid invoice order totals and paid invoice counts for the requested UTC window, grouped by invoice.updated_at date.',
+            },
+        };
+    }
+
+    /**
+     * Sponsorship status overview for donut / summary cards.
+     * Active = order PAID or IN_PROGRESS, offering SPONSORED, and today (UTC) within start/end dates.
+     */
+    async getSponsorshipOverview(user: ActiveUserData, forUserId?: number) {
+        if (
+            user.user_type !== UserType.CREATOR &&
+            user.user_type !== UserType.BRAND &&
+            user.user_type !== UserType.ADMIN
+        ) {
+            throw new ForbiddenException('Only creators, brands, and admins can view sponsorship overview');
+        }
+
+        const subjectId = forUserId ?? user.sub;
+        this.assertSponsorshipFinancialViewer(user, subjectId);
+        await this.assertViewerMayAccessSubject(user, subjectId);
+
+        const subject = await this.userRepo.findOne({ where: { id: subjectId } });
+        if (!subject) {
+            throw new NotFoundException('User not found');
+        }
+        if (subject.user_type !== UserType.CREATOR && subject.user_type !== UserType.BRAND) {
+            throw new ForbiddenException('Sponsorship overview is only available for creator and brand profiles');
+        }
+
+        const subjectFilter =
+            subject.user_type === UserType.CREATOR ? 'o.creator_id = :uid' : 'o.brand_id = :uid';
+        const uidParam = { uid: subjectId };
+
+        const cancelledStatuses = [OrderStatus.CANCELLED, OrderStatus.REFUNDED];
+        const cancelledOfferingStatuses = [OfferingStatus.DISMISSED, OfferingStatus.EXPIRED];
+
+        const baseOrders = () =>
+            this.orderRepo
+                .createQueryBuilder('o')
+                .innerJoin('o.offering', 'off')
+                .where('o.deleted_at IS NULL')
+                .andWhere('off.deleted_at IS NULL')
+                .andWhere(subjectFilter, uidParam);
+
+        const parseCount = (raw: { cnt?: string } | undefined) => Number(raw?.cnt ?? 0) || 0;
+
+        const cancelled = parseCount(
+            await baseOrders()
+                .andWhere('(o.status IN (:...cancelled) OR off.status IN (:...offCancelled))', {
+                    cancelled: cancelledStatuses,
+                    offCancelled: cancelledOfferingStatuses,
+                })
+                .select('COUNT(DISTINCT o.id)', 'cnt')
+                .getRawOne(),
+        );
+
+        const completed = parseCount(
+            await baseOrders()
+                .andWhere('o.status NOT IN (:...cancelled)', { cancelled: cancelledStatuses })
+                .andWhere('off.status NOT IN (:...offCancelled)', { offCancelled: cancelledOfferingStatuses })
+                .andWhere('(o.status = :delivered OR off.status = :completed)', {
+                    delivered: OrderStatus.DELIVERED,
+                    completed: OfferingStatus.COMPLETED,
+                })
+                .select('COUNT(DISTINCT o.id)', 'cnt')
+                .getRawOne(),
+        );
+
+        const active = parseCount(
+            await baseOrders()
+                .andWhere('o.status NOT IN (:...cancelled)', { cancelled: cancelledStatuses })
+                .andWhere('off.status NOT IN (:...offCancelled)', { offCancelled: cancelledOfferingStatuses })
+                .andWhere('o.status NOT IN (:delivered)', { delivered: OrderStatus.DELIVERED })
+                .andWhere('off.status != :completed', { completed: OfferingStatus.COMPLETED })
+                .andWhere('o.status IN (:...activeOrder)', {
+                    activeOrder: [OrderStatus.PAID, OrderStatus.IN_PROGRESS],
+                })
+                .andWhere('off.status = :sponsored', { sponsored: OfferingStatus.SPONSORED })
+                .andWhere("(off.start_date AT TIME ZONE 'UTC')::date <= (NOW() AT TIME ZONE 'UTC')::date")
+                .andWhere("(off.end_date AT TIME ZONE 'UTC')::date >= (NOW() AT TIME ZONE 'UTC')::date")
+                .select('COUNT(DISTINCT o.id)', 'cnt')
+                .getRawOne(),
+        );
+
+        let pending = parseCount(
+            await baseOrders()
+                .andWhere('o.status NOT IN (:...cancelled)', { cancelled: cancelledStatuses })
+                .andWhere('off.status NOT IN (:...offCancelled)', { offCancelled: cancelledOfferingStatuses })
+                .andWhere('o.status NOT IN (:delivered)', { delivered: OrderStatus.DELIVERED })
+                .andWhere('off.status != :completed', { completed: OfferingStatus.COMPLETED })
+                .andWhere('o.status NOT IN (:...activeOrder)', {
+                    activeOrder: [OrderStatus.PAID, OrderStatus.IN_PROGRESS],
+                })
+                .andWhere('o.status = :pendingPayment', { pendingPayment: OrderStatus.PENDING_PAYMENT })
+                .select('COUNT(DISTINCT o.id)', 'cnt')
+                .getRawOne(),
+        );
+
+        if (subject.user_type === UserType.CREATOR) {
+            const openOffers = await this.offeringRepo
+                .createQueryBuilder('off')
+                .where('off.deleted_at IS NULL')
+                .andWhere('off.user_id = :uid', uidParam)
+                .andWhere('off.status IN (:...openStatuses)', {
+                    openStatuses: [OfferingStatus.PENDING, OfferingStatus.OFFERED, OfferingStatus.ACCEPTED],
+                })
+                .andWhere(
+                    `NOT EXISTS (
+                        SELECT 1 FROM offering_order oo
+                        WHERE oo.offering_id = off.id
+                          AND oo.deleted_at IS NULL
+                          AND oo.status NOT IN (:...cancelled)
+                    )`,
+                    { cancelled: cancelledStatuses },
+                )
+                .getCount();
+            pending += openOffers;
+        }
+
+        return {
+            subject_user_id: subjectId,
+            counts: {
+                active,
+                pending,
+                completed,
+                cancelled,
+            },
+            metric_definitions: {
+                active:
+                    'Paid or in-progress orders where the linked offering is SPONSORED and the current UTC calendar day falls within offering start/end dates.',
+                pending: 'Orders awaiting payment, plus creator offerings in PENDING/OFFERED/ACCEPTED without a non-cancelled order.',
+                completed: 'Delivered orders or offerings marked COMPLETED (excluding cancelled).',
+                cancelled: 'Cancelled/refunded orders or offerings dismissed/expired.',
             },
         };
     }

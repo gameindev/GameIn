@@ -76,13 +76,26 @@ export class AnalyticsController {
     @Get('sponsorship-private-tracking')
     @ApiOperation({
         summary:
-            'Owner-private sponsorship money charts (income today UTC, last 30 days). Not for public profile viewers.',
+            'Owner-private sponsorship money charts (income today UTC, daily paid revenue & orders). Not for public profile viewers.',
     })
+    @ApiQuery({ name: 'days', required: false, description: 'Daily series window (1–90 UTC days, default 30)' })
     @ApiQuery({ name: 'forUserId', required: false, description: 'Subject user id (defaults to current user; admin only)' })
     getSponsorshipPrivateTracking(
         @ActiveUser() user: ActiveUserData,
         @Query('forUserId') forUserId?: string,
+        @Query('days') days?: string,
     ) {
-        return this.analyticsService.getSponsorshipPrivateTracking(user, parseOptionalPositiveInt(forUserId));
+        const n = Math.min(Math.max(parseInt(days ?? '30', 10) || 30, 1), 90);
+        return this.analyticsService.getSponsorshipPrivateTracking(user, parseOptionalPositiveInt(forUserId), n);
+    }
+
+    @Get('sponsorship-overview')
+    @ApiOperation({
+        summary:
+            'Sponsorship status counts (active / pending / completed / cancelled) for owner-private stats.',
+    })
+    @ApiQuery({ name: 'forUserId', required: false, description: 'Subject user id (defaults to current user; admin only)' })
+    getSponsorshipOverview(@ActiveUser() user: ActiveUserData, @Query('forUserId') forUserId?: string) {
+        return this.analyticsService.getSponsorshipOverview(user, parseOptionalPositiveInt(forUserId));
     }
 }

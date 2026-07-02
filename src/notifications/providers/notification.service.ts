@@ -1,6 +1,6 @@
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { NotificationEntity } from '../entities/notification.entity';
 import { NotificationPreferenceEntity } from '../entities/notification-preference.entity';
 import { NotificationChannel } from '../enums/notification-channel.enum';
@@ -276,7 +276,12 @@ export class NotificationService {
             
             // Payment notifications
             { type: NotificationType.PAYMENT_RECEIVED, channel: NotificationChannel.EMAIL, enabled: true },
+            { type: NotificationType.PAYMENT_SECURED, channel: NotificationChannel.EMAIL, enabled: true },
             { type: NotificationType.PAYMENT_FAILED, channel: NotificationChannel.EMAIL, enabled: true },
+            { type: NotificationType.FUNDS_RELEASED, channel: NotificationChannel.EMAIL, enabled: true },
+            { type: NotificationType.PAYOUT_COMPLETED, channel: NotificationChannel.IN_APP, enabled: true },
+            { type: NotificationType.WALLET_TOP_UP, channel: NotificationChannel.IN_APP, enabled: true },
+            { type: NotificationType.CONNECT_SETUP_REQUIRED, channel: NotificationChannel.IN_APP, enabled: true },
             { type: NotificationType.INVOICE_GENERATED, channel: NotificationChannel.EMAIL, enabled: true },
             
             // Social notifications
@@ -302,7 +307,7 @@ export class NotificationService {
         limit: number = 50,
         offset: number = 0,
         unreadOnly: boolean = false,
-    ): Promise<{ notifications: NotificationEntity[]; total: number }> {
+    ): Promise<{ notifications: NotificationEntity[]; total: number; unreadCount: number }> {
         const queryBuilder = this.notificationRepository
             .createQueryBuilder('notification')
             .where('notification.user_id = :userId', { userId })
@@ -315,8 +320,11 @@ export class NotificationService {
         }
 
         const [notifications, total] = await queryBuilder.getManyAndCount();
+        const unreadCount = await this.notificationRepository.count({
+            where: { user_id: userId, read_at: IsNull() },
+        });
 
-        return { notifications, total };
+        return { notifications, total, unreadCount };
     }
 
     /**
@@ -340,16 +348,16 @@ export class NotificationService {
      * Mark all notifications as read for a user
      */
     async markAllAsRead(userId: number): Promise<{ count: number }> {
-        const result = await this.notificationRepository.update(
-            {
-                user_id: userId,
-                read_at: null as any,
-            },
-            {
+        const result = await this.notificationRepository
+            .createQueryBuilder()
+            .update(NotificationEntity)
+            .set({
                 read_at: new Date(),
                 status: NotificationStatus.READ,
-            },
-        );
+            })
+            .where('user_id = :userId', { userId })
+            .andWhere('read_at IS NULL')
+            .execute();
 
         return { count: result.affected || 0 };
     }

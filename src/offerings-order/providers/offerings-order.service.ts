@@ -13,6 +13,7 @@ import { NotificationEventsService } from '../../notifications/providers/notific
 import { NotificationType } from '../../notifications/enums/notification-type.enum';
 import { NotificationChannel } from '../../notifications/enums/notification-channel.enum';
 import { OrderDeliveredRatingPromptService } from '../../sponsorship-feedback/order-delivered-rating-prompt.service';
+import { WalletReleaseService } from '../../wallets/providers/wallet-release.service';
 
 @Injectable()
 export class OfferingsOrderService {
@@ -27,6 +28,8 @@ export class OfferingsOrderService {
         private readonly offeringsService: OfferingsService,
         private readonly notificationEvents: NotificationEventsService,
         private readonly orderDeliveredRatingPrompt: OrderDeliveredRatingPromptService,
+        @Inject(forwardRef(() => WalletReleaseService))
+        private readonly walletReleaseService: WalletReleaseService,
     ) { }
 
 
@@ -75,8 +78,19 @@ export class OfferingsOrderService {
 
         const savedOrder = await repo.save(order);
 
-        // Send notification if status changed
         if (updateData.status && updateData.status !== previousStatus) {
+            if (updateData.status === OrderStatus.DELIVERED) {
+                await this.walletReleaseService.scheduleReleaseForOrder(savedOrder).catch((error) => {
+                    console.error('Failed to schedule wallet release:', error);
+                });
+            }
+
+            if (updateData.status === OrderStatus.DISPUTED) {
+                await this.walletReleaseService.freezeReleaseForOrder(savedOrder.id).catch((error) => {
+                    console.error('Failed to freeze wallet release:', error);
+                });
+            }
+
             await this.sendOrderStatusUpdateNotification(savedOrder, previousStatus, updateData.status).catch((error) => {
                 console.error('Failed to send order status update notification:', error);
             });

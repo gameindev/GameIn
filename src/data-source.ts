@@ -42,6 +42,9 @@ import { SocialAccountRollup } from './social-integration/entities/social-accoun
 import { SocialSyncJob } from './social-integration/entities/social-sync-job.entity';
 import { SocialMetricSnapshot } from './social-integration/entities/social-metric-snapshot.entity';
 import { SocialAudienceSnapshot } from './social-integration/entities/social-audience-snapshot.entity';
+import { Wallet } from './wallets/wallet.entity';
+import { WalletLedgerEntry } from './wallets/wallet-ledger-entry.entity';
+import { WalletRelease } from './wallets/wallet-release.entity';
 
 // ✅ Load environment variables for local/dev
 if (process.env.NODE_ENV !== 'production') { 
@@ -100,6 +103,9 @@ export const dataSourceOptions: DataSourceOptions = {
         SocialSyncJob,
         SocialMetricSnapshot,
         SocialAudienceSnapshot,
+        Wallet,
+        WalletLedgerEntry,
+        WalletRelease,
     ],
 
     // 🧱 Migrations

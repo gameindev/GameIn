@@ -23,6 +23,30 @@ export class SponsorshipFeedbackController {
         return this.sponsorshipFeedbackService.getCreatorRatingAggregate(user.sub);
     }
 
+    @Get('creator/:creatorUserId/summary')
+    @UserTypes(UserType.BRAND, UserType.CREATOR, UserType.ADMIN, UserType.COMMUNITY)
+    @ApiOperation({
+        summary: 'Public aggregated sponsorship ratings for a creator profile',
+    })
+    getCreatorPublicRatingSummary(@Param('creatorUserId', ParseIntPipe) creatorUserId: number) {
+        return this.sponsorshipFeedbackService.getCreatorRatingAggregate(creatorUserId);
+    }
+
+    @Get('creator/:creatorUserId/brand-context')
+    @UserTypes(UserType.BRAND)
+    @ApiOperation({
+        summary: 'Brand view: creator rating summary and pending feedback order',
+    })
+    getBrandCreatorRatingContext(
+        @ActiveUser() user: ActiveUserData,
+        @Param('creatorUserId', ParseIntPipe) creatorUserId: number,
+    ) {
+        return this.sponsorshipFeedbackService.getBrandRatingContextForCreator(
+            creatorUserId,
+            user.sub,
+        );
+    }
+
     @Get('order/:orderId')
     @UserTypes(UserType.BRAND)
     @ApiOperation({ summary: 'Get rating context for an offering order (brand only)' })

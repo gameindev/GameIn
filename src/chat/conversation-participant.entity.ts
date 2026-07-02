@@ -26,4 +26,10 @@ export class ConversationParticipantEntity {
     @Column({ type: 'timestamp', nullable: true })
     left_at: Date;
 
+    @Column({ type: 'boolean', default: false })
+    is_pinned: boolean;
+
+    @Column({ type: 'timestamp', nullable: true })
+    cleared_at: Date;
+
 }

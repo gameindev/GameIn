@@ -36,6 +36,11 @@ export class CreateGatewayPaymentDto {
     @IsString()
     description?: string;
 
+    @ApiPropertyOptional({ description: 'Saved Stripe payment method ID' })
+    @IsOptional()
+    @IsString()
+    paymentMethodId?: string;
+
     @ApiPropertyOptional({ description: 'Return URL for redirect after payment' })
     @IsOptional()
     @IsString()

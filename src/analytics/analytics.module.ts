@@ -6,12 +6,23 @@ import { SocialPostMetric } from '../social-integration/entities/social-post-met
 import { SocialAccountRollup } from '../social-integration/entities/social-account-rollup.entity';
 import { Invoice } from '../invoices/invoice.entity';
 import { UserFollow } from '../user-follow/user-follow.entity';
+import { OfferingOrder } from '../offerings-order/offering-order.entity';
+import { Offering } from '../offerings/offerings.entity';
 import { AnalyticsService } from './analytics.service';
 import { AnalyticsController } from './analytics.controller';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([User, SocialMetricSnapshot, SocialPostMetric, SocialAccountRollup, Invoice, UserFollow]),
+        TypeOrmModule.forFeature([
+            User,
+            SocialMetricSnapshot,
+            SocialPostMetric,
+            SocialAccountRollup,
+            Invoice,
+            UserFollow,
+            OfferingOrder,
+            Offering,
+        ]),
     ],
     controllers: [AnalyticsController],
     providers: [AnalyticsService],

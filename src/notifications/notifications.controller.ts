@@ -45,6 +45,7 @@ export class NotificationsController {
             success: true,
             data: result.notifications,
             total: result.total,
+            unreadCount: result.unreadCount,
         };
     }
 
@@ -110,6 +111,22 @@ export class NotificationsController {
     }
 
     /**
+     * Mark all notifications as read
+     * PUT /notifications/read-all
+     * (Must be registered before :id/read)
+     */
+    @Put('read-all')
+    async markAllAsRead(@Request() req: any) {
+        const userId = req.user.sub;
+        const result = await this.notificationService.markAllAsRead(userId);
+
+        return {
+            success: true,
+            data: result,
+        };
+    }
+
+    /**
      * Mark notification as read
      * PUT /notifications/:id/read
      */
@@ -121,21 +138,6 @@ export class NotificationsController {
         return {
             success: true,
             data: notification,
-        };
-    }
-
-    /**
-     * Mark all notifications as read
-     * PUT /notifications/read-all
-     */
-    @Put('read-all')
-    async markAllAsRead(@Request() req: any) {
-        const userId = req.user.sub;
-        const result = await this.notificationService.markAllAsRead(userId);
-
-        return {
-            success: true,
-            data: result,
         };
     }
 

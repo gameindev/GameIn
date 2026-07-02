@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Param, Post, Patch, UseInterceptors, ClassSerializerInterceptor, Headers, Req, RawBodyRequest } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Patch, UseInterceptors, ClassSerializerInterceptor, Headers, Req, RawBodyRequest, BadRequestException } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PaymentsService } from './providers/payments.service';
 import { PaymentIntentService } from './providers/payment-intent.service';
 import { PaymentService } from './providers/payment.service';
 import { PaymentRefundService } from './providers/payment-refund.service';
 import { PaymentFlowService } from './providers/payment-flow.service';
+import { PaymentWebhookOrchestratorService } from './providers/payment-webhook-orchestrator.service';
 import { CreatePaymentDto } from './dtos/create-payment.dto';
 import { CreateGatewayPaymentDto } from './dtos/create-gateway-payment.dto';
 import { VerifyPaymentDto } from './dtos/verify-payment.dto';
@@ -12,6 +13,8 @@ import { RefundPaymentDto } from './dtos/refund-payment.dto';
 import { CreatePaymentIntentDto } from './dtos/create-payment-intent.dto';
 import { CreateRefundDto } from './dtos/create-refund.dto';
 import { PaymentProvider } from '../offerings/enums/payment-provider.enum';
+import { Auth } from '../auth/decorators/auth.decorator';
+import { AuthType } from '../auth/enums/auth-type.enum';
 
 @ApiTags('Payments')
 @Controller('payments')
@@ -24,6 +27,7 @@ export class PaymentsController {
         private readonly paymentService: PaymentService,
         private readonly refundService: PaymentRefundService,
         private readonly paymentFlowService: PaymentFlowService,
+        private readonly paymentWebhookOrchestrator: PaymentWebhookOrchestratorService,
     ) {}
 
     @Post('create')
@@ -82,11 +86,10 @@ export class PaymentsController {
 
 
     @Post('webhook/:provider')
+    @Auth(AuthType.None)
     @ApiOperation({ summary: 'Handle payment webhook', description: 'Handle webhook events from payment gateways. This endpoint should be publicly accessible (no auth required) for webhook delivery.' })
     @ApiParam({ name: 'provider', enum: PaymentProvider, description: 'Payment provider' })
     @ApiResponse({ status: 200, description: 'Webhook processed successfully' })
-    // Note: This endpoint should bypass authentication since webhooks are sent by payment gateways
-    // If you have a Public decorator, use it here: @Public()
     async handleWebhook(
         @Param('provider') provider: PaymentProvider,
         @Req() req: RawBodyRequest<Request>,
@@ -94,22 +97,46 @@ export class PaymentsController {
         @Headers('x-razorpay-signature') razorpaySignature?: string,
         @Headers('x-paypal-transmission-id') paypalTransmissionId?: string,
     ) {
-        // Get signature based on provider
         let signature = '';
         if (provider === PaymentProvider.STRIPE && stripeSignature) {
             signature = stripeSignature;
         } else if (provider === PaymentProvider.RAZORPAY && razorpaySignature) {
             signature = razorpaySignature;
         } else if (provider === PaymentProvider.PAYPAL && paypalTransmissionId) {
-            // PayPal uses multiple headers for signature verification
             signature = paypalTransmissionId;
         }
 
-        // For Stripe, use raw body if available (needed for signature verification)
-        // Stripe requires raw Buffer for signature verification
-        const payload = req.rawBody ? Buffer.from(req.rawBody) : req.body;
-        
+        if (provider === PaymentProvider.STRIPE && !stripeSignature) {
+            throw new BadRequestException('Missing stripe-signature header');
+        }
+
+        if (provider === PaymentProvider.STRIPE) {
+            const payload = this.getStripeWebhookPayload(req);
+            return this.paymentWebhookOrchestrator.handleStripeWebhook(payload, signature);
+        }
+
+        const payload = req.body ?? req.rawBody;
         return this.paymentsService.handleWebhook(provider, payload, signature);
+    }
+
+    /**
+     * Stripe signature verification requires the untouched request body (Buffer).
+     * Re-serializing parsed JSON will always fail verification.
+     */
+    private getStripeWebhookPayload(req: RawBodyRequest<Request>): Buffer {
+        if (Buffer.isBuffer(req.body)) {
+            return req.body;
+        }
+
+        if (req.rawBody) {
+            return Buffer.isBuffer(req.rawBody)
+                ? req.rawBody
+                : Buffer.from(req.rawBody as Uint8Array);
+        }
+
+        throw new BadRequestException(
+            'Stripe webhook raw body missing. Ensure express.raw middleware is applied to the webhook route.',
+        );
     }
 
 

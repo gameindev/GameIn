@@ -28,6 +28,7 @@ export class PaymentsService {
             customerId: dto.customerId,
             customerEmail: dto.customerEmail,
             description: dto.description,
+            paymentMethodId: dto.paymentMethodId,
             metadata: dto.metadata,
             returnUrl: dto.returnUrl,
             cancelUrl: dto.cancelUrl,
@@ -55,6 +56,7 @@ export class PaymentsService {
             customerId?: string;
             customerEmail?: string;
             description?: string;
+            paymentMethodId?: string;
             metadata?: Record<string, any>;
             returnUrl?: string;
             cancelUrl?: string;

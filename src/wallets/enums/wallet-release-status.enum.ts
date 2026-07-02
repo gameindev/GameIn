@@ -1,0 +1,8 @@
+export enum WalletReleaseStatus {
+    SCHEDULED = 'SCHEDULED',
+    PROCESSING = 'PROCESSING',
+    COMPLETED = 'COMPLETED',
+    FROZEN = 'FROZEN',
+    FAILED = 'FAILED',
+    CANCELLED = 'CANCELLED',
+}

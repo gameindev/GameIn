@@ -40,4 +40,11 @@ export default Joi.object({
     DEFAULT_PAYMENT_PROVIDER: Joi.string().valid('STRIPE', 'PAYPAL', 'RAZORPAY', 'MANUAL').optional().default('STRIPE'),
     FRONTEND_URL: Joi.string().uri().optional().default('http://localhost:3000'),
     PAYMENT_WEBHOOK_PATH: Joi.string().optional().default('/api/payments/webhook'),
+
+    // Wallet Configuration
+    STRIPE_CONNECT_CLIENT_ID: Joi.string().optional(),
+    WALLET_RELEASE_HOLD_DAYS: Joi.number().optional().default(7),
+    WALLET_MIN_WITHDRAWAL: Joi.number().optional().default(25),
+    WALLET_INSTANT_PAYOUT_ENABLED: Joi.string().optional().default('true'),
+    WALLET_DEFAULT_CURRENCY: Joi.string().optional().default('USD'),
 })

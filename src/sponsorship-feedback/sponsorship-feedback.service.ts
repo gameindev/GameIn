@@ -210,6 +210,45 @@ export class SponsorshipFeedbackService {
     }
 
     /**
+     * Brand viewing a creator profile: aggregate summary + next deliverable order awaiting feedback.
+     */
+    async getBrandRatingContextForCreator(creatorUserId: number, brandUserId: number) {
+        const summary = await this.getCreatorRatingAggregate(creatorUserId);
+
+        const deliveredOrders = await this.orderRepo.find({
+            where: {
+                creator_id: creatorUserId,
+                brand_id: brandUserId,
+                status: OrderStatus.DELIVERED,
+            },
+            order: { updated_at: 'DESC' },
+            select: ['id', 'title'],
+        });
+
+        let pending_order: { id: number; title: string } | null = null;
+        for (const order of deliveredOrders) {
+            const existing = await this.feedbackRepo.findOne({
+                where: { offering_order_id: order.id },
+            });
+            if (!existing) {
+                pending_order = { id: order.id, title: order.title };
+                break;
+            }
+        }
+
+        const brand_review_count = await this.feedbackRepo.count({
+            where: { creator_user_id: creatorUserId, brand_user_id: brandUserId },
+        });
+
+        return {
+            summary,
+            pending_order,
+            brand_review_count,
+            has_delivered_orders: deliveredOrders.length > 0,
+        };
+    }
+
+    /**
      * Recompute cumulative certification points and certification level (creator_profile.rank) from DB.
      */
     async refreshCreatorCertification(creatorUserId: number): Promise<void> {

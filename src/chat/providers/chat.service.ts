@@ -87,7 +87,7 @@ export class ChatService {
             // console.log(`Fetching conversations for user: ${userId}`); //TODO Console
 
             const conversations = await this.conversationParticipantRepository.find({
-                where: { user: { id: userId } },
+                where: { user: { id: userId }, left_at: IsNull() },
                 relations: [
                     'conversation',
                     'conversation.participants',
@@ -128,16 +128,28 @@ export class ChatService {
                     conversation: { id: In(conversationIds) },
                     deleted_at: IsNull()
                 },
-                relations: ['sender'],
+                relations: ['sender', 'conversation'],
                 order: { created_at: 'DESC' },
             });
 
-            // Group last messages by conversation ID
-            const lastMessagesMap = new Map();
+            // Group last messages by conversation ID (respect per-user cleared_at)
+            const lastMessagesMap = new Map<number, MessageEntity>();
             lastMessages.forEach(message => {
-                if (message.conversation && message.conversation.id && !lastMessagesMap.has(message.conversation.id)) {
-                    lastMessagesMap.set(message.conversation.id, message);
+                if (!message.conversation?.id || lastMessagesMap.has(message.conversation.id)) {
+                    return;
                 }
+
+                const participantRow = validConversations.find(
+                    (row) => row.conversation.id === message.conversation.id,
+                );
+                if (
+                    participantRow?.cleared_at &&
+                    message.created_at <= participantRow.cleared_at
+                ) {
+                    return;
+                }
+
+                lastMessagesMap.set(message.conversation.id, message);
             });
 
             // Get unread counts for all conversations
@@ -145,7 +157,7 @@ export class ChatService {
                 validConversations.map(conv => this.getUnreadMessageCount(conv.conversation.id, userId))
             );
 
-            return validConversations.map((conversation, index) => {
+            const mappedConversations = validConversations.map((conversation, index) => {
                 const lastMessage = lastMessagesMap.get(conversation.conversation.id);
                 const unreadCount = unreadCounts[index];
 
@@ -162,6 +174,8 @@ export class ChatService {
                     })) || [],
                     is_admin: conversation.is_admin,
                     joined_at: conversation.joined_at,
+                    pinned: conversation.is_pinned || false,
+                    cleared_at: conversation.cleared_at || null,
                     lastMessage: lastMessage ? {
                         content: lastMessage.content,
                         timestamp: lastMessage.created_at,
@@ -171,6 +185,16 @@ export class ChatService {
                     unreadCount: unreadCount || 0,
                     unread: (unreadCount || 0) > 0,
                 };
+            });
+
+            return mappedConversations.sort((a, b) => {
+                if (a.pinned !== b.pinned) {
+                    return a.pinned ? -1 : 1;
+                }
+
+                const aTime = a.lastMessage?.timestamp || a.joined_at;
+                const bTime = b.lastMessage?.timestamp || b.joined_at;
+                return new Date(bTime).getTime() - new Date(aTime).getTime();
             });
 
         } catch (error) {
@@ -422,14 +446,47 @@ export class ChatService {
     /**
      * Get conversation messages with pagination
      */
-    async getConversationMessages(conversationId: number, limit: number = 50, offset: number = 0) {
-        const messages = await this.messageRepository.find({
-            where: { conversation: { id: conversationId } },
-            relations: ['sender', 'sender.creator_profile', 'sender.brand_profile', 'attachment'],
-            order: { created_at: 'DESC' },
-            take: limit,
-            skip: offset,
-        });
+    async getConversationMessages(
+        conversationId: number,
+        limit: number = 50,
+        offset: number = 0,
+        userId?: number,
+    ) {
+        const queryBuilder = this.messageRepository
+            .createQueryBuilder('message')
+            .leftJoinAndSelect('message.sender', 'sender')
+            .leftJoinAndSelect('sender.creator_profile', 'creator_profile')
+            .leftJoinAndSelect('creator_profile.profile_image', 'creator_profile_image')
+            .leftJoinAndSelect('sender.brand_profile', 'brand_profile')
+            .leftJoinAndSelect('brand_profile.profile_image', 'brand_profile_image')
+            .leftJoinAndSelect('message.attachment', 'attachment')
+            .where('message.conversation_id = :conversationId', { conversationId })
+            .andWhere('message.deleted_at IS NULL')
+            .orderBy('message.created_at', 'DESC')
+            .take(limit)
+            .skip(offset);
+
+        if (userId) {
+            const participant = await this.conversationParticipantRepository.findOne({
+                where: {
+                    conversation: { id: conversationId },
+                    user: { id: userId },
+                    left_at: IsNull(),
+                },
+            });
+
+            if (!participant) {
+                throw new ForbiddenException('You are not a participant in this conversation');
+            }
+
+            if (participant.cleared_at) {
+                queryBuilder.andWhere('message.created_at > :clearedAt', {
+                    clearedAt: participant.cleared_at,
+                });
+            }
+        }
+
+        const messages = await queryBuilder.getMany();
 
         return messages.map(message => ({
             id: message.id,
@@ -461,13 +518,38 @@ export class ChatService {
      * Get unread message count for a conversation
      */
     async getUnreadMessageCount(conversationId: number, userId: number): Promise<number> {
-        return this.messageRepository.count({
+        const participant = await this.conversationParticipantRepository.findOne({
             where: {
                 conversation: { id: conversationId },
-                sender: { id: Not(userId) }, // Messages from other users
-                deleted_at: IsNull(), // Not deleted
-            }
+                user: { id: userId },
+                left_at: IsNull(),
+            },
         });
+
+        if (!participant) {
+            return 0;
+        }
+
+        const queryBuilder = this.messageRepository
+            .createQueryBuilder('message')
+            .leftJoin(
+                'message_receipt',
+                'receipt',
+                'receipt.message_id = message.id AND receipt.user_id = :userId',
+                { userId },
+            )
+            .where('message.conversation_id = :conversationId', { conversationId })
+            .andWhere('message.sender_id != :userId', { userId })
+            .andWhere('message.deleted_at IS NULL')
+            .andWhere('receipt.read_at IS NULL');
+
+        if (participant.cleared_at) {
+            queryBuilder.andWhere('message.created_at > :clearedAt', {
+                clearedAt: participant.cleared_at,
+            });
+        }
+
+        return queryBuilder.getCount();
     }
 
     /**
@@ -1032,6 +1114,58 @@ export class ChatService {
         await this.messageRepository.save(message);
         return { success: true, messageId };
 
+    }
+
+    async clearConversation(conversationId: number, userId: number) {
+        const participant = await this.getActiveParticipant(conversationId, userId);
+        participant.cleared_at = new Date();
+        await this.conversationParticipantRepository.save(participant);
+
+        return {
+            success: true,
+            conversationId,
+            clearedAt: participant.cleared_at,
+        };
+    }
+
+    async leaveConversation(conversationId: number, userId: number) {
+        const participant = await this.getActiveParticipant(conversationId, userId);
+        participant.left_at = new Date();
+        participant.is_pinned = false;
+        await this.conversationParticipantRepository.save(participant);
+
+        return {
+            success: true,
+            conversationId,
+        };
+    }
+
+    async togglePinConversation(conversationId: number, userId: number) {
+        const participant = await this.getActiveParticipant(conversationId, userId);
+        participant.is_pinned = !participant.is_pinned;
+        await this.conversationParticipantRepository.save(participant);
+
+        return {
+            success: true,
+            conversationId,
+            pinned: participant.is_pinned,
+        };
+    }
+
+    private async getActiveParticipant(conversationId: number, userId: number) {
+        const participant = await this.conversationParticipantRepository.findOne({
+            where: {
+                conversation: { id: conversationId },
+                user: { id: userId },
+                left_at: IsNull(),
+            },
+        });
+
+        if (!participant) {
+            throw new ForbiddenException('You are not a participant in this conversation');
+        }
+
+        return participant;
     }
 
 
