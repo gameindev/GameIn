@@ -1,44 +1,53 @@
 import styled from "styled-components";
 
 export const HeaderSection = styled.header`
-  /* padding: 1.625em 0; */
   position: sticky;
   top: 0;
   z-index: 99;
 
   .headerCard {
-    padding: ${({ $isLoggedIn }) => ($isLoggedIn ? '1em' : '1.625em')} 0;
+    padding: 0;
     background: ${({ theme }) => theme.colors.secondaryGrey[1]};
     border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .container-fluid {
+    min-height: ${({ $isLoggedIn }) => ($isLoggedIn ? '4.25rem' : '4.5rem')};
+    display: flex;
+    align-items: center;
   }
 
   .headerFlex {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 1.5rem;
+    width: 100%;
 
     .logo {
-      width: 11.5em;
+      width: 10.25rem;
       display: flex;
       align-items: center;
-      gap: 0.75em;
+      gap: 0.75rem;
       flex-shrink: 0;
 
       a {
         display: inline-flex;
         min-width: 0;
+        width: 100%;
       }
 
       img {
         width: 100%;
         min-width: 0;
+        display: block;
       }
     }
 
     .menu-toggle {
       display: none;
-      width: 2.75em;
-      height: 2.75em;
+      width: 2.75rem;
+      height: 2.75rem;
       border: 0;
       border-radius: ${({ theme }) => theme.radius.md};
       background: ${({ theme }) => theme.colors.inputBgColor[0]};
@@ -63,29 +72,51 @@ export const HeaderSection = styled.header`
   nav {
     display: flex;
     align-items: center;
-    gap: 2em;
+    gap: 1.5rem;
+    min-width: 0;
 
     ul {
       display: flex;
-      gap: 1em;
+      gap: 1rem;
+      align-items: center;
 
       li > a {
         color: ${({ theme }) => theme.colors.textWhite[0]};
         text-decoration: none;
         transition: color 0.2s ease-in-out;
         text-transform: uppercase;
+        font-size: 0.8125rem;
+        font-weight: 700;
+        line-height: 1;
+        white-space: nowrap;
       }
     }
 
     .access-btns {
       display: flex;
-      gap: 0.5em;
+      gap: 0.625rem;
+      align-items: center;
+
+      a {
+        display: inline-flex;
+      }
+
+      .mantine-Button-root {
+        min-width: 5.25rem;
+        height: 2.5rem;
+        padding-inline: 1rem;
+      }
+
+      .mantine-Button-label {
+        font-size: 0.8125rem;
+        font-weight: 700;
+      }
     }
 
     .mobile-search-toggle {
       display: none;
-      width: 2.5em;
-      height: 2.5em;
+      width: 2.5rem;
+      height: 2.5rem;
       border: 0;
       border-radius: ${({ theme }) => theme.radius.md};
       background: ${({ theme }) => theme.colors.inputBgColor[0]};
@@ -99,14 +130,14 @@ export const HeaderSection = styled.header`
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 2.5em;
-      height: 2.5em;
+      width: 2.5rem;
+      height: 2.5rem;
       overflow: visible;
     }
 
     .avatar-icon-small {
-      width: 2.5em;
-      height: 2.5em;
+      width: 2.5rem;
+      height: 2.5rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -114,9 +145,9 @@ export const HeaderSection = styled.header`
     }
 
     .avatar-icon-small > div {
-      width: 2.5em !important;
-      height: 2.5em !important;
-      flex: 0 0 2.5em;
+      width: 2.5rem !important;
+      height: 2.5rem !important;
+      flex: 0 0 2.5rem;
     }
   }
 
@@ -125,20 +156,24 @@ export const HeaderSection = styled.header`
   }
 
   @media (max-width: 1024px) {
-    .headerCard {
-      padding: 0.75em 0;
+    .container-fluid {
+      min-height: 4.25rem;
     }
 
     .headerFlex {
-      gap: 1em;
+      gap: 1rem;
 
       .menu-toggle {
         display: inline-flex;
       }
 
       .logo {
-        width: 10em;
+        width: 9.25rem;
       }
+    }
+
+    nav {
+      gap: 1rem;
     }
   }
 
@@ -148,14 +183,10 @@ export const HeaderSection = styled.header`
     }
 
     .headerFlex {
-      gap: 0.75em;
+      gap: 0.75rem;
 
       .logo {
-        width: auto;
-
-        a {
-          width: 8.25em;
-        }
+        width: 8.75rem;
       }
 
       .searchbar {
@@ -164,14 +195,20 @@ export const HeaderSection = styled.header`
     }
 
     nav {
-      gap: 0.55em;
+      gap: 0.625rem;
 
       ul {
         display: none;
       }
 
       .access-btns {
-        gap: 0.35em;
+        gap: 0.5rem;
+
+        .mantine-Button-root {
+          min-width: 4.75rem;
+          height: 2.375rem;
+          padding-inline: 0.75rem;
+        }
       }
 
       .mobile-search-toggle {
@@ -181,15 +218,15 @@ export const HeaderSection = styled.header`
       .mobile-search-toggle,
       .mantine-UnstyledButton-root,
       .avatar-icon-small {
-        width: 2.35em;
-        height: 2.35em;
-        min-width: 2.35em;
+        width: 2.375rem;
+        height: 2.375rem;
+        min-width: 2.375rem;
       }
 
       .avatar-icon-small > div {
-        width: 2.35em !important;
-        height: 2.35em !important;
-        flex-basis: 2.35em;
+        width: 2.375rem !important;
+        height: 2.375rem !important;
+        flex-basis: 2.375rem;
       }
     }
 
@@ -214,12 +251,28 @@ export const HeaderSection = styled.header`
   }
 
   @media (max-width: 420px) {
-    .headerFlex .logo a {
-      width: 6.25em;
+    .container-fluid {
+      min-height: 4rem;
+    }
+
+    .headerFlex {
+      gap: 0.5rem;
+    }
+
+    .headerFlex .logo {
+      width: 7.125rem;
     }
 
     nav .access-btns {
-      display: none;
+      .mantine-Button-root {
+        min-width: 4.5rem;
+        height: 2.25rem;
+        padding-inline: 0.625rem;
+      }
+
+      a:first-child {
+        display: none;
+      }
     }
   }
 `;

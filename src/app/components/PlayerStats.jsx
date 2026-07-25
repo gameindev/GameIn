@@ -40,18 +40,11 @@ function PlayerStats() {
   console.log(player);
 
   return (
-    <div
-      style={{
-        borderColor: theme.colors.black[0],
-        textAlign: "center",
-        width: "48em",
-        margin: "0 auto",
-      }}
-    >
+    <div className="player-stats">
       <Title order={3} c="textWhite" fw={800}>
         {player.name}
       </Title>
-      <Grid fz={10} mt="lg" justify="center" align="center">
+      <Grid fz={10} mt="lg" justify="center" align="center" gutter="xs">
         {/* Left: Demographics */}
         <Grid.Col span={4} sm={12} w="auto" mih={"auto"}>
           <Flex direction="column" gap={4} align="center">
@@ -65,7 +58,7 @@ function PlayerStats() {
                 w={"100%"}
                 style={{ alignItems: "center" }}
               >
-                <Flex key={label} justify="space-between" w={140}>
+                <Flex key={label} justify="space-between" className="demo-row">
                   <Text c="textWhite" fz="sm" tt="uppercase">
                     {label.replace(/([A-Z])/g, " $1")}
                   </Text>
@@ -81,11 +74,7 @@ function PlayerStats() {
         {/* Center: Rank Hex */}
         <Grid.Col span={4} sm={12} w="auto" mih={"auto"}>
           <Flex justify="center" align="center">
-            <div
-              style={{
-                position: "relative",
-              }}
-            >
+            <div className="rank-hex">
               <HexContainer
                 background={theme.colors.bannerGrey[0]}
                 radius={"0.1"}
@@ -101,12 +90,7 @@ function PlayerStats() {
                     c={theme.colors.black[0]}
                     fw={900}
                     fz={20}
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                    }}
+                    className="rank-text"
                   >
                     {player.rank}
                   </Text>
@@ -150,7 +134,7 @@ function PlayerStats() {
             </Flex>
             {Object.keys(player.followers).map((platform) => (
               <Card className="playerData" p={12} w={"100%"}>
-                <Flex key={platform} justify="space-between" w={180}>
+                <Flex key={platform} justify="space-between" className="follower-row">
                   <Text flex={1} c="textWhite" fz="sm" tt="uppercase">
                     {platform}
                   </Text>

@@ -56,9 +56,9 @@ export default function HomeAlt() {
                                 GameIn makes it easy for creators and brands to connect,
                                 collaborate, and get paid—fast.
                             </Text>
-                            <Flex mt="lg" gap="md" justify="center">
+                            <Flex mt="lg" gap="md" justify="center" className="hero-cta">
                                 <Link to="/register">
-                                    <Button variant="secondary" padding="0.5rem" width={120}>
+                                    <Button variant="secondary" className="cta-btn">
                                         Register
                                     </Button>
                                 </Link>
@@ -73,7 +73,7 @@ export default function HomeAlt() {
                                 <Card className="search-demo" radius="xxl" withBorder>
                                     <div className="search-row">
                                         <Text
-                                            w={"60%"}
+                                            className="search-text"
                                             fz={"1rem"}
                                             c={theme.colors.primary[0]}
                                             align="left"
@@ -130,14 +130,13 @@ export default function HomeAlt() {
                             <ReadMore
                                 color="white"
                                 content={`GameIn is your streamlined sponsorship HQ. Built for creators who want to earn, and brands who want results.`}
+                                className="readmore-align"
                             />
-                            <Flex justify="space-between" align="flex-end" mt="xl">
+                            <Flex justify="flex-start" align="flex-end" mt="xl" className="col-cta">
                                 <Button
                                     variant="primary"
-                                    padding="0.5em"
                                     size="sm"
-                                    width="8.125em"
-                                    mt={20}
+                                    className="cta-btn"
                                 >
                                     Search
                                 </Button>
@@ -167,13 +166,11 @@ export default function HomeAlt() {
                                 color="white"
                                 content={`Creators, showcase your value, set your terms, and get paid on time. Brands, discover verified talent, launch faster, and track every campaign in real time.`}
                             />
-                            <Flex justify="end" align="flex-end" mt="xl">
+                            <Flex justify="flex-start" align="flex-end" mt="xl" className="col-cta right-cta">
                                 <Button
                                     variant="primary"
-                                    padding="0.5em"
                                     size="sm"
-                                    width="8.125em"
-                                    mt={20}
+                                    className="cta-btn"
                                 >
                                     Search
                                 </Button>
@@ -209,7 +206,7 @@ export default function HomeAlt() {
                     <div className="container">
                         <Flex
                             wrap={"wrap"}
-                            gap={24}
+                            gap={{ base: "1rem", md: "1.5rem" }}
                             justify={"space-between"}
                             className="card_body"
                         >
@@ -284,7 +281,7 @@ export default function HomeAlt() {
                     </div>
                 </GridCard>
 
-                <TwoColSection style={{ marginTop: "5rem" }}>
+                <TwoColSection className="two-col-spaced">
                     <div className="container two-col">
                         <div className="text">
                             <Title
@@ -303,10 +300,8 @@ export default function HomeAlt() {
                             <Flex justify="space-between" align="flex-end" mt="xl">
                                 <Button
                                     variant="primary"
-                                    padding="0.5em"
                                     size="sm"
-                                    width="8.125em"
-                                    mt={20}
+                                    className="cta-btn"
                                 >
                                     Search
                                 </Button>
@@ -332,9 +327,9 @@ export default function HomeAlt() {
                         <Text c="textWhite" className="helperText">
                             Join GameIn
                         </Text>
-                        <Flex mt="lg" gap="md" justify="center">
+                        <Flex mt="lg" gap="md" justify="center" className="how-cta">
                             <Link to="/register">
-                                <Button variant="secondary" padding="0.5rem" width={140}>
+                                <Button variant="secondary" className="cta-btn">
                                     Register
                                 </Button>
                             </Link>
@@ -401,9 +396,9 @@ export default function HomeAlt() {
                                 >
                                     Thousands of influencers and companies choose&nbsp;Gamein
                                 </Title>
-                                <Flex mt="lg" gap="md" justify="center">
+                                <Flex mt="lg" gap="md" justify="center" className="milestone-cta">
                                     <Link to="/register">
-                                        <Button variant="secondary" padding="0.5rem" width={140}>
+                                        <Button variant="secondary" className="cta-btn">
                                             Register
                                         </Button>
                                     </Link>

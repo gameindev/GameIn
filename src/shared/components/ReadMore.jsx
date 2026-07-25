@@ -15,7 +15,7 @@ const ReadMoreText = styled.div`
 
 
 
-export default function ReadMore({ content, maxChars = 100, color }) {
+export default function ReadMore({ content, maxChars = 100, color, className }) {
     const [expanded, setExpanded] = useState(false);
 
     const toggle = () => setExpanded(prev => !prev);
@@ -25,7 +25,7 @@ export default function ReadMore({ content, maxChars = 100, color }) {
         expanded || !shouldTruncate ? content : `${content.slice(0, maxChars)}...`;
 
     return (
-        <ReadMoreText>
+        <ReadMoreText className={className}>
             <Text c="white">
                 {displayText} &nbsp;
                 {shouldTruncate && (

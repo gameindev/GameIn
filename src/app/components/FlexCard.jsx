@@ -11,7 +11,7 @@ export default function FlexCard({ scrollToRef }) {
                 <Title order={2} c="textWhite" className="flexTitle" fw="900" mb="xl">FIND A CREATOR</Title>
                 <Text mb="xl" size="md" c="white" fw="800">Monetize your talent</Text>
                 <ReadMore
-                    color="black"
+                    color="white"
                     content={`GameIn helps sponsors break into dynamic gaming spaces with engaged viewership by finding the right gamers and teams to increase their exposure to desired demographics.`}
                 />
                 <Flex justify="space-between" align="flex-end" mt="xl">
@@ -25,7 +25,7 @@ export default function FlexCard({ scrollToRef }) {
                 <Title order={2} c="textWhite" className="flexTitle" fw="900" mb="xl">FIND A SPONSOR</Title>
                 <Text mb="xl" size="md" c="white" fw="800">Don’t just throw your money at eSports.</Text>
                 <ReadMore
-                    color="black"
+                    color="white"
                     content={`Text way to long. Discover sponsorship opportunities more efficient Our sponsorship marketplace provides increased exposure to potential sponsors, streamlines the sponsorship`}
                 />
                 <Flex justify="space-between" align="flex-end" mt="xl">

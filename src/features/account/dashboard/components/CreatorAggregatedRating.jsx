@@ -84,7 +84,7 @@ function ProfileRatingWithData({ data, ratings, activeIndex, onLearnMore }) {
 /**
  * Loads aggregated sponsorship ratings from all brands for the logged-in creator.
  */
-export default function CreatorAggregatedRating({ onLearnMore, variant = "default" }) {
+export default function CreatorAggregatedRating({ onLearnMore, variant = "default", compact = false }) {
     const navigate = useNavigate();
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
@@ -167,7 +167,7 @@ export default function CreatorAggregatedRating({ onLearnMore, variant = "defaul
                 {data.review_count} brand review{data.review_count !== 1 ? "s" : ""} · overall{" "}
                 {data.overall_average != null ? data.overall_average.toFixed(1) : "—"}/5
             </Text>
-            <RatingWidget ratings={ratings} activeIndex={activeIndex} />
+            <RatingWidget ratings={ratings} activeIndex={activeIndex} compact={compact} />
         </>
     );
 }
