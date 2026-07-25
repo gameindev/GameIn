@@ -69,7 +69,10 @@ const LoginPage = () => {
                     <Stack spacing="xl">
                         <Title order={2}>Login</Title>
 
-                        <Stack w="50%" mx="auto">
+                        <Stack
+                            w={{ base: "90%", sm: "90%", md: "50%" }}
+                            mx="auto"
+                        >        
                             {fieldsMapper.map(({ name, label, placeholder, component: Component }) => (
                                 <FormField
                                     key={name}

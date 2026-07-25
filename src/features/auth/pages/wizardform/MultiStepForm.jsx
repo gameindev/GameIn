@@ -35,7 +35,10 @@ export default function MultiStepForm() {
                             </Text>
                             <Title order={2}>{title}</Title>
                         </Flex>
-                        <Stack w="50%" mx="auto">
+                        <Stack
+                            w={{ base: "90%", sm: "90%", md: "50%" }}
+                            mx="auto"
+                        >                   
                             <StepComponent
                                 onNext={goToNextStep}
                                 onPrev={goToPrevStep}
